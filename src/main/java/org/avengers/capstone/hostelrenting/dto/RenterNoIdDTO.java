@@ -1,16 +1,11 @@
 package capstone.tdhostel.dto;
 
-import capstone.tdhostel.model.Booking;
 import lombok.Data;
 
-import javax.persistence.*;
 import java.io.Serializable;
-import java.util.List;
 
 @Data
-public class RenterDTO implements Serializable {
-    private int renterId;
-
+public class RenterNoIdDTO implements Serializable {
     private String renterName;
 
     private String phoneNumber;
