@@ -5,14 +5,12 @@ import lombok.Data;
 import java.io.Serializable;
 
 @Data
-public class RenterDTO implements Serializable {
-    private int renterId;
-
-    private String renterName;
-
-    private String phoneNumber;
+public class VendorNoIdDTO implements Serializable {
+    private String vendorName;
 
     private String email;
+
+    private String phoneNumber;
 
     private String avatar;
 

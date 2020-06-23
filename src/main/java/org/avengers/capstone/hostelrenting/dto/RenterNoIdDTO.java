@@ -5,9 +5,7 @@ import lombok.Data;
 import java.io.Serializable;
 
 @Data
-public class RenterDTO implements Serializable {
-    private int renterId;
-
+public class RenterNoIdDTO implements Serializable {
     private String renterName;
 
     private String phoneNumber;

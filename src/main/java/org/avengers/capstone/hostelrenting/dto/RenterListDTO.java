@@ -3,9 +3,10 @@ package org.avengers.capstone.hostelrenting.dto;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.List;
 
 @Data
-public class RenterDTO implements Serializable {
+public class RenterListDTO implements Serializable {
     private int renterId;
 
     private String renterName;
@@ -17,4 +18,6 @@ public class RenterDTO implements Serializable {
     private String avatar;
 
     private String password;
+
+    private List<Integer> bookingId;
 }
