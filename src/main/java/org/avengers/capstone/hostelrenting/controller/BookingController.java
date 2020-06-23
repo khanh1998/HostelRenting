@@ -1,22 +1,18 @@
-package capstone.tdhostel.controller;
+package org.avengers.capstone.hostelrenting.controller;
 
-import capstone.tdhostel.dto.BookingDTO;
-import capstone.tdhostel.dto.BookingNoIdDTO;
-import capstone.tdhostel.dto.ScheduleDTO;
-import capstone.tdhostel.exception.ResourceNotFoundException;
-import capstone.tdhostel.model.Booking;
-import capstone.tdhostel.model.Schedule;
-import capstone.tdhostel.model.Vendor;
-import capstone.tdhostel.service.BookingService;
-import capstone.tdhostel.service.HostelTypeService;
-import capstone.tdhostel.service.RenterService;
-import capstone.tdhostel.service.VendorService;
+import org.avengers.capstone.hostelrenting.dto.BookingDTO;
+import org.avengers.capstone.hostelrenting.dto.BookingNoIdDTO;
+import org.avengers.capstone.hostelrenting.exception.ResourceNotFoundException;
+import org.avengers.capstone.hostelrenting.model.Booking;
+import org.avengers.capstone.hostelrenting.service.BookingService;
+import org.avengers.capstone.hostelrenting.service.HostelTypeService;
+import org.avengers.capstone.hostelrenting.service.RenterService;
+import org.avengers.capstone.hostelrenting.service.VendorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 public class BookingController {
@@ -58,7 +54,7 @@ public class BookingController {
     }
 
     @PostMapping("/bookings")
-    public  ResponseEntity<?> createBooking(@RequestBody BookingDTO bookingDTO) {
+    public ResponseEntity<?> createBooking(@RequestBody BookingDTO bookingDTO) {
         Booking booking = new Booking();
         booking.setDealId(bookingDTO.getDealId());
         booking.setStartTime(bookingDTO.getStartTime());

@@ -1,12 +1,10 @@
-package capstone.tdhostel.controller;
+package org.avengers.capstone.hostelrenting.controller;
 
-import capstone.tdhostel.dto.ScheduleDTO;
-import capstone.tdhostel.exception.ResourceNotFoundException;
-import capstone.tdhostel.model.Booking;
-import capstone.tdhostel.model.Schedule;
-import capstone.tdhostel.model.Vendor;
-import capstone.tdhostel.service.ScheduleService;
-import capstone.tdhostel.service.VendorService;
+import org.avengers.capstone.hostelrenting.dto.ScheduleDTO;
+import org.avengers.capstone.hostelrenting.exception.ResourceNotFoundException;
+import org.avengers.capstone.hostelrenting.model.Schedule;
+import org.avengers.capstone.hostelrenting.service.ScheduleService;
+import org.avengers.capstone.hostelrenting.service.VendorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -37,7 +35,7 @@ public class ScheduleController{
     }
 
     @PostMapping("/schedules")
-    public  ResponseEntity<?> createSchedule(@RequestBody ScheduleDTO scheduleDTO) {
+    public ResponseEntity<?> createSchedule(@RequestBody ScheduleDTO scheduleDTO) {
         Schedule schedule = new Schedule();
         schedule.setStartTime(scheduleDTO.getStartTime());
         schedule.setEndTime(scheduleDTO.getEndTime());

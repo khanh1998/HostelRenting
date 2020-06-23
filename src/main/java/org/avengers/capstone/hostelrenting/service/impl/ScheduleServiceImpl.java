@@ -1,17 +1,14 @@
-package capstone.tdhostel.service.impl;
+package org.avengers.capstone.hostelrenting.service.impl;
 
-import capstone.tdhostel.dto.ScheduleDTO;
-import capstone.tdhostel.exception.ResourceNotFoundException;
-import capstone.tdhostel.model.Schedule;
-import capstone.tdhostel.repository.ScheduleRepository;
-import capstone.tdhostel.service.ScheduleService;
+import org.avengers.capstone.hostelrenting.dto.ScheduleDTO;
+import org.avengers.capstone.hostelrenting.model.Schedule;
+import org.avengers.capstone.hostelrenting.repository.ScheduleRepository;
+import org.avengers.capstone.hostelrenting.service.ScheduleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 @Repository

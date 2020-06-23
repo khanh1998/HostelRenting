@@ -1,19 +1,15 @@
-package capstone.tdhostel.controller;
+package org.avengers.capstone.hostelrenting.controller;
 
-import capstone.tdhostel.dto.VendorDTO;
-import capstone.tdhostel.dto.VendorNoIdDTO;
-import capstone.tdhostel.exception.ResourceNotFoundException;
-import capstone.tdhostel.model.Renter;
-import capstone.tdhostel.model.Vendor;
-import capstone.tdhostel.service.RenterService;
-import capstone.tdhostel.service.VendorService;
+import org.avengers.capstone.hostelrenting.dto.VendorDTO;
+import org.avengers.capstone.hostelrenting.dto.VendorNoIdDTO;
+import org.avengers.capstone.hostelrenting.exception.ResourceNotFoundException;
+import org.avengers.capstone.hostelrenting.model.Vendor;
+import org.avengers.capstone.hostelrenting.service.VendorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 public class VendorController {

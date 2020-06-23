@@ -1,8 +1,8 @@
-package capstone.tdhostel.service.impl;
+package org.avengers.capstone.hostelrenting.service.impl;
 
-import capstone.tdhostel.model.HostelType;
-import capstone.tdhostel.repository.HostelTypeRepository;
-import capstone.tdhostel.service.HostelTypeService;
+import org.avengers.capstone.hostelrenting.model.HostelType;
+import org.avengers.capstone.hostelrenting.repository.HostelTypeRepository;
+import org.avengers.capstone.hostelrenting.service.HostelTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

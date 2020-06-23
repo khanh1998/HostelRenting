@@ -1,8 +1,6 @@
-package capstone.tdhostel.service;
+package org.avengers.capstone.hostelrenting.service;
 
-
-import capstone.tdhostel.model.HostelGroup;
-import capstone.tdhostel.model.HostelType;
+import org.avengers.capstone.hostelrenting.model.HostelType;
 
 import java.util.List;
 import java.util.Optional;

@@ -1,7 +1,7 @@
-package capstone.tdhostel.service;
+package org.avengers.capstone.hostelrenting.service;
 
-import capstone.tdhostel.dto.BookingDTO;
-import capstone.tdhostel.model.Booking;
+import org.avengers.capstone.hostelrenting.dto.BookingDTO;
+import org.avengers.capstone.hostelrenting.model.Booking;
 
 import java.util.List;
 import java.util.Optional;

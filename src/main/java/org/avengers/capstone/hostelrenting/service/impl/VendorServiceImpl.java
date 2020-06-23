@@ -1,9 +1,8 @@
-package capstone.tdhostel.service.impl;
+package org.avengers.capstone.hostelrenting.service.impl;
 
-import capstone.tdhostel.dto.VendorDTO;
-import capstone.tdhostel.model.Vendor;
-import capstone.tdhostel.repository.VendorRepository;
-import capstone.tdhostel.service.VendorService;
+import org.avengers.capstone.hostelrenting.model.Vendor;
+import org.avengers.capstone.hostelrenting.repository.VendorRepository;
+import org.avengers.capstone.hostelrenting.service.VendorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

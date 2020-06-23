@@ -31,15 +31,15 @@ public class Vendor implements Serializable {
     private String password;
 
     @OneToMany(mappedBy = "vendor", cascade = CascadeType.ALL)
-    private List<capstone.tdhostel.model.Booking> bookings;
+    private List<Booking> bookings;
 
     @JsonManagedReference
     @OneToMany(mappedBy = "vendor", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<capstone.tdhostel.model.Schedule> schedules;
+    private List<Schedule> schedules;
 
 //    @OneToMany(mappedBy = "vendor", cascade = CascadeType.ALL)
 //    private List<Deal> deals;
 
     @OneToMany(mappedBy = "vendor", cascade = CascadeType.ALL)
-    private List<capstone.tdhostel.model.HostelGroup> hostelGroups;
+    private List<HostelGroup> hostelGroups;
 }

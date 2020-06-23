@@ -1,4 +1,4 @@
-package capstone.tdhostel.dto;
+package org.avengers.capstone.hostelrenting.dto;
 
 import lombok.Data;
 

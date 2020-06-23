@@ -30,7 +30,7 @@ public class Renter implements Serializable {
     private String password;
 
     @OneToMany(mappedBy = "renter", cascade = CascadeType.ALL)
-    private List<capstone.tdhostel.model.Booking> bookings;
+    private List<Booking> bookings;
 //
 //    @OneToMany(mappedBy = "renter", cascade = CascadeType.ALL)
 //    private List<Deal> deals;

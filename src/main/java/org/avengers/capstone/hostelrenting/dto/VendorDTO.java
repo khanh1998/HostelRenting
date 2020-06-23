@@ -1,12 +1,8 @@
-package capstone.tdhostel.dto;
+package org.avengers.capstone.hostelrenting.dto;
 
-import capstone.tdhostel.model.Schedule;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Data;
 
-import javax.persistence.*;
 import java.io.Serializable;
-import java.util.List;
 
 @Data
 public class VendorDTO implements Serializable {

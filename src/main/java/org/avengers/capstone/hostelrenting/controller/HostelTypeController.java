@@ -1,15 +1,14 @@
-package capstone.tdhostel.controller;
+package org.avengers.capstone.hostelrenting.controller;
 
-import capstone.tdhostel.dto.*;
-import capstone.tdhostel.exception.ResourceNotFoundException;
-import capstone.tdhostel.model.Booking;
-import capstone.tdhostel.model.HostelGroup;
-import capstone.tdhostel.model.HostelType;
-import capstone.tdhostel.model.Vendor;
-import capstone.tdhostel.service.BookingService;
-import capstone.tdhostel.service.HostelGroupService;
-import capstone.tdhostel.service.HostelTypeService;
-import capstone.tdhostel.service.VendorService;
+import org.avengers.capstone.hostelrenting.dto.HostelTypeDTO;
+import org.avengers.capstone.hostelrenting.dto.HostelTypeListDTO;
+import org.avengers.capstone.hostelrenting.dto.HostelTypeNoIdDTO;
+import org.avengers.capstone.hostelrenting.dto.ViewDetailDTO;
+import org.avengers.capstone.hostelrenting.exception.ResourceNotFoundException;
+import org.avengers.capstone.hostelrenting.model.HostelType;
+import org.avengers.capstone.hostelrenting.service.HostelGroupService;
+import org.avengers.capstone.hostelrenting.service.HostelTypeService;
+import org.avengers.capstone.hostelrenting.service.VendorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -67,7 +66,7 @@ public class HostelTypeController {
     }
 
     @PostMapping("/types")
-    public  ResponseEntity<?> createHostelType(@RequestBody HostelTypeDTO hostelTypeDTO) {
+    public ResponseEntity<?> createHostelType(@RequestBody HostelTypeDTO hostelTypeDTO) {
         HostelType hostelType = new HostelType();
         hostelType.setHostelTypeName(hostelTypeDTO.getHostelName());
         hostelType.setPrice(hostelTypeDTO.getPrice());

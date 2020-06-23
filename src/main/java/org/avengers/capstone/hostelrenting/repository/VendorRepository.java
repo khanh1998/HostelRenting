@@ -1,6 +1,6 @@
-package capstone.tdhostel.repository;
+package org.avengers.capstone.hostelrenting.repository;
 
-import capstone.tdhostel.model.Vendor;
+import org.avengers.capstone.hostelrenting.model.Vendor;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -1,11 +1,10 @@
-package capstone.tdhostel.controller;
+package org.avengers.capstone.hostelrenting.controller;
 
-import capstone.tdhostel.dto.RenterDTO;
-import capstone.tdhostel.dto.RenterNoIdDTO;
-import capstone.tdhostel.exception.ResourceNotFoundException;
-import capstone.tdhostel.model.HostelGroup;
-import capstone.tdhostel.model.Renter;
-import capstone.tdhostel.service.RenterService;
+import org.avengers.capstone.hostelrenting.dto.RenterDTO;
+import org.avengers.capstone.hostelrenting.dto.RenterNoIdDTO;
+import org.avengers.capstone.hostelrenting.exception.ResourceNotFoundException;
+import org.avengers.capstone.hostelrenting.model.Renter;
+import org.avengers.capstone.hostelrenting.service.RenterService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

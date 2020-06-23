@@ -1,7 +1,6 @@
-package capstone.tdhostel.dto;
+package org.avengers.capstone.hostelrenting.dto;
 
 import lombok.Data;
-import org.springframework.web.bind.annotation.RestController;
 
 import java.io.Serializable;
 

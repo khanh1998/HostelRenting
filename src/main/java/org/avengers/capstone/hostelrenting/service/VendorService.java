@@ -1,7 +1,6 @@
-package capstone.tdhostel.service;
+package org.avengers.capstone.hostelrenting.service;
 
-import capstone.tdhostel.dto.VendorDTO;
-import capstone.tdhostel.model.Vendor;
+import org.avengers.capstone.hostelrenting.model.Vendor;
 
 import java.util.List;
 import java.util.Optional;

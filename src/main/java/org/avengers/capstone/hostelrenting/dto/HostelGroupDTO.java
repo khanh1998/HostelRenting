@@ -1,9 +1,7 @@
-package capstone.tdhostel.dto;
+package org.avengers.capstone.hostelrenting.dto;
 
-import capstone.tdhostel.model.Vendor;
 import lombok.Data;
 
-import javax.persistence.*;
 import java.io.Serializable;
 
 @Data

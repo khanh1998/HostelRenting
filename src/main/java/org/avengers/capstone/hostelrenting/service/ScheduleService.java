@@ -1,7 +1,7 @@
 package org.avengers.capstone.hostelrenting.service;
 
-import capstone.tdhostel.dto.ScheduleDTO;
-import capstone.tdhostel.model.Schedule;
+import org.avengers.capstone.hostelrenting.dto.ScheduleDTO;
+import org.avengers.capstone.hostelrenting.model.Schedule;
 
 import java.util.List;
 import java.util.Optional;

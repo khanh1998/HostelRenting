@@ -1,11 +1,9 @@
-package capstone.tdhostel.service.impl;
+package org.avengers.capstone.hostelrenting.service.impl;
 
-import capstone.tdhostel.dto.HostelGroupDTO;
-import capstone.tdhostel.dto.ScheduleDTO;
-import capstone.tdhostel.model.HostelGroup;
-import capstone.tdhostel.model.Schedule;
-import capstone.tdhostel.repository.HostelGroupRepository;
-import capstone.tdhostel.service.HostelGroupService;
+import org.avengers.capstone.hostelrenting.dto.HostelGroupDTO;
+import org.avengers.capstone.hostelrenting.model.HostelGroup;
+import org.avengers.capstone.hostelrenting.repository.HostelGroupRepository;
+import org.avengers.capstone.hostelrenting.service.HostelGroupService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

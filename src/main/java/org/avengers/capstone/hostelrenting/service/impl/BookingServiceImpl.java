@@ -1,18 +1,12 @@
-package capstone.tdhostel.service.impl;
+package org.avengers.capstone.hostelrenting.service.impl;
 
-import capstone.tdhostel.dto.BookingDTO;
-import capstone.tdhostel.dto.ScheduleDTO;
-import capstone.tdhostel.model.Booking;
-import capstone.tdhostel.model.Renter;
-import capstone.tdhostel.model.Schedule;
-import capstone.tdhostel.model.Vendor;
-import capstone.tdhostel.repository.BookingRepository;
-import capstone.tdhostel.service.BookingService;
+import org.avengers.capstone.hostelrenting.dto.BookingDTO;
+import org.avengers.capstone.hostelrenting.model.Booking;
+import org.avengers.capstone.hostelrenting.repository.BookingRepository;
+import org.avengers.capstone.hostelrenting.service.BookingService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
