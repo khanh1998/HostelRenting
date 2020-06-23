@@ -1,5 +1,6 @@
 package org.avengers.capstone.hostelrenting.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -29,6 +30,7 @@ public class Renter implements Serializable {
     @Column(nullable = false)
     private String password;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "renter", cascade = CascadeType.ALL)
     private List<Booking> bookings;
 //

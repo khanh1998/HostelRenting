@@ -27,6 +27,7 @@ public class HostelType implements Serializable {
 
     private int capacity;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "hostelType", cascade = CascadeType.ALL)
     private List<Booking> bookings;
 

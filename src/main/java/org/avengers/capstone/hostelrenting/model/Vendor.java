@@ -1,5 +1,6 @@
 package org.avengers.capstone.hostelrenting.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Data;
 
@@ -30,16 +31,18 @@ public class Vendor implements Serializable {
     @Column(nullable = false)
     private String password;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "vendor", cascade = CascadeType.ALL)
     private List<Booking> bookings;
 
+    @JsonIgnore
     @JsonManagedReference
     @OneToMany(mappedBy = "vendor", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Schedule> schedules;
 
 //    @OneToMany(mappedBy = "vendor", cascade = CascadeType.ALL)
 //    private List<Deal> deals;
-
+    @JsonIgnore
     @OneToMany(mappedBy = "vendor", cascade = CascadeType.ALL)
     private List<HostelGroup> hostelGroups;
 }
