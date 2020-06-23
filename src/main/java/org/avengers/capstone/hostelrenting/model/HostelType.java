@@ -1,5 +1,6 @@
 package org.avengers.capstone.hostelrenting.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -32,6 +33,7 @@ public class HostelType implements Serializable {
 //    @OneToMany(mappedBy = "hosteltype", cascade = CascadeType.ALL)
 //    private List<Deal> deals;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "hostel_group_id")
     private HostelGroup hostelGroup;
