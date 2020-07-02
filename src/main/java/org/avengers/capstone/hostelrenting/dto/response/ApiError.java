@@ -1,6 +1,8 @@
 package org.avengers.capstone.hostelrenting.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver;
 import lombok.AllArgsConstructor;
@@ -12,15 +14,18 @@ import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 
 import javax.validation.ConstraintViolation;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
 @Data
-@JsonTypeInfo(include = JsonTypeInfo.As.WRAPPER_OBJECT, use = JsonTypeInfo.Id.CUSTOM, property = "error", visible = true)
+//@JsonTypeInfo(include = JsonTypeInfo.As.EXTERNAL_PROPERTY, use = JsonTypeInfo.Id.CUSTOM, property = "success", visible = true)
 @JsonTypeIdResolver(LowerCaseClassNameResolver.class)
-public class ApiError {
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class ApiError implements Serializable{
+    private boolean isSuccess;
     private HttpStatus status;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy hh:mm:ss")
     private LocalDateTime timestamp;

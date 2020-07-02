@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 public class ProvinceServiceImpl implements ProvinceService {
     private ProvinceRepository provinceRepository;
 
+
     @Autowired
     public void setProvinceRepository(ProvinceRepository provinceRepository) {
         this.provinceRepository = provinceRepository;
@@ -25,17 +26,14 @@ public class ProvinceServiceImpl implements ProvinceService {
         return provinceRepository.save(province);
     }
 
-
-    public Province getProvinceNoException(Integer id){
-        return provinceRepository.getOne(id);
-    }
     @Override
     public Province findById(Integer id) {
-        Province province = provinceRepository.getOne(id);
-        if (province == null){
+        Optional<Province> province = provinceRepository.findById(id);
+        if (province.isEmpty()){
             throw new EntityNotFoundException(Province.class, "id", id.toString());
+        }else{
+            return province.get();
         }
-        return province;
     }
 
     @Override

@@ -1,4 +1,5 @@
 package org.avengers.capstone.hostelrenting.handler;
+
 import org.avengers.capstone.hostelrenting.dto.response.ApiError;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
 import org.hibernate.exception.ConstraintViolationException;
@@ -168,13 +169,13 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         return buildResponseEntity(apiError);
     }
 
-    /**
-     * Handle javax.persistence.EntityNotFoundException
-     */
-    @ExceptionHandler(javax.persistence.EntityNotFoundException.class)
-    protected ResponseEntity<Object> handleEntityNotFound(javax.persistence.EntityNotFoundException ex) {
-        return buildResponseEntity(new ApiError(HttpStatus.NOT_FOUND, ex));
-    }
+//    /**
+//     * Handle javax.persistence.EntityNotFoundException
+//     */
+//    @ExceptionHandler(javax.persistence.EntityNotFoundException.class)
+//    protected ResponseEntity<Object> handleEntityNotFound(javax.persistence.EntityNotFoundException ex) {
+//        return buildResponseEntity(new ApiError(HttpStatus.NOT_FOUND, ex));
+//    }
 
     /**
      * Handle DataIntegrityViolationException, inspects the cause for different DB causes.
@@ -205,7 +206,6 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         apiError.setDebugMessage(ex.getMessage());
         return buildResponseEntity(apiError);
     }
-
 
     private ResponseEntity<Object> buildResponseEntity(ApiError apiError) {
         return new ResponseEntity<>(apiError, apiError.getStatus());

@@ -10,6 +10,4 @@ import java.util.List;
 
 @Repository
 public interface ProvinceRepository extends JpaRepository<Province, Integer> {
-//    @Query("from Province p where p.provinceName=:name")
-//    Province findByProvinceName(@Param("name") String name);
 }
