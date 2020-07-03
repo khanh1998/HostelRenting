@@ -8,6 +8,7 @@ import org.avengers.capstone.hostelrenting.model.Province;
 import org.avengers.capstone.hostelrenting.service.ProvinceService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,7 +34,7 @@ public class ProvinceController {
         this.provinceService = provinceService;
     }
 
-    /**
+    /**ko
      * Create a Province
      *
      * @param provinceDTO
