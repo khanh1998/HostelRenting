@@ -10,5 +10,9 @@ import java.util.List;
 
 @Repository
 public interface ProvinceRepository extends JpaRepository<Province, Integer> {
+<<<<<<< HEAD
     
+=======
+    Province getByProvinceName(String provinceName);
+>>>>>>> ddb5bbacfd5f10612ee0a65ca7efb42599328d52
 }

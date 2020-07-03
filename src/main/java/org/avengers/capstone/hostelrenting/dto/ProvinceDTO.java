@@ -9,6 +9,4 @@ public class ProvinceDTO implements Serializable {
     private int provinceId;
 
     private String provinceName;
-
-    private boolean deleted;
 }

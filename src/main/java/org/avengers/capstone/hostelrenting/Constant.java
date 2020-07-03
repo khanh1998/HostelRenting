@@ -14,5 +14,16 @@ public class Constant {
          * Example: Province has been retrieved successfully
          */
         public static final String GET_SUCCESS = "%s(s) has been retrieved successfully";
+
+        /*Error message*/
+
+        public static final String DATABASE_ERROR = "Database error";
+        /**
+         * combine with {@link org.avengers.capstone.hostelrenting.exception.EntityNotFoundException}
+         * Example: Province was not found for parameters {id=9}
+         */
+        public static final String NOT_FOUND_ERROR = " was not found for parameters ";
+
+        public static final String DUPLICATED_ERROR = "Key (%s)=(%s) already exists";
     }
 }
