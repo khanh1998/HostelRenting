@@ -1,6 +1,5 @@
 package org.avengers.capstone.hostelrenting.controller;
 
-import org.avengers.capstone.hostelrenting.Constant;
 import org.avengers.capstone.hostelrenting.dto.ProvinceDTO;
 import org.avengers.capstone.hostelrenting.dto.response.ApiSuccess;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
@@ -8,17 +7,20 @@ import org.avengers.capstone.hostelrenting.model.Province;
 import org.avengers.capstone.hostelrenting.service.ProvinceService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.avengers.capstone.hostelrenting.Constant.Message.*;
 
 @RestController
-@RequestMapping("/api/v1/provinces")
+@RequestMapping("/api/v1")
 public class ProvinceController {
     private ProvinceService provinceService;
     private ModelMapper modelMapper;
@@ -39,13 +41,13 @@ public class ProvinceController {
      * @param provinceDTO
      * @return province object has been created
      */
-    @PostMapping
-    public ApiSuccess<ProvinceDTO> createProvince(@Valid @RequestBody ProvinceDTO provinceDTO) {
+    @PostMapping("/provinces")
+    public ResponseEntity<ApiSuccess> createProvince(@Valid @RequestBody ProvinceDTO provinceDTO) throws DuplicateKeyException {
         Province province = modelMapper.map(provinceDTO, Province.class);
         Province createdProvince = provinceService.save(province);
         provinceDTO = modelMapper.map(createdProvince, ProvinceDTO.class);
 
-        return new ApiSuccess(provinceDTO, String.format(CREATE_SUCCESS, "Province"));
+        return ResponseEntity.status(HttpStatus.CREATED).body(new ApiSuccess(provinceDTO, String.format(CREATE_SUCCESS, "Province")));
     }
 
     /**
@@ -53,14 +55,18 @@ public class ProvinceController {
      *
      * @return List of all provinces
      */
-    @GetMapping
-    public ApiSuccess<List<ProvinceDTO>> getAllProvinces() {
+    @GetMapping("/provinces")
+    public ResponseEntity<ApiSuccess> getAllProvinces(@RequestParam (required = false) String provinceName) {
         List<ProvinceDTO> results = provinceService.findAll()
                 .stream()
                 .map(province -> modelMapper.map(province, ProvinceDTO.class))
                 .collect(Collectors.toList());
 
-        return new ApiSuccess(results, String.format(GET_SUCCESS, "Province"));
+        if (results.isEmpty()){
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(new ApiSuccess("There is no province"));
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(new ApiSuccess( results, String.format(GET_SUCCESS, "Province")));
     }
 
     /**
@@ -70,12 +76,12 @@ public class ProvinceController {
      * @return province object with the request id
      * @throws EntityNotFoundException when provinceId not found
      */
-    @GetMapping("/{provinceId}")
-    public ApiSuccess<ProvinceDTO> getProvinceById(@PathVariable int provinceId) throws EntityNotFoundException {
+    @GetMapping("/provinces/{provinceId}")
+    public ResponseEntity<ApiSuccess> getProvinceById(@PathVariable Integer provinceId) throws EntityNotFoundException {
         Province province = provinceService.findById(provinceId);
         ProvinceDTO provinceDTO = modelMapper.map(province, ProvinceDTO.class);
 
-        return new ApiSuccess(provinceDTO, String.format(GET_SUCCESS, "Province"));
+        return ResponseEntity.status(HttpStatus.OK).body(new ApiSuccess(provinceDTO, String.format(GET_SUCCESS, "Province")));
     }
 
     /**
@@ -85,14 +91,13 @@ public class ProvinceController {
      * @return province object has been updated
      * @throws EntityNotFoundException
      */
-    @PutMapping("/{provinceId}")
-    public ApiSuccess<ProvinceDTO> update(@PathVariable int provinceId, @RequestBody ProvinceDTO provinceDTO) throws EntityNotFoundException {
-        Province oldProvince = provinceService.findById(provinceId);
-        oldProvince = modelMapper.map(provinceDTO, Province.class);
+    @PutMapping("/provinces/{provinceId}")
+    public ResponseEntity<ApiSuccess> update(@PathVariable Integer provinceId, @RequestBody ProvinceDTO provinceDTO) throws EntityNotFoundException {
+        Province oldProvince = modelMapper.map(provinceDTO, Province.class);
         oldProvince.setProvinceId(provinceId);
         ProvinceDTO updatedProvince = modelMapper.map(provinceService.save(oldProvince), ProvinceDTO.class);
 
-        return new ApiSuccess<>(updatedProvince, String.format(UPDATE_SUCCESS, "Province"));
+        return ResponseEntity.status(HttpStatus.OK).body(new ApiSuccess(updatedProvince, String.format(UPDATE_SUCCESS, "Province")));
     }
 
     /**
@@ -102,12 +107,11 @@ public class ProvinceController {
      * @return HttpStatus OK
      * @throws EntityNotFoundException
      */
-    @DeleteMapping("/{provinceId}")
-    public ResponseEntity delete(@PathVariable int provinceId) throws EntityNotFoundException{
-        Province oldProvince = provinceService.findById(provinceId);
-        oldProvince.setDeleted(true);
-        provinceService.save(oldProvince);
+    @DeleteMapping("/provinces/{provinceId}")
+    public ResponseEntity<ApiSuccess> delete(@PathVariable Integer provinceId) throws EntityNotFoundException{
+        provinceService.delete(provinceId);
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.status(HttpStatus.OK).body(new ApiSuccess("Deleted successfully"));
     }
+
 }

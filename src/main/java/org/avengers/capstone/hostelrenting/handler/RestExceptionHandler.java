@@ -1,11 +1,15 @@
 package org.avengers.capstone.hostelrenting.handler;
 
+import io.swagger.annotations.Api;
+import io.swagger.models.Response;
+import org.avengers.capstone.hostelrenting.Constant;
 import org.avengers.capstone.hostelrenting.dto.response.ApiError;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +28,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.HttpStatus.CONFLICT;
 
 @Order(Ordered.HIGHEST_PRECEDENCE)
 @ControllerAdvice
@@ -170,27 +175,19 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
 //    /**
-//     * Handle javax.persistence.EntityNotFoundException
+//     * Handle DataIntegrityViolationException, inspects the cause for different DB causes.
+//     *
+//     * @param ex the DataIntegrityViolationException
+//     * @return the ApiError object
 //     */
-//    @ExceptionHandler(javax.persistence.EntityNotFoundException.class)
-//    protected ResponseEntity<Object> handleEntityNotFound(javax.persistence.EntityNotFoundException ex) {
-//        return buildResponseEntity(new ApiError(HttpStatus.NOT_FOUND, ex));
+//    @ExceptionHandler(DataIntegrityViolationException.class)
+//    protected ResponseEntity<Object> handleDataIntegrityViolation(DataIntegrityViolationException ex,
+//                                                                  WebRequest request) {
+//        if (ex.getCause() instanceof ConstraintViolationException) {
+//            return buildResponseEntity(new ApiError(HttpStatus.CONFLICT, "Database error", ex.getRootCause()));
+//        }
+//        return buildResponseEntity(new ApiError(HttpStatus.INTERNAL_SERVER_ERROR, ex));
 //    }
-
-    /**
-     * Handle DataIntegrityViolationException, inspects the cause for different DB causes.
-     *
-     * @param ex the DataIntegrityViolationException
-     * @return the ApiError object
-     */
-    @ExceptionHandler(DataIntegrityViolationException.class)
-    protected ResponseEntity<Object> handleDataIntegrityViolation(DataIntegrityViolationException ex,
-                                                                  WebRequest request) {
-        if (ex.getCause() instanceof ConstraintViolationException) {
-            return buildResponseEntity(new ApiError(HttpStatus.CONFLICT, "Database error", ex.getCause()));
-        }
-        return buildResponseEntity(new ApiError(HttpStatus.INTERNAL_SERVER_ERROR, ex));
-    }
 
     /**
      * Handle Exception, handle generic Exception.class
@@ -204,6 +201,14 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         ApiError apiError = new ApiError(BAD_REQUEST);
         apiError.setMessage(String.format("The parameter '%s' of value '%s' could not be converted to type '%s'", ex.getName(), ex.getValue(), ex.getRequiredType().getSimpleName()));
         apiError.setDebugMessage(ex.getMessage());
+        return buildResponseEntity(apiError);
+    }
+
+    @ExceptionHandler(DuplicateKeyException.class)
+    protected ResponseEntity<Object> handleDuplicatedEntity(DuplicateKeyException ex, WebRequest request){
+        ApiError apiError = new ApiError(CONFLICT);
+        apiError.setMessage(Constant.Message.DATABASE_ERROR);
+        apiError.setDebugMessage(ex.getLocalizedMessage());
         return buildResponseEntity(apiError);
     }
 

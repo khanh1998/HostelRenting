@@ -10,6 +10,6 @@ public interface ProvinceService {
     Province save(Province province);
     Province findById(Integer id);
     List<Province> findAll();
-    void delete(int id);
+    void delete(Integer id);
     long getCount();
 }

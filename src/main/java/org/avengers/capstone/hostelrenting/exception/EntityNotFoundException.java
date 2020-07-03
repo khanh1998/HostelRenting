@@ -1,5 +1,6 @@
 package org.avengers.capstone.hostelrenting.exception;
 import org.apache.commons.lang3.StringUtils;
+import org.avengers.capstone.hostelrenting.Constant;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -13,7 +14,7 @@ public class EntityNotFoundException extends RuntimeException {
 
     private static String generateMessage(String entity, Map<String, String> searchParams) {
         return StringUtils.capitalize(entity) +
-                " was not found for parameters " +
+                Constant.Message.NOT_FOUND_ERROR +
                 searchParams;
     }
 
