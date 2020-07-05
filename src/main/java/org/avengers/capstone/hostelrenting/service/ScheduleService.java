@@ -8,8 +8,8 @@ import java.util.Optional;
 
 public interface ScheduleService {
     List<ScheduleDTO> findAllSchedule();
-    List<Schedule> findScheduleByVendorId(Integer vendorId);
-    Optional<Schedule> findScheduleById(Integer id);
+//    List<Schedule> findScheduleByHostelGroupId(Integer hostelGroupId);
+    Schedule findScheduleById(Integer id);
     Schedule saveSchedule(Schedule schedule);
-    void removeSchedule(Schedule schedule);
+    void removeSchedule(Integer scheduleId);
 }

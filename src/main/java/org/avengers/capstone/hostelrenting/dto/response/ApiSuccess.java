@@ -4,12 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver;
 import lombok.Getter;
 import lombok.Setter;
-<<<<<<< HEAD
-=======
 import org.avengers.capstone.hostelrenting.handler.LowerCaseClassNameResolver;
-import org.springframework.http.HttpStatus;
->>>>>>> ddb5bbacfd5f10612ee0a65ca7efb42599328d52
-import org.springframework.http.ResponseEntity;
 
 import java.io.Serializable;
 

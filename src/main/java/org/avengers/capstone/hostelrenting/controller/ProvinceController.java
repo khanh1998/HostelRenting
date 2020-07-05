@@ -7,10 +7,8 @@ import org.avengers.capstone.hostelrenting.model.Province;
 import org.avengers.capstone.hostelrenting.service.ProvinceService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-<<<<<<< HEAD
-=======
 import org.springframework.dao.DuplicateKeyException;
->>>>>>> ddb5bbacfd5f10612ee0a65ca7efb42599328d52
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -59,7 +57,7 @@ public class ProvinceController {
      * @return List of all provinces
      */
     @GetMapping("/provinces")
-    public ResponseEntity<ApiSuccess> getAllProvinces(@RequestParam (required = false) String provinceName) {
+    public ResponseEntity<ApiSuccess> getAllProvinces() {
         List<ProvinceDTO> results = provinceService.findAll()
                 .stream()
                 .map(province -> modelMapper.map(province, ProvinceDTO.class))

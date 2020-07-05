@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
+import java.util.List;
 
 @Data
 @Builder
@@ -26,6 +27,7 @@ public class Province implements Serializable {
     @NotBlank(message = "Province name is mandatory")
     private String provinceName;
 
-//    @OneToMany(mappedBy = "province", cascade = CascadeType.ALL)
-//    private List<HostelGroup> hostelGroups;
+    @OneToMany(mappedBy = "province", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<District> districts;
 }

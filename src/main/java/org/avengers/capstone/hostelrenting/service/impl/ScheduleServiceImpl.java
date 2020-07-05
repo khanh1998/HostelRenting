@@ -1,6 +1,8 @@
 package org.avengers.capstone.hostelrenting.service.impl;
 
 import org.avengers.capstone.hostelrenting.dto.ScheduleDTO;
+import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
+import org.avengers.capstone.hostelrenting.model.Province;
 import org.avengers.capstone.hostelrenting.model.Schedule;
 import org.avengers.capstone.hostelrenting.repository.ScheduleRepository;
 import org.avengers.capstone.hostelrenting.service.ScheduleService;
@@ -13,8 +15,12 @@ import java.util.stream.Collectors;
 
 @Repository
 public class ScheduleServiceImpl implements ScheduleService {
-    @Autowired
     private ScheduleRepository scheduleRepository;
+
+    @Autowired
+    public void setScheduleRepository(ScheduleRepository scheduleRepository) {
+        this.scheduleRepository = scheduleRepository;
+    }
 
     @Override
     public List<ScheduleDTO> findAllSchedule() {
@@ -25,20 +31,27 @@ public class ScheduleServiceImpl implements ScheduleService {
             dto.setStartTime(item.getStartTime());
             dto.setEndTime(item.getEndTime());
             dto.setDayOfWeek(item.getDayOfWeek());
-            dto.setVendorId(item.getVendor().getVendorId());
+            List<Integer> hostelGroupOnlyIdDTOS = item.getHostelGroupSchedules().stream().map(item2 -> item2.getHostelGroup().getHostelGroupId()).collect(Collectors.toList());
+            dto.setHostelGroupIds(hostelGroupOnlyIdDTOS);
             return dto;
         }).collect(Collectors.toList());
         return scheduleDTOList;
     }
 
-    @Override
-    public List<Schedule> findScheduleByVendorId(Integer vendorId) {
-        return scheduleRepository.findAllScheduleByVendorId(vendorId);
-    }
+//    @Override
+//    public List<Schedule> findScheduleByHostelGroupId(Integer hostelGroupId) {
+////        return scheduleRepository.findAllByHostelGroups_HostelGroupId(hostelGroupId);
+//        return null;
+//    }
 
     @Override
-    public Optional<Schedule> findScheduleById(Integer id) {
-        return scheduleRepository.findById(id);
+    public Schedule findScheduleById(Integer id) {
+        Optional<Schedule>  schedules = scheduleRepository.findById(id);
+        if (schedules.isEmpty()){
+            throw new EntityNotFoundException(Schedule.class, "id", id.toString());
+        }else{
+            return schedules.get();
+        }
     }
 
     @Override
@@ -47,7 +60,7 @@ public class ScheduleServiceImpl implements ScheduleService {
     }
 
     @Override
-    public void removeSchedule(Schedule schedule) {
-        scheduleRepository.delete(schedule);
+    public void removeSchedule(Integer scheduleId) {
+        scheduleRepository.deleteById(scheduleId);
     }
 }

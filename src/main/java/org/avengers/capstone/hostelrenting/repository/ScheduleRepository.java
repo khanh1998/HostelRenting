@@ -9,6 +9,5 @@ import java.util.List;
 
 @Repository
 public interface ScheduleRepository extends JpaRepository<Schedule, Integer> {
-    @Query("SELECT s from Schedule s where s.vendor in (SELECT v from Vendor v where v.vendorId = ?1)")
-    List<Schedule> findAllScheduleByVendorId(Integer vendorId);
+//    List<Schedule> findAllByHostelGroups_HostelGroupId(int hostelGroupId);
 }
