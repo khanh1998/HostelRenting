@@ -8,9 +8,9 @@ import java.util.Optional;
 
 public interface HostelGroupService {
     Optional<HostelGroup> findAllHostelGroupById(Integer id);
-    HostelGroup findHostelGroupById(Integer hostelGroupId);
-    List<HostelGroupDTO> getAllHostelGroup();
-    List<HostelGroup> findAllHostelGroupByVendorId(Integer vendorId);
+    HostelGroup findHostelGroupByHostelGroupId(Integer hostelGroupId);
+    List<HostelGroupDTO> findAllHostelGroup();
+//    List<HostelGroup> findAllHostelGroupByScheduleId(Integer scheduleId);
     HostelGroup saveHostelGroup(HostelGroup hostelGroup);
-    void removeHostelGroup(HostelGroup hostelGroup);
+    void removeHostelGroup(Integer hostelGroupId);
 }

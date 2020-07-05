@@ -13,8 +13,12 @@ import java.util.stream.Collectors;
 
 @Service
 public class HostelGroupServiceImpl implements HostelGroupService {
-    @Autowired
     private HostelGroupRepository hostelGroupRepository;
+
+    @Autowired
+    public void setHostelGroupRepository(HostelGroupRepository hostelGroupRepository) {
+        this.hostelGroupRepository = hostelGroupRepository;
+    }
 
     @Override
     public Optional<HostelGroup> findAllHostelGroupById(Integer id) {
@@ -22,12 +26,12 @@ public class HostelGroupServiceImpl implements HostelGroupService {
     }
 
     @Override
-    public HostelGroup findHostelGroupById(Integer hostelGroupId) {
+    public HostelGroup findHostelGroupByHostelGroupId(Integer hostelGroupId) {
         return hostelGroupRepository.findById(hostelGroupId).get();
     }
 
     @Override
-    public List<HostelGroupDTO> getAllHostelGroup() {
+    public List<HostelGroupDTO> findAllHostelGroup() {
         List<HostelGroup> hostelGroupList = hostelGroupRepository.findAll();
         List<HostelGroupDTO> hostelGroupDTOList = hostelGroupList.stream().map(item -> {
             HostelGroupDTO dto = new HostelGroupDTO();
@@ -36,16 +40,19 @@ public class HostelGroupServiceImpl implements HostelGroupService {
             dto.setDetailedAddress(item.getDetailedAddress());
             dto.setLatitude(item.getLatitude());
             dto.setLongitude(item.getLongitude());
-            dto.setVendorId(item.getVendor().getVendorId());
+            dto.setDistrictId(item.getDistrict().getDistrictId());
+//            List<Integer> scheduleOnlyIdDTOS = item.getHostelGroupSchedules().stream().map(item2 -> item2.getSchedule().getScheduleId()).collect(Collectors.toList());
+//            dto.setScheduleIds(scheduleOnlyIdDTOS);
             return dto;
         }).collect(Collectors.toList());
         return hostelGroupDTOList;
     }
 
-    @Override
-    public List<HostelGroup> findAllHostelGroupByVendorId(Integer vendorId) {
-        return hostelGroupRepository.findAllHostelGroupByVendorId(vendorId);
-    }
+//    @Override
+//    public List<HostelGroup> findAllHostelGroupByScheduleId(Integer scheduleId) {
+////        return hostelGroupRepository.findAllBySchedules_ScheduleId(scheduleId);
+//        return null;
+//    }
 
     @Override
     public HostelGroup saveHostelGroup(HostelGroup hostelGroup) {
@@ -53,7 +60,7 @@ public class HostelGroupServiceImpl implements HostelGroupService {
     }
 
     @Override
-    public void removeHostelGroup(HostelGroup hostelGroup) {
-        hostelGroupRepository.delete(hostelGroup);
+    public void removeHostelGroup(Integer hostelGroupId) {
+        hostelGroupRepository.deleteById(hostelGroupId);
     }
 }
