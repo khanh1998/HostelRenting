@@ -1,5 +1,6 @@
 package org.avengers.capstone.hostelrenting.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,7 +22,7 @@ import java.util.List;
 public class HostelGroup implements Serializable {
     @Id
     @Column(name = "hostel_group_id")
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int hostelGroupId;
 
     @Column(name = "hostel_group_name", nullable = false)
@@ -34,8 +35,9 @@ public class HostelGroup implements Serializable {
 
     private String latitude;
 
-//    @OneToMany(mappedBy = "hostelGroup", cascade = CascadeType.ALL)
-//    private List<HostelType> hostelTypes;
+    @OneToMany(mappedBy = "hostelGroup", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<HostelType> hostelTypes;
 //
 //    @ManyToOne
 //    @JoinColumn(name = "vendor_id")

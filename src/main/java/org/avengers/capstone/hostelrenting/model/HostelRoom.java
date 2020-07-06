@@ -7,27 +7,28 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 import java.util.List;
 
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 
 @Entity
-@Table(name = "province")
-public class Province implements Serializable {
+@Table(name = "hostelRoom")
+public class HostelRoom implements Serializable {
     @Id
+    @Column(name = "hostel_room_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int provinceId;
+    private int categoryId;
 
-    @Column(nullable = false, unique = true)
-    @NotBlank(message = "Province name is mandatory")
-    private String provinceName;
+    @Column(name = "room_name", nullable = false)
+    private String categoryName;
 
-    @OneToMany(mappedBy = "province", cascade = CascadeType.ALL)
-    @JsonIgnore
-    private List<District> districts;
+    private boolean isAvailable;
+
+    @ManyToOne
+    @JoinColumn(name = "hostel_type_id")
+    private HostelType hostelType;
 }

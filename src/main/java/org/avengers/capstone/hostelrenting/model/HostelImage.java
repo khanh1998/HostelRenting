@@ -16,21 +16,17 @@ import java.util.List;
 @Builder
 
 @Entity
-@Table(name = "district")
-public class District implements Serializable {
+@Table(name = "hostelImage")
+public class HostelImage implements Serializable {
     @Id
-    @Column(name = "district_id")
+    @Column(name = "image_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int districtId;
+    private int imageId;
 
-    @Column(name = "district_name", nullable = false)
-    private String districtName;
+    @Column(name = "resource_url", nullable = false)
+    private String resourceUrl;
 
     @ManyToOne
-    @JoinColumn(name = "province_id")
-    private Province province;
-
-    @OneToMany(mappedBy = "district", cascade = CascadeType.ALL)
-    @JsonIgnore
-    private List<HostelGroup> hostelGroups;
+    @JoinColumn(name = "hostel_type_id")
+    private HostelType hostelType;
 }

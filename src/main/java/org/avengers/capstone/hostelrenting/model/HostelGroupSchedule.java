@@ -20,7 +20,7 @@ import java.io.Serializable;
 public class HostelGroupSchedule implements Serializable {
     @Id
     @Column(name = "hostelgroup_schedule_id")
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int hostelGroupScheduleId;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
