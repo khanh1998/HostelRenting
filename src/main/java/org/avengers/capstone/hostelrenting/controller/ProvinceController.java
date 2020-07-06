@@ -1,6 +1,6 @@
 package org.avengers.capstone.hostelrenting.controller;
 
-import org.avengers.capstone.hostelrenting.dto.ProvinceDTO;
+import org.avengers.capstone.hostelrenting.dto.province.ProvinceDTO;
 import org.avengers.capstone.hostelrenting.dto.response.ApiSuccess;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
 import org.avengers.capstone.hostelrenting.model.Province;
@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.avengers.capstone.hostelrenting.Constant.Message.*;
@@ -43,7 +42,7 @@ public class ProvinceController {
      * @return province object has been created
      */
     @PostMapping("/provinces")
-    public ResponseEntity<ApiSuccess> createProvince(@Valid @RequestBody ProvinceDTO provinceDTO) throws DuplicateKeyException {
+    public ResponseEntity<ApiSuccess> createProvince(@Valid @RequestBody ProvinceDTOw provinceDTO) throws DuplicateKeyException {
         Province province = modelMapper.map(provinceDTO, Province.class);
         Province createdProvince = provinceService.save(province);
         provinceDTO = modelMapper.map(createdProvince, ProvinceDTO.class);

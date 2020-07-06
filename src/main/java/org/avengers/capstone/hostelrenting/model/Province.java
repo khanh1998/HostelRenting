@@ -27,7 +27,6 @@ public class Province implements Serializable {
     @NotBlank(message = "Province name is mandatory")
     private String provinceName;
 
-    @OneToMany(mappedBy = "province", cascade = CascadeType.ALL)
-    @JsonIgnore
+    @OneToMany(mappedBy = "province", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<District> districts;
 }

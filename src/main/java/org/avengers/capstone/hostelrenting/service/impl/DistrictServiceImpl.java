@@ -3,7 +3,6 @@ package org.avengers.capstone.hostelrenting.service.impl;
 import org.avengers.capstone.hostelrenting.Constant;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
 import org.avengers.capstone.hostelrenting.model.District;
-import org.avengers.capstone.hostelrenting.model.Province;
 import org.avengers.capstone.hostelrenting.repository.DistrictRepository;
 import org.avengers.capstone.hostelrenting.service.DistrictService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,12 +24,10 @@ public class DistrictServiceImpl implements DistrictService {
 
     @Override
     public District findById(Integer id) {
-        Optional<District> district = districtRepository.findById(id);
-        if (district.isEmpty()){
+        if (isNotFound(id)) {
             throw new EntityNotFoundException(District.class, "id", id.toString());
-        }else{
-            return district.get();
         }
+        return districtRepository.getOne(id);
     }
 
     @Override
@@ -44,10 +41,21 @@ public class DistrictServiceImpl implements DistrictService {
             throw new DuplicateKeyException(String.format(Constant.Message.DUPLICATED_ERROR, "district_name", district.getDistrictName()));
         }
         return districtRepository.save(district);
+
     }
 
     @Override
     public void delete(Integer id) {
+        if (isNotFound(id)) {
+            throw new EntityNotFoundException(District.class, "id", id.toString());
+        }
         districtRepository.deleteById(id);
+
     }
+
+    private boolean isNotFound(Integer id) {
+        Optional<District> district = districtRepository.findById(id);
+        return district.isEmpty();
+    }
+
 }

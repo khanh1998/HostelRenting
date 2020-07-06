@@ -1,6 +1,5 @@
 package org.avengers.capstone.hostelrenting.service.impl;
 
-import org.apache.tomcat.util.bcel.Const;
 import org.avengers.capstone.hostelrenting.Constant;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
 import org.avengers.capstone.hostelrenting.model.Province;
@@ -34,12 +33,10 @@ public class ProvinceServiceImpl implements ProvinceService {
 
     @Override
     public Province findById(Integer id) {
-        Optional<Province> province = provinceRepository.findById(id);
-        if (province.isEmpty()){
+        if (isNotFound(id)) {
             throw new EntityNotFoundException(Province.class, "id", id.toString());
-        }else{
-            return province.get();
         }
+            return provinceRepository.getOne(id);
     }
 
     @Override
@@ -49,7 +46,17 @@ public class ProvinceServiceImpl implements ProvinceService {
 
     @Override
     public void delete(Integer id) {
+
+        if (isNotFound(id)) {
+            throw new EntityNotFoundException(Province.class, "id", id.toString());
+        }
         provinceRepository.deleteById(id);
+
+    }
+
+    private boolean isNotFound(Integer id) {
+        Optional<Province> province = provinceRepository.findById(id);
+        return province.isEmpty();
     }
 
     @Override
