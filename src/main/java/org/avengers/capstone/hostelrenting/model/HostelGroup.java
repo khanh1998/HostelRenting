@@ -21,7 +21,7 @@ import java.util.List;
 public class HostelGroup implements Serializable {
     @Id
     @Column(name = "hostel_group_id")
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int hostelGroupId;
 
     @Column(name = "hostel_group_name", nullable = false)

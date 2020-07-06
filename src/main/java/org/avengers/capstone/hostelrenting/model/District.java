@@ -7,6 +7,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.List;
 
@@ -24,13 +27,14 @@ public class District implements Serializable {
     private int districtId;
 
     @Column(name = "district_name", nullable = false)
+    @NotBlank(message = "District name is mandatory")
     private String districtName;
 
     @ManyToOne
-    @JoinColumn(name = "province_id")
+    @JoinColumn(name = "province_id", nullable = false)
     private Province province;
 
     @OneToMany(mappedBy = "district", cascade = CascadeType.ALL)
-    @JsonIgnore
+//    @JsonIgnore
     private List<HostelGroup> hostelGroups;
 }

@@ -1,16 +1,10 @@
 package org.avengers.capstone.hostelrenting.controller;
 
-import org.avengers.capstone.hostelrenting.dto.HostelGroupDTO;
-import org.avengers.capstone.hostelrenting.dto.ProvinceDTO;
 import org.avengers.capstone.hostelrenting.dto.ScheduleDTO;
 import org.avengers.capstone.hostelrenting.dto.ScheduleNoIdDTO;
 import org.avengers.capstone.hostelrenting.dto.response.ApiSuccess;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
-import org.avengers.capstone.hostelrenting.exception.ResourceNotFoundException;
-import org.avengers.capstone.hostelrenting.model.HostelGroup;
-import org.avengers.capstone.hostelrenting.model.Province;
 import org.avengers.capstone.hostelrenting.model.Schedule;
-import org.avengers.capstone.hostelrenting.service.HostelGroupService;
 import org.avengers.capstone.hostelrenting.service.ScheduleService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 

@@ -5,7 +5,6 @@ import io.swagger.models.Response;
 import org.avengers.capstone.hostelrenting.Constant;
 import org.avengers.capstone.hostelrenting.dto.response.ApiError;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
-import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -15,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.converter.HttpMessageNotWritableException;
+import org.springframework.transaction.TransactionSystemException;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
@@ -25,6 +25,9 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
@@ -102,13 +105,17 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
      * @param ex the ConstraintViolationException
      * @return the ApiError object
      */
-    @ExceptionHandler(javax.validation.ConstraintViolationException.class)
-    protected ResponseEntity<Object> handleConstraintViolation(
-            javax.validation.ConstraintViolationException ex) {
-        ApiError apiError = new ApiError(BAD_REQUEST);
-        apiError.setMessage("Validation error");
-        apiError.addValidationErrors(ex.getConstraintViolations());
-        return buildResponseEntity(apiError);
+    @ExceptionHandler(TransactionSystemException.class)
+    protected ResponseEntity<Object> handleTransactionSystem(
+            TransactionSystemException ex) {
+        Throwable cause = ex.getRootCause();
+        if (cause instanceof ConstraintViolationException){
+            ApiError apiError = new ApiError(BAD_REQUEST);
+            apiError.setMessage("Validation error");
+            apiError.addValidationErrors(((ConstraintViolationException) cause).getConstraintViolations());
+            return buildResponseEntity(apiError);
+        }
+        return buildResponseEntity(new ApiError(BAD_REQUEST));
     }
 
     /**

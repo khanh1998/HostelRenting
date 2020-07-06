@@ -1,12 +1,10 @@
 package org.avengers.capstone.hostelrenting.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
-import org.avengers.capstone.hostelrenting.model.HostelGroup;
 import org.avengers.capstone.hostelrenting.model.Province;
 
-import javax.persistence.*;
 import java.io.Serializable;
-import java.util.List;
 
 @Data
 public class DistrictDTO implements Serializable {
@@ -14,7 +12,8 @@ public class DistrictDTO implements Serializable {
 
     private String districtName;
 
-    private int provinceId;
+    @JsonIgnore
+    private Province province;
 //
 //    private int hostelGroupId;
 }

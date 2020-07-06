@@ -21,7 +21,7 @@ import java.util.List;
 public class Schedule implements Serializable {
     @Id
     @Column(name = "schedule_id")
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int scheduleId;
 
     @Column(name = "start_time", nullable = false)
