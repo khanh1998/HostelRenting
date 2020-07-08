@@ -27,6 +27,7 @@ public class DistrictServiceImpl implements DistrictService {
         if (isNotFound(id)) {
             throw new EntityNotFoundException(District.class, "id", id.toString());
         }
+
         return districtRepository.getOne(id);
     }
 
@@ -50,8 +51,8 @@ public class DistrictServiceImpl implements DistrictService {
         if (isNotFound(id)) {
             throw new EntityNotFoundException(District.class, "id", id.toString());
         }
-        districtRepository.deleteById(id);
 
+        districtRepository.deleteById(id);
     }
 
     @Override

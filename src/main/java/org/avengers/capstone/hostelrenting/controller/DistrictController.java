@@ -47,11 +47,16 @@ public class DistrictController {
     public ResponseEntity<ApiSuccess> getDistrictsByProvinceId(@PathVariable Integer provinceId)throws EntityNotFoundException{
         Province province = provinceService.findById(provinceId);
         province.getDistricts();
-        return ResponseEntity.status(HttpStatus.OK).body( new ApiSuccess(modelMapper.map(province, ProvinceDTO.class), String.format(GET_SUCCESS, "District")));
+        ProvinceDTO responseDTO = modelMapper.map(province, ProvinceDTO.class);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(new ApiSuccess(responseDTO, String.format(GET_SUCCESS, "District")));
     }
 
     @GetMapping("/provinces/{provinceId}/districts/{districtId}")
-    public ResponseEntity<ApiSuccess> getDistrictByProvinceId(@PathVariable Integer provinceId, @PathVariable Integer districtId)throws EntityNotFoundException{
+    public ResponseEntity<ApiSuccess> getDistrictByProvinceId(@PathVariable Integer provinceId,
+                                                              @PathVariable Integer districtId)throws EntityNotFoundException{
         Province provinceModel = provinceService.findById(provinceId);
         District responseModel = provinceModel.getDistricts()
                 .stream()
@@ -60,7 +65,9 @@ public class DistrictController {
                 .get(0);
         DistrictDTO responseDTO = modelMapper.map(responseModel, DistrictDTO.class);
 
-        return ResponseEntity.status(HttpStatus.OK).body( new ApiSuccess(responseDTO, String.format(GET_SUCCESS, "District")));
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body( new ApiSuccess(responseDTO, String.format(GET_SUCCESS, "District")));
     }
 
     @PostMapping("provinces/{provinceId}/districts")
@@ -69,21 +76,28 @@ public class DistrictController {
         Province provinceModel = provinceService.findById(provinceId);
         District model = modelMapper.map(rqDistrict, District.class);
         model.setProvince(provinceModel);
-        districtService.save(model);
+        District createdModel = districtService.save(model);
         DistrictDTO createdDTO = modelMapper.map(model, DistrictDTO.class);
-        return ResponseEntity.status(HttpStatus.CREATED).body(new ApiSuccess(createdDTO, String.format(CREATE_SUCCESS, "District")));
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(new ApiSuccess(createdDTO, String.format(CREATE_SUCCESS, "District")));
     }
 
     @PutMapping("/provinces/{provinceId}/districts/{districtId}")
     public ResponseEntity<ApiSuccess> updateDistrict(@PathVariable Integer provinceId,
                                                      @PathVariable Integer districtId,
                                                      @Valid @RequestBody DistrictDTO rqDistrict) throws EntityNotFoundException {
+        Province province = provinceService.findById(provinceId);
         rqDistrict.setDistrictId(districtId);
-        rqDistrict.setProvinceId(provinceId);
-        District existedModel = modelMapper.map(rqDistrict, District.class);
-        District updatedModel = districtService.save(existedModel);
+        District rqModel = modelMapper.map(rqDistrict, District.class);
+        rqModel.setProvince(province);
+        District updatedModel = districtService.save(rqModel);
         DistrictDTO updatedDTO = modelMapper.map(updatedModel, DistrictDTO.class);
-        return ResponseEntity.status(HttpStatus.OK).body(new ApiSuccess(updatedDTO, String.format(UPDATE_SUCCESS, "District")));
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(new ApiSuccess(updatedDTO, String.format(UPDATE_SUCCESS, "District")));
     }
 
     @DeleteMapping("/provinces/{provinceId}/districts/{districtId}")
@@ -93,7 +107,10 @@ public class DistrictController {
 
         District existedModel = districtService.findByIdAndProvinceId(districtId, provinceId);
         districtService.delete(existedModel.getDistrictId());
-        return ResponseEntity.status(HttpStatus.OK).body(new ApiSuccess("Deleted successfully"));
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(new ApiSuccess("Deleted successfully"));
     }
 
 

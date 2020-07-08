@@ -1,5 +1,6 @@
 package org.avengers.capstone.hostelrenting.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -30,6 +31,7 @@ public class District {
     @JoinColumn(name = "province_id", nullable = false)
     private Province province;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "district", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Ward> wards;
 }

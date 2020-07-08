@@ -73,8 +73,7 @@ public class HostelGroupController {
                                                                  @RequestParam(required = false) String detailedAddress,
                                                                  @RequestParam(required = false, defaultValue = "50") Integer size,
                                                                  @RequestParam(required = false, defaultValue = "0") Integer page) throws EntityNotFoundException {
-        List<HostelGroup> hostelGroups = hostelGroupService.findAll();
-        List<HostelGroupDTO> responseHostelGroups = hostelGroups.stream()
+        List<HostelGroupDTO> responseHostelGroups = hostelGroupService.findAll().stream()
                 .filter(hostelGroup -> {
                     if (wardId != null)
                         return hostelGroup.getWard().getWardId() == wardId;

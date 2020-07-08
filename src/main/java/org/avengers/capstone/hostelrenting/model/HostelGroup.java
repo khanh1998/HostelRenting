@@ -38,10 +38,9 @@ public class HostelGroup{
     @NotBlank(message = "Latitude is mandatory")
     private String latitude;
 
-//    @OneToMany(mappedBy = "hostelGroup", cascade = CascadeType.ALL)
-//    @JsonIgnore
-//    private List<HostelType> hostelTypes;
-//
+    @OneToMany(mappedBy = "hostelGroup", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<HostelType> hostelTypes;
+
 //    @ManyToOne
 //    @JoinColumn(name = "vendor_id")
 //    private Vendor vendor;

@@ -1,6 +1,7 @@
 package org.avengers.capstone.hostelrenting.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -32,5 +33,6 @@ public class Ward {
     private District district;
 
     @OneToMany(mappedBy = "ward", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<HostelGroup> hostelGroups;
 }
