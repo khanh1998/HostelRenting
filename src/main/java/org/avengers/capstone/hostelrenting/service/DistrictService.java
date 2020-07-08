@@ -10,4 +10,5 @@ public interface DistrictService {
     District save(District district);
     void delete(Integer id);
 
+    District findByIdAndProvinceId(Integer districtId, Integer provinceId);
 }

@@ -32,6 +32,7 @@ public class DistrictServiceImpl implements DistrictService {
 
     @Override
     public List<District> findAll() {
+
         return districtRepository.findAll().stream().collect(Collectors.toList());
     }
 
@@ -51,6 +52,15 @@ public class DistrictServiceImpl implements DistrictService {
         }
         districtRepository.deleteById(id);
 
+    }
+
+    @Override
+    public District findByIdAndProvinceId(Integer districtId, Integer provinceId) {
+        Optional<District> district = districtRepository.findByDistrictIdAndProvince_ProvinceId(districtId, provinceId);
+        if (district.isEmpty()){
+            throw new EntityNotFoundException(District.class, "province_id", provinceId.toString(), "district_id", districtId.toString());
+        }
+        return district.get();
     }
 
     private boolean isNotFound(Integer id) {

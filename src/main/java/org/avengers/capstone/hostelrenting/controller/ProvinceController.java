@@ -42,7 +42,7 @@ public class ProvinceController {
      * @return province object has been created
      */
     @PostMapping("/provinces")
-    public ResponseEntity<ApiSuccess> createProvince(@Valid @RequestBody ProvinceDTOw provinceDTO) throws DuplicateKeyException {
+    public ResponseEntity<ApiSuccess> createProvince(@Valid @RequestBody ProvinceDTO provinceDTO) throws DuplicateKeyException {
         Province province = modelMapper.map(provinceDTO, Province.class);
         Province createdProvince = provinceService.save(province);
         provinceDTO = modelMapper.map(createdProvince, ProvinceDTO.class);

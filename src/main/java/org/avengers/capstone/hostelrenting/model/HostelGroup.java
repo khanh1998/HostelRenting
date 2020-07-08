@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
@@ -31,13 +32,15 @@ public class HostelGroup implements Serializable {
     @Column(name = "detailed_address", nullable = false)
     private String detailedAddress;
 
+    @NotBlank(message = "Longitude is mandatory")
     private String longitude;
 
+    @NotBlank(message = "Latitude is mandatory")
     private String latitude;
 
-    @OneToMany(mappedBy = "hostelGroup", cascade = CascadeType.ALL)
-    @JsonIgnore
-    private List<HostelType> hostelTypes;
+//    @OneToMany(mappedBy = "hostelGroup", cascade = CascadeType.ALL)
+//    @JsonIgnore
+//    private List<HostelType> hostelTypes;
 //
 //    @ManyToOne
 //    @JoinColumn(name = "vendor_id")
@@ -48,14 +51,14 @@ public class HostelGroup implements Serializable {
 //    private Province province;
 //
     @ManyToOne
-    @JoinColumn(name = "district_id")
+    @JoinColumn(name = "district_id", nullable = false)
     private District district;
 
 //    @ManyToMany
 //    @JoinTable(name = "hostelgroup_schedule", joinColumns = @JoinColumn(name = "hostel_group_id"), inverseJoinColumns = @JoinColumn(name = "schedule_id"))
 //    private List<Schedule> schedules;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "hostelGroup", cascade = CascadeType.ALL)
-    @JsonIgnoreProperties
-    private List<HostelGroupSchedule> hostelGroupSchedules;
+//    @OneToMany(fetch = FetchType.LAZY, mappedBy = "hostelGroup", cascade = CascadeType.ALL)
+//    @JsonIgnoreProperties
+//    private List<HostelGroupSchedule> hostelGroupSchedules;
 }

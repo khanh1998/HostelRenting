@@ -9,7 +9,6 @@ import java.util.List;
 
 @Repository
 public interface HostelGroupRepository extends JpaRepository<HostelGroup, Integer> {
-//    @Query("SELECT h from HostelGroup h where h.vendor in (SELECT v from Vendor v where v.vendorId = ?1)")
-//    List<HostelGroup> findAllHostelGroupByVendorId(Integer vendorId);
-//    List<HostelGroup> findAllBySchedules_ScheduleId(int scheduleId);
+    List<HostelGroup> findByDistrict_DistrictId(Integer districtId);
+    HostelGroup findByLongitudeAndLatitude(String longitude, String latitude);
 }

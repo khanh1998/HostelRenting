@@ -59,7 +59,6 @@ public class ProvinceServiceImpl implements ProvinceService {
         return province.isEmpty();
     }
 
-    @Override
     public long getCount() {
         return provinceRepository.count();
     }

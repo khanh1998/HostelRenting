@@ -8,8 +8,6 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.List;
 
@@ -34,7 +32,6 @@ public class District implements Serializable {
     @JoinColumn(name = "province_id", nullable = false)
     private Province province;
 
-    @OneToMany(mappedBy = "district", cascade = CascadeType.ALL)
-//    @JsonIgnore
+    @OneToMany(mappedBy = "district", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<HostelGroup> hostelGroups;
 }
