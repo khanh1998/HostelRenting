@@ -1,10 +1,12 @@
 package org.avengers.capstone.hostelrenting.controller;
 
-import org.avengers.capstone.hostelrenting.dto.hostelgroup.HostelGroupDTO;
+import org.avengers.capstone.hostelrenting.dto.HostelGroupDTO;
 import org.avengers.capstone.hostelrenting.dto.response.ApiSuccess;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
 import org.avengers.capstone.hostelrenting.model.HostelGroup;
 import org.avengers.capstone.hostelrenting.service.DistrictService;
+import org.avengers.capstone.hostelrenting.service.ProvinceService;
+import org.avengers.capstone.hostelrenting.service.WardService;
 import org.avengers.capstone.hostelrenting.service.HostelGroupService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,8 +25,11 @@ import static org.avengers.capstone.hostelrenting.Constant.Message.*;
 public class HostelGroupController {
     private HostelGroupService hostelGroupService;
 
-    private DistrictService districtService;
+    private WardService wardService;
 
+    private ProvinceService provinceService;
+
+    private DistrictService districtService;
 
     private ModelMapper modelMapper;
 
@@ -39,13 +44,21 @@ public class HostelGroupController {
         this.modelMapper = modelMapper;
     }
 
-    @Autowired
+    public void setProvinceService(ProvinceService provinceService) {
+        this.provinceService = provinceService;
+    }
+
     public void setDistrictService(DistrictService districtService) {
         this.districtService = districtService;
     }
 
+    @Autowired
+    public void setWardService(WardService wardService) {
+        this.wardService = wardService;
+    }
+
     @GetMapping("/hostelgroups/{hostelGroupId}")
-    public ResponseEntity<ApiSuccess> getHostelGroupByIdAndDistrictId(@PathVariable Integer hostelGroupId) throws EntityNotFoundException {
+    public ResponseEntity<ApiSuccess> getHostelGroupByIdAndWardId(@PathVariable Integer hostelGroupId) throws EntityNotFoundException {
 
         HostelGroup hostelGroup = hostelGroupService.findById(hostelGroupId);
         HostelGroupDTO responseDTO = modelMapper.map(hostelGroup, HostelGroupDTO.class);
@@ -54,17 +67,17 @@ public class HostelGroupController {
     }
 
     @GetMapping("/hostelgroups")
-    public ResponseEntity<ApiSuccess> getHostelGroupByDistrictId(@RequestParam Integer districtId,
+    public ResponseEntity<ApiSuccess> getHostelGroupByWardId(@RequestParam(required = false) Integer wardId,
                                                                  @RequestParam(required = false) Integer hostelGroupId,
                                                                  @RequestParam(required = false) String hostelGroupName,
                                                                  @RequestParam(required = false) String detailedAddress,
                                                                  @RequestParam(required = false, defaultValue = "50") Integer size,
                                                                  @RequestParam(required = false, defaultValue = "0") Integer page) throws EntityNotFoundException {
-        List<HostelGroup> hostelGroups = hostelGroupService.findByDistrictId(districtId);
+        List<HostelGroup> hostelGroups = hostelGroupService.findAll();
         List<HostelGroupDTO> responseHostelGroups = hostelGroups.stream()
                 .filter(hostelGroup -> {
-                    if (districtId != null)
-                        return hostelGroup.getDistrict().getDistrictId() == districtId;
+                    if (wardId != null)
+                        return hostelGroup.getWard().getWardId() == wardId;
                     return true;
                 }).filter(hostelGroup -> {
                     if (hostelGroupId != null)
@@ -76,7 +89,7 @@ public class HostelGroupController {
                     return true;
                 }).filter(hostelGroup -> {
                     if (detailedAddress != null)
-                        return hostelGroup.getDetailedAddress().contains(detailedAddress);
+                        return hostelGroup.getDetailedAddress().trim().toLowerCase().contains(detailedAddress.toLowerCase().trim());
                     return true;
                 }).skip(page * size)
                 .limit(size)
@@ -89,7 +102,7 @@ public class HostelGroupController {
     @PostMapping("/hostelgroups")
     public ResponseEntity<ApiSuccess> createHostelGroup(@Valid @RequestBody HostelGroupDTO rqHostelGroup) throws EntityNotFoundException {
         HostelGroup hostelGroupModel = modelMapper.map(rqHostelGroup, HostelGroup.class);
-        hostelGroupModel.setDistrict(districtService.findById(rqHostelGroup.getDistrictId()));
+        hostelGroupModel.setWard(wardService.findById(rqHostelGroup.getWardId()));
         hostelGroupService.save(hostelGroupModel);
         HostelGroupDTO createdDTO = modelMapper.map(hostelGroupModel, HostelGroupDTO.class);
 
@@ -102,7 +115,7 @@ public class HostelGroupController {
         rqHostelGroup.setHostelGroupId(hostelGroupId);
         HostelGroup rqModel = modelMapper.map(rqHostelGroup, HostelGroup.class);
         HostelGroup existedModel = hostelGroupService.findById(hostelGroupId);
-        rqModel.setDistrict(existedModel.getDistrict());
+        rqModel.setWard(existedModel.getWard());
         HostelGroup updatedModel = hostelGroupService.save(rqModel);
         HostelGroupDTO updatedDTO = modelMapper.map(updatedModel, HostelGroupDTO.class);
 

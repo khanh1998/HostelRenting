@@ -50,8 +50,8 @@ public class HostelGroupServiceImpl implements HostelGroupService {
     }
 
     @Override
-    public List<HostelGroup> findByDistrictId(Integer districtId) {
-        return hostelGroupRepository.findByDistrict_DistrictId(districtId);
+    public List<HostelGroup> findByWardId(Integer districtId) {
+        return hostelGroupRepository.findByWard_WardId(districtId);
     }
 
 

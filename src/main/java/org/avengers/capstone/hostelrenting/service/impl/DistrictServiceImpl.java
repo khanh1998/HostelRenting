@@ -33,7 +33,7 @@ public class DistrictServiceImpl implements DistrictService {
     @Override
     public List<District> findAll() {
 
-        return districtRepository.findAll().stream().collect(Collectors.toList());
+        return districtRepository.findAll();
     }
 
     @Override

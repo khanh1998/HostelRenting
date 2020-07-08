@@ -11,5 +11,5 @@ public interface HostelGroupService {
     HostelGroup save(HostelGroup hostelGroup);
     void delete(Integer id);
 
-    List<HostelGroup> findByDistrictId(Integer districtId);
+    List<HostelGroup> findByWardId(Integer wardId);
 }

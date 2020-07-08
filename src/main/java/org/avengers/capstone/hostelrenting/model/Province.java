@@ -18,7 +18,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "province")
-public class Province implements Serializable {
+public class Province {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int provinceId;

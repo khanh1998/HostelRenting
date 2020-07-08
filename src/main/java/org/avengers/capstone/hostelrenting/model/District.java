@@ -1,6 +1,5 @@
 package org.avengers.capstone.hostelrenting.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -8,7 +7,6 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
-import java.io.Serializable;
 import java.util.List;
 
 @Data
@@ -18,7 +16,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "district")
-public class District implements Serializable {
+public class District {
     @Id
     @Column(name = "district_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,5 +31,5 @@ public class District implements Serializable {
     private Province province;
 
     @OneToMany(mappedBy = "district", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<HostelGroup> hostelGroups;
+    private List<Ward> wards;
 }

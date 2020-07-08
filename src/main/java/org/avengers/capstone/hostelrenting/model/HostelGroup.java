@@ -20,7 +20,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "hostelgroup")
-public class HostelGroup implements Serializable {
+public class HostelGroup{
     @Id
     @Column(name = "hostel_group_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -51,8 +51,8 @@ public class HostelGroup implements Serializable {
 //    private Province province;
 //
     @ManyToOne
-    @JoinColumn(name = "district_id", nullable = false)
-    private District district;
+    @JoinColumn(name = "ward_id", nullable = false)
+    private Ward ward;
 
 //    @ManyToMany
 //    @JoinTable(name = "hostelgroup_schedule", joinColumns = @JoinColumn(name = "hostel_group_id"), inverseJoinColumns = @JoinColumn(name = "schedule_id"))

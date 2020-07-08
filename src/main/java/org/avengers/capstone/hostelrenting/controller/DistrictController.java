@@ -1,7 +1,7 @@
 package org.avengers.capstone.hostelrenting.controller;
 
-import org.avengers.capstone.hostelrenting.dto.district.DistrictDTO;
-import org.avengers.capstone.hostelrenting.dto.province.ProvinceDTO;
+import org.avengers.capstone.hostelrenting.dto.DistrictDTO;
+import org.avengers.capstone.hostelrenting.dto.ProvinceDTO;
 import org.avengers.capstone.hostelrenting.dto.response.ApiSuccess;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
 import org.avengers.capstone.hostelrenting.model.District;
@@ -79,7 +79,7 @@ public class DistrictController {
                                                      @PathVariable Integer districtId,
                                                      @Valid @RequestBody DistrictDTO rqDistrict) throws EntityNotFoundException {
         rqDistrict.setDistrictId(districtId);
-        rqDistrict.setProvinceId(modelMapper.map(provinceService.findById(provinceId), ProvinceDTO.class));
+        rqDistrict.setProvinceId(provinceId);
         District existedModel = modelMapper.map(rqDistrict, District.class);
         District updatedModel = districtService.save(existedModel);
         DistrictDTO updatedDTO = modelMapper.map(updatedModel, DistrictDTO.class);

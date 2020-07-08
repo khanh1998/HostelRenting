@@ -9,6 +9,6 @@ import java.util.List;
 
 @Repository
 public interface HostelGroupRepository extends JpaRepository<HostelGroup, Integer> {
-    List<HostelGroup> findByDistrict_DistrictId(Integer districtId);
+    List<HostelGroup> findByWard_WardId(Integer districtId);
     HostelGroup findByLongitudeAndLatitude(String longitude, String latitude);
 }

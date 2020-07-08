@@ -1,8 +1,8 @@
-package org.avengers.capstone.hostelrenting.dto.province;
+package org.avengers.capstone.hostelrenting.dto;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.avengers.capstone.hostelrenting.dto.district.DistrictDTO;
+import org.avengers.capstone.hostelrenting.dto.DistrictDTO;
 
 import java.util.List;
 
