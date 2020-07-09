@@ -4,10 +4,8 @@ import org.avengers.capstone.hostelrenting.dto.HostelGroupDTO;
 import org.avengers.capstone.hostelrenting.dto.response.ApiSuccess;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
 import org.avengers.capstone.hostelrenting.model.HostelGroup;
-import org.avengers.capstone.hostelrenting.service.DistrictService;
-import org.avengers.capstone.hostelrenting.service.ProvinceService;
-import org.avengers.capstone.hostelrenting.service.WardService;
-import org.avengers.capstone.hostelrenting.service.HostelGroupService;
+import org.avengers.capstone.hostelrenting.model.Vendor;
+import org.avengers.capstone.hostelrenting.service.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -27,9 +25,7 @@ public class HostelGroupController {
 
     private WardService wardService;
 
-    private ProvinceService provinceService;
-
-    private DistrictService districtService;
+    private VendorService vendorService;
 
     private ModelMapper modelMapper;
 
@@ -40,16 +36,13 @@ public class HostelGroupController {
     }
 
     @Autowired
+    public void setVendorService(VendorService vendorService) {
+        this.vendorService = vendorService;
+    }
+
+    @Autowired
     public void setModelMapper(ModelMapper modelMapper) {
         this.modelMapper = modelMapper;
-    }
-
-    public void setProvinceService(ProvinceService provinceService) {
-        this.provinceService = provinceService;
-    }
-
-    public void setDistrictService(DistrictService districtService) {
-        this.districtService = districtService;
     }
 
     @Autowired
@@ -112,9 +105,12 @@ public class HostelGroupController {
     public ResponseEntity<ApiSuccess> updateHostelGroup(@PathVariable Integer groupId,
                                                         @Valid @RequestBody HostelGroupDTO rqHostelGroup) throws EntityNotFoundException {
         rqHostelGroup.setGroupId(groupId);
-        HostelGroup rqModel = modelMapper.map(rqHostelGroup, HostelGroup.class);
         HostelGroup existedModel = hostelGroupService.findById(groupId);
+        HostelGroup rqModel = modelMapper.map(rqHostelGroup, HostelGroup.class);
+        Vendor vendor = existedModel.getVendor();
+
         rqModel.setWard(existedModel.getWard());
+        rqModel.setVendor(vendor);
         HostelGroup updatedModel = hostelGroupService.save(rqModel);
         HostelGroupDTO updatedDTO = modelMapper.map(updatedModel, HostelGroupDTO.class);
 

@@ -41,23 +41,13 @@ public class HostelGroup{
     @OneToMany(mappedBy = "hostelGroup", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<HostelType> hostelTypes;
 
-//    @ManyToOne
-//    @JoinColumn(name = "vendor_id")
-//    private Vendor vendor;
-
-//    @ManyToOne
-//    @JoinColumn(name = "province_id")
-//    private Province province;
-//
     @ManyToOne
     @JoinColumn(name = "ward_id", nullable = false)
     private Ward ward;
 
-//    @ManyToMany
-//    @JoinTable(name = "hostelgroup_schedule", joinColumns = @JoinColumn(name = "hostel_group_id"), inverseJoinColumns = @JoinColumn(name = "schedule_id"))
-//    private List<Schedule> schedules;
+    @ManyToOne
+    @JoinColumn(name="vendor_id", nullable = false)
+    private Vendor vendor;
 
-//    @OneToMany(fetch = FetchType.LAZY, mappedBy = "hostelGroup", cascade = CascadeType.ALL)
-//    @JsonIgnoreProperties
-//    private List<HostelGroupSchedule> hostelGroupSchedules;
+
 }
