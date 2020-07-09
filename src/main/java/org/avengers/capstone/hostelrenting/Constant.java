@@ -26,4 +26,8 @@ public class Constant {
 
         public static final String DUPLICATED_ERROR = "Key (%s)=(%s) already exists";
     }
+    public static class Pagination{
+        public static final String DEFAULT_SIZE = "50";
+        public static final String DEFAULT_PAGE = "0";
+    }
 }

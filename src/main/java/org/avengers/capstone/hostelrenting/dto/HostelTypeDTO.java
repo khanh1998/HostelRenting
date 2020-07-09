@@ -9,7 +9,7 @@ public class HostelTypeDTO implements Serializable {
     private int hostelTypeId;
     private int hostelGroupId;
     private int categoryId;
-//    private int typeStatusId;
+    private int typeStatusId;
     private String hostelTypeName;
     private long price;
     private float superficiality;

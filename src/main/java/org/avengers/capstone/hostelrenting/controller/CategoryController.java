@@ -46,14 +46,17 @@ public class CategoryController {
     }
 
     @GetMapping("/categories")
-    public ResponseEntity<ApiSuccess> getAll(@RequestParam (required = false) String categoryName) {
+    public ResponseEntity<ApiSuccess> getAll(@RequestParam (required = false) String categoryName,
+                                             @RequestParam(required = false, defaultValue = "50") Integer size,
+                                             @RequestParam(required = false, defaultValue = "0") Integer page) {
         List<CategoryDTO> results = categoryService.findAll()
                 .stream()
                 .filter(category -> {
                     if (categoryName!= null)
                         return category.getCategoryName().toLowerCase().contains(categoryName.trim().toLowerCase());
                     return true;
-                })
+                }).skip(page * size)
+                .limit(size)
                 .map(category -> modelMapper.map(category, CategoryDTO.class))
                 .collect(Collectors.toList());
 

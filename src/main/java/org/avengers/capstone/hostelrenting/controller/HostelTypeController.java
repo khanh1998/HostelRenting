@@ -113,7 +113,7 @@ public class HostelTypeController {
     public ResponseEntity<ApiSuccess> update(@PathVariable Integer hostelTypeId,
                                              @PathVariable Integer hostelGroupId,
                                              @Valid @RequestBody HostelTypeDTO rqHostelType)throws  EntityNotFoundException{
-        // get important info
+        // not able to update info
         HostelGroup hostelGroup = hostelGroupService.findById(hostelGroupId);
         Category category = hostelTypeService.findById(hostelTypeId).getCategory();
 
@@ -132,6 +132,9 @@ public class HostelTypeController {
     @DeleteMapping("hostelgroups/{hostelGroupId}/hosteltypes/{hostelTypeId}")
     public ResponseEntity<ApiSuccess> delete(@PathVariable Integer hostelGroupId,
                                              @PathVariable Integer hostelTypeId) throws EntityNotFoundException {
+
+        HostelType existedHostelType = hostelTypeService.findByIdAndHostelGroupId(hostelTypeId,hostelGroupId);
+        hostelTypeService.delete(existedHostelType.getHostelTypeId());
 
         return ResponseEntity
                 .status(HttpStatus.OK)
