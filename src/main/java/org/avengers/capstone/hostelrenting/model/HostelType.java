@@ -25,12 +25,12 @@ public class HostelType {
     private HostelGroup hostelGroup;
 
 
-//    @ManyToOne
-//    @Column(name = "category_id")
-//    private Category category;
+    @ManyToOne
+    @JoinColumn(name = "category_id")
+    private Category category;
 
 //    @ManyToOne
-//    @Column(name = "type_status_id")
+//    @JoinColumn(name = "type_status_id")
 //    private TypeStatus typeStatus;
 
     @Column(name = "type_name", nullable = false)

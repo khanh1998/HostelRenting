@@ -35,19 +35,21 @@ public class ProvinceController {
         this.provinceService = provinceService;
     }
 
-    /**ko
+    /**
      * Create a Province
      *
      * @param provinceDTO
      * @return province object has been created
      */
     @PostMapping("/provinces")
-    public ResponseEntity<ApiSuccess> createProvince(@Valid @RequestBody ProvinceDTO provinceDTO) throws DuplicateKeyException {
-        Province province = modelMapper.map(provinceDTO, Province.class);
+    public ResponseEntity<ApiSuccess> createProvince(@Valid @RequestBody ProvinceDTO rqDTO) throws DuplicateKeyException {
+        Province province = modelMapper.map(rqDTO, Province.class);
         Province createdProvince = provinceService.save(province);
-        provinceDTO = modelMapper.map(createdProvince, ProvinceDTO.class);
+        ProvinceDTO responseDTO = modelMapper.map(createdProvince, ProvinceDTO.class);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(new ApiSuccess(provinceDTO, String.format(CREATE_SUCCESS, "Province")));
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(new ApiSuccess(responseDTO, String.format(CREATE_SUCCESS, Province.class.getSimpleName())));
     }
 
     /**
@@ -56,9 +58,14 @@ public class ProvinceController {
      * @return List of all provinces
      */
     @GetMapping("/provinces")
-    public ResponseEntity<ApiSuccess> getAllProvinces() {
+    public ResponseEntity<ApiSuccess> getAllProvinces(@RequestParam (required = false) String provinceName) {
         List<ProvinceDTO> results = provinceService.findAll()
                 .stream()
+                .filter(province -> {
+                    if (provinceName != null)
+                        return province.getProvinceName().toLowerCase().contains(provinceName.trim().toLowerCase());
+                    return true;
+                })
                 .map(province -> modelMapper.map(province, ProvinceDTO.class))
                 .collect(Collectors.toList());
 
@@ -66,7 +73,9 @@ public class ProvinceController {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(new ApiSuccess("There is no province"));
         }
 
-        return ResponseEntity.status(HttpStatus.OK).body(new ApiSuccess( results, String.format(GET_SUCCESS, "Province")));
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(new ApiSuccess( results, String.format(GET_SUCCESS, Province.class.getSimpleName())));
     }
 
     /**

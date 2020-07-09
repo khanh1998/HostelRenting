@@ -41,7 +41,7 @@ public class ProvinceServiceImpl implements ProvinceService {
 
     @Override
     public List<Province> findAll() {
-        return provinceRepository.findAll().stream().collect(Collectors.toList());
+        return provinceRepository.findAll();
     }
 
     @Override

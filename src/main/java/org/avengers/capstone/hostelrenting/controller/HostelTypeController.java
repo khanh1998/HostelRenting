@@ -1,9 +1,9 @@
 package org.avengers.capstone.hostelrenting.controller;
 
-import org.avengers.capstone.hostelrenting.dto.HostelGroupDTO;
 import org.avengers.capstone.hostelrenting.dto.HostelTypeDTO;
 import org.avengers.capstone.hostelrenting.dto.response.ApiSuccess;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
+import org.avengers.capstone.hostelrenting.model.Category;
 import org.avengers.capstone.hostelrenting.model.HostelGroup;
 import org.avengers.capstone.hostelrenting.model.HostelType;
 import org.avengers.capstone.hostelrenting.service.HostelGroupService;
@@ -113,10 +113,14 @@ public class HostelTypeController {
     public ResponseEntity<ApiSuccess> update(@PathVariable Integer hostelTypeId,
                                              @PathVariable Integer hostelGroupId,
                                              @Valid @RequestBody HostelTypeDTO rqHostelType)throws  EntityNotFoundException{
+        // get important info
         HostelGroup hostelGroup = hostelGroupService.findById(hostelGroupId);
+        Category category = hostelTypeService.findById(hostelTypeId).getCategory();
+
         rqHostelType.setHostelTypeId(hostelTypeId);
         HostelType rqModel = modelMapper.map(rqHostelType, HostelType.class);
         rqModel.setHostelGroup(hostelGroup);
+        rqModel.setCategory(category);
         HostelType updatedModel = hostelTypeService.save(rqModel);
         HostelTypeDTO updatedDTO = modelMapper.map(updatedModel, HostelTypeDTO.class);
 
