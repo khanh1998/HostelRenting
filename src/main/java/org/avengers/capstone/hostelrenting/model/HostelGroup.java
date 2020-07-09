@@ -22,12 +22,12 @@ import java.util.List;
 @Table(name = "hostelgroup")
 public class HostelGroup{
     @Id
-    @Column(name = "hostel_group_id")
+    @Column(name = "group_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int hostelGroupId;
+    private int groupId;
 
-    @Column(name = "hostel_group_name", nullable = false)
-    private String hostelGroupName;
+    @Column(name = "group_name", nullable = false)
+    private String groupName;
 
     @Column(name = "detailed_address", nullable = false)
     private String detailedAddress;

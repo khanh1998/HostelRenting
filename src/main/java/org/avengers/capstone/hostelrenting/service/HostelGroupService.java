@@ -9,7 +9,7 @@ public interface HostelGroupService {
     HostelGroup findById(Integer id);
     List<HostelGroup> findAll();
     HostelGroup save(HostelGroup hostelGroup);
-    void delete(Integer id);
+    void deleteById(Integer id);
 
     List<HostelGroup> findByWardId(Integer wardId);
 }

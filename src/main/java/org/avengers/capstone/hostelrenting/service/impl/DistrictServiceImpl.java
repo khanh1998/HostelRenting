@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class DistrictServiceImpl implements DistrictService {
-    DistrictRepository districtRepository;
+    private DistrictRepository districtRepository;
 
     @Autowired
     public void setDistrictRepository(DistrictRepository districtRepository) {
@@ -47,7 +47,7 @@ public class DistrictServiceImpl implements DistrictService {
     }
 
     @Override
-    public void delete(Integer id) {
+    public void deleteById(Integer id) {
         if (isNotFound(id)) {
             throw new EntityNotFoundException(District.class, "id", id.toString());
         }

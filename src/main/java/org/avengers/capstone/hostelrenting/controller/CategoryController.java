@@ -92,7 +92,7 @@ public class CategoryController {
 
     @DeleteMapping("/categories/{categoryId}")
     public ResponseEntity<ApiSuccess> delete(@PathVariable Integer categoryId) throws EntityNotFoundException{
-        categoryService.delete(categoryId);
+        categoryService.deleteById(categoryId);
 
         return ResponseEntity.status(HttpStatus.OK).body(new ApiSuccess("Deleted successfully"));
     }

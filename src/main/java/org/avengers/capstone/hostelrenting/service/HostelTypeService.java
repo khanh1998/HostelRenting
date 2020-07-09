@@ -8,7 +8,7 @@ public interface HostelTypeService {
     HostelType findById(Integer id);
     List<HostelType> findAll();
     HostelType save(HostelType hostelType);
-    void delete(Integer id);
+    void deleteById(Integer id);
 
     HostelType findByIdAndHostelGroupId(Integer hostelTypeId, Integer hostelGroupId);
     List<HostelType> findByHostelGroupId(Integer hostelGroupId);

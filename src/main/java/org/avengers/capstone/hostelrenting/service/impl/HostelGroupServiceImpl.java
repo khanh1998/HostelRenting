@@ -45,7 +45,7 @@ public class HostelGroupServiceImpl implements HostelGroupService {
     }
 
     @Override
-    public void delete(Integer hostelGroupId) {
+    public void deleteById(Integer hostelGroupId) {
         hostelGroupRepository.deleteById(hostelGroupId);
     }
 

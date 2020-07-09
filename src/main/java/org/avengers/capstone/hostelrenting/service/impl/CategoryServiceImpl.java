@@ -44,7 +44,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public void delete(Integer id) {
+    public void deleteById(Integer id) {
         if (isNotFound(id)) {
             throw new EntityNotFoundException(Category.class, "id", id.toString());
         }

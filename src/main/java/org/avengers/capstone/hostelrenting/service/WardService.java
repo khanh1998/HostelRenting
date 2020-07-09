@@ -8,7 +8,7 @@ public interface WardService {
     Ward findById(Integer id);
     List<Ward> findAll();
     Ward save(Ward ward);
-    void delete(Integer id);
+    void deleteById(Integer id);
 
     Ward findByIdAndDistrictId(Integer wardId, Integer districtId);
 }

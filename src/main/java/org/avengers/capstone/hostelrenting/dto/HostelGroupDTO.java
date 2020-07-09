@@ -11,13 +11,13 @@ import java.util.List;
 @Data
 @EqualsAndHashCode
 public class HostelGroupDTO implements Serializable {
-    private int hostelGroupId;
+    private int groupId;
 
     private Integer wardId;
 
 //    private Integer vendorId;
 
-    private String hostelGroupName;
+    private String groupName;
 
     private String detailedAddress;
 

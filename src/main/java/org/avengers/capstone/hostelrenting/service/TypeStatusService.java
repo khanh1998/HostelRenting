@@ -8,5 +8,5 @@ public interface TypeStatusService {
     TypeStatus save(TypeStatus typeStatus);
     TypeStatus findById(Integer id);
     List<TypeStatus> findAll();
-    void delete(Integer id);
+    void deleteById(Integer id);
 }

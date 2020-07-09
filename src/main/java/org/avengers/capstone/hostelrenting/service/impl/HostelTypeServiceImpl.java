@@ -46,7 +46,7 @@ public class HostelTypeServiceImpl implements HostelTypeService {
     }
 
     @Override
-    public void delete(Integer id) {
+    public void deleteById(Integer id) {
         if (isNotFound(id)){
             throw new EntityNotFoundException(HostelType.class, "id", id.toString());
         }
@@ -56,7 +56,7 @@ public class HostelTypeServiceImpl implements HostelTypeService {
 
     @Override
     public HostelType findByIdAndHostelGroupId(Integer hostelTypeId, Integer hostelGroupId) {
-        Optional<HostelType> hostelType = hostelTypeRepository.findByHostelTypeIdAndHostelGroup_HostelGroupId(hostelTypeId, hostelGroupId);
+        Optional<HostelType> hostelType = hostelTypeRepository.findByTypeIdAndHostelGroup_GroupId(hostelTypeId, hostelGroupId);
         if (hostelType.isEmpty()){
             throw new EntityNotFoundException(HostelType.class, "hostel_type_id", hostelTypeId.toString(), "hostel_group_id", hostelGroupId.toString());
         }
@@ -66,7 +66,7 @@ public class HostelTypeServiceImpl implements HostelTypeService {
 
     @Override
     public List<HostelType> findByHostelGroupId(Integer hostelGroupId) {
-        List<HostelType> hostelTypes = hostelTypeRepository.findByHostelGroup_HostelGroupId((hostelGroupId));
+        List<HostelType> hostelTypes = hostelTypeRepository.findByHostelGroup_GroupId((hostelGroupId));
         if (hostelTypes.isEmpty()){
             throw new EntityNotFoundException(HostelType.class, "hostel_group_id", hostelGroupId.toString());
         }

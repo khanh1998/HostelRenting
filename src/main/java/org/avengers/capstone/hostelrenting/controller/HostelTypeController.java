@@ -44,9 +44,9 @@ public class HostelTypeController {
         this.modelMapper = modelMapper;
     }
 
-    @GetMapping("/hostelgroups/{hostelGroupId}/hosteltypes")
-    public ResponseEntity<ApiSuccess> getHostelTypeByHostelGroupId(@PathVariable Integer hostelGroupId,
-                                                                   @RequestParam(required = false) Integer hostelTypeId,
+    @GetMapping("/groups/{groupId}/types")
+    public ResponseEntity<ApiSuccess> getHostelTypeByHostelGroupId(@PathVariable Integer groupId,
+                                                                   @RequestParam(required = false) Integer typeId,
                                                                    @RequestParam(required = false) Long minPrice,
                                                                    @RequestParam(required = false) Long maxPrice,
                                                                    @RequestParam(required = false) Float minSuperficiality,
@@ -55,10 +55,10 @@ public class HostelTypeController {
                                                                    @RequestParam(required = false) Integer maxCapacity,
                                                                    @RequestParam(required = false, defaultValue = "50") Integer size,
                                                                    @RequestParam(required = false, defaultValue = "0") Integer page) throws EntityNotFoundException {
-        List<HostelTypeDTO> responseHostelTypes = hostelTypeService.findByHostelGroupId(hostelGroupId).stream()
+        List<HostelTypeDTO> responseHostelTypes = hostelTypeService.findByHostelGroupId(groupId).stream()
                 .filter(hostelType -> {
-                    if (hostelTypeId != null)
-                        return hostelType.getHostelTypeId() == hostelTypeId;
+                    if (typeId != null)
+                        return hostelType.getTypeId() == typeId;
                     return true;
                 }).filter(hostelType -> {
                     if (minPrice != null)
@@ -94,11 +94,11 @@ public class HostelTypeController {
                 body((new ApiSuccess(responseHostelTypes, String.format(GET_SUCCESS, HostelType.class.getSimpleName()))));
     }
 
-    @PostMapping("hostelgroups/{hostelGroupId}/hosteltypes")
-    public ResponseEntity<ApiSuccess> create(@PathVariable Integer hostelGroupId,
+    @PostMapping("groups/{groupId}/types")
+    public ResponseEntity<ApiSuccess> create(@PathVariable Integer groupId,
                                              @Valid @RequestBody HostelTypeDTO rqHostelType) throws EntityNotFoundException {
         HostelType model = modelMapper.map(rqHostelType, HostelType.class);
-        HostelGroup hostelGroup = hostelGroupService.findById(hostelGroupId);
+        HostelGroup hostelGroup = hostelGroupService.findById(groupId);
         model.setHostelGroup(hostelGroup);
         //TODO: category and typestatus
         HostelType createdModel = hostelTypeService.save(model);
@@ -109,15 +109,15 @@ public class HostelTypeController {
                 body(new ApiSuccess(createdDTO, String.format(CREATE_SUCCESS, HostelType.class.getSimpleName())));
     }
 
-    @PutMapping("/hostelgroups/{hostelGroupId}/hosteltypes/{hostelTypeId}")
-    public ResponseEntity<ApiSuccess> update(@PathVariable Integer hostelTypeId,
-                                             @PathVariable Integer hostelGroupId,
+    @PutMapping("/groups/{groupId}/types/{typeId}")
+    public ResponseEntity<ApiSuccess> update(@PathVariable Integer typeId,
+                                             @PathVariable Integer groupId,
                                              @Valid @RequestBody HostelTypeDTO rqHostelType)throws  EntityNotFoundException{
         // not able to update info
-        HostelGroup hostelGroup = hostelGroupService.findById(hostelGroupId);
-        Category category = hostelTypeService.findById(hostelTypeId).getCategory();
+        HostelGroup hostelGroup = hostelGroupService.findById(groupId);
+        Category category = hostelTypeService.findById(typeId).getCategory();
 
-        rqHostelType.setHostelTypeId(hostelTypeId);
+        rqHostelType.setTypeId(typeId);
         HostelType rqModel = modelMapper.map(rqHostelType, HostelType.class);
         rqModel.setHostelGroup(hostelGroup);
         rqModel.setCategory(category);
@@ -129,12 +129,12 @@ public class HostelTypeController {
                 .body(new ApiSuccess(updatedDTO, String.format(UPDATE_SUCCESS, HostelType.class.getSimpleName())));
     }
 
-    @DeleteMapping("hostelgroups/{hostelGroupId}/hosteltypes/{hostelTypeId}")
-    public ResponseEntity<ApiSuccess> delete(@PathVariable Integer hostelGroupId,
-                                             @PathVariable Integer hostelTypeId) throws EntityNotFoundException {
+    @DeleteMapping("groups/{groupId}/types/{typeId}")
+    public ResponseEntity<ApiSuccess> delete(@PathVariable Integer groupId,
+                                             @PathVariable Integer typeId) throws EntityNotFoundException {
 
-        HostelType existedHostelType = hostelTypeService.findByIdAndHostelGroupId(hostelTypeId,hostelGroupId);
-        hostelTypeService.delete(existedHostelType.getHostelTypeId());
+        HostelType existedHostelType = hostelTypeService.findByIdAndHostelGroupId(typeId,groupId);
+        hostelTypeService.deleteById(existedHostelType.getTypeId());
 
         return ResponseEntity
                 .status(HttpStatus.OK)

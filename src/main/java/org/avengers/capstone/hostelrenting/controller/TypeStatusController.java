@@ -99,7 +99,7 @@ public class TypeStatusController {
 
     @DeleteMapping("/typestatuses/{typeStatusId}")
     public ResponseEntity<ApiSuccess> delete(@PathVariable Integer typeStatusId) throws EntityNotFoundException {
-        typeStatusService.delete(typeStatusId);
+        typeStatusService.deleteById(typeStatusId);
 
         return ResponseEntity.status(HttpStatus.OK).body(new ApiSuccess("Deleted successfully"));
     }

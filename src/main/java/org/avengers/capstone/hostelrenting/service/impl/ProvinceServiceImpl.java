@@ -45,7 +45,7 @@ public class ProvinceServiceImpl implements ProvinceService {
     }
 
     @Override
-    public void delete(Integer id) {
+    public void deleteById(Integer id) {
 
         if (isNotFound(id)) {
             throw new EntityNotFoundException(Province.class, "id", id.toString());

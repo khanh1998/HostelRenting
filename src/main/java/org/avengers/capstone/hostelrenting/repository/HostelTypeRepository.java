@@ -7,6 +7,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface HostelTypeRepository extends JpaRepository<HostelType, Integer> {
-    Optional<HostelType> findByHostelTypeIdAndHostelGroup_HostelGroupId(Integer hosteltypeId, Integer hostelGroupId);
-    List<HostelType> findByHostelGroup_HostelGroupId(Integer hostelGroupId);
+    Optional<HostelType> findByTypeIdAndHostelGroup_GroupId(Integer hosteltypeId, Integer hostelGroupId);
+    List<HostelType> findByHostelGroup_GroupId(Integer hostelGroupId);
 }

@@ -44,7 +44,7 @@ public class TypeStatusServiceImpl implements TypeStatusService {
     }
 
     @Override
-    public void delete(Integer id) {
+    public void deleteById(Integer id) {
         if (isNotFound(id)) {
             throw new EntityNotFoundException(TypeStatus.class, "id", id.toString());
         }

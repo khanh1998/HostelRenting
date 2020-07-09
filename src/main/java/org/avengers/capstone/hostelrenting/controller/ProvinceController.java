@@ -127,7 +127,7 @@ public class ProvinceController {
      */
     @DeleteMapping("/provinces/{provinceId}")
     public ResponseEntity<ApiSuccess> delete(@PathVariable Integer provinceId) throws EntityNotFoundException {
-        provinceService.delete(provinceId);
+        provinceService.deleteById(provinceId);
 
         return ResponseEntity
                 .status(HttpStatus.OK)

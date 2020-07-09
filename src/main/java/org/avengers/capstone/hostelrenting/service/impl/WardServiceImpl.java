@@ -46,7 +46,7 @@ public class WardServiceImpl implements WardService {
     }
 
     @Override
-    public void delete(Integer id) {
+    public void deleteById(Integer id) {
         if (isNotFound(id)){
             throw new EntityNotFoundException(Ward.class, "id", id.toString());
         }

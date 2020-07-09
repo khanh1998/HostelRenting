@@ -92,7 +92,7 @@ public class WardController {
 
 
         Ward existedModel = wardService.findByIdAndDistrictId(wardId, districtId);
-        wardService.delete(existedModel.getWardId());
+        wardService.deleteById(existedModel.getWardId());
         return ResponseEntity.status(HttpStatus.OK).body(new ApiSuccess("Deleted successfully"));
     }
 }

@@ -57,18 +57,18 @@ public class HostelGroupController {
         this.wardService = wardService;
     }
 
-    @GetMapping("/hostelgroups/{hostelGroupId}")
-    public ResponseEntity<ApiSuccess> getHostelGroupByIdAndWardId(@PathVariable Integer hostelGroupId) throws EntityNotFoundException {
+    @GetMapping("/groups/{groupId}")
+    public ResponseEntity<ApiSuccess> getHostelGroupByIdAndWardId(@PathVariable Integer groupId) throws EntityNotFoundException {
 
-        HostelGroup hostelGroup = hostelGroupService.findById(hostelGroupId);
+        HostelGroup hostelGroup = hostelGroupService.findById(groupId);
         HostelGroupDTO responseDTO = modelMapper.map(hostelGroup, HostelGroupDTO.class);
 
         return ResponseEntity.status(HttpStatus.OK).body(new ApiSuccess(responseDTO, String.format(GET_SUCCESS, "Hostel Group")));
     }
 
-    @GetMapping("/hostelgroups")
+    @GetMapping("/groups")
     public ResponseEntity<ApiSuccess> getHostelGroupByWardId(@RequestParam(required = false) Integer wardId,
-                                                                 @RequestParam(required = false) Integer hostelGroupId,
+                                                                 @RequestParam(required = false) Integer groupId,
                                                                  @RequestParam(required = false) String hostelGroupName,
                                                                  @RequestParam(required = false) String detailedAddress,
                                                                  @RequestParam(required = false, defaultValue = "50") Integer size,
@@ -79,12 +79,12 @@ public class HostelGroupController {
                         return hostelGroup.getWard().getWardId() == wardId;
                     return true;
                 }).filter(hostelGroup -> {
-                    if (hostelGroupId != null)
-                        return hostelGroup.getHostelGroupId() == hostelGroupId;
+                    if (groupId != null)
+                        return hostelGroup.getGroupId() == groupId;
                     return true;
                 }).filter(hostelGroup -> {
                     if (hostelGroupName != null)
-                        return hostelGroup.getHostelGroupName().contains(hostelGroupName);
+                        return hostelGroup.getGroupName().contains(hostelGroupName);
                     return true;
                 }).filter(hostelGroup -> {
                     if (detailedAddress != null)
@@ -98,7 +98,7 @@ public class HostelGroupController {
         return ResponseEntity.status(HttpStatus.OK).body((new ApiSuccess(responseHostelGroups, String.format(GET_SUCCESS, "Hostel group"))));
     }
 
-    @PostMapping("/hostelgroups")
+    @PostMapping("/groups")
     public ResponseEntity<ApiSuccess> createHostelGroup(@Valid @RequestBody HostelGroupDTO rqHostelGroup) throws EntityNotFoundException {
         HostelGroup hostelGroupModel = modelMapper.map(rqHostelGroup, HostelGroup.class);
         hostelGroupModel.setWard(wardService.findById(rqHostelGroup.getWardId()));
@@ -108,12 +108,12 @@ public class HostelGroupController {
         return ResponseEntity.status(HttpStatus.CREATED).body(new ApiSuccess(createdDTO, String.format(CREATE_SUCCESS, "Hostel group")));
     }
 
-    @PutMapping("/hostelgroups/{hostelGroupId}")
-    public ResponseEntity<ApiSuccess> updateHostelGroup(@PathVariable Integer hostelGroupId,
+    @PutMapping("/groups/{groupId}")
+    public ResponseEntity<ApiSuccess> updateHostelGroup(@PathVariable Integer groupId,
                                                         @Valid @RequestBody HostelGroupDTO rqHostelGroup) throws EntityNotFoundException {
-        rqHostelGroup.setHostelGroupId(hostelGroupId);
+        rqHostelGroup.setGroupId(groupId);
         HostelGroup rqModel = modelMapper.map(rqHostelGroup, HostelGroup.class);
-        HostelGroup existedModel = hostelGroupService.findById(hostelGroupId);
+        HostelGroup existedModel = hostelGroupService.findById(groupId);
         rqModel.setWard(existedModel.getWard());
         HostelGroup updatedModel = hostelGroupService.save(rqModel);
         HostelGroupDTO updatedDTO = modelMapper.map(updatedModel, HostelGroupDTO.class);
@@ -121,9 +121,9 @@ public class HostelGroupController {
         return ResponseEntity.status(HttpStatus.OK).body(new ApiSuccess((updatedDTO), String.format(UPDATE_SUCCESS, "Hostel group")));
     }
 
-    @DeleteMapping("hostelgroups/{hostelGroupId}")
-    public ResponseEntity<ApiSuccess> deleteHostelGroup(@PathVariable Integer hostelGroupId) throws EntityNotFoundException {
-        hostelGroupService.delete(hostelGroupId);
+    @DeleteMapping("groups/{groupId}")
+    public ResponseEntity<ApiSuccess> deleteHostelGroup(@PathVariable Integer groupId) throws EntityNotFoundException {
+        hostelGroupService.deleteById(groupId);
         return ResponseEntity.status(HttpStatus.OK).body(new ApiSuccess("Deleted successfully"));
     }
 }

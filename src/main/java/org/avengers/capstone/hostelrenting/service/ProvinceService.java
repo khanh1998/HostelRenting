@@ -9,7 +9,7 @@ public interface ProvinceService {
     Province save(Province province);
     Province findById(Integer id);
     List<Province> findAll();
-    void delete(Integer id);
+    void deleteById(Integer id);
 
     long getCount();
 }

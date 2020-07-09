@@ -47,11 +47,11 @@ public class DistrictController {
     public ResponseEntity<ApiSuccess> getDistrictsByProvinceId(@PathVariable Integer provinceId)throws EntityNotFoundException{
         Province province = provinceService.findById(provinceId);
         province.getDistricts();
-        ProvinceDTO responseDTO = modelMapper.map(province, ProvinceDTO.class);
+        ProvinceDTO resDTO = modelMapper.map(province, ProvinceDTO.class);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(new ApiSuccess(responseDTO, String.format(GET_SUCCESS, "District")));
+                .body(new ApiSuccess(resDTO, String.format(GET_SUCCESS, District.class.getSimpleName())));
     }
 
     @GetMapping("/provinces/{provinceId}/districts/{districtId}")
@@ -63,11 +63,11 @@ public class DistrictController {
                 .filter(p -> p.getDistrictId() == districtId)
                 .collect(Collectors.toList())
                 .get(0);
-        DistrictDTO responseDTO = modelMapper.map(responseModel, DistrictDTO.class);
+        DistrictDTO resDTO = modelMapper.map(responseModel, DistrictDTO.class);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body( new ApiSuccess(responseDTO, String.format(GET_SUCCESS, "District")));
+                .body( new ApiSuccess(resDTO, String.format(GET_SUCCESS, District.class.getSimpleName())));
     }
 
     @PostMapping("provinces/{provinceId}/districts")
@@ -81,23 +81,26 @@ public class DistrictController {
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(new ApiSuccess(createdDTO, String.format(CREATE_SUCCESS, "District")));
+                .body(new ApiSuccess(createdDTO, String.format(CREATE_SUCCESS, District.class.getSimpleName())));
     }
 
     @PutMapping("/provinces/{provinceId}/districts/{districtId}")
     public ResponseEntity<ApiSuccess> updateDistrict(@PathVariable Integer provinceId,
                                                      @PathVariable Integer districtId,
                                                      @Valid @RequestBody DistrictDTO rqDistrict) throws EntityNotFoundException {
-        Province province = provinceService.findById(provinceId);
-        rqDistrict.setDistrictId(districtId);
+        // check that id exist or not
+        Province existedProvince = provinceService.findById(provinceId);
+        District existedDistrict = districtService.findById(districtId);
+
+        rqDistrict.setDistrictId(existedDistrict.getDistrictId());
         District rqModel = modelMapper.map(rqDistrict, District.class);
-        rqModel.setProvince(province);
+        rqModel.setProvince(existedProvince);
         District updatedModel = districtService.save(rqModel);
         DistrictDTO updatedDTO = modelMapper.map(updatedModel, DistrictDTO.class);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(new ApiSuccess(updatedDTO, String.format(UPDATE_SUCCESS, "District")));
+                .body(new ApiSuccess(updatedDTO, String.format(UPDATE_SUCCESS, District.class.getSimpleName())));
     }
 
     @DeleteMapping("/provinces/{provinceId}/districts/{districtId}")
@@ -106,7 +109,7 @@ public class DistrictController {
 
 
         District existedModel = districtService.findByIdAndProvinceId(districtId, provinceId);
-        districtService.delete(existedModel.getDistrictId());
+        districtService.deleteById(existedModel.getDistrictId());
 
         return ResponseEntity
                 .status(HttpStatus.OK)

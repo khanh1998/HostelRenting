@@ -8,7 +8,7 @@ public interface DistrictService {
     District findById(Integer id);
     List<District> findAll();
     District save(District district);
-    void delete(Integer id);
+    void deleteById(Integer id);
 
     District findByIdAndProvinceId(Integer districtId, Integer provinceId);
 }

@@ -8,5 +8,5 @@ public interface CategoryService {
     Category save(Category province);
     Category findById(Integer id);
     List<Category> findAll();
-    void delete(Integer id);
+    void deleteById(Integer id);
 }

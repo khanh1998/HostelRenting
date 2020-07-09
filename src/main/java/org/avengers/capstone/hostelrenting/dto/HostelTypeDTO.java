@@ -3,16 +3,19 @@ package org.avengers.capstone.hostelrenting.dto;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.List;
 
 @Data
 public class HostelTypeDTO implements Serializable {
-    private int hostelTypeId;
-    private int hostelGroupId;
+    private int typeId;
+    private int groupId;
     private int categoryId;
     private int typeStatusId;
-    private String hostelTypeName;
+    private String typeName;
     private long price;
     private float superficiality;
     private int capacity;
     private boolean isDeleted;
+
+    List<HostelRoomDTO> hostelRooms;
 }
