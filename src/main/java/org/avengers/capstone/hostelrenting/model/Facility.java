@@ -1,14 +1,12 @@
 package org.avengers.capstone.hostelrenting.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 @Data
 @Builder
@@ -26,6 +24,8 @@ public class Facility {
     @NotBlank(message = "Facility name is mandatory")
     private String facilityName;
 
-    @OneToMany(mappedBy = "province", fetch = FetchType.LAZY)
-    private Collection<HTypeFacility> hTypeFacilities;
+    @ManyToMany(mappedBy = "facilities", fetch = FetchType.LAZY)
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    private Set<HostelType> hostelTypes;
 }

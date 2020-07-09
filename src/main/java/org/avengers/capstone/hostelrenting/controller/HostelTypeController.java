@@ -1,11 +1,14 @@
 package org.avengers.capstone.hostelrenting.controller;
 
+import org.avengers.capstone.hostelrenting.dto.FacilityDTO;
 import org.avengers.capstone.hostelrenting.dto.HostelTypeDTO;
 import org.avengers.capstone.hostelrenting.dto.response.ApiSuccess;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
 import org.avengers.capstone.hostelrenting.model.Category;
+import org.avengers.capstone.hostelrenting.model.Facility;
 import org.avengers.capstone.hostelrenting.model.HostelGroup;
 import org.avengers.capstone.hostelrenting.model.HostelType;
+import org.avengers.capstone.hostelrenting.service.FacilityService;
 import org.avengers.capstone.hostelrenting.service.HostelGroupService;
 import org.avengers.capstone.hostelrenting.service.HostelTypeService;
 import org.modelmapper.ModelMapper;
@@ -17,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.avengers.capstone.hostelrenting.Constant.Message.*;
@@ -28,6 +32,12 @@ public class HostelTypeController {
     private HostelTypeService hostelTypeService;
     private ModelMapper modelMapper;
     private HostelGroupService hostelGroupService;
+    private FacilityService facilityService;
+
+    @Autowired
+    public void setFacilityService(FacilityService facilityService) {
+        this.facilityService = facilityService;
+    }
 
     @Autowired
     public void setHostelGroupService(HostelGroupService hostelGroupService) {
@@ -107,6 +117,31 @@ public class HostelTypeController {
         return ResponseEntity.
                 status(HttpStatus.CREATED).
                 body(new ApiSuccess(createdDTO, String.format(CREATE_SUCCESS, HostelType.class.getSimpleName())));
+    }
+    @PostMapping("types/{typeId}/facilities")
+    public ResponseEntity<ApiSuccess> addFacility(@PathVariable Integer typeId,
+                                                  @Valid @RequestBody List<FacilityDTO> facilities){
+        HostelType typeModel = hostelTypeService.findById(typeId);
+        Set<Facility> matchedFacilities = facilities
+                .stream()
+                .filter(f -> {
+                    Facility existedFacility = facilityService.findById(f.getFacilityId());
+                    f.setFacilityName(existedFacility.getFacilityName());
+                    if (existedFacility != null){
+                        return true;
+                    }
+                    return false;
+                }).map(f -> modelMapper.map(f, Facility.class))
+                .collect(Collectors.toSet());
+
+
+        typeModel.setFacilities(matchedFacilities);
+        hostelTypeService.save(typeModel);
+        HostelTypeDTO resDTO = modelMapper.map(typeModel, HostelTypeDTO.class);
+
+        return ResponseEntity.
+                status(HttpStatus.CREATED).
+                body(new ApiSuccess(resDTO, String.format(CREATE_SUCCESS, HostelType.class.getSimpleName())));
     }
 
     @PutMapping("/groups/{groupId}/types/{typeId}")

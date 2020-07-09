@@ -18,4 +18,5 @@ public class HostelTypeDTO implements Serializable {
     private boolean isDeleted;
 
     List<HostelRoomDTO> hostelRooms;
+    List<FacilityDTO> facilities;
 }

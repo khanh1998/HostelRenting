@@ -1,6 +1,5 @@
 package org.avengers.capstone.hostelrenting.service.impl;
 
-import org.avengers.capstone.hostelrenting.Constant;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
 import org.avengers.capstone.hostelrenting.model.HostelGroup;
 import org.avengers.capstone.hostelrenting.repository.HostelGroupRepository;
@@ -45,8 +44,11 @@ public class HostelGroupServiceImpl implements HostelGroupService {
     }
 
     @Override
-    public void deleteById(Integer hostelGroupId) {
-        hostelGroupRepository.deleteById(hostelGroupId);
+    public void deleteById(Integer id) {
+        if (isNotFound(id)) {
+            throw new EntityNotFoundException(HostelGroup.class, "id", id.toString());
+        }
+        hostelGroupRepository.deleteById(id);
     }
 
     @Override
