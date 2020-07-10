@@ -20,6 +20,8 @@ import javax.validation.Valid;
 import java.util.stream.Collectors;
 
 import static org.avengers.capstone.hostelrenting.Constant.Message.*;
+import static org.avengers.capstone.hostelrenting.Constant.Pagination.DEFAULT_PAGE;
+import static org.avengers.capstone.hostelrenting.Constant.Pagination.DEFAULT_SIZE;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -44,7 +46,7 @@ public class DistrictController {
     }
 
     @GetMapping("/provinces/{provinceId}/districts")
-    public ResponseEntity<ApiSuccess> getDistrictsByProvinceId(@PathVariable Integer provinceId)throws EntityNotFoundException{
+    public ResponseEntity<ApiSuccess> getDistrictsByProvinceId(@PathVariable Integer provinceId) throws EntityNotFoundException {
         Province province = provinceService.findById(provinceId);
         province.getDistricts();
         ProvinceDTO resDTO = modelMapper.map(province, ProvinceDTO.class);
@@ -56,7 +58,7 @@ public class DistrictController {
 
     @GetMapping("/provinces/{provinceId}/districts/{districtId}")
     public ResponseEntity<ApiSuccess> getDistrictByProvinceId(@PathVariable Integer provinceId,
-                                                              @PathVariable Integer districtId)throws EntityNotFoundException{
+                                                              @PathVariable Integer districtId) throws EntityNotFoundException {
         Province provinceModel = provinceService.findById(provinceId);
         District responseModel = provinceModel.getDistricts()
                 .stream()
@@ -67,17 +69,17 @@ public class DistrictController {
 
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body( new ApiSuccess(resDTO, String.format(GET_SUCCESS, District.class.getSimpleName())));
+                .body(new ApiSuccess(resDTO, String.format(GET_SUCCESS, District.class.getSimpleName())));
     }
 
     @PostMapping("provinces/{provinceId}/districts")
     public ResponseEntity<ApiSuccess> createDistrict(@PathVariable Integer provinceId,
-                                                     @Valid @RequestBody DistrictDTO rqDistrict) throws DuplicateKeyException{
+                                                     @Valid @RequestBody DistrictDTO rqDistrict) throws DuplicateKeyException {
         Province provinceModel = provinceService.findById(provinceId);
         District model = modelMapper.map(rqDistrict, District.class);
         model.setProvince(provinceModel);
         District createdModel = districtService.save(model);
-        DistrictDTO createdDTO = modelMapper.map(model, DistrictDTO.class);
+        DistrictDTO createdDTO = modelMapper.map(createdModel, DistrictDTO.class);
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -87,13 +89,13 @@ public class DistrictController {
     @PutMapping("/provinces/{provinceId}/districts/{districtId}")
     public ResponseEntity<ApiSuccess> updateDistrict(@PathVariable Integer provinceId,
                                                      @PathVariable Integer districtId,
-                                                     @Valid @RequestBody DistrictDTO rqDistrict) throws EntityNotFoundException {
+                                                     @Valid @RequestBody DistrictDTO reqDTO) throws EntityNotFoundException {
         // check that id exist or not
         Province existedProvince = provinceService.findById(provinceId);
         District existedDistrict = districtService.findById(districtId);
 
-        rqDistrict.setDistrictId(existedDistrict.getDistrictId());
-        District rqModel = modelMapper.map(rqDistrict, District.class);
+        reqDTO.setDistrictId(existedDistrict.getDistrictId());
+        District rqModel = modelMapper.map(reqDTO, District.class);
         rqModel.setProvince(existedProvince);
         District updatedModel = districtService.save(rqModel);
         DistrictDTO updatedDTO = modelMapper.map(updatedModel, DistrictDTO.class);
@@ -105,7 +107,7 @@ public class DistrictController {
 
     @DeleteMapping("/provinces/{provinceId}/districts/{districtId}")
     public ResponseEntity<ApiSuccess> deleteDistrict(@PathVariable Integer provinceId,
-                                                     @PathVariable Integer districtId) throws EntityNotFoundException{
+                                                     @PathVariable Integer districtId) throws EntityNotFoundException {
 
 
         District existedModel = districtService.findByIdAndProvinceId(districtId, provinceId);

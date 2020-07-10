@@ -1,6 +1,7 @@
 package org.avengers.capstone.hostelrenting.dto;
 
 import lombok.Data;
+import org.avengers.capstone.hostelrenting.model.TypeImage;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -19,4 +20,5 @@ public class HostelTypeDTO implements Serializable {
 
     Collection<HostelRoomDTO> hostelRooms;
     Collection<FacilityDTO> facilities;
+    Collection<TypeImage> typeImages;
 }

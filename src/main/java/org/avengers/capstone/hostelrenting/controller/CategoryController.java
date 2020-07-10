@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.avengers.capstone.hostelrenting.Constant.Message.*;
+import static org.avengers.capstone.hostelrenting.Constant.Pagination.*;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -47,15 +48,15 @@ public class CategoryController {
 
     @GetMapping("/categories")
     public ResponseEntity<ApiSuccess> getAll(@RequestParam (required = false) String categoryName,
-                                             @RequestParam(required = false, defaultValue = "50") Integer size,
-                                             @RequestParam(required = false, defaultValue = "0") Integer page) {
+                                             @RequestParam(required = false, defaultValue = DEFAULT_SIZE) Integer size,
+                                             @RequestParam(required = false, defaultValue = DEFAULT_PAGE) Integer page) {
         List<CategoryDTO> results = categoryService.findAll()
                 .stream()
                 .filter(category -> {
                     if (categoryName!= null)
                         return category.getCategoryName().toLowerCase().contains(categoryName.trim().toLowerCase());
                     return true;
-                }).skip(page * size)
+                }).skip(page-1 * size)
                 .limit(size)
                 .map(category -> modelMapper.map(category, CategoryDTO.class))
                 .collect(Collectors.toList());
@@ -70,7 +71,7 @@ public class CategoryController {
     }
 
     @GetMapping("/categories/{categoryId}")
-    public ResponseEntity<ApiSuccess> getCategoryById(@PathVariable Integer categoryId) throws EntityNotFoundException {
+    public ResponseEntity<ApiSuccess> getById(@PathVariable Integer categoryId) throws EntityNotFoundException {
         Category category = categoryService.findById(categoryId);
         CategoryDTO responseDTO = modelMapper.map(category, CategoryDTO.class);
 

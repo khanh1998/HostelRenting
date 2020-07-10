@@ -1,7 +1,9 @@
 package org.avengers.capstone.hostelrenting.controller;
 
 import org.avengers.capstone.hostelrenting.dto.FacilityDTO;
+import org.avengers.capstone.hostelrenting.dto.HostelGroupDTO;
 import org.avengers.capstone.hostelrenting.dto.HostelTypeDTO;
+import org.avengers.capstone.hostelrenting.dto.TypesAndGroupsDTO;
 import org.avengers.capstone.hostelrenting.dto.response.ApiSuccess;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
 import org.avengers.capstone.hostelrenting.model.Category;
@@ -24,6 +26,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.avengers.capstone.hostelrenting.Constant.Message.*;
+import static org.avengers.capstone.hostelrenting.Constant.Pagination.*;
 
 @RestController
 @RequestMapping("api/v1")
@@ -104,6 +107,64 @@ public class HostelTypeController {
                 body((new ApiSuccess(responseHostelTypes, String.format(GET_SUCCESS, HostelType.class.getSimpleName()))));
     }
 
+    @GetMapping("/types")
+    public ResponseEntity<ApiSuccess> getHostelTypes(@RequestParam(required = false) Integer typeId,
+                                                     @RequestParam(required = false) Long minPrice,
+                                                     @RequestParam(required = false) Long maxPrice,
+                                                     @RequestParam(required = false) Float minSuperficiality,
+                                                     @RequestParam(required = false) Float maxSuperficiality,
+                                                     @RequestParam(required = false) Integer minCapacity,
+                                                     @RequestParam(required = false) Integer maxCapacity,
+                                                     @RequestParam(required = false, defaultValue = DEFAULT_SIZE) Integer size,
+                                                     @RequestParam(required = false, defaultValue = DEFAULT_PAGE) Integer page) throws EntityNotFoundException {
+        Set<HostelTypeDTO> typeDTOs = hostelTypeService.findAll().stream()
+                .filter(hostelType -> {
+                    if (typeId != null)
+                        return hostelType.getTypeId() == typeId;
+                    return true;
+                })
+                .filter(hostelType -> {
+                    if (minPrice != null)
+                        return hostelType.getPrice() >= minPrice;
+                    return true;
+                }).filter(hostelType -> {
+                    if (maxPrice != null)
+                        return hostelType.getPrice() <= maxPrice;
+                    return true;
+                }).filter(hostelType -> {
+                    if (minSuperficiality != null)
+                        return hostelType.getSuperficiality() >= minSuperficiality;
+                    return true;
+                }).filter(hostelType -> {
+                    if (maxSuperficiality != null)
+                        return hostelType.getSuperficiality() <= minSuperficiality;
+                    return true;
+                }).filter(hostelType -> {
+                    if (minCapacity != null)
+                        return hostelType.getCapacity() >= minCapacity;
+                    return true;
+                }).filter(hostelType -> {
+                    if (maxCapacity != null)
+                        return hostelType.getCapacity() <= maxCapacity;
+                    return true;
+                })
+                .skip((page-1) * size)
+                .limit(size)
+                .map(hostelType -> modelMapper.map(hostelType, HostelTypeDTO.class))
+                .collect(Collectors.toSet());
+
+        Set<HostelGroupDTO> groupDTOs = typeDTOs.stream()
+                .map(typeDTO -> modelMapper.map(hostelGroupService.findById(typeDTO.getGroupId()), HostelGroupDTO.class))
+                .collect(Collectors.toSet());
+
+        // DTO contains list of Types and groups follow that type
+        TypesAndGroupsDTO resDTO = new TypesAndGroupsDTO(typeDTOs, groupDTOs);
+
+        return ResponseEntity.
+                status(HttpStatus.OK).
+                body((new ApiSuccess(resDTO, String.format(GET_SUCCESS, HostelType.class.getSimpleName()))));
+    }
+
     @PostMapping("groups/{groupId}/types")
     public ResponseEntity<ApiSuccess> create(@PathVariable Integer groupId,
                                              @Valid @RequestBody HostelTypeDTO rqHostelType) throws EntityNotFoundException {
@@ -121,14 +182,14 @@ public class HostelTypeController {
 
     @PostMapping("types/{typeId}/facilities")
     public ResponseEntity<ApiSuccess> addFacility(@PathVariable Integer typeId,
-                                                  @Valid @RequestBody List<FacilityDTO> facilities){
+                                                  @Valid @RequestBody List<FacilityDTO> facilities) {
         HostelType typeModel = hostelTypeService.findById(typeId);
         Set<Facility> matchedFacilities = facilities
                 .stream()
                 .filter(f -> {
                     Facility existedFacility = facilityService.findById(f.getFacilityId());
                     f.setFacilityName(existedFacility.getFacilityName());
-                    if (existedFacility != null){
+                    if (existedFacility != null) {
                         return true;
                     }
                     return false;
@@ -148,7 +209,7 @@ public class HostelTypeController {
     @PutMapping("/groups/{groupId}/types/{typeId}")
     public ResponseEntity<ApiSuccess> update(@PathVariable Integer typeId,
                                              @PathVariable Integer groupId,
-                                             @Valid @RequestBody HostelTypeDTO rqHostelType)throws  EntityNotFoundException{
+                                             @Valid @RequestBody HostelTypeDTO rqHostelType) throws EntityNotFoundException {
         // not able to update info
         HostelGroup hostelGroup = hostelGroupService.findById(groupId);
         Category category = hostelTypeService.findById(typeId).getCategory();
@@ -169,7 +230,7 @@ public class HostelTypeController {
     public ResponseEntity<ApiSuccess> delete(@PathVariable Integer groupId,
                                              @PathVariable Integer typeId) throws EntityNotFoundException {
 
-        HostelType existedHostelType = hostelTypeService.findByIdAndHostelGroupId(typeId,groupId);
+        HostelType existedHostelType = hostelTypeService.findByIdAndHostelGroupId(typeId, groupId);
         hostelTypeService.deleteById(existedHostelType.getTypeId());
 
         return ResponseEntity

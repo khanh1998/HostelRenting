@@ -21,7 +21,7 @@ public class HostelGroupDTO implements Serializable {
 
     private String latitude;
 
-    private Collection<HostelTypeDTO> hostelTypes;
+//    private Collection<HostelTypeDTO> hostelTypes;
 
     private Collection<ServiceDTO> services;
 
