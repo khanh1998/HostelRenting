@@ -10,8 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -37,29 +39,12 @@ public class ProvinceController {
     }
 
     /**
-     * Create a Province
-     *
-     * @param reqDTO
-     * @return province object has been created
-     */
-    @PostMapping("/provinces")
-    public ResponseEntity<ApiSuccess> create(@Valid @RequestBody ProvinceDTO reqDTO) throws DuplicateKeyException {
-        Province rqModel = modelMapper.map(reqDTO, Province.class);
-        Province createdModel = provinceService.save(rqModel);
-        ProvinceDTO responseDTO = modelMapper.map(createdModel, ProvinceDTO.class);
-
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(new ApiSuccess(responseDTO, String.format(CREATE_SUCCESS, Province.class.getSimpleName())));
-    }
-
-    /**
      * Get list all of provinces
      *
      * @return List of all provinces
      */
     @GetMapping("/provinces")
-    public ResponseEntity<ApiSuccess> getAll(@RequestParam(required = false) String provinceName,
+    public ResponseEntity<ApiSuccess> getAll(@RequestParam(required = false, name = "name") String provinceName,
                                                       @RequestParam(required = false, defaultValue = DEFAULT_SIZE) Integer size,
                                                       @RequestParam(required = false, defaultValue = DEFAULT_PAGE) Integer page) {
         List<ProvinceDTO> results = provinceService.findAll()
@@ -68,7 +53,7 @@ public class ProvinceController {
                     if (provinceName != null)
                         return province.getProvinceName().toLowerCase().contains(provinceName.trim().toLowerCase());
                     return true;
-                }).skip(page * size)
+                }).skip(page-1 * size)
                 .limit(size)
                 .map(province -> modelMapper.map(province, ProvinceDTO.class))
                 .collect(Collectors.toList());
@@ -99,6 +84,23 @@ public class ProvinceController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(new ApiSuccess(resDTO, String.format(GET_SUCCESS, Province.class.getSimpleName())));
+    }
+
+    /**
+     * Create a Province
+     *
+     * @param reqDTO
+     * @return province object has been created
+     */
+    @PostMapping("/provinces")
+    public ResponseEntity<ApiSuccess> create(@Validated @RequestBody ProvinceDTO reqDTO) throws DuplicateKeyException, ConstraintViolationException {
+        Province rqModel = modelMapper.map(reqDTO, Province.class);
+        Province createdModel = provinceService.save(rqModel);
+        ProvinceDTO responseDTO = modelMapper.map(createdModel, ProvinceDTO.class);
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(new ApiSuccess(responseDTO, String.format(CREATE_SUCCESS, Province.class.getSimpleName())));
     }
 
     /**

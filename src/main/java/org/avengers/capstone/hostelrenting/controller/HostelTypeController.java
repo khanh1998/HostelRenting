@@ -118,6 +118,7 @@ public class HostelTypeController {
                 status(HttpStatus.CREATED).
                 body(new ApiSuccess(createdDTO, String.format(CREATE_SUCCESS, HostelType.class.getSimpleName())));
     }
+
     @PostMapping("types/{typeId}/facilities")
     public ResponseEntity<ApiSuccess> addFacility(@PathVariable Integer typeId,
                                                   @Valid @RequestBody List<FacilityDTO> facilities){

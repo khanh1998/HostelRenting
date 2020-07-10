@@ -1,9 +1,12 @@
 package org.avengers.capstone.hostelrenting.controller;
 
 import org.avengers.capstone.hostelrenting.dto.HostelGroupDTO;
+import org.avengers.capstone.hostelrenting.dto.ServiceDTO;
 import org.avengers.capstone.hostelrenting.dto.response.ApiSuccess;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
 import org.avengers.capstone.hostelrenting.model.HostelGroup;
+import org.avengers.capstone.hostelrenting.model.HostelType;
+import org.avengers.capstone.hostelrenting.model.Service;
 import org.avengers.capstone.hostelrenting.model.Vendor;
 import org.avengers.capstone.hostelrenting.service.*;
 import org.modelmapper.ModelMapper;
@@ -14,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.avengers.capstone.hostelrenting.Constant.Message.*;
@@ -25,7 +29,8 @@ public class HostelGroupController {
 
     private WardService wardService;
 
-    private VendorService vendorService;
+
+    private ServiceService serviceService;
 
     private ModelMapper modelMapper;
 
@@ -36,8 +41,8 @@ public class HostelGroupController {
     }
 
     @Autowired
-    public void setVendorService(VendorService vendorService) {
-        this.vendorService = vendorService;
+    public void setServiceService(ServiceService serviceService) {
+        this.serviceService = serviceService;
     }
 
     @Autowired
@@ -99,6 +104,33 @@ public class HostelGroupController {
         HostelGroupDTO createdDTO = modelMapper.map(hostelGroupModel, HostelGroupDTO.class);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(new ApiSuccess(createdDTO, String.format(CREATE_SUCCESS, "Hostel group")));
+    }
+
+    @PostMapping("/groups/{groupId}/services")
+    public ResponseEntity<ApiSuccess> addService(@PathVariable Integer groupId,
+                                                 @Valid @RequestBody List<ServiceDTO> services){
+        HostelGroup groupModel = hostelGroupService.findById(groupId);
+        Set<Service> matchedServices = services
+                .stream()
+                .filter(s ->{
+                    Service existedService = serviceService.findById(s.getServiceId());
+                    s.setServiceName(existedService.getServiceName());
+                    s.setServicePrice(existedService.getServicePrice());
+                    s.setUnit(existedService.getUnit());
+                    if (existedService != null)
+                        return true;
+                    return false;
+                })
+                .map(s -> modelMapper.map(s, Service.class))
+                .collect(Collectors.toSet());
+
+        groupModel.setServices(matchedServices);
+        hostelGroupService.save(groupModel);
+        HostelGroupDTO resDTO = modelMapper.map(groupModel, HostelGroupDTO.class);
+
+        return ResponseEntity.
+                status(HttpStatus.CREATED).
+                body(new ApiSuccess(resDTO, String.format(CREATE_SUCCESS, HostelGroup.class.getSimpleName())));
     }
 
     @PutMapping("/groups/{groupId}")

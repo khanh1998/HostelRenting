@@ -2,16 +2,14 @@ package org.avengers.capstone.hostelrenting.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 @Data
 @NoArgsConstructor
@@ -19,7 +17,7 @@ import java.util.List;
 @Builder
 
 @Entity
-@Table(name = "hostelgroup")
+@Table(name = "hostel_group")
 public class HostelGroup{
     @Id
     @Column(name = "group_id")
@@ -49,5 +47,13 @@ public class HostelGroup{
     @JoinColumn(name="vendor_id", nullable = false)
     private Vendor vendor;
 
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    @JoinTable(name = "group_service",
+            joinColumns = @JoinColumn(name = "group_id"),
+            inverseJoinColumns = @JoinColumn(name = "service_id")
+    )
+    private Set<Service> services;
 
 }

@@ -28,6 +28,6 @@ public class Constant {
     }
     public static class Pagination{
         public static final String DEFAULT_SIZE = "50";
-        public static final String DEFAULT_PAGE = "0";
+        public static final String DEFAULT_PAGE = "1";
     }
 }

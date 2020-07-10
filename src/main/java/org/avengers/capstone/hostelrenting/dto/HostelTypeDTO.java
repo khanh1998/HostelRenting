@@ -3,7 +3,7 @@ package org.avengers.capstone.hostelrenting.dto;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.util.List;
+import java.util.Collection;
 
 @Data
 public class HostelTypeDTO implements Serializable {
@@ -17,6 +17,6 @@ public class HostelTypeDTO implements Serializable {
     private int capacity;
     private boolean isDeleted;
 
-    List<HostelRoomDTO> hostelRooms;
-    List<FacilityDTO> facilities;
+    Collection<HostelRoomDTO> hostelRooms;
+    Collection<FacilityDTO> facilities;
 }

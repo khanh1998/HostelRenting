@@ -46,7 +46,7 @@ public class FacilityController {
      * @throws DuplicateKeyException
      */
     @PostMapping("/facilities")
-    public ResponseEntity<ApiSuccess> create(@Valid @RequestBody FacilityDTO reqDTO) throws DuplicateKeyException {
+    public ResponseEntity<ApiSuccess> create(@RequestBody @Valid FacilityDTO reqDTO) throws DuplicateKeyException {
         Facility rqModel = modelMapper.map(reqDTO, Facility.class);
         Facility createdModel = facilityService.save(rqModel);
         FacilityDTO responseDTO = modelMapper.map(createdModel, FacilityDTO.class);
@@ -117,7 +117,7 @@ public class FacilityController {
      */
     @PutMapping("/facilities/{facilityId}")
     public ResponseEntity<ApiSuccess> update(@PathVariable Integer facilityId,
-                                             @RequestBody FacilityDTO reqDTO) throws EntityNotFoundException {
+                                             @RequestBody @Valid FacilityDTO reqDTO) throws EntityNotFoundException {
         Facility rqModel = modelMapper.map(reqDTO, Facility.class);
         rqModel.setFacilityId(facilityId);
         FacilityDTO resDTO = modelMapper.map(facilityService.save(rqModel), FacilityDTO.class);

@@ -1,12 +1,9 @@
 package org.avengers.capstone.hostelrenting.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import org.avengers.capstone.hostelrenting.model.HostelType;
 
 import java.io.Serializable;
-import java.util.List;
+import java.util.Collection;
 
 @Data
 public class HostelGroupDTO implements Serializable {
@@ -24,8 +21,8 @@ public class HostelGroupDTO implements Serializable {
 
     private String latitude;
 
-    private List<HostelTypeDTO> hostelTypes;
+    private Collection<HostelTypeDTO> hostelTypes;
 
-
+    private Collection<ServiceDTO> services;
 
 }

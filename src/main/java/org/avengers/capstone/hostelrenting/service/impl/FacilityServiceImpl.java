@@ -55,6 +55,7 @@ public class FacilityServiceImpl implements FacilityService {
     public long getCount() {
         return facilityRepository.count();
     }
+
     private boolean isNotFound(Integer id) {
         Optional<Facility> facility = facilityRepository.findById(id);
         return facility.isEmpty();

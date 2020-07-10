@@ -36,9 +36,8 @@ public class HostelGroupServiceImpl implements HostelGroupService {
 
     @Override
     public HostelGroup save(HostelGroup hostelGroup) {
-        HostelGroup existedHostelGroup = hostelGroupRepository.findByLongitudeAndLatitude(hostelGroup.getLongitude(), hostelGroup.getLatitude());
-        if (existedHostelGroup != null){
-            throw new DuplicateKeyException(String.format("Hostel group location is dupplicated"));
+        if (hostelGroupRepository.equals(hostelGroup)){
+            throw new DuplicateKeyException(String.format("Hostel group is dupplicated"));
         }
         return hostelGroupRepository.save(hostelGroup);
     }
