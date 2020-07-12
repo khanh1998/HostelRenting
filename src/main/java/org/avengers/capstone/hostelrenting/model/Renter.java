@@ -4,8 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.avengers.capstone.hostelrenting.dto.ContractDTO;
-import org.avengers.capstone.hostelrenting.dto.HostelGroupDTO;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -17,11 +15,11 @@ import java.util.List;
 @AllArgsConstructor
 
 @Entity
-@Table(name = "vendor")
-public class Vendor {
+@Table(name = "renter")
+public class Renter {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int vendorId;
+    private int renterId;
 
     @Column(nullable = false, unique = true)
     @NotBlank(message = "Username is mandatory")
@@ -40,10 +38,6 @@ public class Vendor {
     @Column(nullable = false)
     private String avatar;
 
-
-//    @OneToMany(mappedBy = "contact", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-//    private List<Contract> contracts;
-
-    @OneToMany(mappedBy = "vendor", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<HostelGroup> hostelGroups;
+//    @OneToMany(mappedBy = "renter", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+//    private List<Conversation> conversations;
 }

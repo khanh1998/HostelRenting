@@ -1,6 +1,5 @@
 package org.avengers.capstone.hostelrenting.service;
 
-import org.avengers.capstone.hostelrenting.model.HostelType;
 import org.avengers.capstone.hostelrenting.model.Vendor;
 
 import java.util.List;

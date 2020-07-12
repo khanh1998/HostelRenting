@@ -9,6 +9,7 @@ import java.util.List;
 public class VendorDTO implements Serializable {
     private int vendorId;
     private String username;
+    private String password;
     private String email;
     private String phone;
     private String avatar;

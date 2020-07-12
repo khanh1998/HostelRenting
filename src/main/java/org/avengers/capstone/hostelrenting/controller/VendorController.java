@@ -61,7 +61,7 @@ public class VendorController {
                     if (username != null)
                         return vendor.getUsername().toLowerCase().contains(username.trim().toLowerCase());
                     return true;
-                }).skip(page * size)
+                }).skip((page-1) * size)
                 .limit(size)
                 .map(vendor -> modelMapper.map(vendor, VendorDTO.class))
                 .collect(Collectors.toList());
