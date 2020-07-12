@@ -1,13 +1,9 @@
 package org.avengers.capstone.hostelrenting.controller;
 
-import org.avengers.capstone.hostelrenting.dto.HostelGroupDTO;
-import org.avengers.capstone.hostelrenting.dto.ServiceDTO;
+import org.avengers.capstone.hostelrenting.dto.*;
 import org.avengers.capstone.hostelrenting.dto.response.ApiSuccess;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
-import org.avengers.capstone.hostelrenting.model.HostelGroup;
-import org.avengers.capstone.hostelrenting.model.HostelType;
-import org.avengers.capstone.hostelrenting.model.Service;
-import org.avengers.capstone.hostelrenting.model.Vendor;
+import org.avengers.capstone.hostelrenting.model.*;
 import org.avengers.capstone.hostelrenting.service.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,11 +25,17 @@ public class HostelGroupController {
 
     private WardService wardService;
 
+    private ScheduleService scheduleService;
 
     private ServiceService serviceService;
 
     private ModelMapper modelMapper;
 
+
+    @Autowired
+    public void setScheduleService(ScheduleService scheduleService) {
+        this.scheduleService = scheduleService;
+    }
 
     @Autowired
     public void setHostelGroupService(HostelGroupService hostelGroupService) {
@@ -95,6 +97,35 @@ public class HostelGroupController {
 
         return ResponseEntity.status(HttpStatus.OK).body((new ApiSuccess(responseHostelGroups, String.format(GET_SUCCESS, "Hostel group"))));
     }
+
+    @PostMapping("groups/{groupId}/schedules")
+    public ResponseEntity<ApiSuccess> addFacility(@PathVariable Integer groupId,
+                                                  @Valid @RequestBody List<ScheduleDTO> schedules) {
+        HostelGroup typeModel = hostelGroupService.findById(groupId);
+        Set<Schedule> matchedSchedules = schedules
+                .stream()
+                .filter(s -> {
+                    Schedule existedSchedule = scheduleService.findById(s.getScheduleId());
+                    s.setStartTime(existedSchedule.getStartTime());
+                    s.setEndTime(existedSchedule.getEndTime());
+                    s.setDayOfWeek(existedSchedule.getDayOfWeek());
+                    if (existedSchedule != null) {
+                        return true;
+                    }
+                    return false;
+                }).map(f -> modelMapper.map(f, Schedule.class))
+                .collect(Collectors.toSet());
+
+
+        typeModel.setSchedules(matchedSchedules);
+        hostelGroupService.save(typeModel);
+        HostelGroupDTO resDTO = modelMapper.map(typeModel, HostelGroupDTO.class);
+
+        return ResponseEntity.
+                status(HttpStatus.CREATED).
+                body(new ApiSuccess(resDTO, String.format(CREATE_SUCCESS, HostelGroup.class.getSimpleName())));
+    }
+
 
     @PostMapping("/groups")
     public ResponseEntity<ApiSuccess> createHostelGroup(@Valid @RequestBody HostelGroupDTO rqHostelGroup) throws EntityNotFoundException {

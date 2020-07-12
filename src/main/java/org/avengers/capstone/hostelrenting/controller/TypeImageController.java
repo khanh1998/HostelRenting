@@ -48,7 +48,7 @@ public class TypeImageController {
         this.hostelTypeService = hostelTypeService;
     }
 
-    @PostMapping("types/{typeId}/typeimages")
+    @PostMapping("types/{typeId}/images")
     public ResponseEntity<ApiSuccess> create(@PathVariable Integer typeId,
                                              @Valid @RequestBody TypeImageDTO reqDTO) throws DuplicateKeyException {
         HostelType typeModel = hostelTypeService.findById(typeId);
@@ -62,7 +62,7 @@ public class TypeImageController {
                 .body(new ApiSuccess(resDTO, String.format(CREATE_SUCCESS, TypeImage.class.getSimpleName())));
     }
 
-    @GetMapping("types/{typeId}/typeimages")
+    @GetMapping("types/{typeId}/images")
     public ResponseEntity<ApiSuccess> getAll(@PathVariable Integer typeId) throws EntityNotFoundException {
         HostelType typeModel = hostelTypeService.findById(typeId);
         typeModel.getTypeImages();
@@ -73,7 +73,7 @@ public class TypeImageController {
                 .body(new ApiSuccess(resDTO, String.format(GET_SUCCESS, TypeImage.class.getSimpleName())));
     }
 
-    @GetMapping("hosteltypes/{typeId]/typeimages/{typeImageId}")
+    @GetMapping("hosteltypes/{typeId]/images/{typeImageId}")
     public ResponseEntity<ApiSuccess> getById(@PathVariable Integer typeId,
                                               @PathVariable Integer typeImageId) throws EntityNotFoundException {
         HostelType typeModel = hostelTypeService.findById(typeId);
@@ -89,7 +89,7 @@ public class TypeImageController {
                 .body(new ApiSuccess(resDTO, String.format(GET_SUCCESS, TypeImage.class.getSimpleName())));
     }
 
-    @PutMapping("types/{typeId}/typeimages/{typeImageId}")
+    @PutMapping("types/{typeId}/images/{typeImageId}")
     public ResponseEntity<ApiSuccess> update(@PathVariable Integer typeId,
                                              @PathVariable Integer typeImageId,
                                              @Valid @RequestBody TypeImageDTO reqDTO) throws EntityNotFoundException {
@@ -108,7 +108,7 @@ public class TypeImageController {
                 .body(new ApiSuccess(updatedDTO, String.format(UPDATE_SUCCESS, TypeImage.class.getSimpleName())));
     }
 
-    @DeleteMapping("types/{typeId}/typeimages/{typeImageId}")
+    @DeleteMapping("types/{typeId}/images/{typeImageId}")
     public ResponseEntity<ApiSuccess> delete(@PathVariable Integer typeId,
                                              @PathVariable Integer typeImageId) throws EntityNotFoundException {
         TypeImage existedModel = typeImageService.findByIdAndHostelTypeId(typeImageId, typeId);

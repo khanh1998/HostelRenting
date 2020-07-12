@@ -56,4 +56,12 @@ public class HostelGroup{
     )
     private Set<Service> services;
 
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    @JoinTable(name = "group_schedule",
+            joinColumns = @JoinColumn(name = "group_id"),
+            inverseJoinColumns = @JoinColumn(name = "schedule_id")
+    )
+    private Set<Schedule> schedules;
 }

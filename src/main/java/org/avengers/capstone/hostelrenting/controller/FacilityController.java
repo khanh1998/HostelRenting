@@ -74,7 +74,7 @@ public class FacilityController {
                     if (facilityName != null)
                         return facility.getFacilityName().toLowerCase().contains(facilityName.trim().toLowerCase());
                     return true;
-                }).skip(page * size)
+                }).skip((page-1) * size)
                 .limit(size)
                 .map(facility -> modelMapper.map(facility, FacilityDTO.class))
                 .collect(Collectors.toList());
@@ -82,7 +82,7 @@ public class FacilityController {
         if (results.isEmpty()) {
             return ResponseEntity
                     .status(HttpStatus.NO_CONTENT)
-                    .body(new ApiSuccess("There is no province"));
+                    .body(new ApiSuccess("There is no facility"));
         }
 
         return ResponseEntity
