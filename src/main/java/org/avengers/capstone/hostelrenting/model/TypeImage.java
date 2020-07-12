@@ -1,5 +1,6 @@
 package org.avengers.capstone.hostelrenting.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -7,7 +8,6 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
-import java.util.List;
 
 @Data
 @Builder
@@ -23,7 +23,7 @@ public class TypeImage {
 
     @Column(nullable = false)
     @NotBlank(message = "Image resource is mandatory")
-    private String resource;
+    private String resourceUrl;
 
     @ManyToOne
     @JoinColumn(name = "type_id")

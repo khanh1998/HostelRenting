@@ -20,5 +20,5 @@ public class HostelTypeDTO implements Serializable {
 
     Collection<HostelRoomDTO> hostelRooms;
     Collection<FacilityDTO> facilities;
-    Collection<TypeImage> typeImages;
+    Collection<TypeImageDTO> typeImages;
 }
