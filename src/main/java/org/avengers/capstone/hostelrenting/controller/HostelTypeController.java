@@ -139,7 +139,7 @@ public class HostelTypeController {
                     return true;
                 }).filter(hostelType -> {
                     if (maxSuperficiality != null)
-                        return hostelType.getSuperficiality() <= minSuperficiality;
+                        return hostelType.getSuperficiality() <= maxSuperficiality;
                     return true;
                 }).filter(hostelType -> {
                     if (minCapacity != null)
