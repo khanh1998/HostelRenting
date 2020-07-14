@@ -92,6 +92,16 @@ public class BookingController {
                 .body(new ApiSuccess(resDTO, String.format(UPDATE_SUCCESS, Booking.class.getSimpleName())));
     }
 
+    @GetMapping("/bookings/{bookingId}")
+    public ResponseEntity<ApiSuccess> getBookingById(@PathVariable Integer bookingId) throws EntityNotFoundException{
+        Booking existedModel = bookingService.findById(bookingId);
+        BookingDTO resDTO = modelMapper.map(existedModel, BookingDTO.class);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(new ApiSuccess(resDTO, String.format(UPDATE_SUCCESS, Booking.class.getSimpleName())));
+    }
+
     @GetMapping("/renters/{renterId}/bookings")
     public ResponseEntity<ApiSuccess> getByRenterId(@PathVariable Integer renterId) throws EntityNotFoundException {
         Renter existedRenter = renterService.findById(renterId);
