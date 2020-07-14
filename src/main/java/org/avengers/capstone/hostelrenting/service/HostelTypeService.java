@@ -12,4 +12,5 @@ public interface HostelTypeService {
 
     HostelType findByIdAndHostelGroupId(Integer hostelTypeId, Integer hostelGroupId);
     List<HostelType> findByHostelGroupId(Integer hostelGroupId);
+    List<HostelType> findByAddress(String address);
 }

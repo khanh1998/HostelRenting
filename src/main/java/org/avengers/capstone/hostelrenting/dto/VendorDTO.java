@@ -16,6 +16,6 @@ public class VendorDTO implements Serializable {
 
     private List<ContractDTO> contracts;
     private List<HostelGroupDTO> hostelGroups;
-//    private List<DealDTO> deals;
-//    private List<BookingDTO> bookings;
+    private List<DealDTO> deals;
+    private List<BookingDTO> bookings;
 }

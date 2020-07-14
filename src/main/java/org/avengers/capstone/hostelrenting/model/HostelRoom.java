@@ -36,7 +36,6 @@ public class HostelRoom {
     @Column(name = "is_available", nullable = false, columnDefinition = "boolean default true")
     private boolean isAvailable;
 
-//    @JsonIgnore
-//    @OneToMany(mappedBy = "hostelRoom", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-//    private List<Contract> contracts;
+    @OneToMany(mappedBy = "hostelRoom", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Contract> contracts;
 }

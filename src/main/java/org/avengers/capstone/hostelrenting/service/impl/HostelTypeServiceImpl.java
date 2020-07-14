@@ -74,6 +74,17 @@ public class HostelTypeServiceImpl implements HostelTypeService {
         return hostelTypes;
     }
 
+    @Override
+    public List<HostelType> findByAddress(String address) {
+        if (address != null){
+            address = "%" + address + "%";
+            return hostelTypeRepository.findByAddress(address);
+        }
+        else{
+            return hostelTypeRepository.findAll();
+        }
+    }
+
     private boolean isNotFound(Integer id) {
         Optional<HostelType> hostelType = hostelTypeRepository.findById(id);
         return hostelType.isEmpty();

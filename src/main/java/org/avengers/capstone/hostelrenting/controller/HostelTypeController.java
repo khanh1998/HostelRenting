@@ -87,7 +87,7 @@ public class HostelTypeController {
                     return true;
                 }).filter(hostelType -> {
                     if (maxSuperficiality != null)
-                        return hostelType.getSuperficiality() <= minSuperficiality;
+                        return hostelType.getSuperficiality() <= maxSuperficiality;
                     return true;
                 }).filter(hostelType -> {
                     if (minCapacity != null)
@@ -109,6 +109,7 @@ public class HostelTypeController {
 
     @GetMapping("/types")
     public ResponseEntity<ApiSuccess> getHostelTypes(@RequestParam(required = false) Integer typeId,
+                                                     @RequestParam(required = false) String address,
                                                      @RequestParam(required = false) Long minPrice,
                                                      @RequestParam(required = false) Long maxPrice,
                                                      @RequestParam(required = false) Float minSuperficiality,
@@ -117,7 +118,8 @@ public class HostelTypeController {
                                                      @RequestParam(required = false) Integer maxCapacity,
                                                      @RequestParam(required = false, defaultValue = DEFAULT_SIZE) Integer size,
                                                      @RequestParam(required = false, defaultValue = DEFAULT_PAGE) Integer page) throws EntityNotFoundException {
-        Set<HostelTypeDTO> typeDTOs = hostelTypeService.findAll().stream()
+
+        Set<HostelTypeDTO> typeDTOs = hostelTypeService.findByAddress(address).stream()
                 .filter(hostelType -> {
                     if (typeId != null)
                         return hostelType.getTypeId() == typeId;

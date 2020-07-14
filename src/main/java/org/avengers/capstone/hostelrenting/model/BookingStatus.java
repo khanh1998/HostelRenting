@@ -15,16 +15,16 @@ import java.util.List;
 @AllArgsConstructor
 
 @Entity
-@Table(name = "type_status")
-public class TypeStatus {
+@Table(name = "booking_status")
+public class BookingStatus {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int statusId;
 
     @Column(nullable = false, unique = true)
-    @NotBlank(message = "Type status name is mandatory")
+    @NotBlank(message = "Booking status name is mandatory")
     private String statusName;
 
-    @OneToMany(mappedBy = "typeStatus", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<HostelType> hostelTypes;
+    @OneToMany(mappedBy = "status", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Booking> bookings;
 }

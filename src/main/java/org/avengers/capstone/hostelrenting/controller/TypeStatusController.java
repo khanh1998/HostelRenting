@@ -57,9 +57,9 @@ public class TypeStatusController {
                 .stream()
                 .filter(typeStatus -> {
                     if (typeStatus != null)
-                        return typeStatus.getTypeStatusName().toLowerCase().contains(typeStatusName.trim().toLowerCase());
+                        return typeStatus.getStatusName().toLowerCase().contains(typeStatusName.trim().toLowerCase());
                     return true;
-                }).skip(page * size)
+                }).skip((page-1) * size)
                 .limit(size)
                 .map(typeStatus -> modelMapper.map(typeStatus, TypeStatusDTO.class))
                 .collect(Collectors.toList());
@@ -89,7 +89,7 @@ public class TypeStatusController {
     public ResponseEntity<ApiSuccess> update(@PathVariable Integer typeStatusId,
                                              @RequestBody TypeStatusDTO rqDTO) throws EntityNotFoundException {
         TypeStatus rqModel = modelMapper.map(rqDTO, TypeStatus.class);
-        rqModel.setTypeStatusId(typeStatusId);
+        rqModel.setStatusId(typeStatusId);
         TypeStatusDTO resDTO = modelMapper.map(typeStatusService.save(rqModel), TypeStatusDTO.class);
 
         return ResponseEntity

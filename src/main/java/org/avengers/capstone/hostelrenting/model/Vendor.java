@@ -40,9 +40,14 @@ public class Vendor {
     @Column(nullable = false)
     private String avatar;
 
+    @OneToMany(mappedBy = "vendor", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Contract> contracts;
 
-//    @OneToMany(mappedBy = "contact", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-//    private List<Contract> contracts;
+    @OneToMany(mappedBy = "renter", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Deal> deals;
+
+    @OneToMany(mappedBy = "renter", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Booking> bookings;
 
     @OneToMany(mappedBy = "vendor", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<HostelGroup> hostelGroups;

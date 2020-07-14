@@ -24,8 +24,8 @@ public class TypeStatusServiceImpl implements TypeStatusService {
 
     @Override
     public TypeStatus save(TypeStatus typeStatus) {
-        if (typeStatusRepository.getByTypeStatusName(typeStatus.getTypeStatusName()) != null)
-            throw new DuplicateKeyException(String.format(Constant.Message.DUPLICATED_ERROR, "type_status_name", typeStatus.getTypeStatusName()));
+        if (typeStatusRepository.getByStatusName(typeStatus.getStatusName()) != null)
+            throw new DuplicateKeyException(String.format(Constant.Message.DUPLICATED_ERROR, "type_status_name", typeStatus.getStatusName()));
 
         return typeStatusRepository.save(typeStatus);
     }

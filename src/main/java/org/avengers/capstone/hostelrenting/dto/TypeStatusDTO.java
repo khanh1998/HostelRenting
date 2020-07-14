@@ -8,7 +8,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 public class TypeStatusDTO {
-    private int typeStatusId;
-    private String typeStatusName;
+    private int statusId;
+    private String statusName;
     private List<HostelTypeDTO> hostelTypes;
 }

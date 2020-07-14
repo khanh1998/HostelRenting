@@ -46,7 +46,7 @@ public class HostelType {
     private Category category;
 
     @ManyToOne
-    @JoinColumn(name = "type_status_id")
+    @JoinColumn(name = "status_id")
     private TypeStatus typeStatus;
 
     @OneToMany(mappedBy = "hostelType", fetch = FetchType.LAZY)
