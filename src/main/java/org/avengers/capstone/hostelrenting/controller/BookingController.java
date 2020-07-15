@@ -1,6 +1,7 @@
 package org.avengers.capstone.hostelrenting.controller;
 
 import org.avengers.capstone.hostelrenting.dto.BookingDTO;
+import org.avengers.capstone.hostelrenting.dto.BookingResponseDTO;
 import org.avengers.capstone.hostelrenting.dto.RenterDTO;
 import org.avengers.capstone.hostelrenting.dto.VendorDTO;
 import org.avengers.capstone.hostelrenting.dto.response.ApiSuccess;
@@ -65,6 +66,7 @@ public class BookingController {
         Vendor existedVendor = vendorService.findById(reqDTO.getVendorId());
         Renter existedRenter = renterService.findById(reqDTO.getRenterId());
         HostelType existedType = hostelTypeService.findById(reqDTO.getTypeId());
+        BookingStatus existedStatus = bookingStatusService.findById(reqDTO.getStatusId());
 
         Booking reqModel = modelMapper.map(reqDTO, Booking.class);
         reqModel.setHostelType(existedType);
@@ -72,7 +74,7 @@ public class BookingController {
         reqModel.setRenter(existedRenter);
 
         Booking resModel = bookingService.save((reqModel));
-        BookingDTO resDTO = modelMapper.map(resModel, BookingDTO.class);
+        BookingResponseDTO resDTO = modelMapper.map(resModel, BookingResponseDTO.class);
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -85,7 +87,7 @@ public class BookingController {
         Booking existedModel = bookingService.findById(bookingId);
         existedModel.setStatus(bookingStatusService.findById(reqDTO.getStatusId()));
         Booking resModel = bookingService.save(existedModel);
-        BookingDTO resDTO = modelMapper.map(resModel, BookingDTO.class);
+        BookingResponseDTO resDTO = modelMapper.map(resModel, BookingResponseDTO.class);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -95,32 +97,32 @@ public class BookingController {
     @GetMapping("/bookings/{bookingId}")
     public ResponseEntity<ApiSuccess> getBookingById(@PathVariable Integer bookingId) throws EntityNotFoundException{
         Booking existedModel = bookingService.findById(bookingId);
-        BookingDTO resDTO = modelMapper.map(existedModel, BookingDTO.class);
+        BookingResponseDTO resDTO = modelMapper.map(existedModel, BookingResponseDTO.class);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(new ApiSuccess(resDTO, String.format(UPDATE_SUCCESS, Booking.class.getSimpleName())));
     }
 
-    @GetMapping("/renters/{renterId}/bookings")
-    public ResponseEntity<ApiSuccess> getByRenterId(@PathVariable Integer renterId) throws EntityNotFoundException {
-        Renter existedRenter = renterService.findById(renterId);
-        existedRenter.getBookings();
-        RenterDTO resDTO = modelMapper.map(existedRenter, RenterDTO.class);
-
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(new ApiSuccess(resDTO, String.format(GET_SUCCESS, Renter.class.getSimpleName())));
-    }
-
-    @GetMapping("/vendors/{vendorId}/bookings")
-    public ResponseEntity<ApiSuccess> getByVendorId(@PathVariable Integer vendorId) throws EntityNotFoundException {
-        Vendor existedVendor = vendorService.findById(vendorId);
-        existedVendor.getBookings();
-        VendorDTO resDTO = modelMapper.map(existedVendor, VendorDTO.class);
-
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(new ApiSuccess(resDTO, String.format(GET_SUCCESS, Vendor.class.getSimpleName())));
-    }
+//    @GetMapping("/renters/{renterId}/bookings")
+//    public ResponseEntity<ApiSuccess> getByRenterId(@PathVariable Integer renterId) throws EntityNotFoundException {
+//        Renter existedRenter = renterService.findById(renterId);
+//        existedRenter.getBookings();
+//        RenterDTO resDTO = modelMapper.map(existedRenter, RenterDTO.class);
+//
+//        return ResponseEntity
+//                .status(HttpStatus.OK)
+//                .body(new ApiSuccess(resDTO, String.format(GET_SUCCESS, Renter.class.getSimpleName())));
+//    }
+//
+//    @GetMapping("/vendors/{vendorId}/bookings")
+//    public ResponseEntity<ApiSuccess> getByVendorId(@PathVariable Integer vendorId) throws EntityNotFoundException {
+//        Vendor existedVendor = vendorService.findById(vendorId);
+//        existedVendor.getBookings();
+//        VendorDTO resDTO = modelMapper.map(existedVendor, VendorDTO.class);
+//
+//        return ResponseEntity
+//                .status(HttpStatus.OK)
+//                .body(new ApiSuccess(resDTO, String.format(GET_SUCCESS, Vendor.class.getSimpleName())));
+//    }
 }
