@@ -114,15 +114,15 @@ public class BookingController {
 //                .status(HttpStatus.OK)
 //                .body(new ApiSuccess(resDTO, String.format(GET_SUCCESS, Renter.class.getSimpleName())));
 //    }
-//
-//    @GetMapping("/vendors/{vendorId}/bookings")
-//    public ResponseEntity<ApiSuccess> getByVendorId(@PathVariable Integer vendorId) throws EntityNotFoundException {
-//        Vendor existedVendor = vendorService.findById(vendorId);
-//        existedVendor.getBookings();
-//        VendorDTO resDTO = modelMapper.map(existedVendor, VendorDTO.class);
-//
-//        return ResponseEntity
-//                .status(HttpStatus.OK)
-//                .body(new ApiSuccess(resDTO, String.format(GET_SUCCESS, Vendor.class.getSimpleName())));
-//    }
+
+    @GetMapping("/vendors/{vendorId}/bookings")
+    public ResponseEntity<ApiSuccess> getByVendorId(@PathVariable Integer vendorId) throws EntityNotFoundException {
+        Vendor existedVendor = vendorService.findById(vendorId);
+        existedVendor.getBookings();
+        VendorDTO resDTO = modelMapper.map(existedVendor, VendorDTO.class);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(new ApiSuccess(resDTO, String.format(GET_SUCCESS, Vendor.class.getSimpleName())));
+    }
 }
