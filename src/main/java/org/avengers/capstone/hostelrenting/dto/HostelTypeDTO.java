@@ -12,13 +12,15 @@ public class HostelTypeDTO implements Serializable {
     private int groupId;
     private int categoryId;
     private int typeStatusId;
-    private String typeName;
-    private long price;
+    private String title;
+    private float price;
+    private String priceUnit;
     private float superficiality;
     private int capacity;
     private boolean isDeleted;
 
-    Collection<HostelRoomDTO> hostelRooms;
-    Collection<FacilityDTO> facilities;
-    Collection<TypeImageDTO> typeImages;
+    private Collection<HostelRoomDTO> hostelRooms;
+    private Collection<FacilityDTO> facilities;
+    private Collection<TypeImageDTO> typeImages;
+    private Collection<ServiceDTO> services;
 }

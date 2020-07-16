@@ -21,12 +21,15 @@ public class HostelType {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int typeId;
 
-    @Column(name = "type_name", nullable = false)
-    @NotBlank(message = "Type name is mandatory")
-    private String typeName;
+    @Column(name = "title", nullable = false)
+    @NotBlank(message = "Title is mandatory")
+    private String title;
 
     @Column(nullable = false)
-    private long price;
+    private Float price;
+
+    @Column(nullable = false)
+    private String priceUnit;
 
     @Column(nullable = false)
     private float superficiality;
@@ -63,5 +66,14 @@ public class HostelType {
             inverseJoinColumns = @JoinColumn(name = "facility_id")
     )
     private Set<Facility> facilities;
+
+        @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    @JoinTable(name = "type_service",
+            joinColumns = @JoinColumn(name = "type_id"),
+            inverseJoinColumns = @JoinColumn(name = "service_id")
+    )
+    private Set<Service> services;
 
 }

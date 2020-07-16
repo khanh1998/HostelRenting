@@ -27,14 +27,23 @@ public class HostelGroup{
     @Column(name = "group_name", nullable = false)
     private String groupName;
 
-    @Column(name = "detailed_address", nullable = false)
+    @Column(name = "building_no", nullable = false)
     private String detailedAddress;
+
+    @Column(name = "street", nullable = false)
+    private String street;
 
     @NotBlank(message = "Longitude is mandatory")
     private String longitude;
 
     @NotBlank(message = "Latitude is mandatory")
     private String latitude;
+
+    private String description;
+
+    private boolean ownerJoin;
+
+    private Float curfewTime;
 
     @OneToMany(mappedBy = "hostelGroup", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<HostelType> hostelTypes;
@@ -47,14 +56,14 @@ public class HostelGroup{
     @JoinColumn(name="vendor_id", nullable = false)
     private Vendor vendor;
 
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @EqualsAndHashCode.Exclude
-    @ToString.Exclude
-    @JoinTable(name = "group_service",
-            joinColumns = @JoinColumn(name = "group_id"),
-            inverseJoinColumns = @JoinColumn(name = "service_id")
-    )
-    private Set<Service> services;
+//    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+//    @EqualsAndHashCode.Exclude
+//    @ToString.Exclude
+//    @JoinTable(name = "group_service",
+//            joinColumns = @JoinColumn(name = "group_id"),
+//            inverseJoinColumns = @JoinColumn(name = "service_id")
+//    )
+//    private Set<Service> services;
 
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @EqualsAndHashCode.Exclude

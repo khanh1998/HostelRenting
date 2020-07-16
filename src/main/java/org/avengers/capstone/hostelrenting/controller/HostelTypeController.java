@@ -1,18 +1,13 @@
 package org.avengers.capstone.hostelrenting.controller;
 
-import org.avengers.capstone.hostelrenting.dto.FacilityDTO;
-import org.avengers.capstone.hostelrenting.dto.HostelGroupDTO;
-import org.avengers.capstone.hostelrenting.dto.HostelTypeDTO;
-import org.avengers.capstone.hostelrenting.dto.TypesAndGroupsDTO;
+import org.avengers.capstone.hostelrenting.dto.*;
 import org.avengers.capstone.hostelrenting.dto.response.ApiSuccess;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
-import org.avengers.capstone.hostelrenting.model.Category;
-import org.avengers.capstone.hostelrenting.model.Facility;
-import org.avengers.capstone.hostelrenting.model.HostelGroup;
-import org.avengers.capstone.hostelrenting.model.HostelType;
+import org.avengers.capstone.hostelrenting.model.*;
 import org.avengers.capstone.hostelrenting.service.FacilityService;
 import org.avengers.capstone.hostelrenting.service.HostelGroupService;
 import org.avengers.capstone.hostelrenting.service.HostelTypeService;
+import org.avengers.capstone.hostelrenting.service.ServiceService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -36,6 +31,12 @@ public class HostelTypeController {
     private ModelMapper modelMapper;
     private HostelGroupService hostelGroupService;
     private FacilityService facilityService;
+    private ServiceService serviceService;
+
+    @Autowired
+    public void setServiceService(ServiceService serviceService) {
+        this.serviceService = serviceService;
+    }
 
     @Autowired
     public void setFacilityService(FacilityService facilityService) {
@@ -206,6 +207,34 @@ public class HostelTypeController {
         return ResponseEntity.
                 status(HttpStatus.CREATED).
                 body(new ApiSuccess(resDTO, String.format(CREATE_SUCCESS, HostelType.class.getSimpleName())));
+    }
+
+    @PostMapping("/types/{typeId}/services")
+    public ResponseEntity<ApiSuccess> addService(@PathVariable Integer typeId,
+                                                 @Valid @RequestBody List<ServiceDTO> services){
+        HostelType typeModel = hostelTypeService.findById(typeId);
+        Set<Service> matchedServices = services
+                .stream()
+                .filter(s ->{
+                    Service existedService = serviceService.findById(s.getServiceId());
+                    s.setServiceName(existedService.getServiceName());
+                    s.setServicePrice(existedService.getServicePrice());
+                    s.setPriceUnit(existedService.getPriceUnit());
+                    s.setUserUnit(existedService.getUserUnit());
+                    if (existedService != null)
+                        return true;
+                    return false;
+                })
+                .map(s -> modelMapper.map(s, Service.class))
+                .collect(Collectors.toSet());
+
+        typeModel.setServices(matchedServices);
+        hostelTypeService.save(typeModel);
+        HostelTypeDTO resDTO = modelMapper.map(typeModel, HostelTypeDTO.class);
+
+        return ResponseEntity.
+                status(HttpStatus.CREATED).
+                body(new ApiSuccess(resDTO, String.format(CREATE_SUCCESS, HostelTypeDTO.class.getSimpleName())));
     }
 
     @PutMapping("/groups/{groupId}/types/{typeId}")

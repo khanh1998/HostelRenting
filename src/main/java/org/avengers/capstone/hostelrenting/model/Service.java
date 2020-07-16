@@ -19,20 +19,25 @@ public class Service {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int serviceId;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     @NotBlank(message = "Service name is mandatory")
     private String serviceName;
 
-    @Column(nullable = false)
-    @NotNull(message = "Service price is mandatory")
-    private Long servicePrice;
+//    @Column(nullable = false)
+//    @NotNull(message = "Service price is mandatory")
+    private Integer servicePrice;
 
-    @Column(nullable = false)
-    @NotBlank(message = "Service unit is mandatory")
-    private String unit;
+//    @Column(nullable = false)
+    private String priceUnit;
+
+//    @Column(nullable = false)
+    private String userUnit;
+
+//    @Column(nullable = false)
+    private String timeUnit;
 
     @ManyToMany(mappedBy = "services", fetch = FetchType.LAZY)
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
-    private Set<HostelGroup> hostelGroups;
+    private Set<HostelType> hostelTypes;
 }

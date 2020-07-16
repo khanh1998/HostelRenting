@@ -15,14 +15,25 @@ public class HostelGroupDTO implements Serializable {
 
     private String groupName;
 
-    private String detailedAddress;
+    private String buildingNo;
+
+    private String street;
 
     private String longitude;
 
     private String latitude;
 
+    /**
+     * curfewTime that limit the time to come back home
+     */
+    private Float curfewTime;
+
+    private String description;
+
+    private boolean ownerJoin;
+
 //    private Collection<HostelTypeDTO> hostelTypes;
 
-    private Collection<ServiceDTO> services;
+//    private Collection<ServiceDTO> services;
 
 }

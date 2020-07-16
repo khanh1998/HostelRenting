@@ -4,7 +4,10 @@ import org.avengers.capstone.hostelrenting.Constant;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
 import org.avengers.capstone.hostelrenting.model.HostelType;
 import org.avengers.capstone.hostelrenting.model.HostelType;
+import org.avengers.capstone.hostelrenting.repository.DistrictRepository;
 import org.avengers.capstone.hostelrenting.repository.HostelTypeRepository;
+import org.avengers.capstone.hostelrenting.repository.ProvinceRepository;
+import org.avengers.capstone.hostelrenting.repository.WardRepository;
 import org.avengers.capstone.hostelrenting.service.HostelTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
@@ -15,7 +18,7 @@ import java.util.Optional;
 
 @Service
 public class HostelTypeServiceImpl implements HostelTypeService {
-    HostelTypeRepository hostelTypeRepository;
+    private HostelTypeRepository hostelTypeRepository;
 
     @Autowired
     public void setHostelTypeRepository(HostelTypeRepository hostelTypeRepository) {
@@ -24,7 +27,7 @@ public class HostelTypeServiceImpl implements HostelTypeService {
 
     @Override
     public HostelType findById(Integer id) {
-        if (isNotFound(id)){
+        if (isNotFound(id)) {
             throw new EntityNotFoundException(HostelType.class, "id", id.toString());
         }
 
@@ -38,7 +41,7 @@ public class HostelTypeServiceImpl implements HostelTypeService {
 
     @Override
     public HostelType save(HostelType hostelType) {
-        if (hostelTypeRepository.equals(hostelType)){
+        if (hostelTypeRepository.equals(hostelType)) {
             throw new DuplicateKeyException(String.format(Constant.Message.DUPLICATED_ERROR, "all", "all"));
         }
 
@@ -47,7 +50,7 @@ public class HostelTypeServiceImpl implements HostelTypeService {
 
     @Override
     public void deleteById(Integer id) {
-        if (isNotFound(id)){
+        if (isNotFound(id)) {
             throw new EntityNotFoundException(HostelType.class, "id", id.toString());
         }
 
@@ -57,7 +60,7 @@ public class HostelTypeServiceImpl implements HostelTypeService {
     @Override
     public HostelType findByIdAndHostelGroupId(Integer hostelTypeId, Integer hostelGroupId) {
         Optional<HostelType> hostelType = hostelTypeRepository.findByTypeIdAndHostelGroup_GroupId(hostelTypeId, hostelGroupId);
-        if (hostelType.isEmpty()){
+        if (hostelType.isEmpty()) {
             throw new EntityNotFoundException(HostelType.class, "hostel_type_id", hostelTypeId.toString(), "hostel_group_id", hostelGroupId.toString());
         }
 
@@ -67,20 +70,19 @@ public class HostelTypeServiceImpl implements HostelTypeService {
     @Override
     public List<HostelType> findByHostelGroupId(Integer hostelGroupId) {
         List<HostelType> hostelTypes = hostelTypeRepository.findByHostelGroup_GroupId((hostelGroupId));
-        if (hostelTypes.isEmpty()){
+        if (hostelTypes.isEmpty()) {
             throw new EntityNotFoundException(HostelType.class, "hostel_group_id", hostelGroupId.toString());
         }
-
         return hostelTypes;
     }
 
     @Override
     public List<HostelType> findByAddress(String address) {
-        if (address != null){
-            address = "%" + address + "%";
-            return hostelTypeRepository.findByAddress(address);
-        }
-        else{
+        if (address != null) {
+            address = "%" + address.trim().toLowerCase() + "%";
+            List<HostelType> matchedTypes =  hostelTypeRepository.findByAddress(address);
+            return matchedTypes;
+        } else {
             return hostelTypeRepository.findAll();
         }
     }

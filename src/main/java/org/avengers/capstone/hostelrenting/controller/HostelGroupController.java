@@ -137,32 +137,33 @@ public class HostelGroupController {
         return ResponseEntity.status(HttpStatus.CREATED).body(new ApiSuccess(createdDTO, String.format(CREATE_SUCCESS, "Hostel group")));
     }
 
-    @PostMapping("/groups/{groupId}/services")
-    public ResponseEntity<ApiSuccess> addService(@PathVariable Integer groupId,
-                                                 @Valid @RequestBody List<ServiceDTO> services){
-        HostelGroup groupModel = hostelGroupService.findById(groupId);
-        Set<Service> matchedServices = services
-                .stream()
-                .filter(s ->{
-                    Service existedService = serviceService.findById(s.getServiceId());
-                    s.setServiceName(existedService.getServiceName());
-                    s.setServicePrice(existedService.getServicePrice());
-                    s.setUnit(existedService.getUnit());
-                    if (existedService != null)
-                        return true;
-                    return false;
-                })
-                .map(s -> modelMapper.map(s, Service.class))
-                .collect(Collectors.toSet());
-
-        groupModel.setServices(matchedServices);
-        hostelGroupService.save(groupModel);
-        HostelGroupDTO resDTO = modelMapper.map(groupModel, HostelGroupDTO.class);
-
-        return ResponseEntity.
-                status(HttpStatus.CREATED).
-                body(new ApiSuccess(resDTO, String.format(CREATE_SUCCESS, HostelGroup.class.getSimpleName())));
-    }
+//    @PostMapping("/groups/{groupId}/services")
+//    public ResponseEntity<ApiSuccess> addService(@PathVariable Integer groupId,
+//                                                 @Valid @RequestBody List<ServiceDTO> services){
+//        HostelGroup groupModel = hostelGroupService.findById(groupId);
+//        Set<Service> matchedServices = services
+//                .stream()
+//                .filter(s ->{
+//                    Service existedService = serviceService.findById(s.getServiceId());
+//                    s.setServiceName(existedService.getServiceName());
+//                    s.setServicePrice(existedService.getServicePrice());
+//                    s.setPriceUnit(existedService.getPriceUnit());
+//                    s.setUserUnit(existedService.getUserUnit());
+//                    if (existedService != null)
+//                        return true;
+//                    return false;
+//                })
+//                .map(s -> modelMapper.map(s, Service.class))
+//                .collect(Collectors.toSet());
+//
+////        groupModel.setServices(matchedServices);
+//        hostelGroupService.save(groupModel);
+//        HostelGroupDTO resDTO = modelMapper.map(groupModel, HostelGroupDTO.class);
+//
+//        return ResponseEntity.
+//                status(HttpStatus.CREATED).
+//                body(new ApiSuccess(resDTO, String.format(CREATE_SUCCESS, HostelGroup.class.getSimpleName())));
+//    }
 
     @PutMapping("/groups/{groupId}")
     public ResponseEntity<ApiSuccess> updateHostelGroup(@PathVariable Integer groupId,

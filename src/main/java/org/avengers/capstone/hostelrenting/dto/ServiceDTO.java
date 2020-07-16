@@ -6,6 +6,8 @@ import lombok.Data;
 public class ServiceDTO {
     private int serviceId;
     private String serviceName;
-    private long servicePrice;
-    private String unit;
+    private int servicePrice;
+    private String priceUnit;
+    private String userUnit;
+    private String timeUnit;
 }
