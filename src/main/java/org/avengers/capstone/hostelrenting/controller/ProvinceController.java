@@ -53,7 +53,7 @@ public class ProvinceController {
                     if (provinceName != null)
                         return province.getProvinceName().toLowerCase().contains(provinceName.trim().toLowerCase());
                     return true;
-                }).skip(page-1 * size)
+                }).skip((page-1) * size)
                 .limit(size)
                 .map(province -> modelMapper.map(province, ProvinceDTO.class))
                 .collect(Collectors.toList());

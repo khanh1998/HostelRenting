@@ -56,7 +56,7 @@ public class CategoryController {
                     if (categoryName!= null)
                         return category.getCategoryName().toLowerCase().contains(categoryName.trim().toLowerCase());
                     return true;
-                }).skip(page-1 * size)
+                }).skip((page-1) * size)
                 .limit(size)
                 .map(category -> modelMapper.map(category, CategoryDTO.class))
                 .collect(Collectors.toList());

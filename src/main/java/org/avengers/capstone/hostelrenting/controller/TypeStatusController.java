@@ -56,7 +56,7 @@ public class TypeStatusController {
         List<TypeStatusDTO> results = typeStatusService.findAll()
                 .stream()
                 .filter(typeStatus -> {
-                    if (typeStatus != null)
+                    if (typeStatusName != null)
                         return typeStatus.getStatusName().toLowerCase().contains(typeStatusName.trim().toLowerCase());
                     return true;
                 }).skip((page-1) * size)
