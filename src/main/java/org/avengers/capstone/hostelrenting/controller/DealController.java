@@ -1,8 +1,10 @@
 package org.avengers.capstone.hostelrenting.controller;
 
-import org.avengers.capstone.hostelrenting.dto.DealDTO;
+import org.avengers.capstone.hostelrenting.dto.booking.BookingDTOFull;
+import org.avengers.capstone.hostelrenting.dto.deal.DealDTOFull;
+import org.avengers.capstone.hostelrenting.dto.deal.DealDTOShort;
 import org.avengers.capstone.hostelrenting.dto.RenterDTO;
-import org.avengers.capstone.hostelrenting.dto.VendorDTO;
+import org.avengers.capstone.hostelrenting.dto.vendor.VendorDTO;
 import org.avengers.capstone.hostelrenting.dto.response.ApiSuccess;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
 import org.avengers.capstone.hostelrenting.model.*;
@@ -18,8 +20,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
-import static org.avengers.capstone.hostelrenting.Constant.Message.CREATE_SUCCESS;
-import static org.avengers.capstone.hostelrenting.Constant.Message.GET_SUCCESS;
+import static org.avengers.capstone.hostelrenting.Constant.Message.*;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -57,7 +58,7 @@ public class DealController {
     }
 
     @PostMapping("/deals")
-    public ResponseEntity<ApiSuccess> create(@RequestBody @Valid DealDTO reqDTO) {
+    public ResponseEntity<ApiSuccess> create(@RequestBody @Valid DealDTOShort reqDTO) {
         // check that vendor, renter and room is existed or not
         Vendor existedVendor = vendorService.findById(reqDTO.getVendorId());
         Renter existedRenter = renterService.findById(reqDTO.getRenterId());
@@ -69,7 +70,7 @@ public class DealController {
         reqModel.setHostelType(existedType);
 
         Deal resModel  = dealService.save(reqModel);
-        DealDTO resDTO = modelMapper.map(resModel, DealDTO.class);
+        DealDTOShort resDTO = modelMapper.map(resModel, DealDTOShort.class);
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -85,6 +86,16 @@ public class DealController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(new ApiSuccess(resDTO, String.format(GET_SUCCESS, Renter.class.getSimpleName())));
+    }
+
+    @GetMapping("/deals/{dealId}")
+    public ResponseEntity<ApiSuccess> getBookingById(@PathVariable Integer dealId) throws EntityNotFoundException{
+        Deal existedModel = dealService.findById(dealId);
+        DealDTOFull resDTO = modelMapper.map(existedModel, DealDTOFull.class);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(new ApiSuccess(resDTO, String.format(UPDATE_SUCCESS, Deal.class.getSimpleName())));
     }
 
     @GetMapping("/vendors/{vendorId}/deals")

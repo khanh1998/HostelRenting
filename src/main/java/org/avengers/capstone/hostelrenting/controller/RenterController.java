@@ -1,11 +1,9 @@
 package org.avengers.capstone.hostelrenting.controller;
 
 import org.avengers.capstone.hostelrenting.dto.RenterDTO;
-import org.avengers.capstone.hostelrenting.dto.VendorDTO;
 import org.avengers.capstone.hostelrenting.dto.response.ApiSuccess;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
 import org.avengers.capstone.hostelrenting.model.Renter;
-import org.avengers.capstone.hostelrenting.model.Vendor;
 import org.avengers.capstone.hostelrenting.service.RenterService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;

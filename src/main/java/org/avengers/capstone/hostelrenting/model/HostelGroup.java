@@ -28,7 +28,7 @@ public class HostelGroup{
     private String groupName;
 
     @Column(name = "building_no", nullable = false)
-    private String detailedAddress;
+    private String buildingNo;
 
     @Column(name = "street", nullable = false)
     private String street;

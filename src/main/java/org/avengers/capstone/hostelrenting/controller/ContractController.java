@@ -2,7 +2,7 @@ package org.avengers.capstone.hostelrenting.controller;
 
 import org.avengers.capstone.hostelrenting.dto.ContractDTO;
 import org.avengers.capstone.hostelrenting.dto.RenterDTO;
-import org.avengers.capstone.hostelrenting.dto.VendorDTO;
+import org.avengers.capstone.hostelrenting.dto.vendor.VendorDTO;
 import org.avengers.capstone.hostelrenting.dto.response.ApiSuccess;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
 import org.avengers.capstone.hostelrenting.model.*;

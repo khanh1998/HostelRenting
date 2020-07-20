@@ -17,6 +17,7 @@ public class HostelTypeDTO implements Serializable {
     private String priceUnit;
     private float superficiality;
     private int capacity;
+    private int view;
     private boolean isDeleted;
 
     private Collection<HostelRoomDTO> hostelRooms;

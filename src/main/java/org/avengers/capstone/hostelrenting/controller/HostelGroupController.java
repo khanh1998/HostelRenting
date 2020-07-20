@@ -70,7 +70,7 @@ public class HostelGroupController {
     public ResponseEntity<ApiSuccess> getHostelGroupByWardId(@RequestParam(required = false) Integer wardId,
                                                                  @RequestParam(required = false) Integer groupId,
                                                                  @RequestParam(required = false) String hostelGroupName,
-                                                                 @RequestParam(required = false) String detailedAddress,
+                                                                 @RequestParam(required = false) String streetName,
                                                                  @RequestParam(required = false, defaultValue = "50") Integer size,
                                                                  @RequestParam(required = false, defaultValue = "0") Integer page) throws EntityNotFoundException {
         List<HostelGroupDTO> responseHostelGroups = hostelGroupService.findAll().stream()
@@ -87,10 +87,10 @@ public class HostelGroupController {
                         return hostelGroup.getGroupName().contains(hostelGroupName);
                     return true;
                 }).filter(hostelGroup -> {
-                    if (detailedAddress != null)
-                        return hostelGroup.getDetailedAddress().trim().toLowerCase().contains(detailedAddress.toLowerCase().trim());
+                    if (streetName != null)
+                        return hostelGroup.getStreet().trim().toLowerCase().contains(streetName.toLowerCase().trim());
                     return true;
-                }).skip(page * size)
+                }).skip((page -1) * size)
                 .limit(size)
                 .map(hostelGroup -> modelMapper.map(hostelGroup, HostelGroupDTO.class))
                 .collect(Collectors.toList());

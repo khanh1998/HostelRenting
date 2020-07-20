@@ -1,9 +1,9 @@
-package org.avengers.capstone.hostelrenting.dto;
+package org.avengers.capstone.hostelrenting.dto.deal;
 
 import lombok.Data;
 
 @Data
-public class DealDTO {
+public class DealDTOShort {
     private int dealId;
     private int typeId;
     private int renterId;
