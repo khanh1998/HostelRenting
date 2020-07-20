@@ -17,18 +17,16 @@ import java.util.List;
 @AllArgsConstructor
 
 @Entity
-@Table(name = "vendor")
+//@Table(uniqueConstraints = {@UniqueConstraint(columnNames = "email")})
 public class Vendor {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int vendorId;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     @NotBlank(message = "Username is mandatory")
     private String username;
 
-    @Column(nullable = false)
-    @NotBlank(message = "Password is mandatory")
     private String password;
 
     @Column(unique = true)

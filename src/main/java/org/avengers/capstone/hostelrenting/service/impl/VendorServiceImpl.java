@@ -39,8 +39,10 @@ public class VendorServiceImpl implements VendorService {
 
     @Override
     public Vendor save(Vendor vendor) {
-        if (vendorRepository.equals(vendor)){
-            throw new DuplicateKeyException(String.format(Constant.Message.DUPLICATED_ERROR, "all", "all"));
+        if (vendorRepository.findByEmail(vendor.getEmail()).isPresent()){
+            throw new DuplicateKeyException(String.format(Constant.Message.DUPLICATED_ERROR, "email", vendor.getEmail()));
+        }else if (vendorRepository.findByPhone(vendor.getPhone()).isPresent()){
+            throw new DuplicateKeyException(String.format(Constant.Message.DUPLICATED_ERROR, "phone", vendor.getPhone()));
         }
 
         return vendorRepository.save(vendor);

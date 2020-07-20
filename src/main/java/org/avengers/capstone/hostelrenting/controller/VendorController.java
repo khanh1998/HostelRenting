@@ -11,6 +11,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -40,7 +41,7 @@ public class VendorController {
     }
 
     @PostMapping("/vendors")
-    public ResponseEntity<ApiSuccess> create(@Valid @RequestBody VendorDTO reqDTO) throws EntityNotFoundException {
+    public ResponseEntity<ApiSuccess> create(@Validated @RequestBody VendorDTO reqDTO) throws EntityNotFoundException {
         Vendor rqModel = modelMapper.map(reqDTO, Vendor.class);
         Vendor createdModel = vendorService.save(rqModel);
 
