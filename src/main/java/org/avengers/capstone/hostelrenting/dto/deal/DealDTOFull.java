@@ -11,5 +11,5 @@ public class DealDTOFull {
     private HostelTypeDTO type;
     private RenterDTO renter;
     private VendorDTO vendor;
-    private long offeredPrice;
+    private float offeredPrice;
 }

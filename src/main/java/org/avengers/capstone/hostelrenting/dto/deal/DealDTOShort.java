@@ -8,6 +8,6 @@ public class DealDTOShort {
     private int typeId;
     private int renterId;
     private int vendorId;
-    private long offeredPrice;
+    private float offeredPrice;
 //    private boolean isDeleted;
 }

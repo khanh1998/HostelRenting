@@ -20,6 +20,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import static org.avengers.capstone.hostelrenting.Constant.Message.*;
 
 @RestController
@@ -80,12 +83,14 @@ public class DealController {
     @GetMapping("/renters/{renterId}/deals")
     public ResponseEntity<ApiSuccess> getByRenterId(@PathVariable Integer renterId) throws EntityNotFoundException {
         Renter existedRenter = renterService.findById(renterId);
-        existedRenter.getDeals();
-        RenterDTO resDTO = modelMapper.map(existedRenter, RenterDTO.class);
+        List<DealDTOFull> resDeals = existedRenter.getDeals()
+                .stream()
+                .map(deal -> modelMapper.map(deal, DealDTOFull.class))
+                .collect(Collectors.toList());
 
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(new ApiSuccess(resDTO, String.format(GET_SUCCESS, Renter.class.getSimpleName())));
+                .body(new ApiSuccess(resDeals, String.format(GET_SUCCESS, Renter.class.getSimpleName())));
     }
 
     @GetMapping("/deals/{dealId}")
@@ -101,11 +106,13 @@ public class DealController {
     @GetMapping("/vendors/{vendorId}/deals")
     public ResponseEntity<ApiSuccess> getByVendorId(@PathVariable Integer vendorId) throws EntityNotFoundException {
         Vendor existedVendor = vendorService.findById(vendorId);
-        existedVendor.getDeals();
-        VendorDTO resDTO = modelMapper.map(existedVendor, VendorDTO.class);
+        List<DealDTOFull> resDeals = existedVendor.getDeals()
+                .stream()
+                .map(deal -> modelMapper.map(deal, DealDTOFull.class))
+                .collect(Collectors.toList());
 
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(new ApiSuccess(resDTO, String.format(GET_SUCCESS, Vendor.class.getSimpleName())));
+                .body(new ApiSuccess(resDeals, String.format(GET_SUCCESS, Vendor.class.getSimpleName())));
     }
 }

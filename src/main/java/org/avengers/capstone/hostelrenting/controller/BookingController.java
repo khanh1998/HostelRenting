@@ -16,6 +16,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import static org.avengers.capstone.hostelrenting.Constant.Message.*;
 
 @RestController
@@ -105,22 +108,26 @@ public class BookingController {
     @GetMapping("/renters/{renterId}/bookings")
     public ResponseEntity<ApiSuccess> getByRenterId(@PathVariable Integer renterId) throws EntityNotFoundException {
         Renter existedRenter = renterService.findById(renterId);
-        existedRenter.getBookings();
-        RenterDTO resDTO = modelMapper.map(existedRenter, RenterDTO.class);
+        List<BookingDTOFull> resBookings = existedRenter.getBookings()
+                .stream()
+                .map(booking -> modelMapper.map(booking, BookingDTOFull.class))
+                .collect(Collectors.toList());
 
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(new ApiSuccess(resDTO, String.format(GET_SUCCESS, Renter.class.getSimpleName())));
+                .body(new ApiSuccess(resBookings, String.format(GET_SUCCESS, Booking.class.getSimpleName())));
     }
 
     @GetMapping("/vendors/{vendorId}/bookings")
     public ResponseEntity<ApiSuccess> getByVendorId(@PathVariable Integer vendorId) throws EntityNotFoundException {
         Vendor existedVendor = vendorService.findById(vendorId);
-        existedVendor.getBookings();
-        VendorDTO resDTO = modelMapper.map(existedVendor, VendorDTO.class);
+        List<BookingDTOFull> resBookings = existedVendor.getBookings()
+                .stream()
+                .map(booking -> modelMapper.map(booking, BookingDTOFull.class))
+                .collect(Collectors.toList());
 
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(new ApiSuccess(resDTO, String.format(GET_SUCCESS, Vendor.class.getSimpleName())));
+                .body(new ApiSuccess(resBookings, String.format(GET_SUCCESS, Booking.class.getSimpleName())));
     }
 }
