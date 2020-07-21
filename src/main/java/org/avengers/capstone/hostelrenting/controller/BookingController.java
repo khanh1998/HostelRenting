@@ -1,5 +1,6 @@
 package org.avengers.capstone.hostelrenting.controller;
 
+import org.avengers.capstone.hostelrenting.dto.HostelGroupDTO;
 import org.avengers.capstone.hostelrenting.dto.RenterDTO;
 import org.avengers.capstone.hostelrenting.dto.booking.BookingDTOShort;
 import org.avengers.capstone.hostelrenting.dto.booking.BookingDTOFull;
@@ -30,6 +31,12 @@ public class BookingController {
     private VendorService vendorService;
     private HostelTypeService hostelTypeService;
     private BookingStatusService bookingStatusService;
+    private HostelGroupService hostelGroupService;
+
+    @Autowired
+    public void setHostelGroupService(HostelGroupService hostelGroupService) {
+        this.hostelGroupService = hostelGroupService;
+    }
 
     @Autowired
     public void setBookingStatusService(BookingStatusService bookingStatusService) {
@@ -67,6 +74,7 @@ public class BookingController {
         Vendor existedVendor = vendorService.findById(reqDTO.getVendorId());
         Renter existedRenter = renterService.findById(reqDTO.getRenterId());
         HostelType existedType = hostelTypeService.findById(reqDTO.getTypeId());
+        HostelGroup existedGroup = hostelGroupService.findById(existedType.getHostelGroup().getGroupId());
         BookingStatus existedStatus = bookingStatusService.findById(reqDTO.getStatusId());
 
         Booking reqModel = modelMapper.map(reqDTO, Booking.class);
@@ -99,6 +107,8 @@ public class BookingController {
     public ResponseEntity<ApiSuccess> getBookingById(@PathVariable Integer bookingId) throws EntityNotFoundException{
         Booking existedModel = bookingService.findById(bookingId);
         BookingDTOFull resDTO = modelMapper.map(existedModel, BookingDTOFull.class);
+        HostelGroup existedGroup = hostelGroupService.findById(resDTO.getType().getGroupId());
+        resDTO.setGroup(modelMapper.map(existedGroup, HostelGroupDTO.class));
 
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -113,6 +123,12 @@ public class BookingController {
                 .map(booking -> modelMapper.map(booking, BookingDTOFull.class))
                 .collect(Collectors.toList());
 
+        resBookings.stream().forEach(resDTO -> {
+            HostelGroup existedGroup = hostelGroupService.findById(resDTO.getType().getGroupId());
+            resDTO.setGroup(modelMapper.map(existedGroup, HostelGroupDTO.class));
+        });
+
+
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(new ApiSuccess(resBookings, String.format(GET_SUCCESS, Booking.class.getSimpleName())));
@@ -125,6 +141,11 @@ public class BookingController {
                 .stream()
                 .map(booking -> modelMapper.map(booking, BookingDTOFull.class))
                 .collect(Collectors.toList());
+
+        resBookings.stream().forEach(resDTO -> {
+            HostelGroup existedGroup = hostelGroupService.findById(resDTO.getType().getGroupId());
+            resDTO.setGroup(modelMapper.map(existedGroup, HostelGroupDTO.class));
+        });
 
         return ResponseEntity
                 .status(HttpStatus.OK)

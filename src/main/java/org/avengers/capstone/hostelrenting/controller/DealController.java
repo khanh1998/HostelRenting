@@ -1,5 +1,6 @@
 package org.avengers.capstone.hostelrenting.controller;
 
+import org.avengers.capstone.hostelrenting.dto.HostelGroupDTO;
 import org.avengers.capstone.hostelrenting.dto.booking.BookingDTOFull;
 import org.avengers.capstone.hostelrenting.dto.deal.DealDTOFull;
 import org.avengers.capstone.hostelrenting.dto.deal.DealDTOShort;
@@ -8,10 +9,7 @@ import org.avengers.capstone.hostelrenting.dto.vendor.VendorDTO;
 import org.avengers.capstone.hostelrenting.dto.response.ApiSuccess;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
 import org.avengers.capstone.hostelrenting.model.*;
-import org.avengers.capstone.hostelrenting.service.DealService;
-import org.avengers.capstone.hostelrenting.service.HostelTypeService;
-import org.avengers.capstone.hostelrenting.service.RenterService;
-import org.avengers.capstone.hostelrenting.service.VendorService;
+import org.avengers.capstone.hostelrenting.service.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -33,7 +31,14 @@ public class DealController {
     private RenterService renterService;
     private VendorService vendorService;
     private HostelTypeService hostelTypeService;
+    private HostelGroupService hostelGroupService;
     private DealService dealService;
+
+
+    @Autowired
+    public void setHostelGroupService(HostelGroupService hostelGroupService) {
+        this.hostelGroupService = hostelGroupService;
+    }
 
     @Autowired
     public void setDealService(DealService dealService) {
@@ -79,20 +84,7 @@ public class DealController {
                 .status(HttpStatus.CREATED)
                 .body(new ApiSuccess(resDTO, String.format(CREATE_SUCCESS, Deal.class.getSimpleName())));
     }
-
-    @GetMapping("/renters/{renterId}/deals")
-    public ResponseEntity<ApiSuccess> getByRenterId(@PathVariable Integer renterId) throws EntityNotFoundException {
-        Renter existedRenter = renterService.findById(renterId);
-        List<DealDTOFull> resDeals = existedRenter.getDeals()
-                .stream()
-                .map(deal -> modelMapper.map(deal, DealDTOFull.class))
-                .collect(Collectors.toList());
-
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(new ApiSuccess(resDeals, String.format(GET_SUCCESS, Renter.class.getSimpleName())));
-    }
-
+    
     @GetMapping("/deals/{dealId}")
     public ResponseEntity<ApiSuccess> getBookingById(@PathVariable Integer dealId) throws EntityNotFoundException{
         Deal existedModel = dealService.findById(dealId);
@@ -103,6 +95,24 @@ public class DealController {
                 .body(new ApiSuccess(resDTO, String.format(UPDATE_SUCCESS, Deal.class.getSimpleName())));
     }
 
+    @GetMapping("/renters/{renterId}/deals")
+    public ResponseEntity<ApiSuccess> getByRenterId(@PathVariable Integer renterId) throws EntityNotFoundException {
+        Renter existedRenter = renterService.findById(renterId);
+        List<DealDTOFull> resDeals = existedRenter.getDeals()
+                .stream()
+                .map(deal -> modelMapper.map(deal, DealDTOFull.class))
+                .collect(Collectors.toList());
+
+        resDeals.stream().forEach(resDTO -> {
+            HostelGroup existedGroup = hostelGroupService.findById(resDTO.getType().getGroupId());
+            resDTO.setGroup(modelMapper.map(existedGroup, HostelGroupDTO.class));
+        });
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(new ApiSuccess(resDeals, String.format(GET_SUCCESS, Renter.class.getSimpleName())));
+    }
+
     @GetMapping("/vendors/{vendorId}/deals")
     public ResponseEntity<ApiSuccess> getByVendorId(@PathVariable Integer vendorId) throws EntityNotFoundException {
         Vendor existedVendor = vendorService.findById(vendorId);
@@ -110,6 +120,11 @@ public class DealController {
                 .stream()
                 .map(deal -> modelMapper.map(deal, DealDTOFull.class))
                 .collect(Collectors.toList());
+
+        resDeals.stream().forEach(resDTO -> {
+            HostelGroup existedGroup = hostelGroupService.findById(resDTO.getType().getGroupId());
+            resDTO.setGroup(modelMapper.map(existedGroup, HostelGroupDTO.class));
+        });
 
         return ResponseEntity
                 .status(HttpStatus.OK)
