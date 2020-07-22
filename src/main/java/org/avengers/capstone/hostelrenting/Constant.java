@@ -30,4 +30,9 @@ public class Constant {
         public static final String DEFAULT_SIZE = "50";
         public static final String DEFAULT_PAGE = "1";
     }
+    public static class Kafka{
+        public static final String TOPIC = "kafka-chat";
+        public static final String GROUP_ID = "kafka-sandbox";
+        public static final String KAFKA_BROKER = "localhost:9092";
+    }
 }
