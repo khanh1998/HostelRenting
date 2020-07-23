@@ -1,6 +1,7 @@
 package org.avengers.capstone.hostelrenting.service;
 
 import org.avengers.capstone.hostelrenting.model.Renter;
+import org.avengers.capstone.hostelrenting.model.Vendor;
 
 import java.util.List;
 
@@ -9,4 +10,5 @@ public interface RenterService {
     List<Renter> findAll();
     Renter save(Renter renter);
     void deleteById(Integer id);
+    Renter checkLogin(String phone, String password);
 }

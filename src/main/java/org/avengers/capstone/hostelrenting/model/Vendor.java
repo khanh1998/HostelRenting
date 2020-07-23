@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.avengers.capstone.hostelrenting.dto.ContractDTO;
+import org.avengers.capstone.hostelrenting.dto.contract.ContractDTOFull;
 import org.avengers.capstone.hostelrenting.dto.HostelGroupDTO;
 
 import javax.persistence.*;

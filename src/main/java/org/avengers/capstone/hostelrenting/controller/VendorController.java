@@ -1,7 +1,8 @@
 package org.avengers.capstone.hostelrenting.controller;
 
-import org.avengers.capstone.hostelrenting.dto.vendor.VendorDTO;
+import org.avengers.capstone.hostelrenting.dto.vendor.VendorDTOFull;
 import org.avengers.capstone.hostelrenting.dto.response.ApiSuccess;
+import org.avengers.capstone.hostelrenting.dto.vendor.VendorDTOLogin;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
 import org.avengers.capstone.hostelrenting.model.Vendor;
 import org.avengers.capstone.hostelrenting.service.VendorService;
@@ -37,12 +38,27 @@ public class VendorController {
         this.vendorService = vendorService;
     }
 
-    @PostMapping("/vendors")
-    public ResponseEntity<ApiSuccess> create(@Valid @RequestBody VendorDTO reqDTO) throws EntityNotFoundException {
+    @PostMapping("/vendors/login")
+    public ResponseEntity<ApiSuccess> loginVendor(@Valid @RequestBody VendorDTOLogin reqDTO) {
+        Vendor matchedVendor = vendorService.checkLogin(reqDTO.getPhone(), reqDTO.getPassword());
+        if (matchedVendor != null) {
+            VendorDTOFull resDTO = modelMapper.map(matchedVendor, VendorDTOFull.class);
+            return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body(new ApiSuccess(resDTO, "Login successfully!"));
+        }else{
+            return ResponseEntity
+                    .status(HttpStatus.UNAUTHORIZED)
+                    .body(new ApiSuccess( "Invalid phone or password", false));
+        }
+    }
+
+    @PostMapping("/vendors/register")
+    public ResponseEntity<ApiSuccess> create(@Valid @RequestBody VendorDTOFull reqDTO) throws EntityNotFoundException {
         Vendor rqModel = modelMapper.map(reqDTO, Vendor.class);
         Vendor createdModel = vendorService.save(rqModel);
 
-        VendorDTO resDTO = modelMapper.map(createdModel, VendorDTO.class);
+        VendorDTOFull resDTO = modelMapper.map(createdModel, VendorDTOFull.class);
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -53,15 +69,15 @@ public class VendorController {
     public ResponseEntity<ApiSuccess> getAll(@RequestParam(required = false) String username,
                                              @RequestParam(required = false, defaultValue = DEFAULT_SIZE) Integer size,
                                              @RequestParam(required = false, defaultValue = DEFAULT_PAGE) Integer page) {
-        List<VendorDTO> results = vendorService.findAll()
+        List<VendorDTOFull> results = vendorService.findAll()
                 .stream()
                 .filter(vendor -> {
                     if (username != null)
                         return vendor.getUsername().toLowerCase().contains(username.trim().toLowerCase());
                     return true;
-                }).skip((page-1) * size)
+                }).skip((page - 1) * size)
                 .limit(size)
-                .map(vendor -> modelMapper.map(vendor, VendorDTO.class))
+                .map(vendor -> modelMapper.map(vendor, VendorDTOFull.class))
                 .collect(Collectors.toList());
 
         if (results.isEmpty()) {
@@ -78,7 +94,7 @@ public class VendorController {
     @GetMapping("/vendors/{vendorId}")
     public ResponseEntity<ApiSuccess> getById(@PathVariable Integer vendorId) throws EntityNotFoundException {
         Vendor existedModel = vendorService.findById(vendorId);
-        VendorDTO resDTO = modelMapper.map(existedModel, VendorDTO.class);
+        VendorDTOFull resDTO = modelMapper.map(existedModel, VendorDTOFull.class);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -87,13 +103,13 @@ public class VendorController {
 
     @PutMapping("/vendors/{vendorId}")
     public ResponseEntity<ApiSuccess> update(@PathVariable Integer vendorId,
-                                             @RequestBody VendorDTO reqDTO) throws EntityNotFoundException {
+                                             @RequestBody VendorDTOFull reqDTO) throws EntityNotFoundException {
         Vendor existedModel = vendorService.findById(vendorId);
 
         Vendor rqModel = modelMapper.map(reqDTO, Vendor.class);
         rqModel.setVendorId(vendorId);
         rqModel.setUsername(existedModel.getUsername());
-        VendorDTO resDTO = modelMapper.map(vendorService.save(rqModel), VendorDTO.class);
+        VendorDTOFull resDTO = modelMapper.map(vendorService.save(rqModel), VendorDTOFull.class);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -108,4 +124,5 @@ public class VendorController {
                 .status(HttpStatus.OK)
                 .body(new ApiSuccess("Deleted successfully"));
     }
+
 }

@@ -1,6 +1,7 @@
 package org.avengers.capstone.hostelrenting.dto;
 
 import lombok.Data;
+import org.avengers.capstone.hostelrenting.dto.contract.ContractDTOFull;
 
 import java.util.List;
 
@@ -10,5 +11,5 @@ public class HostelRoomDTO {
     private String roomName;
     private Integer typeId;
     private boolean isAvailable;
-    private List<ContractDTO> contracts;
+    private List<ContractDTOFull> contracts;
 }

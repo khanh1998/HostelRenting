@@ -25,7 +25,7 @@ public class VendorServiceImpl implements VendorService {
 
     @Override
     public Vendor findById(Integer id) {
-        if (isNotFound(id)){
+        if (isNotFound(id)) {
             throw new EntityNotFoundException(Vendor.class, "id", id.toString());
         }
 
@@ -39,7 +39,7 @@ public class VendorServiceImpl implements VendorService {
 
     @Override
     public Vendor save(Vendor vendor) {
-        if (vendorRepository.equals(vendor)){
+        if (vendorRepository.equals(vendor)) {
             throw new DuplicateKeyException(String.format(Constant.Message.DUPLICATED_ERROR, "all", "all"));
         }
 
@@ -48,11 +48,21 @@ public class VendorServiceImpl implements VendorService {
 
     @Override
     public void deleteById(Integer id) {
-        if (isNotFound(id)){
+        if (isNotFound(id)) {
             throw new EntityNotFoundException(Vendor.class, "id", id.toString());
         }
 
         vendorRepository.deleteById(id);
+    }
+
+    @Override
+    public Vendor checkLogin(String phone, String password) {
+        Optional<Vendor> existedVendor = vendorRepository.findByPhone(phone);
+        if (existedVendor.isPresent()) {
+            if (existedVendor.get().getPassword().equals(password))
+                return existedVendor.get();
+        }
+        return null;
     }
 
     private boolean isNotFound(Integer id) {
