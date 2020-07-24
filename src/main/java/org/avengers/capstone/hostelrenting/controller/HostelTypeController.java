@@ -61,8 +61,8 @@ public class HostelTypeController {
     @GetMapping("/groups/{groupId}/types")
     public ResponseEntity<ApiSuccess> getHostelTypeByHostelGroupId(@PathVariable Integer groupId,
                                                                    @RequestParam(required = false) Integer typeId,
-                                                                   @RequestParam(required = false) Long minPrice,
-                                                                   @RequestParam(required = false) Long maxPrice,
+                                                                   @RequestParam(required = false) Float minPrice,
+                                                                   @RequestParam(required = false) Float maxPrice,
                                                                    @RequestParam(required = false) Float minSuperficiality,
                                                                    @RequestParam(required = false) Float maxSuperficiality,
                                                                    @RequestParam(required = false) Integer minCapacity,
@@ -111,8 +111,8 @@ public class HostelTypeController {
     @GetMapping("/types")
     public ResponseEntity<ApiSuccess> getHostelTypes(@RequestParam(required = false) Integer typeId,
                                                      @RequestParam(required = false) String address,
-                                                     @RequestParam(required = false) Long minPrice,
-                                                     @RequestParam(required = false) Long maxPrice,
+                                                     @RequestParam(required = false) Float minPrice,
+                                                     @RequestParam(required = false) Float maxPrice,
                                                      @RequestParam(required = false) Float minSuperficiality,
                                                      @RequestParam(required = false) Float maxSuperficiality,
                                                      @RequestParam(required = false) Integer minCapacity,

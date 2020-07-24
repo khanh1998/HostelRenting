@@ -34,10 +34,10 @@ public class HostelGroup{
     private String street;
 
     @NotBlank(message = "Longitude is mandatory")
-    private String longitude;
+    private Float longitude;
 
     @NotBlank(message = "Latitude is mandatory")
-    private String latitude;
+    private Float latitude;
 
     private String description;
 
