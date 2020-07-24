@@ -1,11 +1,11 @@
-package org.avengers.capstone.hostelrenting.dto.vendor;
+package org.avengers.capstone.hostelrenting.dto;
 
 import lombok.Data;
 
 import javax.validation.constraints.NotEmpty;
 
 @Data
-public class VendorDTOLogin {
+public class UserDTOLogin {
     @NotEmpty(message = "Phone is mandatory")
     private String phone;
     @NotEmpty(message = "Password is mandatory")

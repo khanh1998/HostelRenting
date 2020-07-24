@@ -53,16 +53,6 @@ public class RenterServiceIml implements RenterService {
         renterRepository.deleteById(id);
     }
 
-    @Override
-    public Renter checkLogin(String phone, String password) {
-        Optional<Renter> existedRenter = renterRepository.findByPhone(phone);
-        if (existedRenter.isPresent()){
-            if (existedRenter.get().getPassword().equals(password))
-                return existedRenter.get();
-        }
-        return null;
-    }
-
     private boolean isNotFound(Integer id) {
         Optional<Renter> renter = renterRepository.findById(id);
         return renter.isEmpty();

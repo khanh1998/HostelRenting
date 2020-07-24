@@ -9,5 +9,4 @@ public interface VendorService {
     List<Vendor> findAll();
     Vendor save(Vendor vendor);
     void deleteById(Integer id);
-    Vendor checkLogin(String phone, String password);
 }

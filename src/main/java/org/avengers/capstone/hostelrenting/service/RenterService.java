@@ -10,5 +10,4 @@ public interface RenterService {
     List<Renter> findAll();
     Renter save(Renter renter);
     void deleteById(Integer id);
-    Renter checkLogin(String phone, String password);
 }

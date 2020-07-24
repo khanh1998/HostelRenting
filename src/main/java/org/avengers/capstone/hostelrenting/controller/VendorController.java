@@ -2,7 +2,6 @@ package org.avengers.capstone.hostelrenting.controller;
 
 import org.avengers.capstone.hostelrenting.dto.vendor.VendorDTOFull;
 import org.avengers.capstone.hostelrenting.dto.response.ApiSuccess;
-import org.avengers.capstone.hostelrenting.dto.vendor.VendorDTOLogin;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
 import org.avengers.capstone.hostelrenting.model.Vendor;
 import org.avengers.capstone.hostelrenting.service.VendorService;
@@ -36,21 +35,6 @@ public class VendorController {
     @Autowired
     public void setVendorService(VendorService vendorService) {
         this.vendorService = vendorService;
-    }
-
-    @PostMapping("/vendors/login")
-    public ResponseEntity<ApiSuccess> loginVendor(@Valid @RequestBody VendorDTOLogin reqDTO) {
-        Vendor matchedVendor = vendorService.checkLogin(reqDTO.getPhone(), reqDTO.getPassword());
-        if (matchedVendor != null) {
-            VendorDTOFull resDTO = modelMapper.map(matchedVendor, VendorDTOFull.class);
-            return ResponseEntity
-                    .status(HttpStatus.OK)
-                    .body(new ApiSuccess(resDTO, "Login successfully!"));
-        }else{
-            return ResponseEntity
-                    .status(HttpStatus.UNAUTHORIZED)
-                    .body(new ApiSuccess( "Invalid phone or password", false));
-        }
     }
 
     @PostMapping("/vendors/register")
@@ -107,7 +91,7 @@ public class VendorController {
         Vendor existedModel = vendorService.findById(vendorId);
 
         Vendor rqModel = modelMapper.map(reqDTO, Vendor.class);
-        rqModel.setVendorId(vendorId);
+        rqModel.setUserId(vendorId);
         rqModel.setUsername(existedModel.getUsername());
         VendorDTOFull resDTO = modelMapper.map(vendorService.save(rqModel), VendorDTOFull.class);
 

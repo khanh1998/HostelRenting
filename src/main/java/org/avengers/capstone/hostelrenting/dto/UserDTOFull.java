@@ -1,16 +1,15 @@
-package org.avengers.capstone.hostelrenting.dto.renter;
+package org.avengers.capstone.hostelrenting.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.ToString;
-import org.avengers.capstone.hostelrenting.dto.RoleDTO;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 
 @Data
-public class RenterDTOFull {
-    private int renterId;
+public class UserDTOFull {
+    private int userId;
     @NotEmpty(message = "Username is mandatory")
     private String username;
     @NotEmpty(message = "Password is mandatory")
@@ -23,10 +22,5 @@ public class RenterDTOFull {
     @NotEmpty(message = "Phone is mandatory")
     private String phone;
     private String avatar;
-
-//    private Collection<BookingDTO> bookings;
-//    private Collection<DealDTO> deals;
-//    private Collection<ContractDTO> contracts;
-//    private Collection<RequestDTO> requests;
-//    private Collection<ConversationDTO> conversations;
+    private RoleDTO role;
 }

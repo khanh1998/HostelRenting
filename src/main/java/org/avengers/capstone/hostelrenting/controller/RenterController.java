@@ -2,7 +2,6 @@ package org.avengers.capstone.hostelrenting.controller;
 
 import org.avengers.capstone.hostelrenting.dto.renter.RenterDTOFull;
 import org.avengers.capstone.hostelrenting.dto.response.ApiSuccess;
-import org.avengers.capstone.hostelrenting.dto.vendor.VendorDTOLogin;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
 import org.avengers.capstone.hostelrenting.model.Renter;
 import org.avengers.capstone.hostelrenting.service.RenterService;
@@ -38,20 +37,6 @@ public class RenterController {
         this.renterService = renterService;
     }
 
-    @PostMapping("/renters/login")
-    public ResponseEntity<ApiSuccess> loginRenter(@Valid @RequestBody VendorDTOLogin reqDTO){
-        Renter matchedRenter = renterService.checkLogin(reqDTO.getPhone(), reqDTO.getPassword());
-        if (matchedRenter != null){
-            RenterDTOFull resDTO = modelMapper.map(matchedRenter, RenterDTOFull.class);
-            return ResponseEntity
-                    .status(HttpStatus.OK)
-                    .body(new ApiSuccess(resDTO, "Login successfully!"));
-        }else{
-            return ResponseEntity
-                    .status(HttpStatus.UNAUTHORIZED)
-                    .body(new ApiSuccess( "Invalid phone or password", false));
-        }
-    }
 
     @PostMapping("/renters/register")
     public ResponseEntity<ApiSuccess> create(@Valid @RequestBody RenterDTOFull reqDTO){

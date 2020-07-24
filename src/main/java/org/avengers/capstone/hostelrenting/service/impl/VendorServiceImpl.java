@@ -55,16 +55,6 @@ public class VendorServiceImpl implements VendorService {
         vendorRepository.deleteById(id);
     }
 
-    @Override
-    public Vendor checkLogin(String phone, String password) {
-        Optional<Vendor> existedVendor = vendorRepository.findByPhone(phone);
-        if (existedVendor.isPresent()) {
-            if (existedVendor.get().getPassword().equals(password))
-                return existedVendor.get();
-        }
-        return null;
-    }
-
     private boolean isNotFound(Integer id) {
         Optional<Vendor> vendor = vendorRepository.findById(id);
         return vendor.isEmpty();
