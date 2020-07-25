@@ -99,10 +99,6 @@ public class HostelTypeController {
                 .map(hostelType -> modelMapper.map(hostelType, HostelTypeDTO.class))
                 .collect(Collectors.toList());
 
-        responseHostelTypes.forEach(hostelTypeDTO -> {
-            hostelTypeDTO.setHostelRooms(null);
-        });
-
         return ResponseEntity.
                 status(HttpStatus.OK).
                 body((new ApiSuccess(responseHostelTypes, String.format(GET_SUCCESS, HostelType.class.getSimpleName()))));
@@ -155,10 +151,6 @@ public class HostelTypeController {
                 .limit(size)
                 .map(hostelType -> modelMapper.map(hostelType, HostelTypeDTO.class))
                 .collect(Collectors.toSet());
-
-        typeDTOs.forEach(hostelTypeDTO -> {
-            hostelTypeDTO.setHostelRooms(null);
-        });
 
         Set<HostelGroupDTO> groupDTOs = typeDTOs.stream()
                 .map(typeDTO -> modelMapper.map(hostelGroupService.findById(typeDTO.getGroupId()), HostelGroupDTO.class))

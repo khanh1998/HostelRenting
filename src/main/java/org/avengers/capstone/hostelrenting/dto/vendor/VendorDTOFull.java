@@ -31,8 +31,8 @@ public class VendorDTOFull implements Serializable {
     private String phone;
     private String avatar;
 
-    private List<ContractDTOShort> contracts;
-    private List<HostelGroupDTO> hostelGroups;
-    private List<DealDTOShort> deals;
-    private List<BookingDTOShort> bookings;
+//    private List<ContractDTOShort> contracts;
+//    private List<HostelGroupDTO> hostelGroups;
+//    private List<DealDTOShort> deals;
+//    private List<BookingDTOShort> bookings;
 }

@@ -22,7 +22,6 @@ public class HostelTypeDTO implements Serializable {
     private int view;
     private boolean isDeleted;
 
-    private Collection<HostelRoomDTO> hostelRooms;
     private Collection<FacilityDTO> facilities;
     private Collection<TypeImageDTO> typeImages;
     private Collection<ServiceDTO> services;

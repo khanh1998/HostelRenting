@@ -198,14 +198,13 @@ public class HostelGroupController {
     @GetMapping("/vendors/{vendorId}/groups")
     public ResponseEntity<ApiSuccess> getGroupsByVendorId(@PathVariable Integer vendorId)throws  EntityNotFoundException{
         Vendor existedModel = vendorService.findById(vendorId);
-        existedModel.getHostelGroups();
-        existedModel.setBookings(null);
-        existedModel.setContracts(null);
-        existedModel.setDeals(null);
-        VendorDTOFull resDTO = modelMapper.map(existedModel, VendorDTOFull.class);
+        List<HostelGroupDTO> groups = existedModel.getHostelGroups()
+                .stream()
+                .map(hostelGroup -> modelMapper.map(hostelGroup, HostelGroupDTO.class))
+                .collect(Collectors.toList());
 
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(new ApiSuccess(resDTO, String.format(UPDATE_SUCCESS, "Hostel group")));
+                .body(new ApiSuccess(groups, String.format(UPDATE_SUCCESS, "Hostel group")));
     }
 }
