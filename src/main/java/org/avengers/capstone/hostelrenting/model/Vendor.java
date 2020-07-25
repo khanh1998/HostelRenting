@@ -11,12 +11,16 @@ import java.util.List;
 @Data
 //@Builder
 @EqualsAndHashCode(callSuper = false)
-@NoArgsConstructor
-@AllArgsConstructor
-
 @Entity
 @Table(name = "vendor")
 public class Vendor extends User{
+
+    public Vendor(){
+        contracts = null;
+        deals = null;
+        bookings = null;
+        hostelGroups = null;
+    }
 
     @OneToMany(mappedBy = "vendor", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Contract> contracts;

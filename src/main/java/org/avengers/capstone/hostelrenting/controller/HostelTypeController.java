@@ -44,14 +44,10 @@ public class HostelTypeController {
     }
 
     @Autowired
-    public void setHostelGroupService(HostelGroupService hostelGroupService) {
-        this.hostelGroupService = hostelGroupService;
-    }
+    public void setHostelGroupService(HostelGroupService hostelGroupService) { this.hostelGroupService = hostelGroupService; }
 
     @Autowired
-    public void setHostelTypeService(HostelTypeService hostelTypeService) {
-        this.hostelTypeService = hostelTypeService;
-    }
+    public void setHostelTypeService(HostelTypeService hostelTypeService) { this.hostelTypeService = hostelTypeService; }
 
     @Autowired
     public void setModelMapper(ModelMapper modelMapper) {
@@ -102,6 +98,10 @@ public class HostelTypeController {
                 .limit(size)
                 .map(hostelType -> modelMapper.map(hostelType, HostelTypeDTO.class))
                 .collect(Collectors.toList());
+
+        responseHostelTypes.forEach(hostelTypeDTO -> {
+            hostelTypeDTO.setHostelRooms(null);
+        });
 
         return ResponseEntity.
                 status(HttpStatus.OK).
@@ -156,9 +156,15 @@ public class HostelTypeController {
                 .map(hostelType -> modelMapper.map(hostelType, HostelTypeDTO.class))
                 .collect(Collectors.toSet());
 
+        typeDTOs.forEach(hostelTypeDTO -> {
+            hostelTypeDTO.setHostelRooms(null);
+        });
+
         Set<HostelGroupDTO> groupDTOs = typeDTOs.stream()
                 .map(typeDTO -> modelMapper.map(hostelGroupService.findById(typeDTO.getGroupId()), HostelGroupDTO.class))
                 .collect(Collectors.toSet());
+
+
 
         // DTO contains list of Types and groups follow that type
         TypesAndGroupsDTO resDTO = new TypesAndGroupsDTO(typeDTOs, groupDTOs);
@@ -174,6 +180,7 @@ public class HostelTypeController {
         HostelType model = modelMapper.map(rqHostelType, HostelType.class);
         HostelGroup hostelGroup = hostelGroupService.findById(groupId);
         model.setHostelGroup(hostelGroup);
+        model.setHostelRooms(null);
         //TODO: category and typestatus
         HostelType createdModel = hostelTypeService.save(model);
         HostelTypeDTO createdDTO = modelMapper.map(createdModel, HostelTypeDTO.class);
@@ -187,6 +194,7 @@ public class HostelTypeController {
     public ResponseEntity<ApiSuccess> addFacility(@PathVariable Integer typeId,
                                                   @Valid @RequestBody List<FacilityDTO> facilities) {
         HostelType typeModel = hostelTypeService.findById(typeId);
+        typeModel.setHostelRooms(null);
         Set<Facility> matchedFacilities = facilities
                 .stream()
                 .filter(f -> {
@@ -213,6 +221,7 @@ public class HostelTypeController {
     public ResponseEntity<ApiSuccess> addService(@PathVariable Integer typeId,
                                                  @Valid @RequestBody List<ServiceDTO> services){
         HostelType typeModel = hostelTypeService.findById(typeId);
+        typeModel.setHostelRooms(null);
         Set<Service> matchedServices = services
                 .stream()
                 .filter(s ->{
@@ -237,36 +246,26 @@ public class HostelTypeController {
                 body(new ApiSuccess(resDTO, String.format(CREATE_SUCCESS, HostelTypeDTO.class.getSimpleName())));
     }
 
-    @PutMapping("/groups/{groupId}/types/{typeId}")
-    public ResponseEntity<ApiSuccess> update(@PathVariable Integer typeId,
-                                             @PathVariable Integer groupId,
-                                             @Valid @RequestBody HostelTypeDTO rqHostelType) throws EntityNotFoundException {
-        // not able to update info
-        HostelGroup hostelGroup = hostelGroupService.findById(groupId);
-        Category category = hostelTypeService.findById(typeId).getCategory();
+//    @PutMapping("/groups/{groupId}/types/{typeId}")
+//    public ResponseEntity<ApiSuccess> update(@PathVariable Integer typeId,
+//                                             @PathVariable Integer groupId,
+//                                             @Valid @RequestBody HostelTypeDTO rqHostelType) throws EntityNotFoundException {
+//        // not able to update info
+//        HostelGroup hostelGroup = hostelGroupService.findById(groupId);
+//        Category category = hostelTypeService.findById(typeId).getCategory();
+//
+//        rqHostelType.setTypeId(typeId);
+//        HostelType rqModel = modelMapper.map(rqHostelType, HostelType.class);
+//        rqModel.setHostelGroup(hostelGroup);
+//        rqModel.setCategory(category);
+//        HostelType updatedModel = hostelTypeService.save(rqModel);
+//        HostelTypeDTO updatedDTO = modelMapper.map(updatedModel, HostelTypeDTO.class);
+//
+//        return ResponseEntity
+//                .status(HttpStatus.OK)
+//                .body(new ApiSuccess(updatedDTO, String.format(UPDATE_SUCCESS, HostelType.class.getSimpleName())));
+//    }
 
-        rqHostelType.setTypeId(typeId);
-        HostelType rqModel = modelMapper.map(rqHostelType, HostelType.class);
-        rqModel.setHostelGroup(hostelGroup);
-        rqModel.setCategory(category);
-        HostelType updatedModel = hostelTypeService.save(rqModel);
-        HostelTypeDTO updatedDTO = modelMapper.map(updatedModel, HostelTypeDTO.class);
 
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(new ApiSuccess(updatedDTO, String.format(UPDATE_SUCCESS, HostelType.class.getSimpleName())));
-    }
-
-    @DeleteMapping("groups/{groupId}/types/{typeId}")
-    public ResponseEntity<ApiSuccess> delete(@PathVariable Integer groupId,
-                                             @PathVariable Integer typeId) throws EntityNotFoundException {
-
-        HostelType existedHostelType = hostelTypeService.findByIdAndHostelGroupId(typeId, groupId);
-        hostelTypeService.deleteById(existedHostelType.getTypeId());
-
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(new ApiSuccess("Deleted successfully"));
-    }
 
 }

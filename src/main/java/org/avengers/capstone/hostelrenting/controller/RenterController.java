@@ -2,6 +2,7 @@ package org.avengers.capstone.hostelrenting.controller;
 
 import org.avengers.capstone.hostelrenting.dto.renter.RenterDTOFull;
 import org.avengers.capstone.hostelrenting.dto.response.ApiSuccess;
+import org.avengers.capstone.hostelrenting.dto.user.UserDTOFull;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
 import org.avengers.capstone.hostelrenting.model.Renter;
 import org.avengers.capstone.hostelrenting.service.RenterService;
@@ -37,49 +38,24 @@ public class RenterController {
         this.renterService = renterService;
     }
 
+//
+//    @PostMapping("/renters/register")
+//    public ResponseEntity<ApiSuccess> create(@Valid @RequestBody RenterDTOFull reqDTO){
+//        Renter reqModel = modelMapper.map(reqDTO, Renter.class);
+//        Renter createdModel = renterService.save(reqModel);
+//
+//        RenterDTOFull resDTO = modelMapper.map(createdModel, RenterDTOFull.class);
+//
+//        return ResponseEntity
+//                .status(HttpStatus.CREATED)
+//                .body(new ApiSuccess(resDTO, String.format(CREATE_SUCCESS, Renter.class.getSimpleName())));
+//    }
 
-    @PostMapping("/renters/register")
-    public ResponseEntity<ApiSuccess> create(@Valid @RequestBody RenterDTOFull reqDTO){
-        Renter reqModel = modelMapper.map(reqDTO, Renter.class);
-        Renter createdModel = renterService.save(reqModel);
-
-        RenterDTOFull resDTO = modelMapper.map(createdModel, RenterDTOFull.class);
-
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(new ApiSuccess(resDTO, String.format(CREATE_SUCCESS, Renter.class.getSimpleName())));
-    }
-
-    @GetMapping("/renters")
-    public ResponseEntity<ApiSuccess> getAll(@RequestParam(required = false) String username,
-                                             @RequestParam(required = false, defaultValue = DEFAULT_SIZE) Integer size,
-                                             @RequestParam(required = false, defaultValue = DEFAULT_PAGE) Integer page) {
-        List<RenterDTOFull> results = renterService.findAll()
-                .stream()
-                .filter(renter -> {
-                    if (username != null)
-                        return renter.getUsername().toLowerCase().contains(username.trim().toLowerCase());
-                    return true;
-                }).skip((page-1) * size)
-                .limit(size)
-                .map(renter -> modelMapper.map(renter, RenterDTOFull.class))
-                .collect(Collectors.toList());
-
-        if (results.isEmpty()) {
-            return ResponseEntity
-                    .status(HttpStatus.NO_CONTENT)
-                    .body(new ApiSuccess("There is no renter"));
-        }
-
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(new ApiSuccess(results, String.format(GET_SUCCESS, Renter.class.getSimpleName())));
-    }
 
     @GetMapping("/renters/{renterId}")
     public ResponseEntity<ApiSuccess> getById(@PathVariable Integer renterId) throws EntityNotFoundException {
         Renter existedModel = renterService.findById(renterId);
-        RenterDTOFull resDTO = modelMapper.map(existedModel, RenterDTOFull.class);
+        UserDTOFull resDTO = modelMapper.map(existedModel, UserDTOFull.class);
 
         return ResponseEntity
                 .status(HttpStatus.OK)

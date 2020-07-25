@@ -1,8 +1,9 @@
-package org.avengers.capstone.hostelrenting.dto;
+package org.avengers.capstone.hostelrenting.dto.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.ToString;
+import org.avengers.capstone.hostelrenting.dto.RoleDTO;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;

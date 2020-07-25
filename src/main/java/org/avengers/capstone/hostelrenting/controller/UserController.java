@@ -1,8 +1,7 @@
 package org.avengers.capstone.hostelrenting.controller;
 
-import org.avengers.capstone.hostelrenting.dto.UserDTOFull;
-import org.avengers.capstone.hostelrenting.dto.UserDTOLogin;
-import org.avengers.capstone.hostelrenting.dto.renter.RenterDTOFull;
+import org.avengers.capstone.hostelrenting.dto.user.UserDTOFull;
+import org.avengers.capstone.hostelrenting.dto.user.UserDTOLogin;
 import org.avengers.capstone.hostelrenting.dto.response.ApiSuccess;
 import org.avengers.capstone.hostelrenting.model.User;
 import org.avengers.capstone.hostelrenting.service.UserService;

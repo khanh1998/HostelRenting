@@ -103,16 +103,5 @@ public class HostelRoomController {
                 .body(new ApiSuccess(resDTO, String.format(UPDATE_SUCCESS, HostelRoom.class.getSimpleName())));
     }
 
-    @DeleteMapping("/types/{typeId}/rooms/{roomId}")
-    public ResponseEntity<ApiSuccess> deleteDistrict(@PathVariable Integer typeId,
-                                                     @PathVariable Integer roomId) throws EntityNotFoundException{
 
-
-        HostelRoom existedModel = hostelRoomService.findByIdAndHostelTypeId(roomId, typeId);
-        hostelRoomService.deleteById(existedModel.getRoomId());
-
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(new ApiSuccess("Deleted successfully"));
-    }
 }

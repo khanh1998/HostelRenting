@@ -1,7 +1,9 @@
 package org.avengers.capstone.hostelrenting.controller;
 
+import io.swagger.models.Response;
 import org.avengers.capstone.hostelrenting.dto.*;
 import org.avengers.capstone.hostelrenting.dto.response.ApiSuccess;
+import org.avengers.capstone.hostelrenting.dto.vendor.VendorDTOFull;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
 import org.avengers.capstone.hostelrenting.model.*;
 import org.avengers.capstone.hostelrenting.service.*;
@@ -27,10 +29,14 @@ public class HostelGroupController {
 
     private ScheduleService scheduleService;
 
-    private ServiceService serviceService;
+    private VendorService vendorService;
 
     private ModelMapper modelMapper;
 
+    @Autowired
+    public void setVendorService(VendorService vendorService) {
+        this.vendorService = vendorService;
+    }
 
     @Autowired
     public void setScheduleService(ScheduleService scheduleService) {
@@ -40,11 +46,6 @@ public class HostelGroupController {
     @Autowired
     public void setHostelGroupService(HostelGroupService hostelGroupService) {
         this.hostelGroupService = hostelGroupService;
-    }
-
-    @Autowired
-    public void setServiceService(ServiceService serviceService) {
-        this.serviceService = serviceService;
     }
 
     @Autowired
@@ -64,6 +65,19 @@ public class HostelGroupController {
         HostelGroupDTO responseDTO = modelMapper.map(hostelGroup, HostelGroupDTO.class);
 
         return ResponseEntity.status(HttpStatus.OK).body(new ApiSuccess(responseDTO, String.format(GET_SUCCESS, "Hostel Group")));
+    }
+
+    @GetMapping("/groups/surroundings")
+    public ResponseEntity<ApiSuccess> getSurroundings(@RequestParam Double latitude,
+                                                      @RequestParam Double longitude,
+                                                      @RequestParam(required = false, defaultValue = "50") Integer size,
+                                                      @RequestParam(required = false, defaultValue = "0") Integer page){
+        List<HostelGroup> resModels = hostelGroupService.getSurroundings(latitude, longitude);
+        List<HostelGroupDTO> resDTOs = resModels
+                .stream()
+                .map(hostelGroup -> modelMapper.map(hostelGroup, HostelGroupDTO.class))
+                .collect(Collectors.toList());
+        return ResponseEntity.status(HttpStatus.OK).body(new ApiSuccess(resDTOs, String.format(GET_SUCCESS, "Hostel Group")));
     }
 
     @GetMapping("/groups")
@@ -178,12 +192,20 @@ public class HostelGroupController {
         HostelGroup updatedModel = hostelGroupService.save(rqModel);
         HostelGroupDTO updatedDTO = modelMapper.map(updatedModel, HostelGroupDTO.class);
 
-        return ResponseEntity.status(HttpStatus.OK).body(new ApiSuccess((updatedDTO), String.format(UPDATE_SUCCESS, "Hostel group")));
+        return ResponseEntity.status(HttpStatus.OK).body(new ApiSuccess(updatedDTO, String.format(UPDATE_SUCCESS, "Hostel group")));
     }
 
-    @DeleteMapping("groups/{groupId}")
-    public ResponseEntity<ApiSuccess> deleteHostelGroup(@PathVariable Integer groupId) throws EntityNotFoundException {
-        hostelGroupService.deleteById(groupId);
-        return ResponseEntity.status(HttpStatus.OK).body(new ApiSuccess("Deleted successfully"));
+    @GetMapping("/vendors/{vendorId}/groups")
+    public ResponseEntity<ApiSuccess> getGroupsByVendorId(@PathVariable Integer vendorId)throws  EntityNotFoundException{
+        Vendor existedModel = vendorService.findById(vendorId);
+        existedModel.getHostelGroups();
+        existedModel.setBookings(null);
+        existedModel.setContracts(null);
+        existedModel.setDeals(null);
+        VendorDTOFull resDTO = modelMapper.map(existedModel, VendorDTOFull.class);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(new ApiSuccess(resDTO, String.format(UPDATE_SUCCESS, "Hostel group")));
     }
 }
