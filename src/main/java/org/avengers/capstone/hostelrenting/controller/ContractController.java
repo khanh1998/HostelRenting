@@ -1,15 +1,13 @@
 package org.avengers.capstone.hostelrenting.controller;
 
-import org.avengers.capstone.hostelrenting.dto.ContractDTO;
-import org.avengers.capstone.hostelrenting.dto.RenterDTO;
-import org.avengers.capstone.hostelrenting.dto.VendorDTO;
+import org.avengers.capstone.hostelrenting.dto.HostelGroupDTO;
+import org.avengers.capstone.hostelrenting.dto.HostelTypeDTO;
+import org.avengers.capstone.hostelrenting.dto.contract.ContractDTOFull;
+import org.avengers.capstone.hostelrenting.dto.contract.ContractDTOShort;
 import org.avengers.capstone.hostelrenting.dto.response.ApiSuccess;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
 import org.avengers.capstone.hostelrenting.model.*;
-import org.avengers.capstone.hostelrenting.service.ContractService;
-import org.avengers.capstone.hostelrenting.service.HostelRoomService;
-import org.avengers.capstone.hostelrenting.service.RenterService;
-import org.avengers.capstone.hostelrenting.service.VendorService;
+import org.avengers.capstone.hostelrenting.service.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,6 +15,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.avengers.capstone.hostelrenting.Constant.Message.CREATE_SUCCESS;
 import static org.avengers.capstone.hostelrenting.Constant.Message.GET_SUCCESS;
@@ -29,6 +29,18 @@ public class ContractController {
     private VendorService vendorService;
     private RenterService renterService;
     private HostelRoomService hostelRoomService;
+    private HostelTypeService hostelTypeService;
+    private HostelGroupService hostelGroupService;
+
+    @Autowired
+    public void setHostelTypeService(HostelTypeService hostelTypeService) {
+        this.hostelTypeService = hostelTypeService;
+    }
+
+    @Autowired
+    public void setHostelGroupService(HostelGroupService hostelGroupService) {
+        this.hostelGroupService = hostelGroupService;
+    }
 
     @Autowired
     public void setVendorService(VendorService vendorService) {
@@ -56,7 +68,7 @@ public class ContractController {
     }
 
     @PostMapping("/contracts")
-    public ResponseEntity<ApiSuccess> create (@RequestBody @Valid ContractDTO reqDTO){
+    public ResponseEntity<ApiSuccess> create (@RequestBody @Valid ContractDTOShort reqDTO){
         // check that vendor, renter, and room id is exist or not
         Vendor existedVendor = vendorService.findById(reqDTO.getVendorId());
         Renter existedRenter = renterService.findById(reqDTO.getRenterId());
@@ -68,7 +80,7 @@ public class ContractController {
         reqModel.setRenter(existedRenter);
 
         Contract resModel = contractService.save(reqModel);
-        ContractDTO resDTO = modelMapper.map(resModel, ContractDTO.class);
+        ContractDTOFull resDTO = modelMapper.map(resModel, ContractDTOFull.class);
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -78,22 +90,40 @@ public class ContractController {
     @GetMapping("/renters/{renterId}/contracts")
     public ResponseEntity<ApiSuccess> getByRenterId(@PathVariable Integer renterId) throws EntityNotFoundException {
         Renter existedRenter = renterService.findById(renterId);
-        existedRenter.getContracts();
-        RenterDTO resDTO = modelMapper.map(existedRenter, RenterDTO.class);
+        List<ContractDTOFull> resContracts = existedRenter.getContracts()
+                .stream()
+                .map(contract -> modelMapper.map(contract, ContractDTOFull.class))
+                .collect(Collectors.toList());
+
+        resContracts.stream().forEach(resDTO ->{
+            HostelType existedType = hostelTypeService.findById(resDTO.getRoom().getTypeId());
+            HostelGroup existedGroup = hostelGroupService.findById(existedType.getHostelGroup().getGroupId());
+            resDTO.setType(modelMapper.map(existedType, HostelTypeDTO.class));
+            resDTO.setGroup(modelMapper.map(existedGroup, HostelGroupDTO.class));
+        });
 
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(new ApiSuccess(resDTO, String.format(GET_SUCCESS, Renter.class.getSimpleName())));
+                .body(new ApiSuccess(resContracts, String.format(GET_SUCCESS, Renter.class.getSimpleName())));
     }
 
     @GetMapping("/vendors/{vendorId}/contracts")
     public ResponseEntity<ApiSuccess> getByVendorId(@PathVariable Integer vendorId) throws EntityNotFoundException {
         Vendor existedVendor = vendorService.findById(vendorId);
-        existedVendor.getContracts();
-        VendorDTO resDTO = modelMapper.map(existedVendor, VendorDTO.class);
+        List<ContractDTOFull> resContracts = existedVendor.getContracts()
+                .stream()
+                .map(contract -> modelMapper.map(contract, ContractDTOFull.class))
+                .collect(Collectors.toList());
+
+        resContracts.stream().forEach(resDTO ->{
+            HostelType existedType = hostelTypeService.findById(resDTO.getRoom().getTypeId());
+            HostelGroup existedGroup = hostelGroupService.findById(existedType.getHostelGroup().getGroupId());
+            resDTO.setType(modelMapper.map(existedType, HostelTypeDTO.class));
+            resDTO.setGroup(modelMapper.map(existedGroup, HostelGroupDTO.class));
+        });
 
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(new ApiSuccess(resDTO, String.format(GET_SUCCESS, Vendor.class.getSimpleName())));
+                .body(new ApiSuccess(resContracts, String.format(GET_SUCCESS, Vendor.class.getSimpleName())));
     }
 }

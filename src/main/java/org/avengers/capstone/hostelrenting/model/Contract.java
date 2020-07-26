@@ -34,9 +34,7 @@ public class Contract {
     @JoinColumn(name = "renter_id", nullable = false)
     private Renter renter;
 
-    @Column(nullable = false)
-    @NotBlank(message = "Start time is mandatory")
-    private String startTime;
+    private Long startTime;
 
     @Column(nullable = false)
     @NotNull(message = "Contract duration is mandatory")

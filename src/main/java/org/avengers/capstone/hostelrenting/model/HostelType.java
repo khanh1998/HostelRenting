@@ -37,6 +37,9 @@ public class HostelType {
     @Column(nullable = false)
     private int capacity;
 
+    @Column(nullable = false)
+    private int view;
+
     @Column(columnDefinition = "boolean default false")
     private boolean isDeleted;
 

@@ -1,5 +1,6 @@
 package org.avengers.capstone.hostelrenting.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 import org.avengers.capstone.hostelrenting.model.TypeImage;
 
@@ -7,6 +8,7 @@ import java.io.Serializable;
 import java.util.Collection;
 
 @Data
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class HostelTypeDTO implements Serializable {
     private int typeId;
     private int groupId;
@@ -17,9 +19,9 @@ public class HostelTypeDTO implements Serializable {
     private String priceUnit;
     private float superficiality;
     private int capacity;
+    private int view;
     private boolean isDeleted;
 
-    private Collection<HostelRoomDTO> hostelRooms;
     private Collection<FacilityDTO> facilities;
     private Collection<TypeImageDTO> typeImages;
     private Collection<ServiceDTO> services;

@@ -31,8 +31,9 @@ public class ApiSuccess<T> implements Serializable {
         this.message = message;
     }
 
-    public ApiSuccess(String message) {
+    public ApiSuccess(String message, boolean isSuccess) {
         this();
+        this.isSuccess = isSuccess;
         this.message = message;
     }
 }

@@ -11,5 +11,5 @@ public interface HostelGroupService {
     HostelGroup save(HostelGroup hostelGroup);
     void deleteById(Integer id);
 
-    List<HostelGroup> findByWardId(Integer wardId);
+    List<HostelGroup> getSurroundings(Double latitude, Double longitude);
 }

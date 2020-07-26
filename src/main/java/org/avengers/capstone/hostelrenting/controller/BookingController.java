@@ -1,9 +1,8 @@
 package org.avengers.capstone.hostelrenting.controller;
 
-import org.avengers.capstone.hostelrenting.dto.BookingDTO;
-import org.avengers.capstone.hostelrenting.dto.BookingResponseDTO;
-import org.avengers.capstone.hostelrenting.dto.RenterDTO;
-import org.avengers.capstone.hostelrenting.dto.VendorDTO;
+import org.avengers.capstone.hostelrenting.dto.HostelGroupDTO;
+import org.avengers.capstone.hostelrenting.dto.booking.BookingDTOShort;
+import org.avengers.capstone.hostelrenting.dto.booking.BookingDTOFull;
 import org.avengers.capstone.hostelrenting.dto.response.ApiSuccess;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
 import org.avengers.capstone.hostelrenting.model.*;
@@ -16,7 +15,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
-import java.awt.print.Book;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.avengers.capstone.hostelrenting.Constant.Message.*;
 
@@ -29,6 +29,12 @@ public class BookingController {
     private VendorService vendorService;
     private HostelTypeService hostelTypeService;
     private BookingStatusService bookingStatusService;
+    private HostelGroupService hostelGroupService;
+
+    @Autowired
+    public void setHostelGroupService(HostelGroupService hostelGroupService) {
+        this.hostelGroupService = hostelGroupService;
+    }
 
     @Autowired
     public void setBookingStatusService(BookingStatusService bookingStatusService) {
@@ -61,11 +67,12 @@ public class BookingController {
     }
 
     @PostMapping("/bookings")
-    public ResponseEntity<ApiSuccess> create(@RequestBody @Valid BookingDTO reqDTO){
+    public ResponseEntity<ApiSuccess> create(@RequestBody @Valid BookingDTOShort reqDTO){
         // check that vendor, renter and type id is existed or not
         Vendor existedVendor = vendorService.findById(reqDTO.getVendorId());
         Renter existedRenter = renterService.findById(reqDTO.getRenterId());
         HostelType existedType = hostelTypeService.findById(reqDTO.getTypeId());
+        HostelGroup existedGroup = hostelGroupService.findById(existedType.getHostelGroup().getGroupId());
         BookingStatus existedStatus = bookingStatusService.findById(reqDTO.getStatusId());
 
         Booking reqModel = modelMapper.map(reqDTO, Booking.class);
@@ -74,7 +81,7 @@ public class BookingController {
         reqModel.setRenter(existedRenter);
 
         Booking resModel = bookingService.save((reqModel));
-        BookingResponseDTO resDTO = modelMapper.map(resModel, BookingResponseDTO.class);
+        BookingDTOShort resDTO = modelMapper.map(resModel, BookingDTOShort.class);
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -83,11 +90,11 @@ public class BookingController {
 
     @PutMapping("/bookings/{bookingId}")
     public ResponseEntity<ApiSuccess> updateBooking(@PathVariable Integer bookingId,
-                                                    @Valid @RequestBody BookingDTO reqDTO){
+                                                    @Valid @RequestBody BookingDTOShort reqDTO){
         Booking existedModel = bookingService.findById(bookingId);
         existedModel.setStatus(bookingStatusService.findById(reqDTO.getStatusId()));
         Booking resModel = bookingService.save(existedModel);
-        BookingResponseDTO resDTO = modelMapper.map(resModel, BookingResponseDTO.class);
+        BookingDTOShort resDTO = modelMapper.map(resModel, BookingDTOShort.class);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -97,32 +104,49 @@ public class BookingController {
     @GetMapping("/bookings/{bookingId}")
     public ResponseEntity<ApiSuccess> getBookingById(@PathVariable Integer bookingId) throws EntityNotFoundException{
         Booking existedModel = bookingService.findById(bookingId);
-        BookingResponseDTO resDTO = modelMapper.map(existedModel, BookingResponseDTO.class);
+        BookingDTOFull resDTO = modelMapper.map(existedModel, BookingDTOFull.class);
+        HostelGroup existedGroup = hostelGroupService.findById(resDTO.getType().getGroupId());
+        resDTO.setGroup(modelMapper.map(existedGroup, HostelGroupDTO.class));
 
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(new ApiSuccess(resDTO, String.format(UPDATE_SUCCESS, Booking.class.getSimpleName())));
     }
 
-//    @GetMapping("/renters/{renterId}/bookings")
-//    public ResponseEntity<ApiSuccess> getByRenterId(@PathVariable Integer renterId) throws EntityNotFoundException {
-//        Renter existedRenter = renterService.findById(renterId);
-//        existedRenter.getBookings();
-//        RenterDTO resDTO = modelMapper.map(existedRenter, RenterDTO.class);
-//
-//        return ResponseEntity
-//                .status(HttpStatus.OK)
-//                .body(new ApiSuccess(resDTO, String.format(GET_SUCCESS, Renter.class.getSimpleName())));
-//    }
+    @GetMapping("/renters/{renterId}/bookings")
+    public ResponseEntity<ApiSuccess> getByRenterId(@PathVariable Integer renterId) throws EntityNotFoundException {
+        Renter existedRenter = renterService.findById(renterId);
+        List<BookingDTOFull> resBookings = existedRenter.getBookings()
+                .stream()
+                .map(booking -> modelMapper.map(booking, BookingDTOFull.class))
+                .collect(Collectors.toList());
+
+        resBookings.stream().forEach(resDTO -> {
+            HostelGroup existedGroup = hostelGroupService.findById(resDTO.getType().getGroupId());
+            resDTO.setGroup(modelMapper.map(existedGroup, HostelGroupDTO.class));
+        });
+
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(new ApiSuccess(resBookings, String.format(GET_SUCCESS, Booking.class.getSimpleName())));
+    }
 
     @GetMapping("/vendors/{vendorId}/bookings")
     public ResponseEntity<ApiSuccess> getByVendorId(@PathVariable Integer vendorId) throws EntityNotFoundException {
         Vendor existedVendor = vendorService.findById(vendorId);
-        existedVendor.getBookings();
-        VendorDTO resDTO = modelMapper.map(existedVendor, VendorDTO.class);
+        List<BookingDTOFull> resBookings = existedVendor.getBookings()
+                .stream()
+                .map(booking -> modelMapper.map(booking, BookingDTOFull.class))
+                .collect(Collectors.toList());
+
+        resBookings.stream().forEach(resDTO -> {
+            HostelGroup existedGroup = hostelGroupService.findById(resDTO.getType().getGroupId());
+            resDTO.setGroup(modelMapper.map(existedGroup, HostelGroupDTO.class));
+        });
 
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(new ApiSuccess(resDTO, String.format(GET_SUCCESS, Vendor.class.getSimpleName())));
+                .body(new ApiSuccess(resBookings, String.format(GET_SUCCESS, Booking.class.getSimpleName())));
     }
 }

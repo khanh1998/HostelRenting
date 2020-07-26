@@ -34,7 +34,7 @@ public class Deal {
 
     @Column
     @NotNull(message = "Offered price is mandatory")
-    private Long offeredPrice;
+    private Float offeredPrice;
 
     @Column(columnDefinition = "boolean default false")
     private boolean isDeleted;

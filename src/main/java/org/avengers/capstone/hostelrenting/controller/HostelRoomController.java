@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.avengers.capstone.hostelrenting.Constant.Message.*;
@@ -46,12 +47,14 @@ public class HostelRoomController {
     @GetMapping("/types/{typeId}/rooms")
     public ResponseEntity<ApiSuccess> getRoomsByTypeId(@PathVariable Integer typeId) throws EntityNotFoundException {
         HostelType existedType = hostelTypeService.findById(typeId);
-        existedType.getHostelRooms();
-        HostelTypeDTO resDTO = modelMapper.map(existedType, HostelTypeDTO.class);
+        List<HostelRoomDTO> rooms = existedType.getHostelRooms()
+                .stream()
+                .map(hostelRoom -> modelMapper.map(hostelRoom, HostelRoomDTO.class))
+                .collect(Collectors.toList());
 
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(new ApiSuccess(resDTO, String.format(GET_SUCCESS, HostelType.class.getSimpleName())));
+                .body(new ApiSuccess(rooms, String.format(GET_SUCCESS, HostelType.class.getSimpleName())));
     }
 
     @GetMapping("/types/{typeId}/rooms/{roomId}")
@@ -103,16 +106,5 @@ public class HostelRoomController {
                 .body(new ApiSuccess(resDTO, String.format(UPDATE_SUCCESS, HostelRoom.class.getSimpleName())));
     }
 
-    @DeleteMapping("/types/{typeId}/rooms/{roomId}")
-    public ResponseEntity<ApiSuccess> deleteDistrict(@PathVariable Integer typeId,
-                                                     @PathVariable Integer roomId) throws EntityNotFoundException{
 
-
-        HostelRoom existedModel = hostelRoomService.findByIdAndHostelTypeId(roomId, typeId);
-        hostelRoomService.deleteById(existedModel.getRoomId());
-
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(new ApiSuccess("Deleted successfully"));
-    }
 }

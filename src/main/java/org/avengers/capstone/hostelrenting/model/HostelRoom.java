@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.avengers.capstone.hostelrenting.dto.ContractDTO;
+import org.avengers.capstone.hostelrenting.dto.contract.ContractDTOFull;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -36,6 +36,6 @@ public class HostelRoom {
     @Column(name = "is_available", nullable = false, columnDefinition = "boolean default true")
     private boolean isAvailable;
 
-    @OneToMany(mappedBy = "hostelRoom", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Contract> contracts;
+//    @OneToMany(mappedBy = "hostelRoom", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+//    private List<Contract> contracts;
 }

@@ -1,10 +1,7 @@
 package org.avengers.capstone.hostelrenting.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.avengers.capstone.hostelrenting.dto.ContractDTO;
+import lombok.*;
+import org.avengers.capstone.hostelrenting.dto.contract.ContractDTOFull;
 import org.avengers.capstone.hostelrenting.dto.HostelGroupDTO;
 
 import javax.persistence.*;
@@ -12,33 +9,18 @@ import javax.validation.constraints.NotBlank;
 import java.util.List;
 
 @Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-
+//@Builder
+@EqualsAndHashCode(callSuper = false)
 @Entity
 @Table(name = "vendor")
-public class Vendor {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int vendorId;
+public class Vendor extends User{
 
-    @Column(nullable = false, unique = true)
-    @NotBlank(message = "Username is mandatory")
-    private String username;
-
-    @Column(nullable = false)
-    @NotBlank(message = "Password is mandatory")
-    private String password;
-
-    @Column(unique = true)
-    private String email;
-
-    @Column(unique = true)
-    private String phone;
-
-    @Column(nullable = false)
-    private String avatar;
+    public Vendor(){
+        contracts = null;
+        deals = null;
+        bookings = null;
+        hostelGroups = null;
+    }
 
     @OneToMany(mappedBy = "vendor", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Contract> contracts;

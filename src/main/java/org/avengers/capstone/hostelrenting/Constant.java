@@ -30,4 +30,14 @@ public class Constant {
         public static final String DEFAULT_SIZE = "50";
         public static final String DEFAULT_PAGE = "1";
     }
+
+    /**
+     * Radius of earth in miles
+     */
+    public static final double EARTH_RADIUS = 6371;
+
+    /**
+     * distance to collect hostelgroups
+     */
+    public static final double DEFAULT_RANGE = 5;
 }
