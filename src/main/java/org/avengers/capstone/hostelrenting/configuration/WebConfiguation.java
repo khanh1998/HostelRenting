@@ -12,7 +12,12 @@ public class WebConfiguation implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins("http://localhost:8080", "https://hostel-renting.netlify.app");
+                .allowedOrigins(
+                        "http://localhost:8080",
+                        "https://hostel-renting.netlify.app",
+                        "https://td-vue-firestore-chat.web.app",
+                        "http://127.0.0.1"
+                );
     }
 
     @Override
