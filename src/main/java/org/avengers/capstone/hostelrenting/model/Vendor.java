@@ -1,11 +1,8 @@
 package org.avengers.capstone.hostelrenting.model;
 
 import lombok.*;
-import org.avengers.capstone.hostelrenting.dto.contract.ContractDTOFull;
-import org.avengers.capstone.hostelrenting.dto.HostelGroupDTO;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
 import java.util.List;
 
 @Data
