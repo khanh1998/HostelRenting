@@ -59,25 +59,8 @@ public class HostelGroupServiceImpl implements HostelGroupService {
      * @return
      */
     @Override
-    public List<HostelGroup> getSurroundings(Double latitude, Double longitude) {
-        double long2 = Math.toRadians(longitude);
-        double lat2 = Math.toRadians(latitude);
-        List<HostelGroup> results = findAll()
-                .stream()
-                .filter(hostelGroup -> {
-                    double dlong = Math.toRadians(hostelGroup.getLongitude()) - long2;
-                    double dlat = Math.toRadians(hostelGroup.getLatitude()) - lat2;
-                    double a = Math.pow(Math.sin(dlat / 2), 2)
-                            + Math.cos(lat2) * Math.cos(hostelGroup.getLatitude())
-                            * Math.pow(Math.sin(dlong / 2), 2);
-                    double c = 2 * Math.asin(Math.sqrt(a));
-                    if (c * Constant.EARTH_RADIUS <= Constant.DEFAULT_RANGE){
-                        System.out.println("******************************" + c * Constant.EARTH_RADIUS);
-                        return true;
-                    }
-                    return false;
-                })
-                .collect(Collectors.toList());
+    public List<HostelGroup> getSurroundings(Double latitude, Double longitude, Double distance) {
+        List<HostelGroup> results = hostelGroupRepository.getSurroundings(latitude, longitude, distance);
         return results;
     }
 

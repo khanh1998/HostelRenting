@@ -23,5 +23,6 @@ public class UserDTOFull {
     @NotEmpty(message = "Phone is mandatory")
     private String phone;
     private String avatar;
+    private String firebaseToken;
     private RoleDTO role;
 }

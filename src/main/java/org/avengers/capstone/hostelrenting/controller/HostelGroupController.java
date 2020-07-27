@@ -70,9 +70,10 @@ public class HostelGroupController {
     @GetMapping("/groups/surroundings")
     public ResponseEntity<ApiSuccess> getSurroundings(@RequestParam Double latitude,
                                                       @RequestParam Double longitude,
+                                                      @RequestParam Double distance,
                                                       @RequestParam(required = false, defaultValue = "50") Integer size,
                                                       @RequestParam(required = false, defaultValue = "0") Integer page){
-        List<HostelGroup> resModels = hostelGroupService.getSurroundings(latitude, longitude);
+        List<HostelGroup> resModels = hostelGroupService.getSurroundings(latitude, longitude, distance);
         List<HostelGroupDTO> resDTOs = resModels
                 .stream()
                 .map(hostelGroup -> modelMapper.map(hostelGroup, HostelGroupDTO.class))

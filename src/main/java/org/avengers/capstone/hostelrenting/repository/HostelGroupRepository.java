@@ -10,5 +10,7 @@ import java.util.List;
 @Repository
 public interface HostelGroupRepository extends JpaRepository<HostelGroup, Integer> {
     List<HostelGroup> findByWard_WardId(Integer districtId);
-    HostelGroup findByLongitudeAndLatitude(String longitude, String latitude);
+
+    @Query(value = "SELECT * FROM get_surroundings(?1, ?2, ?3)", nativeQuery = true)
+    List<HostelGroup> getSurroundings(double latitude, double longitude, double distance);
 }

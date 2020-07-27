@@ -35,6 +35,9 @@ public class User {
     @Column(nullable = false)
     private String avatar;
 
+    @Column
+    private String firebaseToken;
+
     @ManyToOne
     @JoinColumn(name = "role_id", nullable = false)
     private Role role;

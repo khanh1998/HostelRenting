@@ -20,6 +20,7 @@ public class HostelTypeDTO implements Serializable {
     private float superficiality;
     private int capacity;
     private int view;
+    private float deposit;
     private boolean isDeleted;
 
     private Collection<FacilityDTO> facilities;

@@ -26,7 +26,7 @@ public class HostelType {
     private String title;
 
     @Column(nullable = false)
-    private Float price;
+    private float price;
 
     @Column(nullable = false)
     private String priceUnit;
@@ -39,6 +39,9 @@ public class HostelType {
 
     @Column(nullable = false)
     private int view;
+
+    @Column
+    private float deposit;
 
     @Column(columnDefinition = "boolean default false")
     private boolean isDeleted;
