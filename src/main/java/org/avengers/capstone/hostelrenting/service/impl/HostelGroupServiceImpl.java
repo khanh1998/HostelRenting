@@ -51,19 +51,6 @@ public class HostelGroupServiceImpl implements HostelGroupService {
         hostelGroupRepository.deleteById(id);
     }
 
-    /**
-     * Find all hostelgroups in 5km around
-     *
-     * @param longitude
-     * @param latitude
-     * @return
-     */
-    @Override
-    public List<HostelGroup> getSurroundings(Double latitude, Double longitude, Double distance) {
-        List<HostelGroup> results = hostelGroupRepository.getSurroundings(latitude, longitude, distance);
-        return results;
-    }
-
     private boolean isNotFound(Integer id) {
         Optional<HostelGroup> hostelGroup = hostelGroupRepository.findById(id);
         return hostelGroup.isEmpty();

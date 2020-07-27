@@ -67,19 +67,6 @@ public class HostelGroupController {
         return ResponseEntity.status(HttpStatus.OK).body(new ApiSuccess(responseDTO, String.format(GET_SUCCESS, "Hostel Group")));
     }
 
-    @GetMapping("/groups/surroundings")
-    public ResponseEntity<ApiSuccess> getSurroundings(@RequestParam Double latitude,
-                                                      @RequestParam Double longitude,
-                                                      @RequestParam Double distance,
-                                                      @RequestParam(required = false, defaultValue = "50") Integer size,
-                                                      @RequestParam(required = false, defaultValue = "0") Integer page){
-        List<HostelGroup> resModels = hostelGroupService.getSurroundings(latitude, longitude, distance);
-        List<HostelGroupDTO> resDTOs = resModels
-                .stream()
-                .map(hostelGroup -> modelMapper.map(hostelGroup, HostelGroupDTO.class))
-                .collect(Collectors.toList());
-        return ResponseEntity.status(HttpStatus.OK).body(new ApiSuccess(resDTOs, String.format(GET_SUCCESS, "Hostel Group")));
-    }
 
     @GetMapping("/groups")
     public ResponseEntity<ApiSuccess> getHostelGroupByWardId(@RequestParam(required = false) Integer wardId,
