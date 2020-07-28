@@ -3,6 +3,7 @@ package org.avengers.capstone.hostelrenting.controller;
 import org.avengers.capstone.hostelrenting.dto.renter.RenterDTOFull;
 import org.avengers.capstone.hostelrenting.dto.response.ApiSuccess;
 import org.avengers.capstone.hostelrenting.dto.user.UserDTOFull;
+import org.avengers.capstone.hostelrenting.dto.user.UserIdDTO;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
 import org.avengers.capstone.hostelrenting.model.Renter;
 import org.avengers.capstone.hostelrenting.service.RenterService;
@@ -62,5 +63,15 @@ public class RenterController {
                 .body(new ApiSuccess(resDTO, String.format(GET_SUCCESS, Renter.class.getSimpleName())));
     }
 
+    @GetMapping("/renters")
+    public ResponseEntity<ApiSuccess> getByIds(@RequestBody List<UserIdDTO> reqIds){
+        List<UserDTOFull> resDTOs = reqIds.stream()
+                .map(dto -> modelMapper.map(renterService.findById(dto.getUserId()), UserDTOFull.class))
+                .collect(Collectors.toList());
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(new ApiSuccess(resDTOs, String.format(GET_SUCCESS, Renter.class.getSimpleName())));
+    }
 
 }
