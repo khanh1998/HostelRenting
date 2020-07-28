@@ -47,14 +47,13 @@ public class ProvinceController {
     public ResponseEntity<ApiSuccess> getAll(@RequestParam(required = false, name = "name") String provinceName,
                                                       @RequestParam(required = false, defaultValue = DEFAULT_SIZE) Integer size,
                                                       @RequestParam(required = false, defaultValue = DEFAULT_PAGE) Integer page) {
-        List<ProvinceDTO> results = provinceService.findAll()
+        List<ProvinceDTO> results = provinceService.findAll(page, size)
                 .stream()
                 .filter(province -> {
                     if (provinceName != null)
                         return province.getProvinceName().toLowerCase().contains(provinceName.trim().toLowerCase());
                     return true;
-                }).skip((page-1) * size)
-                .limit(size)
+                })
                 .map(province -> modelMapper.map(province, ProvinceDTO.class))
                 .collect(Collectors.toList());
 
@@ -121,22 +120,6 @@ public class ProvinceController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(new ApiSuccess(resDTO, String.format(UPDATE_SUCCESS, Province.class.getSimpleName())));
-    }
-
-    /**
-     * Delete province object by id
-     *
-     * @param provinceId
-     * @return HttpStatus OK
-     * @throws EntityNotFoundException
-     */
-    @DeleteMapping("/provinces/{provinceId}")
-    public ResponseEntity<ApiSuccess> delete(@PathVariable Integer provinceId) throws EntityNotFoundException {
-        provinceService.deleteById(provinceId);
-
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(new ApiSuccess("Deleted successfully"));
     }
 
 }

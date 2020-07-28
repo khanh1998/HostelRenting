@@ -65,6 +65,8 @@ public class HostelTypeController {
                                                                    @RequestParam(required = false) Integer maxCapacity,
                                                                    @RequestParam(required = false, defaultValue = "50") Integer size,
                                                                    @RequestParam(required = false, defaultValue = "0") Integer page) throws EntityNotFoundException {
+
+        String message = "";
         List<HostelTypeDTO> responseHostelTypes = hostelTypeService.findByHostelGroupId(groupId).stream()
                 .filter(hostelType -> {
                     if (typeId != null)
@@ -99,9 +101,15 @@ public class HostelTypeController {
                 .map(hostelType -> modelMapper.map(hostelType, HostelTypeDTO.class))
                 .collect(Collectors.toList());
 
+        if (responseHostelTypes.isEmpty()){
+            message = "There is no hostel types found!";
+        }else{
+            message = "Hostel types has been retrieved successfully!";
+        }
+
         return ResponseEntity.
                 status(HttpStatus.OK).
-                body((new ApiSuccess(responseHostelTypes, String.format(GET_SUCCESS, HostelType.class.getSimpleName()))));
+                body((new ApiSuccess(responseHostelTypes, message)));
     }
 
     @GetMapping("/types")

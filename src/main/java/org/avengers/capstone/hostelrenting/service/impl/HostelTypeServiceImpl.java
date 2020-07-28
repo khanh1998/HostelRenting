@@ -3,11 +3,7 @@ package org.avengers.capstone.hostelrenting.service.impl;
 import org.avengers.capstone.hostelrenting.Constant;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
 import org.avengers.capstone.hostelrenting.model.HostelType;
-import org.avengers.capstone.hostelrenting.model.HostelType;
-import org.avengers.capstone.hostelrenting.repository.DistrictRepository;
 import org.avengers.capstone.hostelrenting.repository.HostelTypeRepository;
-import org.avengers.capstone.hostelrenting.repository.ProvinceRepository;
-import org.avengers.capstone.hostelrenting.repository.WardRepository;
 import org.avengers.capstone.hostelrenting.service.HostelTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
@@ -43,6 +39,7 @@ public class HostelTypeServiceImpl implements HostelTypeService {
 
     @Override
     public HostelType save(HostelType hostelType) {
+        //TODO: Check duplicate object
         if (hostelTypeRepository.equals(hostelType)) {
             throw new DuplicateKeyException(String.format(Constant.Message.DUPLICATED_ERROR, "all", "all"));
         }
@@ -59,22 +56,35 @@ public class HostelTypeServiceImpl implements HostelTypeService {
         hostelTypeRepository.deleteById(id);
     }
 
+    /**
+     * Get all Types by groupId
+     * @param hostelGroupId
+     * @return HostelTypes of given group, otherwise null
+     */
     @Override
     public List<HostelType> findByHostelGroupId(Integer hostelGroupId) {
         List<HostelType> hostelTypes = hostelTypeRepository.findByHostelGroup_GroupId((hostelGroupId));
-        if (hostelTypes.isEmpty()) {
-            throw new EntityNotFoundException(HostelType.class, "hostel_group_id", hostelGroupId.toString());
-        }
         return hostelTypes;
     }
 
+    /**
+     * Get list of HostelTypes around the given location and distance
+     *
+     * @param latitude
+     * @param longitude
+     * @param distance - radius of circle from the search point
+     * @param size
+     * @param page
+     * @return
+     */
     @Override
     public List<HostelType> findByLocationAndDistance(Double latitude, Double longitude, Double distance, int size, int page) {
-        Pageable pageable = PageRequest.of(page, size);
+        Pageable pageable = PageRequest.of(page-1, size);
         List<HostelType> types;
         if (latitude != null && longitude != null){
             types = hostelTypeRepository.getSurroundings(latitude, longitude, distance);
         }else{
+            //TODO: get all hotest hostel types
             types = findAll(pageable);
         }
         return types;
