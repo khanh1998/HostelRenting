@@ -73,13 +73,7 @@ public class HostelType {
     )
     private Set<Facility> facilities;
 
-        @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @EqualsAndHashCode.Exclude
-    @ToString.Exclude
-    @JoinTable(name = "type_service",
-            joinColumns = @JoinColumn(name = "type_id"),
-            inverseJoinColumns = @JoinColumn(name = "service_id")
-    )
-    private Set<Service> services;
+    @OneToMany(mappedBy = "hostelType", fetch = FetchType.LAZY)
+    private Collection<TypeService> typeServices;
 
 }

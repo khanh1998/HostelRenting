@@ -219,35 +219,6 @@ public class HostelTypeController {
                 body(new ApiSuccess(resDTO, String.format(CREATE_SUCCESS, HostelType.class.getSimpleName())));
     }
 
-    @PostMapping("/types/{typeId}/services")
-    public ResponseEntity<ApiSuccess> addService(@PathVariable Integer typeId,
-                                                 @Valid @RequestBody List<ServiceDTO> services){
-        HostelType typeModel = hostelTypeService.findById(typeId);
-        typeModel.setHostelRooms(null);
-        Set<Service> matchedServices = services
-                .stream()
-                .filter(s ->{
-                    Service existedService = serviceService.findById(s.getServiceId());
-                    s.setServiceName(existedService.getServiceName());
-                    s.setServicePrice(existedService.getServicePrice());
-                    s.setPriceUnit(existedService.getPriceUnit());
-                    s.setUserUnit(existedService.getUserUnit());
-                    if (existedService != null)
-                        return true;
-                    return false;
-                })
-                .map(s -> modelMapper.map(s, Service.class))
-                .collect(Collectors.toSet());
-
-        typeModel.setServices(matchedServices);
-        hostelTypeService.save(typeModel);
-        HostelTypeDTO resDTO = modelMapper.map(typeModel, HostelTypeDTO.class);
-
-        return ResponseEntity.
-                status(HttpStatus.CREATED).
-                body(new ApiSuccess(resDTO, String.format(CREATE_SUCCESS, HostelTypeDTO.class.getSimpleName())));
-    }
-
 //    @PutMapping("/groups/{groupId}/types/{typeId}")
 //    public ResponseEntity<ApiSuccess> update(@PathVariable Integer typeId,
 //                                             @PathVariable Integer groupId,

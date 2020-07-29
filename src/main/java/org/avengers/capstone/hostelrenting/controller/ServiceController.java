@@ -55,45 +55,45 @@ public class ServiceController {
                 .body(new ApiSuccess(responseDTO, String.format(CREATE_SUCCESS, Service.class.getSimpleName())));
     }
 
-    /**
-     * Filter and get list all of provinces
-     *
-     * @param serviceName
-     * @param size
-     * @param page
-     * @return
-     */
-    @GetMapping("/services")
-    public ResponseEntity<ApiSuccess> getAllProvinces(@RequestParam(required = false) String serviceName,
-                                                      @RequestParam(required = false) Integer servicePrice,
-                                                      @RequestParam(required = false, defaultValue = DEFAULT_SIZE) Integer size,
-                                                      @RequestParam(required = false, defaultValue = DEFAULT_PAGE) Integer page) {
-        List<ServiceDTO> responses = serviceService.findAll()
-                .stream()
-                .filter(service -> {
-                    if (serviceName != null)
-                        return service.getServiceName().toLowerCase().contains(serviceName.trim().toLowerCase());
-                    return true;
-                }).filter(service -> {
-                    if (servicePrice != null)
-                        return service.getServicePrice() == servicePrice;
-                    return true;
-                })
-                .skip((page-1) * size)
-                .limit(size)
-                .map(service -> modelMapper.map(service, ServiceDTO.class))
-                .collect(Collectors.toList());
-
-        if (responses.isEmpty()) {
-            return ResponseEntity
-                    .status(HttpStatus.OK)
-                    .body(new ApiSuccess("There is no services"));
-        }
-
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(new ApiSuccess(responses, String.format(GET_SUCCESS, Service.class.getSimpleName())));
-    }
+//    /**
+//     * Filter and get list all of provinces
+//     *
+//     * @param serviceName
+//     * @param size
+//     * @param page
+//     * @return
+//     */
+//    @GetMapping("/services")
+//    public ResponseEntity<ApiSuccess> getAllProvinces(@RequestParam(required = false) String serviceName,
+//                                                      @RequestParam(required = false) Integer servicePrice,
+//                                                      @RequestParam(required = false, defaultValue = DEFAULT_SIZE) Integer size,
+//                                                      @RequestParam(required = false, defaultValue = DEFAULT_PAGE) Integer page) {
+//        List<ServiceDTO> responses = serviceService.findAll()
+//                .stream()
+//                .filter(service -> {
+//                    if (serviceName != null)
+//                        return service.getServiceName().toLowerCase().contains(serviceName.trim().toLowerCase());
+//                    return true;
+//                }).filter(service -> {
+//                    if (servicePrice != null)
+//                        return service.getServicePrice() == servicePrice;
+//                    return true;
+//                })
+//                .skip((page-1) * size)
+//                .limit(size)
+//                .map(service -> modelMapper.map(service, ServiceDTO.class))
+//                .collect(Collectors.toList());
+//
+//        if (responses.isEmpty()) {
+//            return ResponseEntity
+//                    .status(HttpStatus.OK)
+//                    .body(new ApiSuccess("There is no services"));
+//        }
+//
+//        return ResponseEntity
+//                .status(HttpStatus.OK)
+//                .body(new ApiSuccess(responses, String.format(GET_SUCCESS, Service.class.getSimpleName())));
+//    }
 
     /**
      * Find a Service with serviceId

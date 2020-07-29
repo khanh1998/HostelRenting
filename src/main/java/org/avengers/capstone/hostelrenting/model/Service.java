@@ -5,6 +5,7 @@ import lombok.*;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.Collection;
 import java.util.Set;
 
 @Data
@@ -23,21 +24,7 @@ public class Service {
     @NotBlank(message = "Service name is mandatory")
     private String serviceName;
 
-//    @Column(nullable = false)
-//    @NotNull(message = "Service price is mandatory")
-    private Integer servicePrice;
+    @OneToMany(mappedBy = "service", fetch = FetchType.LAZY)
+    private Collection<TypeService> typeServices;
 
-//    @Column(nullable = false)
-    private String priceUnit;
-
-//    @Column(nullable = false)
-    private String userUnit;
-
-//    @Column(nullable = false)
-    private String timeUnit;
-
-    @ManyToMany(mappedBy = "services", fetch = FetchType.LAZY)
-    @EqualsAndHashCode.Exclude
-    @ToString.Exclude
-    private Set<HostelType> hostelTypes;
 }
