@@ -12,8 +12,8 @@ import java.util.Collection;
 public class HostelTypeDTO implements Serializable {
     private int typeId;
     private int groupId;
-    private int categoryId;
-    private int typeStatusId;
+    private CategoryDTO category;
+    private TypeStatusDTO typeStatus;
     private String title;
     private float price;
     private String priceUnit;

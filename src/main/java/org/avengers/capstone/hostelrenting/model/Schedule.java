@@ -4,6 +4,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.Set;
 
 @Data
@@ -14,10 +15,15 @@ import java.util.Set;
 @Entity
 @Table(name = "schedule")
 public class Schedule {
+    public enum Code{MON, TUE, WED, THU, FRI, SAT, SUN}
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int scheduleId;
+
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    private Code code;
 
     @Column(nullable = false)
     @NotBlank(message = "Start time is mandatory")

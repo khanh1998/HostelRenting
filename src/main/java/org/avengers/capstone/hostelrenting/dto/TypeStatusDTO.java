@@ -10,5 +10,5 @@ import java.util.List;
 public class TypeStatusDTO {
     private int statusId;
     private String statusName;
-    private List<HostelTypeDTO> hostelTypes;
+//    private List<HostelTypeDTO> hostelTypes;
 }
