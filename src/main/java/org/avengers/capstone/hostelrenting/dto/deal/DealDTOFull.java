@@ -16,4 +16,5 @@ public class DealDTOFull {
     private RenterDTOFull renter;
     private VendorDTOFull vendor;
     private float offeredPrice;
+    private long creationTime;
 }
