@@ -26,7 +26,7 @@ public class HostelGroupDTO implements Serializable {
     /**
      * curfewTime that limit the time to come back home
      */
-    private Float curfewTime;
+    private String curfewTime;
 
     private String description;
 

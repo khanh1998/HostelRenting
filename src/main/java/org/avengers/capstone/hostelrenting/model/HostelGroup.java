@@ -43,7 +43,7 @@ public class HostelGroup{
 
     private boolean ownerJoin;
 
-    private Float curfewTime;
+    private String curfewTime;
 
     @OneToMany(mappedBy = "hostelGroup", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<HostelType> hostelTypes;

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -64,9 +65,9 @@ public class RenterController {
     }
 
     @GetMapping("/renters")
-    public ResponseEntity<ApiSuccess> getByIds(@RequestBody List<UserIdDTO> reqIds){
-        List<UserDTOFull> resDTOs = reqIds.stream()
-                .map(dto -> modelMapper.map(renterService.findById(dto.getUserId()), UserDTOFull.class))
+    public ResponseEntity<ApiSuccess> getRenterByIds(@RequestParam Integer[] renterIds){
+        List<UserDTOFull> resDTOs = Arrays.stream(renterIds)
+                .map(id -> modelMapper.map(renterService.findById(id), UserDTOFull.class))
                 .collect(Collectors.toList());
 
         return ResponseEntity
