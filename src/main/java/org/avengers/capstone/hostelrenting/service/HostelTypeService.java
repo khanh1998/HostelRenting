@@ -7,10 +7,12 @@ import java.util.List;
 
 public interface HostelTypeService {
     HostelType findById(Integer id);
-    List<HostelType> findAll(Pageable pageable);
+
     HostelType save(HostelType hostelType);
+
     void deleteById(Integer id);
 
     List<HostelType> findByHostelGroupId(Integer hostelGroupId);
-    List<HostelType> findByLocationAndDistance(Double latitude, Double longitude, Double distance, int size, int page);
+
+    List<HostelType> findByLocationAndDistance(Double latitude, Double longitude, Double distance, String sortBy, Boolean asc, int size, int page);
 }

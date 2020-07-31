@@ -21,6 +21,8 @@ public class HostelType {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int typeId;
 
+    private float score;
+
     @Column(name = "title", nullable = false)
     @NotBlank(message = "Title is mandatory")
     private String title;
@@ -40,7 +42,7 @@ public class HostelType {
     @Column(nullable = false)
     private int view;
 
-    @Column
+    @Column(nullable = false)
     private float deposit;
 
     @Column(columnDefinition = "boolean default false")

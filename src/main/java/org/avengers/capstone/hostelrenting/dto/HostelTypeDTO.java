@@ -11,6 +11,7 @@ import java.util.Collection;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class HostelTypeDTO implements Serializable {
     private int typeId;
+    private float score;
     private int groupId;
     private CategoryDTO category;
     private TypeStatusDTO typeStatus;

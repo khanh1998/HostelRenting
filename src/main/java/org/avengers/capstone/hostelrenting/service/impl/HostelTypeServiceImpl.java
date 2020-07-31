@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -33,11 +34,6 @@ public class HostelTypeServiceImpl implements HostelTypeService {
     }
 
     @Override
-    public List<HostelType> findAll(Pageable pageable) {
-        return hostelTypeRepository.findAll(pageable).toList();
-    }
-
-    @Override
     public HostelType save(HostelType hostelType) {
         //TODO: Check duplicate object
         if (hostelTypeRepository.equals(hostelType)) {
@@ -58,6 +54,7 @@ public class HostelTypeServiceImpl implements HostelTypeService {
 
     /**
      * Get all Types by groupId
+     *
      * @param hostelGroupId
      * @return HostelTypes of given group, otherwise null
      */
@@ -72,20 +69,25 @@ public class HostelTypeServiceImpl implements HostelTypeService {
      *
      * @param latitude
      * @param longitude
-     * @param distance - radius of circle from the search point
+     * @param distance
+     * @param sortBy
+     * @param asc
      * @param size
      * @param page
      * @return
      */
     @Override
-    public List<HostelType> findByLocationAndDistance(Double latitude, Double longitude, Double distance, int size, int page) {
-        Pageable pageable = PageRequest.of(page-1, size);
+    public List<HostelType> findByLocationAndDistance(Double latitude, Double longitude, Double distance, String sortBy, Boolean asc, int size, int page) {
+
+        Sort sort = Sort.by(asc == true ? Sort.Direction.ASC : Sort.Direction.DESC, sortBy);
+        Pageable pageable = PageRequest.of(page - 1, size, sort);
         List<HostelType> types;
-        if (latitude != null && longitude != null){
-            types = hostelTypeRepository.getSurroundings(latitude, longitude, distance);
-        }else{
-            //TODO: get all hotest hostel types
-            types = findAll(pageable);
+        if (latitude != null && longitude != null) {
+            types = hostelTypeRepository.getSurroundings(latitude, longitude, distance, pageable);
+        } else {
+
+            //default get highest score
+            types = hostelTypeRepository.findAll(pageable).toList();
         }
         return types;
     }

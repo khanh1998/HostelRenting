@@ -123,10 +123,12 @@ public class HostelTypeController {
                                                      @RequestParam(required = false) Float maxSuperficiality,
                                                      @RequestParam(required = false) Integer minCapacity,
                                                      @RequestParam(required = false) Integer maxCapacity,
+                                                     @RequestParam(required = false, defaultValue = "score") String sortBy,
+                                                     @RequestParam(required = false, defaultValue = "false") Boolean asc,
                                                      @RequestParam(required = false, defaultValue = DEFAULT_SIZE) Integer size,
                                                      @RequestParam(required = false, defaultValue = DEFAULT_PAGE) Integer page) throws EntityNotFoundException {
 
-        Set<HostelTypeDTO> typeDTOs = hostelTypeService.findByLocationAndDistance(latitude, longitude, distance, size, page).stream()
+        Set<HostelTypeDTO> typeDTOs = hostelTypeService.findByLocationAndDistance(latitude, longitude, distance,sortBy, asc, size, page).stream()
                 .filter(hostelType -> {
                     if (typeId != null)
                         return hostelType.getTypeId() == typeId;
