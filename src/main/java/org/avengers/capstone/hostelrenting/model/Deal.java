@@ -16,9 +16,15 @@ import javax.validation.constraints.NotNull;
 @Entity
 @Table(name = "deal")
 public class Deal {
+    public enum Status{CREATED, DONE, CANCELED}
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int dealId;
+
+    @Column(columnDefinition = "varchar(10) default 'CREATED'")
+    @Enumerated(EnumType.STRING)
+    private Status status;
 
     @ManyToOne
     @JoinColumn(name = "type_id", nullable = false)

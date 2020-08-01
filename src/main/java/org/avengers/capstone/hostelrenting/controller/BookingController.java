@@ -27,18 +27,12 @@ public class BookingController {
     private BookingService bookingService;
     private RenterService renterService;
     private VendorService vendorService;
-    private HostelTypeService hostelTypeService;
-    private BookingStatusService bookingStatusService;
     private HostelGroupService hostelGroupService;
+
 
     @Autowired
     public void setHostelGroupService(HostelGroupService hostelGroupService) {
         this.hostelGroupService = hostelGroupService;
-    }
-
-    @Autowired
-    public void setBookingStatusService(BookingStatusService bookingStatusService) {
-        this.bookingStatusService = bookingStatusService;
     }
 
     @Autowired
@@ -61,26 +55,14 @@ public class BookingController {
         this.vendorService = vendorService;
     }
 
-    @Autowired
-    public void setHostelTypeService(HostelTypeService hostelTypeService) {
-        this.hostelTypeService = hostelTypeService;
-    }
 
     @PostMapping("/bookings")
     public ResponseEntity<ApiSuccess> create(@RequestBody @Valid BookingDTOShort reqDTO){
-        // check that vendor, renter and type id is existed or not
-        Vendor existedVendor = vendorService.findById(reqDTO.getVendorId());
-        Renter existedRenter = renterService.findById(reqDTO.getRenterId());
-        HostelType existedType = hostelTypeService.findById(reqDTO.getTypeId());
-        HostelGroup existedGroup = hostelGroupService.findById(existedType.getHostelGroup().getGroupId());
-        BookingStatus existedStatus = bookingStatusService.findById(reqDTO.getStatusId());
 
         Booking reqModel = modelMapper.map(reqDTO, Booking.class);
-        reqModel.setHostelType(existedType);
-        reqModel.setVendor(existedVendor);
-        reqModel.setRenter(existedRenter);
 
-        Booking resModel = bookingService.save((reqModel));
+        Booking resModel = bookingService.createNew((reqModel));
+
         BookingDTOShort resDTO = modelMapper.map(resModel, BookingDTOShort.class);
 
         return ResponseEntity
@@ -88,18 +70,18 @@ public class BookingController {
                 .body(new ApiSuccess(resDTO, String.format(CREATE_SUCCESS, Booking.class.getSimpleName())));
     }
 
-    @PutMapping("/bookings/{bookingId}")
-    public ResponseEntity<ApiSuccess> updateBooking(@PathVariable Integer bookingId,
-                                                    @Valid @RequestBody BookingDTOShort reqDTO){
-        Booking existedModel = bookingService.findById(bookingId);
-        existedModel.setStatus(bookingStatusService.findById(reqDTO.getStatusId()));
-        Booking resModel = bookingService.save(existedModel);
-        BookingDTOShort resDTO = modelMapper.map(resModel, BookingDTOShort.class);
-
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(new ApiSuccess(resDTO, String.format(UPDATE_SUCCESS, Booking.class.getSimpleName())));
-    }
+//    @PutMapping("/bookings/{bookingId}")
+//    public ResponseEntity<ApiSuccess> updateBooking(@PathVariable Integer bookingId,
+//                                                    @Valid @RequestBody BookingDTOShort reqDTO){
+//        Booking existedModel = bookingService.findById(bookingId);
+//        existedModel.setStatus(reqDTO.getStatus());
+//        Booking resModel = bookingService.save(existedModel);
+//        BookingDTOShort resDTO = modelMapper.map(resModel, BookingDTOShort.class);
+//
+//        return ResponseEntity
+//                .status(HttpStatus.OK)
+//                .body(new ApiSuccess(resDTO, String.format(UPDATE_SUCCESS, Booking.class.getSimpleName())));
+//    }
 
     @GetMapping("/bookings/{bookingId}")
     public ResponseEntity<ApiSuccess> getBookingById(@PathVariable Integer bookingId) throws EntityNotFoundException{

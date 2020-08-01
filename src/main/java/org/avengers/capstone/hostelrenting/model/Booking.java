@@ -6,7 +6,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.Random;
 
 @Data
 @Builder
@@ -16,6 +15,8 @@ import java.util.Random;
 @Entity
 @Table(name = "booking")
 public class Booking {
+    public enum Status{INCOMING, MISSING, DONE, CANCELED}
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int bookingId;
@@ -32,9 +33,9 @@ public class Booking {
     @JoinColumn(name = "renter_id", nullable = false)
     private Renter renter;
 
-    @ManyToOne
-    @JoinColumn(name = "status_id", nullable = false)
-    private BookingStatus status;
+    @Column(columnDefinition = "varchar(10) default 'INCOMING'")
+    @Enumerated(EnumType.STRING)
+    private Status status;
 
     @Column
     private int dealId;
@@ -43,7 +44,7 @@ public class Booking {
     private String qrCode;
 
     @Column(nullable = false)
-    private String startTime;
+    private String meetTime;
 
     @Column(columnDefinition = "boolean default false")
     private boolean isDeleted;
