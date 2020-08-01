@@ -22,7 +22,7 @@ public class Deal {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int dealId;
 
-    @Column(columnDefinition = "varchar(10) default 'CREATED'")
+    @Column(columnDefinition = "varchar(10) default 'CREATED'", nullable = false)
     @Enumerated(EnumType.STRING)
     private Status status;
 

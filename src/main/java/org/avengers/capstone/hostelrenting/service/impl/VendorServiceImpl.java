@@ -2,6 +2,7 @@ package org.avengers.capstone.hostelrenting.service.impl;
 
 import org.avengers.capstone.hostelrenting.Constant;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
+import org.avengers.capstone.hostelrenting.model.Booking;
 import org.avengers.capstone.hostelrenting.model.HostelType;
 import org.avengers.capstone.hostelrenting.model.Vendor;
 import org.avengers.capstone.hostelrenting.repository.VendorRepository;
@@ -21,6 +22,13 @@ public class VendorServiceImpl implements VendorService {
     @Autowired
     public void setVendorRepository(VendorRepository vendorRepository) {
         this.vendorRepository = vendorRepository;
+    }
+
+    @Override
+    public void checkExist(Integer id) {
+        Optional<Vendor> model = vendorRepository.findById(id);
+        if (model.isEmpty())
+            throw new EntityNotFoundException(Vendor.class, "id", id.toString());
     }
 
     @Override

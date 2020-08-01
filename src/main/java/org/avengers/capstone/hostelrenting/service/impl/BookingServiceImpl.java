@@ -1,9 +1,11 @@
 package org.avengers.capstone.hostelrenting.service.impl;
 
+import org.avengers.capstone.hostelrenting.dto.booking.BookingDTOShort;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
 import org.avengers.capstone.hostelrenting.model.*;
-import org.avengers.capstone.hostelrenting.repository.*;
+import org.avengers.capstone.hostelrenting.repository.BookingRepository;
 import org.avengers.capstone.hostelrenting.service.*;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +21,12 @@ public class BookingServiceImpl implements BookingService {
     private RenterService renterService;
     private HostelTypeService hostelTypeService;
     private DealService dealService;
+    private ModelMapper modelMapper;
+
+    @Autowired
+    public void setModelMapper(ModelMapper modelMapper) {
+        this.modelMapper = modelMapper;
+    }
 
     @Autowired
     public void setVendorService(VendorService vendorService) {
@@ -46,54 +54,75 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public Booking findById(Integer id) {
-        if (isNotFound(id))
+    public void checkExist(Integer id) {
+        Optional<Booking> model = bookingRepository.findById(id);
+        if (model.isEmpty())
             throw new EntityNotFoundException(Booking.class, "id", id.toString());
+    }
+
+    @Override
+    public Booking findById(Integer id) {
+        checkExist(id);
 
         return bookingRepository.getOne(id);
     }
 
     @Override
-    public List<Booking> findAll() {
-        return bookingRepository.findAll();
-    }
+    public Booking create(BookingDTOShort reqDTO) {
+        Vendor existedVendor = vendorService.findById(reqDTO.getVendorId());
+        Renter existedRenter = renterService.findById(reqDTO.getRenterId());
+        HostelType existedType = hostelTypeService.findById(reqDTO.getTypeId());
 
-    @Override
-    public Booking createNew(Booking booking) {
-        Vendor existedVendor = vendorService.findById(booking.getVendor().getUserId());
-        Renter existedRenter = renterService.findById(booking.getRenter().getUserId());
-        HostelType existedType = hostelTypeService.findById(booking.getHostelType().getTypeId());
-
-        booking.setHostelType(existedType);
-        booking.setRenter(existedRenter);
-        booking.setVendor(existedVendor);
-        booking.setStatus(Booking.Status.INCOMING);
-
-        if (booking.getQrCode() == null) {
-            String qrCode = generateQRCode();
-            booking.setQrCode(qrCode);
-        }
-
-        Integer dealId = booking.getDealId();
-        if (dealId != null) {
+        Booking reqModel = modelMapper.map(reqDTO, Booking.class);
+        Integer dealId = reqDTO.getDealId();
+        if (dealId != null)
+            dealService.checkExist(dealId);
             dealService.changeStatus(dealId, Deal.Status.DONE);
+
+
+        reqModel.setHostelType(existedType);
+        reqModel.setRenter(existedRenter);
+        reqModel.setVendor(existedVendor);
+        reqModel.setStatus(Booking.Status.INCOMING);
+
+        if (reqModel.getQrCode() == null) {
+            String qrCode = generateQRCode();
+            reqModel.setQrCode(qrCode);
         }
 
-        return bookingRepository.save(booking);
+        return bookingRepository.save(reqModel);
     }
 
     @Override
-    public void deleteById(Integer id) {
-        if (isNotFound(id)) {
-            throw new EntityNotFoundException(Booking.class, "id", id.toString());
+    public Booking update(BookingDTOShort reqDTO) {
+        checkExist(reqDTO.getBookingId());
+
+        // Update status
+        Booking exModel = bookingRepository.getOne(reqDTO.getBookingId());
+        if (!exModel.getStatus().equals(reqDTO.getStatus())) {
+            exModel.setStatus(reqDTO.getStatus());
+            return bookingRepository.save(exModel);
         }
-        bookingRepository.deleteById(id);
+        // Update meetTime
+        //TODO: Implement here
+
+        return null;
     }
 
-    private boolean isNotFound(Integer id) {
-        Optional<Booking> booking = bookingRepository.findById(id);
-        return booking.isEmpty();
+    @Override
+    public List<Booking> findByRenterId(Integer renterId) {
+        renterService.checkExist(renterId);
+
+        return renterService.findById(renterId).getBookings();
     }
+
+    @Override
+    public List<Booking> findByVendorId(Integer vendorId) {
+        vendorService.checkExist(vendorId);
+
+        return renterService.findById(vendorId).getBookings();
+    }
+
 
     private String generateQRCode() {
         Random rnd = new Random();

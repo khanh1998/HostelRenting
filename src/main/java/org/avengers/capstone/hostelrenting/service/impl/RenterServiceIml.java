@@ -2,6 +2,7 @@ package org.avengers.capstone.hostelrenting.service.impl;
 
 import org.avengers.capstone.hostelrenting.Constant;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
+import org.avengers.capstone.hostelrenting.model.Booking;
 import org.avengers.capstone.hostelrenting.model.Renter;
 import org.avengers.capstone.hostelrenting.repository.RenterRepository;
 import org.avengers.capstone.hostelrenting.service.RenterService;
@@ -19,6 +20,13 @@ public class RenterServiceIml implements RenterService {
     @Autowired
     public void setRenterRepository(RenterRepository renterRepository) {
         this.renterRepository = renterRepository;
+    }
+
+    @Override
+    public void checkExist(Integer id) {
+        Optional<Renter> model = renterRepository.findById(id);
+        if (model.isEmpty())
+            throw new EntityNotFoundException(Renter.class, "id", id.toString());
     }
 
     @Override

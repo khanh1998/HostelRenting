@@ -6,8 +6,11 @@ import org.avengers.capstone.hostelrenting.model.Vendor;
 import java.util.List;
 
 public interface RenterService {
+    void checkExist(Integer id);
+
     Renter findById(Integer id);
     List<Renter> findAll();
     Renter save(Renter renter);
     void deleteById(Integer id);
+
 }

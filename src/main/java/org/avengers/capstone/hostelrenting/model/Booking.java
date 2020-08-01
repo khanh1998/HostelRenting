@@ -37,8 +37,8 @@ public class Booking {
     @Enumerated(EnumType.STRING)
     private Status status;
 
-    @Column
-    private int dealId;
+    @Column(columnDefinition = "int default null")
+    private Integer dealId;
 
     @Column
     private String qrCode;

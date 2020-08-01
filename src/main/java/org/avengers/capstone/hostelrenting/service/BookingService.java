@@ -1,14 +1,16 @@
 package org.avengers.capstone.hostelrenting.service;
 
+import org.avengers.capstone.hostelrenting.dto.booking.BookingDTOShort;
 import org.avengers.capstone.hostelrenting.model.Booking;
-import org.avengers.capstone.hostelrenting.model.Contract;
 
 import java.util.List;
 
 public interface BookingService {
+    void checkExist(Integer id);
     Booking findById(Integer id);
-    List<Booking> findAll();
-    Booking createNew(Booking booking);
-    void deleteById(Integer id);
+    Booking create(BookingDTOShort reqDTO);
+    Booking update(BookingDTOShort reqDTO);
+    List<Booking> findByRenterId(Integer renterId);
+    List<Booking> findByVendorId(Integer vendorId);
 }
 
