@@ -15,7 +15,7 @@ import javax.persistence.*;
 @Entity
 @Table(name = "booking")
 public class Booking {
-    public enum Status{INCOMING, MISSING, DONE, CANCELED}
+    public enum Status{INCOMING, MISSING, DONE, CANCELLED}
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

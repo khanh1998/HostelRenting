@@ -16,7 +16,7 @@ import javax.validation.constraints.NotNull;
 @Entity
 @Table(name = "deal")
 public class Deal {
-    public enum Status{CREATED, DONE, CANCELED}
+    public enum Status{CREATED, DONE, CANCELLED}
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
