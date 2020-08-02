@@ -6,6 +6,8 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import static com.google.api.client.http.HttpMethods.POST;
+
 @Configuration
 @EnableWebMvc
 public class WebConfiguation implements WebMvcConfigurer {
@@ -17,7 +19,7 @@ public class WebConfiguation implements WebMvcConfigurer {
                         "https://hostel-renting.netlify.app",
                         "https://td-vue-firestore-chat.web.app",
                         "http://127.0.0.1:8080"
-                );
+                ).allowedMethods("POST", "GET", "PUT", "OPTIONS", "DELETE");
     }
 
     @Override
