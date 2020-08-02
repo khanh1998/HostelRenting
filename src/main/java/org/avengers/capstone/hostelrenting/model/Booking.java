@@ -44,7 +44,13 @@ public class Booking {
     private String qrCode;
 
     @Column(nullable = false)
-    private String meetTime;
+    private Long meetTime;
+
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private Long createdAt;
+
+    @Column(name = "updated_at")
+    private Long updatedAt;
 
     @Column(columnDefinition = "boolean default false")
     private boolean isDeleted;

@@ -54,15 +54,17 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public void checkExist(Integer id) {
+    public void checkActive(Integer id) {
         Optional<Booking> model = bookingRepository.findById(id);
         if (model.isEmpty())
+            throw new EntityNotFoundException(Booking.class, "id", id.toString());
+        else if (model.get().isDeleted())
             throw new EntityNotFoundException(Booking.class, "id", id.toString());
     }
 
     @Override
     public Booking findById(Integer id) {
-        checkExist(id);
+        checkActive(id);
 
         return bookingRepository.getOne(id);
     }
@@ -76,7 +78,7 @@ public class BookingServiceImpl implements BookingService {
         Booking reqModel = modelMapper.map(reqDTO, Booking.class);
         Integer dealId = reqDTO.getDealId();
         if (dealId != null)
-            dealService.checkExist(dealId);
+            dealService.checkActive(dealId);
             dealService.changeStatus(dealId, Deal.Status.DONE);
 
 
@@ -84,6 +86,7 @@ public class BookingServiceImpl implements BookingService {
         reqModel.setRenter(existedRenter);
         reqModel.setVendor(existedVendor);
         reqModel.setStatus(Booking.Status.INCOMING);
+        reqModel.setCreatedAt(System.currentTimeMillis());
 
         if (reqModel.getQrCode() == null) {
             String qrCode = generateQRCode();
@@ -95,18 +98,30 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public Booking update(BookingDTOShort reqDTO) {
-        checkExist(reqDTO.getBookingId());
+        checkActive(reqDTO.getBookingId());
 
         // Update status
         Booking exModel = bookingRepository.getOne(reqDTO.getBookingId());
         if (!exModel.getStatus().equals(reqDTO.getStatus())) {
             exModel.setStatus(reqDTO.getStatus());
+            setUpdatedTime(exModel);
             return bookingRepository.save(exModel);
         }
         // Update meetTime
         //TODO: Implement here
 
         return null;
+    }
+
+    @Override
+    public void delete(Integer id) {
+        checkActive(id);
+        Booking exModel = bookingRepository.getOne(id);
+        if (exModel.isDeleted())
+            throw new EntityNotFoundException(Booking.class, "id", id.toString());
+        exModel.setDeleted(true);
+        setUpdatedTime(exModel);
+        bookingRepository.save(exModel);
     }
 
     @Override
@@ -128,5 +143,9 @@ public class BookingServiceImpl implements BookingService {
         Random rnd = new Random();
         int number = rnd.nextInt(999999);
         return String.format("%06d", number);
+    }
+
+    private void setUpdatedTime(Booking exModel){
+        exModel.setUpdatedAt(System.currentTimeMillis());
     }
 }

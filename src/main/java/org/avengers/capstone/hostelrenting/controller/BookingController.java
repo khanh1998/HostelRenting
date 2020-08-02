@@ -5,6 +5,7 @@ import org.avengers.capstone.hostelrenting.dto.booking.BookingDTOFull;
 import org.avengers.capstone.hostelrenting.dto.booking.BookingDTOShort;
 import org.avengers.capstone.hostelrenting.dto.response.ApiSuccess;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
+import org.avengers.capstone.hostelrenting.model.Booking;
 import org.avengers.capstone.hostelrenting.model.HostelGroup;
 import org.avengers.capstone.hostelrenting.service.BookingService;
 import org.avengers.capstone.hostelrenting.service.HostelGroupService;
@@ -44,7 +45,8 @@ public class BookingController {
     @PostMapping("/bookings")
     public ResponseEntity<?> create(@RequestBody @Valid BookingDTOShort reqDTO) {
 
-        BookingDTOShort resDTO = modelMapper.map(bookingService.create((reqDTO)), BookingDTOShort.class);
+        Booking resModel = bookingService.create(reqDTO);
+        BookingDTOFull resDTO = modelMapper.map(resModel, BookingDTOFull.class);
 
         ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTO, "Your booking has been created successfully!");
 
@@ -53,11 +55,12 @@ public class BookingController {
 
     @PutMapping("/bookings/{bookingId}")
     public ResponseEntity<?> updateBooking(@PathVariable Integer bookingId,
-                                                    @Valid @RequestBody BookingDTOShort reqDTO) {
+                                           @Valid @RequestBody BookingDTOShort reqDTO) {
 
         String resMsg = "Your booking has been updated";
         reqDTO.setBookingId(bookingId);
-        BookingDTOShort resDTO = modelMapper.map(bookingService.update(reqDTO), BookingDTOShort.class);
+        Booking resModel = bookingService.update(reqDTO);
+        BookingDTOFull resDTO = modelMapper.map(resModel, BookingDTOFull.class);
         if (resDTO == null)
             resMsg = "Your booking is up to date";
 
@@ -67,10 +70,21 @@ public class BookingController {
         return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
     }
 
-    @GetMapping("/bookings/{bookingId}")
-    public ResponseEntity<?> getBookingById(@PathVariable Integer bookingId) throws EntityNotFoundException{
+    @DeleteMapping("/bookings/{bookingId}")
+    public ResponseEntity<?> deleteDeal(@PathVariable Integer bookingId) {
 
-        BookingDTOFull resDTO = modelMapper.map(bookingService.findById(bookingId), BookingDTOFull.class);
+        bookingService.delete(bookingId);
+
+        // Response entity
+        ApiSuccess<?> apiSuccess = new ApiSuccess<>(null, "Your booking has been deleted successfully");
+
+        return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
+    }
+
+    @GetMapping("/bookings/{bookingId}")
+    public ResponseEntity<?> getBookingById(@PathVariable Integer bookingId) {
+        Booking resModel = bookingService.findById(bookingId);
+        BookingDTOFull resDTO = modelMapper.map(resModel, BookingDTOFull.class);
 
         // Response entity
         ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTO, "Your booking has been retrieved successfully!");
@@ -113,7 +127,7 @@ public class BookingController {
      * @param bookings list of {@link org.avengers.capstone.hostelrenting.model.Booking} need to fill {@link HostelGroup}
      * @return list of {@link org.avengers.capstone.hostelrenting.model.Booking} with corresponding {@link HostelGroup}
      */
-    private List<BookingDTOFull> getGroupForBooking(List<BookingDTOFull> bookings){
+    private List<BookingDTOFull> getGroupForBooking(List<BookingDTOFull> bookings) {
         bookings.forEach(resDTO -> {
             HostelGroup existedGroup = hostelGroupService.findById(resDTO.getType().getGroupId());
             resDTO.setGroup(modelMapper.map(existedGroup, HostelGroupDTO.class));

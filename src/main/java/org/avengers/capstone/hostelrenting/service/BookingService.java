@@ -6,10 +6,11 @@ import org.avengers.capstone.hostelrenting.model.Booking;
 import java.util.List;
 
 public interface BookingService {
-    void checkExist(Integer id);
+    void checkActive(Integer id);
     Booking findById(Integer id);
     Booking create(BookingDTOShort reqDTO);
     Booking update(BookingDTOShort reqDTO);
+    void delete(Integer id);
     List<Booking> findByRenterId(Integer renterId);
     List<Booking> findByVendorId(Integer vendorId);
 }

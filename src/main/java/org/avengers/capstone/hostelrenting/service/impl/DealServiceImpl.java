@@ -51,30 +51,38 @@ public class DealServiceImpl implements DealService {
         this.dealRepository = dealRepository;
     }
 
+    /**
+     * Check that object with given id is active or not
+     * @param id input id
+     */
     @Override
-    public void checkExist(Integer id) {
+    public void checkActive(Integer id) {
         Optional<Deal> model = dealRepository.findById(id);
         if (model.isEmpty())
+            throw new EntityNotFoundException(Deal.class, "id", id.toString());
+        else if (model.get().isDeleted())
             throw new EntityNotFoundException(Deal.class, "id", id.toString());
     }
 
     @Override
     public Deal findById(Integer id) {
-        checkExist(id);
-
+        checkActive(id);
         return dealRepository.getOne(id);
     }
 
     /**
      * Change status of deal from CREATED to DONE
+     *
      * @param id a deal id to identify
      * @return Deal object with status has been updated
      */
     @Override
     public Deal changeStatus(Integer id, Deal.Status status) {
         Optional<Deal> existed = dealRepository.findById(id);
-        if (existed.isPresent() && existed.get().getStatus().equals(Deal.Status.CREATED))
+        if (existed.isPresent() && existed.get().getStatus().equals(Deal.Status.CREATED)){
             existed.get().setStatus(status);
+            setUpdatedTime(existed.get());
+        }
         return existed.orElse(null);
     }
 
@@ -89,23 +97,36 @@ public class DealServiceImpl implements DealService {
         reqModel.setRenter(existedRenter);
         reqModel.setHostelType(existedType);
         reqModel.setStatus(Deal.Status.CREATED);
+        reqModel.setCreatedAt(System.currentTimeMillis());
 
         return dealRepository.save(reqModel);
     }
 
     @Override
     public Deal update(DealDTOShort reqDTO) {
-        checkExist(reqDTO.getDealId());
+        checkActive(reqDTO.getDealId());
 
 
         //Update status
         Deal exModel = dealRepository.getOne(reqDTO.getDealId());
-        if (!exModel.getStatus().equals(reqDTO.getStatus())){
+        if (!exModel.getStatus().equals(reqDTO.getStatus())) {
             exModel.setStatus(reqDTO.getStatus());
+            setUpdatedTime(exModel);
             return dealRepository.save(exModel);
         }
 
         return null;
+    }
+
+    @Override
+    public void delete(Integer id) {
+        checkActive(id);
+        Deal exModel = dealRepository.getOne(id);
+        if (exModel.isDeleted())
+            throw new EntityNotFoundException(Deal.class, "id", id.toString());
+        exModel.setDeleted(true);
+        setUpdatedTime(exModel);
+        dealRepository.save(exModel);
     }
 
     @Override
@@ -120,5 +141,9 @@ public class DealServiceImpl implements DealService {
         vendorService.checkExist(vendorId);
 
         return vendorService.findById(vendorId).getDeals();
+    }
+
+    private void setUpdatedTime(Deal exModel){
+        exModel.setUpdatedAt(System.currentTimeMillis());
     }
 }

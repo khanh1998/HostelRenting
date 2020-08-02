@@ -19,5 +19,8 @@ public class BookingDTOFull {
     private Booking.Status status;
     private DealDTOShort deal;
     private String qrCode;
-    private String startTime;
+    private Long meetTime;
+
+    private long createdAt;
+    private long updatedAt;
 }

@@ -12,5 +12,5 @@ public class BookingDTOShort {
     private Booking.Status status;
     private Integer dealId;
     private String qrCode;
-    private String meetTime;
+    private Long meetTime;
 }

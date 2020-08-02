@@ -45,8 +45,8 @@ public class DealController {
 
     @PostMapping("/deals")
     public ResponseEntity<?> create(@RequestBody @Valid DealDTOShort reqDTO) {
-
-        DealDTOShort resDTO = modelMapper.map(dealService.create((reqDTO)), DealDTOShort.class);
+        Deal resModel = dealService.create(reqDTO);
+        DealDTOShort resDTO = modelMapper.map(resModel, DealDTOShort.class);
 
         // Response entity
         ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTO,
@@ -56,8 +56,8 @@ public class DealController {
     }
 
     @PutMapping("/deals/{dealId}")
-    public ResponseEntity<?> updateBooking(@PathVariable Integer dealId,
-                                           @Valid @RequestBody DealDTOShort reqDTO) {
+    public ResponseEntity<?> updateDeal(@PathVariable Integer dealId,
+                                        @Valid @RequestBody DealDTOShort reqDTO) {
 
         String resMsg = "Your deal has been updated";
         DealDTOShort resDTO = null;
@@ -75,9 +75,21 @@ public class DealController {
         return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
     }
 
+    @DeleteMapping("/deals/{dealId}")
+    public ResponseEntity<?> deleteDeal(@PathVariable Integer dealId) {
+
+        dealService.delete(dealId);
+
+        // Response entity
+        ApiSuccess<?> apiSuccess = new ApiSuccess<>(null, "Your deal has been deleted successfully");
+
+        return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
+    }
+
     @GetMapping("/deals/{dealId}")
-    public ResponseEntity<?> getBookingById(@PathVariable Integer dealId) throws EntityNotFoundException{
-        DealDTOFull resDTO = modelMapper.map(dealService.findById(dealId), DealDTOFull.class);
+    public ResponseEntity<?> getBookingById(@PathVariable Integer dealId) throws EntityNotFoundException {
+        Deal resModel = dealService.findById(dealId);
+        DealDTOFull resDTO = modelMapper.map(resModel, DealDTOFull.class);
 
         // Response entity
         ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTO, "Your deal has been retrieved successfully!");
@@ -119,7 +131,7 @@ public class DealController {
      * @param deals list of {@link org.avengers.capstone.hostelrenting.model.Booking} need to fill {@link HostelGroup}
      * @return list of {@link org.avengers.capstone.hostelrenting.model.Booking} with corresponding {@link HostelGroup}
      */
-    private List<DealDTOFull> getGroupForBooking(List<DealDTOFull> deals){
+    private List<DealDTOFull> getGroupForBooking(List<DealDTOFull> deals) {
         deals.forEach(deal -> {
             HostelGroup existedGroup = hostelGroupService.findById(deal.getType().getGroupId());
             deal.setGroup(modelMapper.map(existedGroup, HostelGroupDTO.class));

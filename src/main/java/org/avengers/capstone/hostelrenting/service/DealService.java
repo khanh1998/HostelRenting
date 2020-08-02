@@ -6,10 +6,11 @@ import org.avengers.capstone.hostelrenting.model.Deal;
 import java.util.List;
 
 public interface DealService {
-    void checkExist(Integer id);
+    void checkActive(Integer id);
     Deal findById(Integer id);
     Deal create(DealDTOShort reqDTO);
     Deal update(DealDTOShort reqDTO);
+    void delete(Integer id);
     List<Deal> findByRenterId(Integer renterId);
     List<Deal> findByVendorId(Integer vendorId);
 

@@ -42,7 +42,11 @@ public class Deal {
     @NotNull(message = "Offered price is mandatory")
     private Float offeredPrice;
 
-    private Long creationTime;
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private Long createdAt;
+
+    @Column(name = "updated_at")
+    private Long updatedAt;
 
     @Column(columnDefinition = "boolean default false")
     private boolean isDeleted;

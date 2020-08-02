@@ -23,7 +23,7 @@ public class HostelType {
 
     private float score;
 
-    @Column(name = "title", nullable = false)
+    @Column(name = "title", nullable = false, length = 100)
     @NotBlank(message = "Title is mandatory")
     private String title;
 

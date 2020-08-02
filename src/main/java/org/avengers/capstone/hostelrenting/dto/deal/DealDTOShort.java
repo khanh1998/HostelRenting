@@ -11,5 +11,4 @@ public class DealDTOShort {
     private int renterId;
     private int vendorId;
     private float offeredPrice;
-//    private boolean isDeleted;
 }
