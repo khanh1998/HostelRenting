@@ -34,7 +34,7 @@ public class Contract {
     @JoinColumn(name = "renter_id", nullable = false)
     private Renter renter;
 
-    private Long creationTime;
+    private Long startTime;
 
     @Column(nullable = false)
     @NotNull(message = "Contract duration is mandatory")
