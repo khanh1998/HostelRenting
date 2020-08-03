@@ -77,9 +77,10 @@ public class BookingServiceImpl implements BookingService {
 
         Booking reqModel = modelMapper.map(reqDTO, Booking.class);
         Integer dealId = reqDTO.getDealId();
-        if (dealId != null)
+        if (dealId != null) {
             dealService.checkActive(dealId);
             dealService.changeStatus(dealId, Deal.Status.DONE);
+        }
 
 
         reqModel.setHostelType(existedType);
