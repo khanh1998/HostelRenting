@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -44,10 +45,14 @@ public class HostelTypeController {
     }
 
     @Autowired
-    public void setHostelGroupService(HostelGroupService hostelGroupService) { this.hostelGroupService = hostelGroupService; }
+    public void setHostelGroupService(HostelGroupService hostelGroupService) {
+        this.hostelGroupService = hostelGroupService;
+    }
 
     @Autowired
-    public void setHostelTypeService(HostelTypeService hostelTypeService) { this.hostelTypeService = hostelTypeService; }
+    public void setHostelTypeService(HostelTypeService hostelTypeService) {
+        this.hostelTypeService = hostelTypeService;
+    }
 
     @Autowired
     public void setModelMapper(ModelMapper modelMapper) {
@@ -101,9 +106,9 @@ public class HostelTypeController {
                 .map(hostelType -> modelMapper.map(hostelType, HostelTypeDTO.class))
                 .collect(Collectors.toList());
 
-        if (responseHostelTypes.isEmpty()){
+        if (responseHostelTypes.isEmpty()) {
             message = "There is no hostel types found!";
-        }else{
+        } else {
             message = "Hostel types has been retrieved successfully!";
         }
 
@@ -123,12 +128,14 @@ public class HostelTypeController {
                                                      @RequestParam(required = false) Float maxSuperficiality,
                                                      @RequestParam(required = false) Integer minCapacity,
                                                      @RequestParam(required = false) Integer maxCapacity,
+                                                     @RequestParam(required = false) Integer[] facilityIds,
+                                                     @RequestParam(required = false) Integer[] serviceIds,
                                                      @RequestParam(required = false, defaultValue = "score") String sortBy,
                                                      @RequestParam(required = false, defaultValue = "false") Boolean asc,
                                                      @RequestParam(required = false, defaultValue = DEFAULT_SIZE) Integer size,
                                                      @RequestParam(required = false, defaultValue = DEFAULT_PAGE) Integer page) throws EntityNotFoundException {
 
-        Set<HostelTypeDTO> typeDTOs = hostelTypeService.findByLocationAndDistance(latitude, longitude, distance,sortBy, asc, size, page).stream()
+        Set<HostelTypeDTO> typeDTOs = hostelTypeService.findByLocationAndDistance(latitude, longitude, distance, sortBy, asc, size, page).stream()
                 .filter(hostelType -> {
                     if (typeId != null)
                         return hostelType.getTypeId() == typeId;
@@ -158,16 +165,29 @@ public class HostelTypeController {
                     if (maxCapacity != null)
                         return hostelType.getCapacity() <= maxCapacity;
                     return true;
+                }).filter(hostelType -> {
+                    if (facilityIds != null && facilityIds.length > 0)
+                        return hostelType.getFacilities()
+                                .stream()
+                                .anyMatch(facility -> Arrays
+                                        .stream(facilityIds)
+                                        .anyMatch(id -> true ? Integer.compare(id, facility.getFacilityId()) == 0 : false));
+                    return true;
+                }).filter(hostelType -> {
+                    if (serviceIds != null && serviceIds.length > 0)
+                        return hostelType.getTypeServices()
+                                .stream()
+                                .anyMatch(typeService -> Arrays
+                                        .stream(serviceIds)
+                                        .anyMatch(id -> true ? Integer.compare(id, typeService.getService().getServiceId()) == 0 : false));
+                    return true;
                 })
-                .skip((page-1) * size)
-                .limit(size)
                 .map(hostelType -> modelMapper.map(hostelType, HostelTypeDTO.class))
                 .collect(Collectors.toSet());
 
         Set<HostelGroupDTO> groupDTOs = typeDTOs.stream()
                 .map(typeDTO -> modelMapper.map(hostelGroupService.findById(typeDTO.getGroupId()), HostelGroupDTO.class))
                 .collect(Collectors.toSet());
-
 
 
         // DTO contains list of Types and groups follow that type
@@ -240,7 +260,6 @@ public class HostelTypeController {
 //                .status(HttpStatus.OK)
 //                .body(new ApiSuccess(updatedDTO, String.format(UPDATE_SUCCESS, HostelType.class.getSimpleName())));
 //    }
-
 
 
 }
