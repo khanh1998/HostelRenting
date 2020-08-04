@@ -1,11 +1,15 @@
 package org.avengers.capstone.hostelrenting.service.impl;
 
 import org.avengers.capstone.hostelrenting.Constant;
+import org.avengers.capstone.hostelrenting.dto.user.UserDTOFull;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
 import org.avengers.capstone.hostelrenting.model.Booking;
 import org.avengers.capstone.hostelrenting.model.Renter;
+import org.avengers.capstone.hostelrenting.model.User;
+import org.avengers.capstone.hostelrenting.model.Vendor;
 import org.avengers.capstone.hostelrenting.repository.RenterRepository;
 import org.avengers.capstone.hostelrenting.service.RenterService;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
@@ -16,6 +20,12 @@ import java.util.Optional;
 @Service
 public class RenterServiceIml implements RenterService {
     private RenterRepository renterRepository;
+    private ModelMapper modelMapper;
+
+    @Autowired
+    public void setModelMapper(ModelMapper modelMapper) {
+        this.modelMapper = modelMapper;
+    }
 
     @Autowired
     public void setRenterRepository(RenterRepository renterRepository) {
@@ -30,12 +40,26 @@ public class RenterServiceIml implements RenterService {
     }
 
     @Override
-    public Renter findById(Integer id) {
-        if (isNotFound(id)){
-            throw new EntityNotFoundException(Renter.class, "id", id.toString());
+    public User update(UserDTOFull reqDTO) {
+        checkExist(reqDTO.getUserId());
+
+        //Update firebase Token
+        User exModel = renterRepository.getOne(reqDTO.getUserId());
+        if (exModel.getFirebaseToken() == null
+                || !exModel.getFirebaseToken().equals(reqDTO.getFirebaseToken())) {
+            exModel.setFirebaseToken(reqDTO.getFirebaseToken());
+
+            return renterRepository.save(modelMapper.map(exModel, Renter.class));
         }
 
+        return modelMapper.map(exModel, Renter.class);
+    }
+
+    @Override
+    public Renter findById(Integer id) {
+        checkExist(id);
         return renterRepository.getOne(id);
+
     }
 
     @Override

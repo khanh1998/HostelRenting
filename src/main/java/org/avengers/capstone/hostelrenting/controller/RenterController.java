@@ -6,6 +6,7 @@ import org.avengers.capstone.hostelrenting.dto.user.UserDTOFull;
 import org.avengers.capstone.hostelrenting.dto.user.UserIdDTO;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
 import org.avengers.capstone.hostelrenting.model.Renter;
+import org.avengers.capstone.hostelrenting.model.User;
 import org.avengers.capstone.hostelrenting.service.RenterService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,6 +54,18 @@ public class RenterController {
 //                .body(new ApiSuccess(resDTO, String.format(CREATE_SUCCESS, Renter.class.getSimpleName())));
 //    }
 
+    @PutMapping("/renters/{renterId}")
+    public ResponseEntity<?> update(@PathVariable Integer renterId,
+                                    @RequestBody UserDTOFull reqDTO) throws EntityNotFoundException {
+        String resMsg = "Your information has been up to date!";
+
+        reqDTO.setUserId(renterId);
+        User resModel = renterService.update(reqDTO);
+        UserDTOFull resDTO = modelMapper.map(resModel, UserDTOFull.class);
+        ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTO, resMsg);
+
+        return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
+    }
 
     @GetMapping("/renters/{renterId}")
     public ResponseEntity<ApiSuccess> getById(@PathVariable Integer renterId) throws EntityNotFoundException {
