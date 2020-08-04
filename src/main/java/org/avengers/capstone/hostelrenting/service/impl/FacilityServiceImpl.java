@@ -1,63 +1,68 @@
 package org.avengers.capstone.hostelrenting.service.impl;
 
-import org.avengers.capstone.hostelrenting.Constant;
+import org.avengers.capstone.hostelrenting.dto.FacilityDTO;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
 import org.avengers.capstone.hostelrenting.model.Facility;
-import org.avengers.capstone.hostelrenting.model.Province;
 import org.avengers.capstone.hostelrenting.repository.FacilityRepository;
 import org.avengers.capstone.hostelrenting.service.FacilityService;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class FacilityServiceImpl implements FacilityService {
     private FacilityRepository facilityRepository;
+    private ModelMapper modelMapper;
+
+    @Autowired
+    public void setModelMapper(ModelMapper modelMapper) {
+        this.modelMapper = modelMapper;
+    }
 
     @Autowired
     public void setFacilityRepository(FacilityRepository facilityRepository) {
         this.facilityRepository = facilityRepository;
     }
 
+    /**
+     * Check that given id is existed or not
+     *
+     * @param id the given id
+     */
     @Override
-    public Facility save(Facility facility) {
-        if (facilityRepository.getByFacilityName(facility.getFacilityName()) != null) {
-            throw new DuplicateKeyException(String.format(Constant.Message.DUPLICATED_ERROR, "facility_name", facility.getFacilityName()));
-        }
-        return facilityRepository.save(facility);
+    public void checkExist(Integer id) {
+        Optional<Facility> model = facilityRepository.findById(id);
+        if (model.isEmpty())
+            throw new EntityNotFoundException(Facility.class, "id", id.toString());
     }
 
+    /**
+     * Get all facilities
+     *
+     * @return list of DTO
+     */
+    @Override
+    public List<FacilityDTO> getAll() {
+        return facilityRepository.findAll()
+                .stream()
+                .map(facility -> modelMapper.map(facility, FacilityDTO.class))
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Find facility by given id
+     *
+     * @param id the given id
+     * @return facility model
+     */
     @Override
     public Facility findById(Integer id) {
-        if (isNotFound(id)) {
-            throw new EntityNotFoundException(Province.class, "id", id.toString());
-        }
+        checkExist(id);
+
         return facilityRepository.getOne(id);
-    }
-
-    @Override
-    public List<Facility> findAll() {
-        return facilityRepository.findAll();
-    }
-
-    @Override
-    public void deleteById(Integer id) {
-        if (isNotFound(id)) {
-            throw new EntityNotFoundException(Facility.class, "id", id.toString());
-        }
-        facilityRepository.deleteById(id);
-    }
-
-    @Override
-    public long getCount() {
-        return facilityRepository.count();
-    }
-
-    private boolean isNotFound(Integer id) {
-        Optional<Facility> facility = facilityRepository.findById(id);
-        return facility.isEmpty();
     }
 }

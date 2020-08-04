@@ -1,15 +1,32 @@
 package org.avengers.capstone.hostelrenting.service;
 
+import org.avengers.capstone.hostelrenting.dto.FacilityDTO;
+import org.avengers.capstone.hostelrenting.dto.ServiceDTO;
 import org.avengers.capstone.hostelrenting.model.Facility;
 import org.avengers.capstone.hostelrenting.model.Service;
 
 import java.util.List;
 
 public interface ServiceService {
-    Service save(Service service);
-    Service findById(Integer id);
-    List<Service> findAll();
-    void deleteById(Integer id);
+    /**
+     * Check that given id is existed or not
+     *
+     * @param id the given id
+     */
+    void checkExist(Integer id);
 
-    long getCount();
+    /**
+     * Get all services
+     *
+     * @return list of DTO
+     */
+    List<ServiceDTO> getAll();
+
+    /**
+     * Find service by given id
+     *
+     * @param id the given id
+     * @return service model
+     */
+    Service findById(Integer id);
 }

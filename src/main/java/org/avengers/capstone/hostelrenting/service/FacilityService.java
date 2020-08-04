@@ -1,16 +1,30 @@
 package org.avengers.capstone.hostelrenting.service;
 
+import org.avengers.capstone.hostelrenting.dto.FacilityDTO;
 import org.avengers.capstone.hostelrenting.model.Facility;
-import org.avengers.capstone.hostelrenting.model.Province;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 public interface FacilityService {
-    Facility save(Facility facility);
-    Facility findById(Integer id);
-    List<Facility> findAll();
-    void deleteById(Integer id);
+    /**
+     * Check that given id is existed or not
+     *
+     * @param id the given id
+     */
+    void checkExist(Integer id);
 
-    long getCount();
+    /**
+     * Get all facilities
+     *
+     * @return list of DTO
+     */
+    List<FacilityDTO> getAll();
+
+    /**
+     * Find facility by given id
+     *
+     * @param id the given id
+     * @return facility model
+     */
+    Facility findById(Integer id);
 }
