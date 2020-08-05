@@ -16,7 +16,7 @@ public interface FacilityService {
     /**
      * Get all facilities
      *
-     * @return list of DTO
+     * @return list of DTOs
      */
     List<FacilityDTO> getAll();
 

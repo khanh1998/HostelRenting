@@ -1,13 +1,17 @@
 package org.avengers.capstone.hostelrenting.controller;
 
-import org.avengers.capstone.hostelrenting.dto.*;
+import org.avengers.capstone.hostelrenting.dto.FacilityDTO;
+import org.avengers.capstone.hostelrenting.dto.HostelGroupDTO;
+import org.avengers.capstone.hostelrenting.dto.HostelTypeDTO;
+import org.avengers.capstone.hostelrenting.dto.TypesAndGroupsDTO;
 import org.avengers.capstone.hostelrenting.dto.response.ApiSuccess;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
-import org.avengers.capstone.hostelrenting.model.*;
+import org.avengers.capstone.hostelrenting.model.Facility;
+import org.avengers.capstone.hostelrenting.model.HostelGroup;
+import org.avengers.capstone.hostelrenting.model.HostelType;
 import org.avengers.capstone.hostelrenting.service.FacilityService;
 import org.avengers.capstone.hostelrenting.service.HostelGroupService;
 import org.avengers.capstone.hostelrenting.service.HostelTypeService;
-import org.avengers.capstone.hostelrenting.service.ServiceService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,14 +19,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static org.avengers.capstone.hostelrenting.Constant.Message.*;
-import static org.avengers.capstone.hostelrenting.Constant.Pagination.*;
+import static org.avengers.capstone.hostelrenting.Constant.Pagination.DEFAULT_PAGE;
+import static org.avengers.capstone.hostelrenting.Constant.Pagination.DEFAULT_SIZE;
 
 @RestController
 @RequestMapping("api/v1")
@@ -32,12 +35,6 @@ public class HostelTypeController {
     private ModelMapper modelMapper;
     private HostelGroupService hostelGroupService;
     private FacilityService facilityService;
-    private ServiceService serviceService;
-
-    @Autowired
-    public void setServiceService(ServiceService serviceService) {
-        this.serviceService = serviceService;
-    }
 
     @Autowired
     public void setFacilityService(FacilityService facilityService) {
@@ -60,19 +57,19 @@ public class HostelTypeController {
     }
 
     @GetMapping("/groups/{groupId}/types")
-    public ResponseEntity<ApiSuccess> getHostelTypeByHostelGroupId(@PathVariable Integer groupId,
-                                                                   @RequestParam(required = false) Integer typeId,
-                                                                   @RequestParam(required = false) Float minPrice,
-                                                                   @RequestParam(required = false) Float maxPrice,
-                                                                   @RequestParam(required = false) Float minSuperficiality,
-                                                                   @RequestParam(required = false) Float maxSuperficiality,
-                                                                   @RequestParam(required = false) Integer minCapacity,
-                                                                   @RequestParam(required = false) Integer maxCapacity,
-                                                                   @RequestParam(required = false, defaultValue = "50") Integer size,
-                                                                   @RequestParam(required = false, defaultValue = "0") Integer page) throws EntityNotFoundException {
+    public ResponseEntity<?> getHostelTypeByHostelGroupId(@PathVariable Integer groupId,
+                                                          @RequestParam(required = false) Integer typeId,
+                                                          @RequestParam(required = false) Float minPrice,
+                                                          @RequestParam(required = false) Float maxPrice,
+                                                          @RequestParam(required = false) Float minSuperficiality,
+                                                          @RequestParam(required = false) Float maxSuperficiality,
+                                                          @RequestParam(required = false) Integer minCapacity,
+                                                          @RequestParam(required = false) Integer maxCapacity,
+                                                          @RequestParam(required = false, defaultValue = "50") Integer size,
+                                                          @RequestParam(required = false, defaultValue = "0") Integer page) throws EntityNotFoundException {
 
         String message = "";
-        List<HostelTypeDTO> responseHostelTypes = hostelTypeService.findByHostelGroupId(groupId).stream()
+        List<HostelTypeDTO> resDTOs = hostelTypeService.findByHostelGroupId(groupId).stream()
                 .filter(hostelType -> {
                     if (typeId != null)
                         return hostelType.getTypeId() == typeId;
@@ -106,34 +103,34 @@ public class HostelTypeController {
                 .map(hostelType -> modelMapper.map(hostelType, HostelTypeDTO.class))
                 .collect(Collectors.toList());
 
-        if (responseHostelTypes.isEmpty()) {
+        if (resDTOs.isEmpty()) {
             message = "There is no hostel types found!";
         } else {
             message = "Hostel types has been retrieved successfully!";
         }
 
-        return ResponseEntity.
-                status(HttpStatus.OK).
-                body((new ApiSuccess(responseHostelTypes, message)));
+        ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTOs, "Hostel type has been retrieved successfully!");
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(apiSuccess);
     }
 
     @GetMapping("/types")
-    public ResponseEntity<ApiSuccess> getHostelTypes(@RequestParam(required = false) Integer typeId,
-                                                     @RequestParam(required = false) Double latitude,
-                                                     @RequestParam(required = false) Double longitude,
-                                                     @RequestParam(required = false, defaultValue = "5.0") Double distance,
-                                                     @RequestParam(required = false) Float minPrice,
-                                                     @RequestParam(required = false) Float maxPrice,
-                                                     @RequestParam(required = false) Float minSuperficiality,
-                                                     @RequestParam(required = false) Float maxSuperficiality,
-                                                     @RequestParam(required = false) Integer minCapacity,
-                                                     @RequestParam(required = false) Integer maxCapacity,
-                                                     @RequestParam(required = false) Integer[] facilityIds,
-                                                     @RequestParam(required = false) Integer[] serviceIds,
-                                                     @RequestParam(required = false, defaultValue = "score") String sortBy,
-                                                     @RequestParam(required = false, defaultValue = "false") Boolean asc,
-                                                     @RequestParam(required = false, defaultValue = DEFAULT_SIZE) Integer size,
-                                                     @RequestParam(required = false, defaultValue = DEFAULT_PAGE) Integer page) throws EntityNotFoundException {
+    public ResponseEntity<?> getHostelTypes(@RequestParam(required = false) Integer typeId,
+                                            @RequestParam(required = false) Double latitude,
+                                            @RequestParam(required = false) Double longitude,
+                                            @RequestParam(required = false, defaultValue = "5.0") Double distance,
+                                            @RequestParam(required = false) Float minPrice,
+                                            @RequestParam(required = false) Float maxPrice,
+                                            @RequestParam(required = false) Float minSuperficiality,
+                                            @RequestParam(required = false) Float maxSuperficiality,
+                                            @RequestParam(required = false) Integer minCapacity,
+                                            @RequestParam(required = false) Integer maxCapacity,
+                                            @RequestParam(required = false) Integer[] facilityIds,
+                                            @RequestParam(required = false) Integer[] serviceIds,
+                                            @RequestParam(required = false, defaultValue = "score") String sortBy,
+                                            @RequestParam(required = false, defaultValue = "false") Boolean asc,
+                                            @RequestParam(required = false, defaultValue = DEFAULT_SIZE) Integer size,
+                                            @RequestParam(required = false, defaultValue = DEFAULT_PAGE) Integer page) throws EntityNotFoundException {
 
         Set<HostelTypeDTO> typeDTOs = hostelTypeService.findByLocationAndDistance(latitude, longitude, distance, sortBy, asc, size, page).stream()
                 .filter(hostelType -> {
@@ -193,30 +190,30 @@ public class HostelTypeController {
         // DTO contains list of Types and groups follow that type
         TypesAndGroupsDTO resDTO = new TypesAndGroupsDTO(typeDTOs, groupDTOs);
 
-        return ResponseEntity.
-                status(HttpStatus.OK).
-                body((new ApiSuccess(resDTO, String.format(GET_SUCCESS, HostelType.class.getSimpleName()))));
+        ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTO, "Hostel type has been retrieved successfully!");
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(apiSuccess);
     }
 
     @PostMapping("groups/{groupId}/types")
-    public ResponseEntity<ApiSuccess> create(@PathVariable Integer groupId,
-                                             @Valid @RequestBody HostelTypeDTO rqHostelType) throws EntityNotFoundException {
+    public ResponseEntity<?> create(@PathVariable Integer groupId,
+                                    @Valid @RequestBody HostelTypeDTO rqHostelType) throws EntityNotFoundException {
         HostelType model = modelMapper.map(rqHostelType, HostelType.class);
         HostelGroup hostelGroup = hostelGroupService.findById(groupId);
         model.setHostelGroup(hostelGroup);
         model.setHostelRooms(null);
         //TODO: category and typestatus
         HostelType createdModel = hostelTypeService.save(model);
-        HostelTypeDTO createdDTO = modelMapper.map(createdModel, HostelTypeDTO.class);
+        HostelTypeDTO resDTO = modelMapper.map(createdModel, HostelTypeDTO.class);
 
-        return ResponseEntity.
-                status(HttpStatus.CREATED).
-                body(new ApiSuccess(createdDTO, String.format(CREATE_SUCCESS, HostelType.class.getSimpleName())));
+        ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTO, "Hostel type has been created successfully!");
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(apiSuccess);
     }
 
     @PostMapping("types/{typeId}/facilities")
-    public ResponseEntity<ApiSuccess> addFacility(@PathVariable Integer typeId,
-                                                  @Valid @RequestBody List<FacilityDTO> facilities) {
+    public ResponseEntity<?> addFacility(@PathVariable Integer typeId,
+                                         @Valid @RequestBody List<FacilityDTO> facilities) {
         HostelType typeModel = hostelTypeService.findById(typeId);
         typeModel.setHostelRooms(null);
         Set<Facility> matchedFacilities = facilities
@@ -236,30 +233,9 @@ public class HostelTypeController {
         hostelTypeService.save(typeModel);
         HostelTypeDTO resDTO = modelMapper.map(typeModel, HostelTypeDTO.class);
 
-        return ResponseEntity.
-                status(HttpStatus.CREATED).
-                body(new ApiSuccess(resDTO, String.format(CREATE_SUCCESS, HostelType.class.getSimpleName())));
+        ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTO, "Facilities has been added successfully!");
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(apiSuccess);
     }
-
-//    @PutMapping("/groups/{groupId}/types/{typeId}")
-//    public ResponseEntity<ApiSuccess> update(@PathVariable Integer typeId,
-//                                             @PathVariable Integer groupId,
-//                                             @Valid @RequestBody HostelTypeDTO rqHostelType) throws EntityNotFoundException {
-//        // not able to update info
-//        HostelGroup hostelGroup = hostelGroupService.findById(groupId);
-//        Category category = hostelTypeService.findById(typeId).getCategory();
-//
-//        rqHostelType.setTypeId(typeId);
-//        HostelType rqModel = modelMapper.map(rqHostelType, HostelType.class);
-//        rqModel.setHostelGroup(hostelGroup);
-//        rqModel.setCategory(category);
-//        HostelType updatedModel = hostelTypeService.save(rqModel);
-//        HostelTypeDTO updatedDTO = modelMapper.map(updatedModel, HostelTypeDTO.class);
-//
-//        return ResponseEntity
-//                .status(HttpStatus.OK)
-//                .body(new ApiSuccess(updatedDTO, String.format(UPDATE_SUCCESS, HostelType.class.getSimpleName())));
-//    }
-
 
 }

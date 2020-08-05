@@ -43,7 +43,7 @@ public class FacilityServiceImpl implements FacilityService {
     /**
      * Get all facilities
      *
-     * @return list of DTO
+     * @return list of DTOs
      */
     @Override
     public List<FacilityDTO> getAll() {

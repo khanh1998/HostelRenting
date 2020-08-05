@@ -1,12 +1,21 @@
 package org.avengers.capstone.hostelrenting.service;
 
-import org.avengers.capstone.hostelrenting.model.Category;
+import org.avengers.capstone.hostelrenting.dto.CategoryDTO;
 
 import java.util.List;
 
 public interface CategoryService {
-    Category save(Category province);
-    Category findById(Integer id);
-    List<Category> findAll();
-    void deleteById(Integer id);
+    /**
+     * Check that given id is existed or not
+     *
+     * @param id the given id
+     */
+    void checkExist(Integer id);
+
+    /**
+     * Get all categories
+     *
+     * @return list of DTOs
+     */
+    List<CategoryDTO> getAll();
 }

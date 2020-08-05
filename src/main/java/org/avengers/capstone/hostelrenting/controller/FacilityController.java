@@ -26,16 +26,17 @@ public class FacilityController {
 
     /**
      * Get all facilities
+     *
      * @return ResponseEntity
      */
     @GetMapping("/facilities")
-    public ResponseEntity<?> getAll(){
+    public ResponseEntity<?> getAll() {
         String resMsg = "Facilities has been retrieved successfully!";
-        List<FacilityDTO> resDTO = facilityService.getAll();
-        if (resDTO.isEmpty()){
+        List<FacilityDTO> resDTOs = facilityService.getAll();
+        if (resDTOs.isEmpty()) {
             resMsg = "There is no facility";
         }
-        ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTO, resMsg);
+        ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTOs, resMsg);
 
         return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
     }
