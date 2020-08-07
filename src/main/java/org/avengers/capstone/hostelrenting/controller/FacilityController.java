@@ -18,7 +18,6 @@ import java.util.List;
 public class FacilityController {
     private FacilityService facilityService;
 
-
     @Autowired
     public void setFacilityService(FacilityService facilityService) {
         this.facilityService = facilityService;
@@ -30,7 +29,7 @@ public class FacilityController {
      * @return ResponseEntity
      */
     @GetMapping("/facilities")
-    public ResponseEntity<?> getAll() {
+    public ResponseEntity<?> getAllFacilities() {
         String resMsg = "Facilities has been retrieved successfully!";
         List<FacilityDTO> resDTOs = facilityService.getAll();
         if (resDTOs.isEmpty()) {

@@ -36,23 +36,23 @@ class CategoryServiceImplTest {
     private CategoryRepository mockRepository;
 
     @Test
-    @DisplayName("Test getAll")
+    @DisplayName("Test get all categories")
     void testGetAll(){
         // Set up mock repository
-        Category category1 = Mockito.mock(Category.class);
-        Category category2 = Mockito.mock(Category.class);
-        when(mockRepository.findAll()).thenReturn(Arrays.asList(category1, category2));
+        Category mockModel1 = Mockito.mock(Category.class);
+        Category mockModel2 = Mockito.mock(Category.class);
+        when(mockRepository.findAll()).thenReturn(Arrays.asList(mockModel1, mockModel2));
 
         // Execute the service call
-        List<CategoryDTO> categories = service.getAll();
+        List<CategoryDTO> categoryDTOs = service.getAll();
 
         // Assert the response
-        Assertions.assertEquals(2, categories.size());
+        Assertions.assertEquals(2, categoryDTOs.size());
     }
 
     @Test
-    @DisplayName("Test check existed not found")
-    void testCheckExistNotFound(){
+    @DisplayName("Test not found")
+    void testNotFound(){
         //Set up mock repository
         when(mockRepository.findById(anyInt())).thenReturn(Optional.empty());
 
@@ -60,17 +60,17 @@ class CategoryServiceImplTest {
         EntityNotFoundException exception = Assertions.assertThrows(EntityNotFoundException.class, () -> service.checkExist(5));
 
         // Assert the response
-        Assertions.assertTrue(exception != null);
+        Assertions.assertNotNull(exception);
     }
 
     @Test
-    @DisplayName("Test check existed success")
-    void testCheckExist(){
+    @DisplayName("Test found")
+    void testFound(){
         //Set up mock repository
-        Category category = Mockito.mock(Category.class);
-        when(mockRepository.findById(anyInt())).thenReturn(Optional.of(category));
+        Category mockModel = Mockito.mock(Category.class);
+        when(mockRepository.findById(mockModel.getCategoryId())).thenReturn(Optional.of(mockModel));
 
         // Assert the response
-        Assertions.assertDoesNotThrow(() -> service.checkExist(5));
+        Assertions.assertDoesNotThrow(() -> service.checkExist(mockModel.getCategoryId()));
     }
 }

@@ -1,8 +1,6 @@
 package org.avengers.capstone.hostelrenting.service;
 
-import org.avengers.capstone.hostelrenting.dto.FacilityDTO;
 import org.avengers.capstone.hostelrenting.dto.ServiceDTO;
-import org.avengers.capstone.hostelrenting.model.Facility;
 import org.avengers.capstone.hostelrenting.model.Service;
 
 import java.util.List;
@@ -13,7 +11,7 @@ public interface ServiceService {
      *
      * @param id the given id
      */
-    void checkExist(Integer id);
+    void checkNotFound(Integer id);
 
     /**
      * Get all services

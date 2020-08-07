@@ -34,7 +34,7 @@ public class FacilityServiceImpl implements FacilityService {
      * @param id the given id
      */
     @Override
-    public void checkExist(Integer id) {
+    public void checkNotFound(Integer id) {
         Optional<Facility> model = facilityRepository.findById(id);
         if (model.isEmpty())
             throw new EntityNotFoundException(Facility.class, "id", id.toString());
@@ -61,7 +61,7 @@ public class FacilityServiceImpl implements FacilityService {
      */
     @Override
     public Facility findById(Integer id) {
-        checkExist(id);
+        checkNotFound(id);
 
         return facilityRepository.getOne(id);
     }

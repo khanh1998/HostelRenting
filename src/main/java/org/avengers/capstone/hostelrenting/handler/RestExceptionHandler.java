@@ -2,9 +2,11 @@ package org.avengers.capstone.hostelrenting.handler;
 
 import io.swagger.annotations.Api;
 import io.swagger.models.Response;
+import net.bytebuddy.implementation.bytecode.Throw;
 import org.avengers.capstone.hostelrenting.Constant;
 import org.avengers.capstone.hostelrenting.dto.response.ApiError;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
+import org.springframework.core.NestedExceptionUtils;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -183,12 +185,11 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
      * @return the ApiError object
      */
     @ExceptionHandler(DataIntegrityViolationException.class)
-    public ResponseEntity<Object> handleDataIntegrityViolation(DataIntegrityViolationException ex,
+    public ResponseEntity<?> handleDataIntegrityViolation(DataIntegrityViolationException ex,
                                                                   WebRequest request) {
-        if (ex.getCause() instanceof ConstraintViolationException) {
-            return buildResponseEntity(new ApiError(HttpStatus.CONFLICT, "Database error", ex.getCause()));
-        }
-        return buildResponseEntity(new ApiError(HttpStatus.INTERNAL_SERVER_ERROR, ex));
+        Throwable throwable = NestedExceptionUtils.getMostSpecificCause(ex);
+        ApiError apiError = new ApiError(CONFLICT, "Database error", throwable);
+        return buildResponseEntity(apiError);
     }
 
     /**

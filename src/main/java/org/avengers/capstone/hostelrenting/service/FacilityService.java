@@ -11,7 +11,7 @@ public interface FacilityService {
      *
      * @param id the given id
      */
-    void checkExist(Integer id);
+    void checkNotFound(Integer id);
 
     /**
      * Get all facilities
