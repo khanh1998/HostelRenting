@@ -1,41 +1,35 @@
 package org.avengers.capstone.hostelrenting.firebase;
 
+import org.avengers.capstone.hostelrenting.dto.NotificationRequestDTO;
+import org.avengers.capstone.hostelrenting.dto.SubscriptionRequestDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/v1")
+@RequestMapping("/api/v1/notification")
 public class PushNotificationController {
-    private PushNotificationService pushNotificationService;
-
     @Autowired
-    public void setPushNotificationService(PushNotificationService pushNotificationService) {
-        this.pushNotificationService = pushNotificationService;
+    private NotificationService notificationService;
+
+    @PostMapping("/subscribe")
+    public void subscribeToTopic(@RequestBody SubscriptionRequestDTO subscriptionRequestDTO) {
+        notificationService.subscribeToTopic(subscriptionRequestDTO);
     }
 
-    @PostMapping("/notification/topic")
-    public ResponseEntity sendNotification(@RequestBody PushNotificationRequest request) {
-        pushNotificationService.sendPushNotificationWithoutData(request);
-        return new ResponseEntity<>(new PushNotificationResponse(HttpStatus.OK.value(), "Notification has been sent."), HttpStatus.OK);
+    @PostMapping("/unsubscribe")
+    public void unsubscribeFromTopic(SubscriptionRequestDTO subscriptionRequestDTO) {
+        notificationService.unsubscribeFromTopic(subscriptionRequestDTO);
     }
 
-    @PostMapping("/notification/token")
-    public ResponseEntity sendTokenNotification(@RequestBody PushNotificationRequest request) {
-        pushNotificationService.sendPushNotificationToToken(request);
-        return new ResponseEntity<>(new PushNotificationResponse(HttpStatus.OK.value(), "Notification has been sent."), HttpStatus.OK);
+    @PostMapping("/token")
+    public String sendPnsToDevice(@RequestBody NotificationRequestDTO notificationRequestDTO) {
+        return notificationService.sendPnsToDevice(notificationRequestDTO);
     }
 
-    @PostMapping("/notification/data")
-    public ResponseEntity sendDataNotification(@RequestBody PushNotificationRequest request) {
-        pushNotificationService.sendPushNotification(request);
-        return new ResponseEntity<>(new PushNotificationResponse(HttpStatus.OK.value(), "Notification has been sent."), HttpStatus.OK);
-    }
-
-    @GetMapping("/notification")
-    public ResponseEntity sendSampleNotification() {
-        pushNotificationService.sendSamplePushNotification();
-        return new ResponseEntity<>(new PushNotificationResponse(HttpStatus.OK.value(), "Notification has been sent."), HttpStatus.OK);
+    @PostMapping("/topic")
+    public String sendPnsToTopic(@RequestBody NotificationRequestDTO notificationRequestDTO) {
+        return notificationService.sendPnsToTopic(notificationRequestDTO);
     }
 }
