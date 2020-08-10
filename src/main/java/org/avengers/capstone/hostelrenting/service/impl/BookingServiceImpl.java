@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 @Service
 public class BookingServiceImpl implements BookingService {
@@ -129,14 +130,14 @@ public class BookingServiceImpl implements BookingService {
     public List<Booking> findByRenterId(Integer renterId) {
         renterService.checkExist(renterId);
 
-        return renterService.findById(renterId).getBookings();
+        return renterService.findById(renterId).getBookings().stream().filter(booking -> !booking.isDeleted()).collect(Collectors.toList());
     }
 
     @Override
     public List<Booking> findByVendorId(Integer vendorId) {
         vendorService.checkExist(vendorId);
 
-        return renterService.findById(vendorId).getBookings();
+        return renterService.findById(vendorId).getBookings().stream().filter(booking -> !booking.isDeleted()).collect(Collectors.toList());
     }
 
 
