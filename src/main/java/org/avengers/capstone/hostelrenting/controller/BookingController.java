@@ -94,29 +94,36 @@ public class BookingController {
 
     @GetMapping("/renters/{renterId}/bookings")
     public ResponseEntity<?> getByRenterId(@PathVariable Integer renterId) throws EntityNotFoundException {
+        String resMsg = "Your booking(s) has been retrieved successfully!";
+
         List<BookingDTOFull> resBookings = bookingService.findByRenterId(renterId)
                 .stream()
                 .map(booking -> modelMapper.map(booking, BookingDTOFull.class))
                 .collect(Collectors.toList());
 
+        if (resBookings.isEmpty())
+            resMsg = "There is no booking";
+
         // Response entity
-        ApiSuccess<?> apiSuccess = new ApiSuccess<>(getGroupForBooking(resBookings),
-                "Your booking(s) has been retrieved successfully!");
+        ApiSuccess<?> apiSuccess = new ApiSuccess<>(getGroupForBooking(resBookings), resMsg);
 
         return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
     }
 
     @GetMapping("/vendors/{vendorId}/bookings")
     public ResponseEntity<?> getByVendorId(@PathVariable Integer vendorId) throws EntityNotFoundException {
+        String resMsg = "Your booking(s) has been retrieved successfully!";
+
         List<BookingDTOFull> resBookings = bookingService.findByVendorId(vendorId)
                 .stream()
                 .map(booking -> modelMapper.map(booking, BookingDTOFull.class))
                 .collect(Collectors.toList());
 
+        if (resBookings.isEmpty())
+            resMsg = "There is no booking";
 
         // Response entity
-        ApiSuccess<?> apiSuccess = new ApiSuccess<>(getGroupForBooking(resBookings),
-                "Your booking(s) has been retrieved successfully!");
+        ApiSuccess<?> apiSuccess = new ApiSuccess<>(getGroupForBooking(resBookings), resMsg);
 
         return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
     }
