@@ -16,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.converter.HttpMessageNotWritableException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.transaction.TransactionSystemException;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -208,9 +209,9 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(AccessDeniedException.class)
-    public ResponseEntity<Object> handleMethodArgumentTypeMismatch(AccessDeniedException ex,
+    public ResponseEntity<Object> handleAccessDenied(AccessDeniedException ex,
                                                                       WebRequest request) {
-        ApiError apiError = new ApiError(UNAUTHORIZED);
+        ApiError apiError = new ApiError(FORBIDDEN);
         apiError.setMessage(ex.getMessage());
         apiError.setDebugMessage(ex.getMessage());
         return buildResponseEntity(apiError);
@@ -218,5 +219,19 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
     private ResponseEntity<Object> buildResponseEntity(ApiError apiError) {
         return new ResponseEntity<>(apiError, apiError.getStatus());
+    }
+
+    /**
+     * Handle Unauthorized
+     *
+     * @param ex the BadCredentialsException
+     * @return The {@link ApiError} object
+     */
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<?> handleBadCredentials(BadCredentialsException ex){
+        ApiError apiError = new ApiError(UNAUTHORIZED);
+        apiError.setMessage(ex.getMessage());
+        apiError.setDebugMessage(ex.getLocalizedMessage());
+        return buildResponseEntity(apiError);
     }
 }

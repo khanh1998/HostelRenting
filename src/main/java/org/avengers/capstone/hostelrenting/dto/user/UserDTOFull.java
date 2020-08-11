@@ -25,4 +25,5 @@ public class UserDTOFull {
     private String avatar;
     private String firebaseToken;
     private RoleDTO role;
+    private String jwtToken;
 }
