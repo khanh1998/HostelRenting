@@ -17,7 +17,7 @@ public class BookingDTOFull {
     private HostelTypeDTO type;
     private HostelGroupDTO group;
     private Booking.Status status;
-    private DealDTOShort deal;
+    private Integer dealId;
     private String qrCode;
     private Long meetTime;
 

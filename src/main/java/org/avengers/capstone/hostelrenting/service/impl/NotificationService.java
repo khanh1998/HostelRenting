@@ -1,17 +1,19 @@
-package org.avengers.capstone.hostelrenting.firebase;
+package org.avengers.capstone.hostelrenting.service.impl;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.messaging.*;
-import org.avengers.capstone.hostelrenting.dto.NotificationRequestDTO;
-import org.avengers.capstone.hostelrenting.dto.SubscriptionRequestDTO;
+import org.avengers.capstone.hostelrenting.dto.notification.NotificationRequestDTO;
+import org.avengers.capstone.hostelrenting.dto.notification.SubscriptionRequestDTO;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
+import java.util.Map;
 
 @Service
 public class NotificationService {
@@ -60,11 +62,13 @@ public class NotificationService {
     }
 
     public String sendPnsToDevice(NotificationRequestDTO notificationRequestDto) {
+        ObjectMapper objMapper = new ObjectMapper();
+        Map<String, String> data = objMapper.convertValue(notificationRequestDto.getData(), Map.class);
+
         Message message = Message.builder()
-                .setToken(notificationRequestDto.getTarget())
-                .setNotification(new Notification(notificationRequestDto.getTitle(), notificationRequestDto.getBody()))
-                .putData("content", notificationRequestDto.getTitle())
-                .putData("body", notificationRequestDto.getBody())
+                .setToken(notificationRequestDto.getDestination())
+                .setNotification(new Notification(notificationRequestDto.getContent().getTitle(), notificationRequestDto.getContent().getBody()))
+                .putAllData(data)
                 .build();
 
         String response = null;
@@ -78,24 +82,24 @@ public class NotificationService {
         return response;
     }
 
-    public String sendPnsToTopic(NotificationRequestDTO notificationRequestDto) {
-        Message message = Message.builder()
-                .setTopic(notificationRequestDto.getTarget())
-                .setNotification(new Notification(notificationRequestDto.getTitle(), notificationRequestDto.getBody()))
-                .putData("content", notificationRequestDto.getTitle())
-                .putData("body", notificationRequestDto.getBody())
-                .build();
-
-        String response = null;
-        try {
-            response = FirebaseMessaging.getInstance().send(message);
-        } catch (FirebaseMessagingException e) {
-//            log.error("Fail to send firebase notification", e);
-            e.printStackTrace();
-        }
-
-        return response;
-    }
+//    public String sendPnsToTopic(NotificationRequestDTO notificationRequestDto) {
+//        Message message = Message.builder()
+//                .setTopic(notificationRequestDto.getTarget())
+//                .setNotification(new Notification(notificationRequestDto.getTitle(), notificationRequestDto.getBody()))
+//                .putData("content", notificationRequestDto.getTitle())
+//                .putData("body", notificationRequestDto.getBody())
+//                .build();
+//
+//        String response = null;
+//        try {
+//            response = FirebaseMessaging.getInstance().send(message);
+//        } catch (FirebaseMessagingException e) {
+////            log.error("Fail to send firebase notification", e);
+//            e.printStackTrace();
+//        }
+//
+//        return response;
+//    }
 
 
 }
