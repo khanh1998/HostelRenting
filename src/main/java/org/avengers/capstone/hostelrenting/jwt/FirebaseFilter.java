@@ -1,5 +1,9 @@
 package org.avengers.capstone.hostelrenting.jwt;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthException;
+import com.google.firebase.auth.FirebaseToken;
+import org.avengers.capstone.hostelrenting.firebase.FirebaseService;
 import org.avengers.capstone.hostelrenting.service.impl.CustomUserService;
 import org.avengers.capstone.hostelrenting.util.JwtTokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,16 +22,18 @@ import io.jsonwebtoken.ExpiredJwtException;
 import java.io.IOException;
 
 @Component
-public class JwtRequestFilter extends OncePerRequestFilter {
+public class FirebaseFilter extends OncePerRequestFilter {
 
     private CustomUserService customUserService;
 
-    private JwtTokenUtil jwtTokenUtil;
+
+    private FirebaseService firebaseService;
 
     @Autowired
-    public void setJwtTokenUtil(JwtTokenUtil jwtTokenUtil) {
-        this.jwtTokenUtil = jwtTokenUtil;
+    public void setFirebaseService(FirebaseService firebaseService) {
+        this.firebaseService = firebaseService;
     }
+
 
     @Autowired
     public void setCustomUserService(CustomUserService customUserService) {
@@ -43,11 +49,10 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
             jwtToken = requestTokenHeader.substring(7);
             try {
-                phone = jwtTokenUtil.getPhoneFromToken(jwtToken);
-            } catch (IllegalArgumentException e) {
-                System.out.println("Unable to get JWT Token");
-            } catch (ExpiredJwtException e) {
-                System.out.println("JWT Token has expired");
+                FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(jwtToken);
+                phone = decodedToken.getUid();
+            } catch (FirebaseAuthException e) {
+                e.printStackTrace();
             }
         } else {
             logger.warn("JWT Token does not begin with Bearer String");
@@ -59,7 +64,8 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
             // if token is valid configure Spring Security to manually set
             // authentication
-            if (jwtTokenUtil.validateToken(jwtToken, userDetails)) {
+            //TODO: check expired
+            if (phone.equals(userDetails.getUsername())) {
 
                 UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
                         userDetails, null, userDetails.getAuthorities());

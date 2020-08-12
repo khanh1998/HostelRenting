@@ -9,6 +9,7 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 
 @Data
+
 public class UserDTOFull {
     private int userId;
     @NotEmpty(message = "Username is mandatory")

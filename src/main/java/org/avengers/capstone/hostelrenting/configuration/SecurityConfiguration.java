@@ -1,7 +1,7 @@
 package org.avengers.capstone.hostelrenting.configuration;
 
 import org.avengers.capstone.hostelrenting.jwt.JwtAuthenticationEntryPoint;
-import org.avengers.capstone.hostelrenting.jwt.JwtRequestFilter;
+import org.avengers.capstone.hostelrenting.jwt.FirebaseFilter;
 import org.avengers.capstone.hostelrenting.service.impl.CustomUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -23,7 +23,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private CustomUserService jwtUserDetailsService;
-    private JwtRequestFilter jwtRequestFilter;
+    private FirebaseFilter firebaseFilter;
 
     @Autowired
     public void setJwtAuthenticationEntryPoint(JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint) {
@@ -36,8 +36,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     }
 
     @Autowired
-    public void setJwtRequestFilter(JwtRequestFilter jwtRequestFilter) {
-        this.jwtRequestFilter = jwtRequestFilter;
+    public void setJwtRequestFilter(FirebaseFilter firebaseFilter) {
+        this.firebaseFilter = firebaseFilter;
     }
 
     @Autowired
@@ -73,6 +73,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
         // Add a filter to validate the tokens with every request
-        httpSecurity.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+        httpSecurity.addFilterBefore(firebaseFilter, UsernamePasswordAuthenticationFilter.class);
     }
 }

@@ -3,18 +3,23 @@ package org.avengers.capstone.hostelrenting.firebase;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.messaging.*;
 import org.avengers.capstone.hostelrenting.dto.NotificationRequestDTO;
 import org.avengers.capstone.hostelrenting.dto.SubscriptionRequestDTO;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
-public class NotificationService {
+public class FirebaseService {
 
     @Value("${app.firebase-config}")
     private String firebaseConfig;
@@ -97,5 +102,13 @@ public class NotificationService {
         return response;
     }
 
+    public String generateJwtToken(UserDetails userDetails) throws FirebaseAuthException {
+        String uid = userDetails.getUsername();
+        Map<String, Object> additionalClaims = new HashMap<>();
+//        additionalClaims.put("vendor", true);
+
+        String token = FirebaseAuth.getInstance().createCustomToken(uid, additionalClaims);
+        return token;
+    }
 
 }

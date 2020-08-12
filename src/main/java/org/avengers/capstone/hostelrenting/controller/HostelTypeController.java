@@ -192,7 +192,7 @@ public class HostelTypeController {
 
         ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTO, "Hostel type has been retrieved successfully!");
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(apiSuccess);
+        return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
     }
 
     @PostMapping("groups/{groupId}/types")

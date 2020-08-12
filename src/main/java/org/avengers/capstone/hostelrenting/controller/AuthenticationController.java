@@ -2,10 +2,10 @@ package org.avengers.capstone.hostelrenting.controller;
 
 import org.avengers.capstone.hostelrenting.dto.response.ApiSuccess;
 import org.avengers.capstone.hostelrenting.dto.user.UserDTOFull;
+import org.avengers.capstone.hostelrenting.dto.user.UserDTOLogin;
+import org.avengers.capstone.hostelrenting.firebase.FirebaseService;
 import org.avengers.capstone.hostelrenting.model.User;
-import org.avengers.capstone.hostelrenting.service.UserService;
 import org.avengers.capstone.hostelrenting.service.impl.CustomUserService;
-import org.avengers.capstone.hostelrenting.util.JwtTokenUtil;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +14,6 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,18 +23,18 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1")
 public class AuthenticationController {
     private AuthenticationManager authenticationManager;
-    private JwtTokenUtil jwtTokenUtil;
     private CustomUserService customUserService;
-    private ModelMapper modelMap;
+    private ModelMapper modelMapper;
 
     @Autowired
     public void setAuthenticationManager(AuthenticationManager authenticationManager) {
         this.authenticationManager = authenticationManager;
     }
 
+    private FirebaseService firebaseService;
     @Autowired
-    public void setJwtTokenUtil(JwtTokenUtil jwtTokenUtil) {
-        this.jwtTokenUtil = jwtTokenUtil;
+    public void setFirebaseService(FirebaseService firebaseService) {
+        this.firebaseService = firebaseService;
     }
 
     @Autowired
@@ -44,18 +43,18 @@ public class AuthenticationController {
     }
 
     @Autowired
-    public void setUserService(ModelMapper modelMap) {
-        this.modelMap = modelMap;
+    public void setModelMapper(ModelMapper modelMapper) {
+        this.modelMapper = modelMapper;
     }
 
     @PostMapping(value = "/authenticate")
-    public ResponseEntity<?> createAuthenticationToken(@RequestBody User reqDTO) throws Exception {
+    public ResponseEntity<?> createAuthenticationToken(@RequestBody UserDTOLogin reqDTO) throws Exception {
 
         authenticate(reqDTO.getPhone(), reqDTO.getPassword());
         final UserDetails userDetails = customUserService.loadUserByUsername(reqDTO.getPhone());
-        final String token = jwtTokenUtil.generateToken(userDetails);
+        final String token = firebaseService.generateJwtToken(userDetails);
         User resModel = customUserService.findByPhone(reqDTO.getPhone());
-        UserDTOFull resDTO = modelMap.map(resModel, UserDTOFull.class);
+        UserDTOFull resDTO = modelMapper.map(resModel, UserDTOFull.class);
         resDTO.setJwtToken(token);
 
         ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTO, "Login successfully!");
@@ -63,7 +62,7 @@ public class AuthenticationController {
         return ResponseEntity.ok(apiSuccess);
     }
 
-    private void authenticate(String username, String password) throws Exception {
+    private void authenticate(String username, String password){
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
         } catch (DisabledException e) {
