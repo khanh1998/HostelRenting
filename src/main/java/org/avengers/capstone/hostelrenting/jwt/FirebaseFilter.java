@@ -1,8 +1,10 @@
 package org.avengers.capstone.hostelrenting.jwt;
 
+import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseToken;
+import org.apache.commons.lang3.StringUtils;
 import org.avengers.capstone.hostelrenting.service.impl.CustomUserService;
 import org.avengers.capstone.hostelrenting.service.impl.FirebaseService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,10 +49,15 @@ public class FirebaseFilter extends OncePerRequestFilter {
         if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
             idToken = requestTokenHeader.substring(7);
             try {
-                FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(idToken);
-                phone = decodedToken.getUid();
+                System.out.println(FirebaseApp.getInstance().getName());
+                FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+                FirebaseToken decodedToken = firebaseAuth.verifyIdToken(idToken);
+                if (decodedToken != null)
+                    phone = decodedToken.getUid();
             } catch (FirebaseAuthException e) {
                 e.printStackTrace();
+            } catch (IllegalArgumentException e){
+                System.out.println("Invalid id token");
             }
         } else {
             logger.warn("JWT Token does not begin with Bearer String");
