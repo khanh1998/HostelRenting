@@ -44,12 +44,12 @@ public class FirebaseFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         final String requestTokenHeader = request.getHeader("Authorization");
         String phone = null;
-        String jwtToken = null;
+        String idToken = null;
         // JWT Token is in the form "Bearer token". Remove Bearer word and get only the Token
         if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
-            jwtToken = requestTokenHeader.substring(7);
+            idToken = requestTokenHeader.substring(7);
             try {
-                FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(jwtToken);
+                FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(idToken);
                 phone = decodedToken.getUid();
             } catch (FirebaseAuthException e) {
                 e.printStackTrace();

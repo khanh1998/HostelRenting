@@ -28,7 +28,7 @@ import static org.avengers.capstone.hostelrenting.Constant.Pagination.DEFAULT_PA
 import static org.avengers.capstone.hostelrenting.Constant.Pagination.DEFAULT_SIZE;
 
 @RestController
-@RequestMapping("api/v1")
+@RequestMapping("/api/v1")
 public class HostelTypeController {
 
     private HostelTypeService hostelTypeService;

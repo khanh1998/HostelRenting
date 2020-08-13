@@ -32,19 +32,19 @@ public class UserController {
         this.modelMapper = modelMapper;
     }
 
-    @PostMapping("/login")
-    public ResponseEntity<ApiSuccess> loginRenter(@Valid @RequestBody UserDTOLogin reqDTO){
-        User matchedUser = userService.login(reqDTO.getPhone(),reqDTO.getPassword());
-        if (matchedUser != null){
-            UserDTOFull resDTO = modelMapper.map(matchedUser, UserDTOFull.class);
-            return ResponseEntity
-                    .status(HttpStatus.OK)
-                    .body(new ApiSuccess(resDTO, "Login successfully!"));
-        }else{
-            return ResponseEntity
-                    .status(HttpStatus.UNAUTHORIZED)
-                    .body(new ApiSuccess( "Invalid phone or password", false));
-        }
-    }
+//    @PostMapping("/login")
+//    public ResponseEntity<ApiSuccess> loginRenter(@Valid @RequestBody UserDTOLogin reqDTO){
+//        User matchedUser = userService.login(reqDTO.getPhone(),reqDTO.getPassword());
+//        if (matchedUser != null){
+//            UserDTOFull resDTO = modelMapper.map(matchedUser, UserDTOFull.class);
+//            return ResponseEntity
+//                    .status(HttpStatus.OK)
+//                    .body(new ApiSuccess(resDTO, "Login successfully!"));
+//        }else{
+//            return ResponseEntity
+//                    .status(HttpStatus.UNAUTHORIZED)
+//                    .body(new ApiSuccess( "Invalid phone or password", false));
+//        }
+//    }
 
 }

@@ -47,7 +47,7 @@ public class AuthenticationController {
         this.modelMapper = modelMapper;
     }
 
-    @PostMapping(value = "/authenticate")
+    @PostMapping(value = "/login")
     public ResponseEntity<?> createAuthenticationToken(@RequestBody UserDTOLogin reqDTO) throws Exception {
 
         authenticate(reqDTO.getPhone(), reqDTO.getPassword());
