@@ -28,7 +28,7 @@ import static org.avengers.capstone.hostelrenting.Constant.Pagination.DEFAULT_PA
 import static org.avengers.capstone.hostelrenting.Constant.Pagination.DEFAULT_SIZE;
 
 @RestController
-@RequestMapping("api/v1")
+@RequestMapping("/api/v1")
 public class HostelTypeController {
 
     private HostelTypeService hostelTypeService;
@@ -192,7 +192,7 @@ public class HostelTypeController {
 
         ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTO, "Hostel type has been retrieved successfully!");
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(apiSuccess);
+        return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
     }
 
     @PostMapping("groups/{groupId}/types")

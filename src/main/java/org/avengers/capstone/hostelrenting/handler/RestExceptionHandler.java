@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.converter.HttpMessageNotWritableException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
@@ -176,8 +177,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
      * @return the ApiError object
      */
     @ExceptionHandler(DataIntegrityViolationException.class)
-    public ResponseEntity<?> handleDataIntegrityViolation(DataIntegrityViolationException ex,
-                                                                  WebRequest request) {
+    public ResponseEntity<?> handleDataIntegrityViolation(DataIntegrityViolationException ex) {
         Throwable throwable = NestedExceptionUtils.getMostSpecificCause(ex);
         ApiError apiError = new ApiError(CONFLICT, "Database error", throwable);
         return buildResponseEntity(apiError);
@@ -190,8 +190,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
      * @return the ApiError object
      */
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-    public ResponseEntity<Object> handleMethodArgumentTypeMismatch(MethodArgumentTypeMismatchException ex,
-                                                                      WebRequest request) {
+    public ResponseEntity<Object> handleMethodArgumentTypeMismatch(MethodArgumentTypeMismatchException ex) {
         ApiError apiError = new ApiError(BAD_REQUEST);
         apiError.setMessage(String.format("The parameter '%s' of value '%s' could not be converted to type '%s'", ex.getName(), ex.getValue(), ex.getRequiredType().getSimpleName()));
         apiError.setDebugMessage(ex.getMessage());
@@ -199,11 +198,25 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(AccessDeniedException.class)
-    public ResponseEntity<Object> handleMethodArgumentTypeMismatch(AccessDeniedException ex,
-                                                                      WebRequest request) {
-        ApiError apiError = new ApiError(UNAUTHORIZED);
+    public ResponseEntity<Object> handleAccessDenied(AccessDeniedException ex) {
+        ApiError apiError = new ApiError(FORBIDDEN);
         apiError.setMessage(ex.getMessage());
         apiError.setDebugMessage(ex.getMessage());
+        return buildResponseEntity(apiError);
+    }
+
+
+    /**
+     * Handle Unauthorized
+     *
+     * @param ex the BadCredentialsException
+     * @return The {@link ApiError} object
+     */
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<?> handleBadCredentials(BadCredentialsException ex) {
+        ApiError apiError = new ApiError(UNAUTHORIZED);
+        apiError.setMessage(ex.getMessage());
+        apiError.setDebugMessage(ex.getLocalizedMessage());
         return buildResponseEntity(apiError);
     }
 

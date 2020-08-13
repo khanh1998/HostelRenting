@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 import static org.avengers.capstone.hostelrenting.Constant.Message.*;
 
 @RestController
-@RequestMapping("api/v1")
+@RequestMapping("/api/v1")
 public class HostelRoomController {
 
     private HostelRoomService hostelRoomService;
