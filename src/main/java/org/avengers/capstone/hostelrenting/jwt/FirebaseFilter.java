@@ -1,6 +1,5 @@
 package org.avengers.capstone.hostelrenting.jwt;
 
-import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseToken;
@@ -49,9 +48,7 @@ public class FirebaseFilter extends OncePerRequestFilter {
         if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
             idToken = requestTokenHeader.substring(7);
             try {
-                System.out.println(FirebaseApp.getInstance().getName());
-                FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
-                FirebaseToken decodedToken = firebaseAuth.verifyIdToken(idToken);
+                FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(idToken);
                 if (decodedToken != null)
                     phone = decodedToken.getUid();
             } catch (FirebaseAuthException e) {

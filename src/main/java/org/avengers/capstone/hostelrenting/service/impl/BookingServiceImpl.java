@@ -137,7 +137,7 @@ public class BookingServiceImpl implements BookingService {
     public List<Booking> findByVendorId(Integer vendorId) {
         vendorService.checkExist(vendorId);
 
-        return renterService.findById(vendorId).getBookings().stream().filter(booking -> !booking.isDeleted()).collect(Collectors.toList());
+        return vendorService.findById(vendorId).getBookings().stream().filter(booking -> !booking.isDeleted()).collect(Collectors.toList());
     }
 
 
