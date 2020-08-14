@@ -3,7 +3,7 @@ package org.avengers.capstone.hostelrenting.dto.contract;
 import lombok.Data;
 import org.avengers.capstone.hostelrenting.dto.HostelGroupDTO;
 import org.avengers.capstone.hostelrenting.dto.HostelRoomDTO;
-import org.avengers.capstone.hostelrenting.dto.HostelTypeDTO;
+import org.avengers.capstone.hostelrenting.dto.hosteltype.ResTypeDTO;
 import org.avengers.capstone.hostelrenting.dto.renter.RenterDTOFull;
 import org.avengers.capstone.hostelrenting.dto.vendor.VendorDTOFull;
 
@@ -15,7 +15,7 @@ import org.avengers.capstone.hostelrenting.dto.vendor.VendorDTOFull;
 public class ContractDTOFull {
     private int contractId;
     private HostelRoomDTO room;
-    private HostelTypeDTO type;
+    private ResTypeDTO type;
     private HostelGroupDTO group;
     private VendorDTOFull vendor;
     private RenterDTOFull renter;

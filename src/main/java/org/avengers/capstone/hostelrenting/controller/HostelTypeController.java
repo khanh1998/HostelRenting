@@ -1,8 +1,10 @@
 package org.avengers.capstone.hostelrenting.controller;
 
+import io.swagger.models.Response;
 import org.avengers.capstone.hostelrenting.dto.FacilityDTO;
 import org.avengers.capstone.hostelrenting.dto.HostelGroupDTO;
-import org.avengers.capstone.hostelrenting.dto.HostelTypeDTO;
+import org.avengers.capstone.hostelrenting.dto.hosteltype.ReqTypeDTO;
+import org.avengers.capstone.hostelrenting.dto.hosteltype.ResTypeDTO;
 import org.avengers.capstone.hostelrenting.dto.TypesAndGroupsDTO;
 import org.avengers.capstone.hostelrenting.dto.response.ApiSuccess;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
@@ -56,6 +58,23 @@ public class HostelTypeController {
         this.modelMapper = modelMapper;
     }
 
+
+    @PostMapping("groups/{groupId}/types")
+    public ResponseEntity<?> createNewType(@PathVariable Integer groupId,
+                                    @Valid @RequestBody ReqTypeDTO reqDTO) throws EntityNotFoundException {
+        HostelType reqModel = modelMapper.map(reqDTO, HostelType.class);
+        HostelGroup hostelGroup = hostelGroupService.findById(groupId);
+        reqModel.setHostelGroup(hostelGroup);
+        reqModel.setHostelRooms(null);
+        //TODO: category and typestatus
+        HostelType resModel = hostelTypeService.save(reqModel);
+        ResTypeDTO resDTO = modelMapper.map(resModel, ResTypeDTO.class);
+
+        ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTO, "Hostel type has been created successfully!");
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(apiSuccess);
+    }
+
     @GetMapping("/groups/{groupId}/types")
     public ResponseEntity<?> getHostelTypeByHostelGroupId(@PathVariable Integer groupId,
                                                           @RequestParam(required = false) Integer typeId,
@@ -69,7 +88,7 @@ public class HostelTypeController {
                                                           @RequestParam(required = false, defaultValue = "0") Integer page) throws EntityNotFoundException {
 
         String message = "";
-        List<HostelTypeDTO> resDTOs = hostelTypeService.findByHostelGroupId(groupId).stream()
+        List<ResTypeDTO> resDTOs = hostelTypeService.findByHostelGroupId(groupId).stream()
                 .filter(hostelType -> {
                     if (typeId != null)
                         return hostelType.getTypeId() == typeId;
@@ -100,7 +119,7 @@ public class HostelTypeController {
                     return true;
                 }).skip(page * size)
                 .limit(size)
-                .map(hostelType -> modelMapper.map(hostelType, HostelTypeDTO.class))
+                .map(hostelType -> modelMapper.map(hostelType, ResTypeDTO.class))
                 .collect(Collectors.toList());
 
         if (resDTOs.isEmpty()) {
@@ -132,7 +151,7 @@ public class HostelTypeController {
                                             @RequestParam(required = false, defaultValue = DEFAULT_SIZE) Integer size,
                                             @RequestParam(required = false, defaultValue = DEFAULT_PAGE) Integer page) throws EntityNotFoundException {
 
-        Set<HostelTypeDTO> typeDTOs = hostelTypeService.findByLocationAndDistance(latitude, longitude, distance, sortBy, asc, size, page).stream()
+        Set<ResTypeDTO> typeDTOs = hostelTypeService.findByLocationAndDistance(latitude, longitude, distance, sortBy, asc, size, page).stream()
                 .filter(hostelType -> {
                     if (typeId != null)
                         return hostelType.getTypeId() == typeId;
@@ -179,7 +198,7 @@ public class HostelTypeController {
                                         .anyMatch(id -> true ? Integer.compare(id, typeService.getService().getServiceId()) == 0 : false));
                     return true;
                 })
-                .map(hostelType -> modelMapper.map(hostelType, HostelTypeDTO.class))
+                .map(hostelType -> modelMapper.map(hostelType, ResTypeDTO.class))
                 .collect(Collectors.toSet());
 
         Set<HostelGroupDTO> groupDTOs = typeDTOs.stream()
@@ -195,22 +214,14 @@ public class HostelTypeController {
         return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
     }
 
-    @PostMapping("groups/{groupId}/types")
-    public ResponseEntity<?> create(@PathVariable Integer groupId,
-                                    @Valid @RequestBody HostelTypeDTO rqHostelType) throws EntityNotFoundException {
-        HostelType model = modelMapper.map(rqHostelType, HostelType.class);
-        HostelGroup hostelGroup = hostelGroupService.findById(groupId);
-        model.setHostelGroup(hostelGroup);
-        model.setHostelRooms(null);
-        //TODO: category and typestatus
-        HostelType createdModel = hostelTypeService.save(model);
-        HostelTypeDTO resDTO = modelMapper.map(createdModel, HostelTypeDTO.class);
 
-        ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTO, "Hostel type has been created successfully!");
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(apiSuccess);
-    }
-
+    /**
+     * Add Facilities to hostel type
+     *
+     * @param typeId hostel type id
+     * @param facilities list of facilities
+     * @return ResponseEntity
+     */
     @PostMapping("types/{typeId}/facilities")
     public ResponseEntity<?> addFacility(@PathVariable Integer typeId,
                                          @Valid @RequestBody List<FacilityDTO> facilities) {
@@ -231,7 +242,7 @@ public class HostelTypeController {
 
         typeModel.setFacilities(matchedFacilities);
         hostelTypeService.save(typeModel);
-        HostelTypeDTO resDTO = modelMapper.map(typeModel, HostelTypeDTO.class);
+        ResTypeDTO resDTO = modelMapper.map(typeModel, ResTypeDTO.class);
 
         ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTO, "Facilities has been added successfully!");
 

@@ -1,7 +1,7 @@
 package org.avengers.capstone.hostelrenting.controller;
 
 import org.avengers.capstone.hostelrenting.dto.HostelGroupDTO;
-import org.avengers.capstone.hostelrenting.dto.HostelTypeDTO;
+import org.avengers.capstone.hostelrenting.dto.hosteltype.ResTypeDTO;
 import org.avengers.capstone.hostelrenting.dto.contract.ContractDTOFull;
 import org.avengers.capstone.hostelrenting.dto.contract.ContractDTOShort;
 import org.avengers.capstone.hostelrenting.dto.response.ApiSuccess;
@@ -98,7 +98,7 @@ public class ContractController {
         resContracts.stream().forEach(resDTO ->{
             HostelType existedType = hostelTypeService.findById(resDTO.getRoom().getTypeId());
             HostelGroup existedGroup = hostelGroupService.findById(existedType.getHostelGroup().getGroupId());
-            resDTO.setType(modelMapper.map(existedType, HostelTypeDTO.class));
+            resDTO.setType(modelMapper.map(existedType, ResTypeDTO.class));
             resDTO.setGroup(modelMapper.map(existedGroup, HostelGroupDTO.class));
         });
 
@@ -118,7 +118,7 @@ public class ContractController {
         resContracts.stream().forEach(resDTO ->{
             HostelType existedType = hostelTypeService.findById(resDTO.getRoom().getTypeId());
             HostelGroup existedGroup = hostelGroupService.findById(existedType.getHostelGroup().getGroupId());
-            resDTO.setType(modelMapper.map(existedType, HostelTypeDTO.class));
+            resDTO.setType(modelMapper.map(existedType, ResTypeDTO.class));
             resDTO.setGroup(modelMapper.map(existedGroup, HostelGroupDTO.class));
         });
 

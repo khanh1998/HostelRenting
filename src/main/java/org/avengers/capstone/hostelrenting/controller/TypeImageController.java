@@ -1,14 +1,10 @@
 package org.avengers.capstone.hostelrenting.controller;
 
-import org.avengers.capstone.hostelrenting.dto.DistrictDTO;
-import org.avengers.capstone.hostelrenting.dto.HostelTypeDTO;
-import org.avengers.capstone.hostelrenting.dto.ProvinceDTO;
+import org.avengers.capstone.hostelrenting.dto.hosteltype.ResTypeDTO;
 import org.avengers.capstone.hostelrenting.dto.TypeImageDTO;
 import org.avengers.capstone.hostelrenting.dto.response.ApiSuccess;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
-import org.avengers.capstone.hostelrenting.model.District;
 import org.avengers.capstone.hostelrenting.model.HostelType;
-import org.avengers.capstone.hostelrenting.model.Province;
 import org.avengers.capstone.hostelrenting.model.TypeImage;
 import org.avengers.capstone.hostelrenting.service.HostelTypeService;
 import org.avengers.capstone.hostelrenting.service.TypeImageService;
@@ -20,11 +16,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.avengers.capstone.hostelrenting.Constant.Message.*;
-import static org.avengers.capstone.hostelrenting.Constant.Pagination.*;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -66,7 +60,7 @@ public class TypeImageController {
     public ResponseEntity<ApiSuccess> getAll(@PathVariable Integer typeId) throws EntityNotFoundException {
         HostelType typeModel = hostelTypeService.findById(typeId);
         typeModel.getTypeImages();
-        HostelTypeDTO resDTO = modelMapper.map(typeModel, HostelTypeDTO.class);
+        ResTypeDTO resDTO = modelMapper.map(typeModel, ResTypeDTO.class);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
