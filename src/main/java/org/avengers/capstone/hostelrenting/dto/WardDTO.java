@@ -4,6 +4,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -11,4 +12,5 @@ public class WardDTO implements Serializable {
     private int wardId;
     private String wardName;
     private Integer districtId;
+    private List<StreetDTO> streets;
 }
