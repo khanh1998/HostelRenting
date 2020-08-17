@@ -53,6 +53,10 @@ public class HostelGroup{
     private Ward ward;
 
     @ManyToOne
+    @JoinColumn(name = "street_id", nullable = false)
+    private Street streetObj;
+
+    @ManyToOne
     @JoinColumn(name="vendor_id", nullable = false)
     private Vendor vendor;
 

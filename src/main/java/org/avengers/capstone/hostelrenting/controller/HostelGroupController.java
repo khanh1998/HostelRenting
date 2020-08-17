@@ -70,13 +70,18 @@ public class HostelGroupController {
 
     @GetMapping("/groups")
     public ResponseEntity<ApiSuccess> getHostelGroupByWardId(@RequestParam(required = false) Integer wardId,
-                                                                 @RequestParam(required = false) Integer groupId,
-                                                                 @RequestParam(required = false) String hostelGroupName,
-                                                                 @RequestParam(required = false) String streetName,
-                                                                 @RequestParam(required = false, defaultValue = "50") Integer size,
-                                                                 @RequestParam(required = false, defaultValue = "0") Integer page) throws EntityNotFoundException {
+                                                             @RequestParam(required = false) Integer groupId,
+                                                             @RequestParam(required = false) String hostelGroupName,
+                                                             @RequestParam(required = false) Integer streetId,
+                                                             @RequestParam(required = false, defaultValue = "50") Integer size,
+                                                             @RequestParam(required = false, defaultValue = "1") Integer page) throws EntityNotFoundException {
         List<HostelGroupDTO> responseHostelGroups = hostelGroupService.findAll().stream()
+
                 .filter(hostelGroup -> {
+                    if (streetId != null)
+                        return hostelGroup.getStreetObj().getStreetId() == streetId;
+                    return true;
+                }).filter(hostelGroup -> {
                     if (wardId != null)
                         return hostelGroup.getWard().getWardId() == wardId;
                     return true;
@@ -88,11 +93,7 @@ public class HostelGroupController {
                     if (hostelGroupName != null)
                         return hostelGroup.getGroupName().contains(hostelGroupName);
                     return true;
-                }).filter(hostelGroup -> {
-                    if (streetName != null)
-                        return hostelGroup.getStreet().trim().toLowerCase().contains(streetName.toLowerCase().trim());
-                    return true;
-                }).skip((page -1) * size)
+                }).skip((page - 1) * size)
                 .limit(size)
                 .map(hostelGroup -> modelMapper.map(hostelGroup, HostelGroupDTO.class))
                 .collect(Collectors.toList());
@@ -184,7 +185,7 @@ public class HostelGroupController {
     }
 
     @GetMapping("/vendors/{vendorId}/groups")
-    public ResponseEntity<ApiSuccess> getGroupsByVendorId(@PathVariable Integer vendorId)throws  EntityNotFoundException{
+    public ResponseEntity<ApiSuccess> getGroupsByVendorId(@PathVariable Integer vendorId) throws EntityNotFoundException {
         Vendor existedModel = vendorService.findById(vendorId);
         List<HostelGroupDTO> groups = existedModel.getHostelGroups()
                 .stream()

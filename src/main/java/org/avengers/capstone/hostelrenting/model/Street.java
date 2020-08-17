@@ -31,6 +31,9 @@ public class Street {
     @JoinColumn(name = "ward_id", nullable = false)
     private Ward ward;
 
+    @OneToMany(mappedBy = "streetObj", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore
+    private List<HostelGroup> hostelGroups;
 
     @OneToMany(mappedBy = "street", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore

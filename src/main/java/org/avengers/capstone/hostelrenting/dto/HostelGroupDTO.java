@@ -11,6 +11,8 @@ public class HostelGroupDTO implements Serializable {
 
     private Integer wardId;
 
+    private Integer streetId;
+
     private Integer vendorId;
 
     private String groupName;
