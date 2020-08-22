@@ -9,8 +9,6 @@ import java.util.Collection;
 public class HostelGroupDTO implements Serializable {
     private int groupId;
 
-    private Integer wardId;
-
     private Integer streetId;
 
     private Integer vendorId;
@@ -18,8 +16,6 @@ public class HostelGroupDTO implements Serializable {
     private String groupName;
 
     private String buildingNo;
-
-    private String street;
 
     private Double longitude;
 

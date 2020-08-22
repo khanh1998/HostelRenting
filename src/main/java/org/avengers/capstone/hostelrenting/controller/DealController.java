@@ -27,7 +27,6 @@ public class DealController {
     private HostelGroupService hostelGroupService;
     private DealService dealService;
 
-
     @Autowired
     public void setHostelGroupService(HostelGroupService hostelGroupService) {
         this.hostelGroupService = hostelGroupService;

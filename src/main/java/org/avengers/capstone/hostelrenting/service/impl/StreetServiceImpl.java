@@ -2,6 +2,7 @@ package org.avengers.capstone.hostelrenting.service.impl;
 
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
 import org.avengers.capstone.hostelrenting.model.Street;
+import org.avengers.capstone.hostelrenting.model.Ward;
 import org.avengers.capstone.hostelrenting.repository.StreetRepository;
 import org.avengers.capstone.hostelrenting.service.StreetService;
 import org.modelmapper.ModelMapper;
@@ -30,6 +31,12 @@ public class StreetServiceImpl implements StreetService {
         Optional<Street> model = streetRepository.findById(id);
         if (model.isEmpty())
             throw new EntityNotFoundException(Street.class, "id", id.toString());
+    }
+
+    @Override
+    public Street findById(Integer id) {
+        checkExist(id);
+        return streetRepository.getOne(id);
     }
 
 }

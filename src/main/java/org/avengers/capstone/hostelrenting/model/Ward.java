@@ -33,9 +33,5 @@ public class Ward {
     private District district;
 
     @OneToMany(mappedBy = "ward", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonIgnore
-    private List<HostelGroup> hostelGroups;
-
-    @OneToMany(mappedBy = "ward", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Street> streets;
 }

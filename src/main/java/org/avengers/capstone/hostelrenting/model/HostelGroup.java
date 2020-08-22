@@ -30,9 +30,6 @@ public class HostelGroup{
     @Column(name = "building_no", nullable = false)
     private String buildingNo;
 
-    @Column(name = "street", nullable = false)
-    private String street;
-
     @NotBlank(message = "Longitude is mandatory")
     private Double longitude;
 
@@ -49,12 +46,8 @@ public class HostelGroup{
     private List<HostelType> hostelTypes;
 
     @ManyToOne
-    @JoinColumn(name = "ward_id", nullable = false)
-    private Ward ward;
-
-    @ManyToOne
     @JoinColumn(name = "street_id", nullable = false)
-    private Street streetObj;
+    private Street street;
 
     @ManyToOne
     @JoinColumn(name="vendor_id", nullable = false)

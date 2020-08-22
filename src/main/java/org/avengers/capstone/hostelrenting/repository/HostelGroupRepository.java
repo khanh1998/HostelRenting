@@ -10,6 +10,6 @@ import java.util.List;
 
 @Repository
 public interface HostelGroupRepository extends JpaRepository<HostelGroup, Integer> {
-    List<HostelGroup> findByWard_WardId(Integer districtId);
+    List<HostelGroup> findByStreet_StreetId(Integer districtId);
 
 }
