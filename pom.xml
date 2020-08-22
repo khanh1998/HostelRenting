@@ -13,7 +13,7 @@
     <version>0.0.1-SNAPSHOT</version>
     <name>hostelrenting</name>
     <description>Hostel Renting back-end API</description>
-gitgio
+
     <properties>
         <java.version>11</java.version>
     </properties>
