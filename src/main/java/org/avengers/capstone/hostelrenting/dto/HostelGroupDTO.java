@@ -9,7 +9,7 @@ import java.util.Collection;
 public class HostelGroupDTO implements Serializable {
     private int groupId;
 
-    private Integer streetId;
+    private StreetDTO street;
 
     private Integer vendorId;
 

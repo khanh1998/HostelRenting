@@ -129,7 +129,7 @@ public class HostelGroupController {
     @PostMapping("/groups")
     public ResponseEntity<ApiSuccess> createHostelGroup(@Valid @RequestBody HostelGroupDTO rqHostelGroup) throws EntityNotFoundException {
         HostelGroup hostelGroupModel = modelMapper.map(rqHostelGroup, HostelGroup.class);
-        hostelGroupModel.setStreet(streetService.findById(rqHostelGroup.getStreetId()));
+        hostelGroupModel.setStreet(streetService.findById(rqHostelGroup.getStreet().getStreetId()));
         hostelGroupService.save(hostelGroupModel);
         HostelGroupDTO createdDTO = modelMapper.map(hostelGroupModel, HostelGroupDTO.class);
 
