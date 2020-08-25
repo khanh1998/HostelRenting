@@ -10,22 +10,21 @@ import javax.persistence.*;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 
 @Entity
-@Table(name = "statistic")
-public class Statistic {
+@Table(name = "utility")
+public class Utility {
     @Id
-    @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private int utilityId;
 
-    private Float avgPrice;
+    private String name;
 
-    private Float avgSuperficiality;
+    private String longitude;
 
-    @Column(nullable = false, unique = true)
-    private Integer streetId;
+    private String latitude;
 
-    private Long count;
+    @ManyToOne
+    @JoinColumn(name = "u_type_id", nullable = false)
+    private UType uType;
 }

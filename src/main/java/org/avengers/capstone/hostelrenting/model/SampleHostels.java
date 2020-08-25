@@ -4,8 +4,14 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
 
 import javax.persistence.*;
+import java.sql.Array;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 @Data
 @NoArgsConstructor
@@ -14,17 +20,39 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "sample")
+@TypeDef(
+        name = "list-array",
+        typeClass = ArrayList.class
+)
 public class SampleHostels {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    private Long postedAt;
     private Float superficiality;
+
     private Float price;
+
+    private String longitude;
+
+    private String latitude;
 
     @ManyToOne
     @JoinColumn(name = "street_id")
     private Street street;
+
+    @Type(type = "list-array")
+    @Column(
+            name = "facility_ids",
+            columnDefinition = "integer[]"
+    )
+    private Integer[] facilityIds;
+
+    @Type(type = "list-array")
+    @Column(
+            name = "service_ids",
+            columnDefinition = "integer[]"
+    )
+    private Integer[] services;
 }
