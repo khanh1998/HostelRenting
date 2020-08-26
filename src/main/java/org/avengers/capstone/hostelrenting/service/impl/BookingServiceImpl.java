@@ -90,6 +90,7 @@ public class BookingServiceImpl implements BookingService {
         reqModel.setStatus(Booking.Status.INCOMING);
         reqModel.setCreatedAt(System.currentTimeMillis());
 
+
         if (reqModel.getQrCode() == null) {
             String qrCode = generateQRCode();
             reqModel.setQrCode(qrCode);

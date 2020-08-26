@@ -3,11 +3,14 @@ package org.avengers.capstone.hostelrenting.controller;
 import org.avengers.capstone.hostelrenting.dto.HostelGroupDTO;
 import org.avengers.capstone.hostelrenting.dto.booking.BookingDTOFull;
 import org.avengers.capstone.hostelrenting.dto.booking.BookingDTOShort;
+import org.avengers.capstone.hostelrenting.dto.deal.DealDTOShort;
 import org.avengers.capstone.hostelrenting.dto.response.ApiSuccess;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
 import org.avengers.capstone.hostelrenting.model.Booking;
+import org.avengers.capstone.hostelrenting.model.Deal;
 import org.avengers.capstone.hostelrenting.model.HostelGroup;
 import org.avengers.capstone.hostelrenting.service.BookingService;
+import org.avengers.capstone.hostelrenting.service.DealService;
 import org.avengers.capstone.hostelrenting.service.HostelGroupService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +28,13 @@ public class BookingController {
 
     private BookingService bookingService;
     private HostelGroupService hostelGroupService;
+    private DealService dealService;
     private ModelMapper modelMapper;
+
+    @Autowired
+    public void setDealService(DealService dealService) {
+        this.dealService = dealService;
+    }
 
     @Autowired
     public void setModelMapper(ModelMapper modelMapper) {
@@ -86,6 +95,10 @@ public class BookingController {
         Booking resModel = bookingService.findById(bookingId);
         BookingDTOFull resDTO = modelMapper.map(resModel, BookingDTOFull.class);
 
+        // get group
+        getGroupForDTO(resDTO);
+        getDealForDTO(resDTO);
+
         // Response entity
         ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTO, "Your booking has been retrieved successfully!");
 
@@ -96,16 +109,19 @@ public class BookingController {
     public ResponseEntity<?> getByRenterId(@PathVariable Integer renterId) throws EntityNotFoundException {
         String resMsg = "Your booking(s) has been retrieved successfully!";
 
-        List<BookingDTOFull> resBookings = bookingService.findByRenterId(renterId)
+        List<BookingDTOFull> resDTOs = bookingService.findByRenterId(renterId)
                 .stream()
                 .map(booking -> modelMapper.map(booking, BookingDTOFull.class))
                 .collect(Collectors.toList());
 
-        if (resBookings.isEmpty())
+        if (resDTOs.isEmpty())
             resMsg = "There is no booking";
 
+        getGroupForDTOs(resDTOs);
+        getDealForDTOs(resDTOs);
+
         // Response entity
-        ApiSuccess<?> apiSuccess = new ApiSuccess<>(getGroupForBooking(resBookings), resMsg);
+        ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTOs, resMsg);
 
         return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
     }
@@ -114,31 +130,54 @@ public class BookingController {
     public ResponseEntity<?> getByVendorId(@PathVariable Integer vendorId) throws EntityNotFoundException {
         String resMsg = "Your booking(s) has been retrieved successfully!";
 
-        List<BookingDTOFull> resBookings = bookingService.findByVendorId(vendorId)
+        List<BookingDTOFull> resDTOs = bookingService.findByVendorId(vendorId)
                 .stream()
                 .map(booking -> modelMapper.map(booking, BookingDTOFull.class))
                 .collect(Collectors.toList());
 
-        if (resBookings.isEmpty())
+        if (resDTOs.isEmpty())
             resMsg = "There is no booking";
 
+        getGroupForDTOs(resDTOs);
+        getDealForDTOs(resDTOs);
+
         // Response entity
-        ApiSuccess<?> apiSuccess = new ApiSuccess<>(getGroupForBooking(resBookings), resMsg);
+        ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTOs, resMsg);
 
         return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
     }
 
     /**
+     * Get corresponding {@link Deal}
+     *
+     * @param resDTOs list of {@link Booking} need to fill {@link HostelGroup}
+     */
+    private void getDealForDTOs(List<BookingDTOFull> resDTOs){
+        resDTOs.forEach(dto -> {
+            Deal existedDeal = dealService.findById(dto.getDeal().getDealId());
+            dto.setDeal(modelMapper.map(existedDeal, DealDTOShort.class));
+        });
+    }
+
+    /**
      * Get corresponding {@link HostelGroup}
      *
-     * @param bookings list of {@link org.avengers.capstone.hostelrenting.model.Booking} need to fill {@link HostelGroup}
-     * @return list of {@link org.avengers.capstone.hostelrenting.model.Booking} with corresponding {@link HostelGroup}
+     * @param resDTOs list of {@link Booking} need to fill {@link HostelGroup}
      */
-    private List<BookingDTOFull> getGroupForBooking(List<BookingDTOFull> bookings) {
-        bookings.forEach(resDTO -> {
+    private void getGroupForDTOs(List<BookingDTOFull> resDTOs) {
+        resDTOs.forEach(resDTO -> {
             HostelGroup existedGroup = hostelGroupService.findById(resDTO.getType().getGroupId());
             resDTO.setGroup(modelMapper.map(existedGroup, HostelGroupDTO.class));
         });
-        return bookings;
+    }
+
+    private void getGroupForDTO(BookingDTOFull resDTO){
+        HostelGroup existedGroup = hostelGroupService.findById(resDTO.getType().getGroupId());
+        resDTO.setGroup(modelMapper.map(existedGroup, HostelGroupDTO.class));
+    }
+
+    private void getDealForDTO(BookingDTOFull resDTO){
+            Deal existedDeal = dealService.findById(resDTO.getDeal().getDealId());
+            resDTO.setDeal(modelMapper.map(existedDeal, DealDTOShort.class));
     }
 }
