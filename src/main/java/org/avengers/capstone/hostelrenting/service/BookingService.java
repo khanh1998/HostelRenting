@@ -13,5 +13,7 @@ public interface BookingService {
     void delete(Integer id);
     List<Booking> findByRenterId(Integer renterId);
     List<Booking> findByVendorId(Integer vendorId);
+
+    Booking changeStatus(Integer id, Booking.STATUS status);
 }
 

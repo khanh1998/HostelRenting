@@ -77,9 +77,9 @@ public class DealServiceImpl implements DealService {
      * @return Deal object with status has been updated
      */
     @Override
-    public Deal changeStatus(Integer id, Deal.Status status) {
+    public Deal changeStatus(Integer id, Deal.STATUS status) {
         Optional<Deal> existed = dealRepository.findById(id);
-        if (existed.isPresent() && existed.get().getStatus().equals(Deal.Status.CREATED)){
+        if (existed.isPresent() && existed.get().getStatus().equals(Deal.STATUS.CREATED)){
             existed.get().setStatus(status);
             setUpdatedTime(existed.get());
         }
@@ -96,7 +96,7 @@ public class DealServiceImpl implements DealService {
         reqModel.setVendor(existedVendor);
         reqModel.setRenter(existedRenter);
         reqModel.setHostelType(existedType);
-        reqModel.setStatus(Deal.Status.CREATED);
+        reqModel.setStatus(Deal.STATUS.CREATED);
         reqModel.setCreatedAt(System.currentTimeMillis());
 
         return dealRepository.save(reqModel);

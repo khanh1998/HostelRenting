@@ -1,6 +1,10 @@
 package org.avengers.capstone.hostelrenting.controller;
 
+import io.swagger.models.Response;
 import org.avengers.capstone.hostelrenting.dto.HostelGroupDTO;
+import org.avengers.capstone.hostelrenting.dto.booking.BookingDTOFull;
+import org.avengers.capstone.hostelrenting.dto.booking.BookingDTOShort;
+import org.avengers.capstone.hostelrenting.dto.deal.DealDTOShort;
 import org.avengers.capstone.hostelrenting.dto.hosteltype.ResTypeDTO;
 import org.avengers.capstone.hostelrenting.dto.contract.ContractDTOFull;
 import org.avengers.capstone.hostelrenting.dto.contract.ContractDTOShort;
@@ -28,18 +32,30 @@ public class ContractController {
     private ContractService contractService;
     private VendorService vendorService;
     private RenterService renterService;
-    private HostelRoomService hostelRoomService;
-    private HostelTypeService hostelTypeService;
-    private HostelGroupService hostelGroupService;
+    private HostelRoomService roomService;
+    private HostelTypeService typeService;
+    private HostelGroupService groupService;
+    private DealService dealService;
+    private BookingService bookingService;
+
+    @Autowired
+    public void setDealService(DealService dealService) {
+        this.dealService = dealService;
+    }
+
+    @Autowired
+    public void setBookingService(BookingService bookingService) {
+        this.bookingService = bookingService;
+    }
 
     @Autowired
     public void setHostelTypeService(HostelTypeService hostelTypeService) {
-        this.hostelTypeService = hostelTypeService;
+        this.typeService = hostelTypeService;
     }
 
     @Autowired
     public void setHostelGroupService(HostelGroupService hostelGroupService) {
-        this.hostelGroupService = hostelGroupService;
+        this.groupService = hostelGroupService;
     }
 
     @Autowired
@@ -54,7 +70,7 @@ public class ContractController {
 
     @Autowired
     public void setHostelRoomService(HostelRoomService hostelRoomService) {
-        this.hostelRoomService = hostelRoomService;
+        this.roomService = hostelRoomService;
     }
 
     @Autowired
@@ -68,62 +84,88 @@ public class ContractController {
     }
 
     @PostMapping("/contracts")
-    public ResponseEntity<ApiSuccess> create (@RequestBody @Valid ContractDTOShort reqDTO){
-        // check that vendor, renter, and room id is exist or not
-        Vendor existedVendor = vendorService.findById(reqDTO.getVendorId());
-        Renter existedRenter = renterService.findById(reqDTO.getRenterId());
-        HostelRoom existedRoom = hostelRoomService.findById(reqDTO.getRoomId());
-
-        Contract reqModel = modelMapper.map(reqDTO, Contract.class);
-        reqModel.setHostelRoom(existedRoom);
-        reqModel.setVendor(existedVendor);
-        reqModel.setRenter(existedRenter);
-
-        Contract resModel = contractService.save(reqModel);
+    public ResponseEntity<?> create(@RequestBody @Valid ContractDTOShort reqDTO) {
+        Contract resModel = contractService.create(reqDTO);
         ContractDTOFull resDTO = modelMapper.map(resModel, ContractDTOFull.class);
 
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(new ApiSuccess(resDTO, String.format(CREATE_SUCCESS, Contract.class.getSimpleName())));
+        // get deal, booking, group and type
+        getFullAttributesForDTO(resDTO);
+
+        ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTO, "Your contract has been created successfully!");
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(apiSuccess);
     }
 
     @GetMapping("/renters/{renterId}/contracts")
-    public ResponseEntity<ApiSuccess> getByRenterId(@PathVariable Integer renterId) throws EntityNotFoundException {
-        Renter existedRenter = renterService.findById(renterId);
-        List<ContractDTOFull> resContracts = existedRenter.getContracts()
+    public ResponseEntity<?> getByRenterId(@PathVariable Integer renterId) throws EntityNotFoundException {
+        String resMsg = "Your contract(s) has been retrieved successfully!";
+
+        List<ContractDTOFull> resDTOs = contractService.findByRenterId(renterId)
                 .stream()
                 .map(contract -> modelMapper.map(contract, ContractDTOFull.class))
                 .collect(Collectors.toList());
 
-        resContracts.stream().forEach(resDTO ->{
-            HostelType existedType = hostelTypeService.findById(resDTO.getRoom().getTypeId());
-            HostelGroup existedGroup = hostelGroupService.findById(existedType.getHostelGroup().getGroupId());
-            resDTO.setType(modelMapper.map(existedType, ResTypeDTO.class));
-            resDTO.setGroup(modelMapper.map(existedGroup, HostelGroupDTO.class));
-        });
+        if (resDTOs.isEmpty())
+            resMsg = "There is no contract";
 
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(new ApiSuccess(resContracts, String.format(GET_SUCCESS, Renter.class.getSimpleName())));
+        // get deal, booking, group and type
+        resDTOs.forEach(contractDTOFull -> getFullAttributesForDTO(contractDTOFull));
+
+        // Response entity
+        ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTOs, resMsg);
+
+        return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
     }
 
     @GetMapping("/vendors/{vendorId}/contracts")
-    public ResponseEntity<ApiSuccess> getByVendorId(@PathVariable Integer vendorId) throws EntityNotFoundException {
-        Vendor existedVendor = vendorService.findById(vendorId);
-        List<ContractDTOFull> resContracts = existedVendor.getContracts()
+    public ResponseEntity<?> getByVendorId(@PathVariable Integer vendorId) throws EntityNotFoundException {
+        String resMsg = "Your contract(s) has been retrieved successfully!";
+
+        List<ContractDTOFull> resDTOs = contractService.findByVendorId(vendorId)
                 .stream()
                 .map(contract -> modelMapper.map(contract, ContractDTOFull.class))
                 .collect(Collectors.toList());
 
-        resContracts.stream().forEach(resDTO ->{
-            HostelType existedType = hostelTypeService.findById(resDTO.getRoom().getTypeId());
-            HostelGroup existedGroup = hostelGroupService.findById(existedType.getHostelGroup().getGroupId());
-            resDTO.setType(modelMapper.map(existedType, ResTypeDTO.class));
-            resDTO.setGroup(modelMapper.map(existedGroup, HostelGroupDTO.class));
-        });
+        if (resDTOs.isEmpty())
+            resMsg = "There is no contract";
 
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(new ApiSuccess(resContracts, String.format(GET_SUCCESS, Vendor.class.getSimpleName())));
+        // get deal, booking, group and type
+        resDTOs.forEach(contractDTOFull -> getFullAttributesForDTO(contractDTOFull));
+
+        // Response entity
+        ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTOs, resMsg);
+
+        return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
+    }
+
+    private void getFullAttributesForDTO(ContractDTOFull resDTO){
+        //get deal
+        if (resDTO.getDeal() != null)
+            getDealForDTO(resDTO);
+
+        //get booking
+        if (resDTO.getBooking() != null)
+            getBookingForDTO(resDTO);
+
+        //get type & group
+        getTypeAndGroupForDTO(resDTO);
+
+        Renter renter = contractService.findById(resDTO.getContractId()).getRenter();
+    }
+
+    private void getDealForDTO(ContractDTOFull resDTO) {
+        Deal exDeal = dealService.findById(resDTO.getDeal().getDealId());
+        resDTO.setDeal(modelMapper.map(exDeal, DealDTOShort.class));
+    }
+
+    private void getBookingForDTO(ContractDTOFull resDTO) {
+        Booking exBooking = bookingService.findById(resDTO.getBooking().getBookingId());
+        resDTO.setBooking(modelMapper.map(exBooking, BookingDTOShort.class));
+    }
+
+    private void getTypeAndGroupForDTO(ContractDTOFull resDTO) {
+        HostelType exType = typeService.findById(resDTO.getRoom().getTypeId());
+        resDTO.setType(modelMapper.map(exType, ResTypeDTO.class));
+        resDTO.setGroup(modelMapper.map(groupService.findById(exType.getHostelGroup().getGroupId()), HostelGroupDTO.class));
     }
 }

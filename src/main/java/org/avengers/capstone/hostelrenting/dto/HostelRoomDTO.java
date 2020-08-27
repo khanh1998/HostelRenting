@@ -11,5 +11,4 @@ public class HostelRoomDTO {
     private String roomName;
     private Integer typeId;
     private boolean isAvailable;
-    private List<ContractDTOFull> contracts;
 }

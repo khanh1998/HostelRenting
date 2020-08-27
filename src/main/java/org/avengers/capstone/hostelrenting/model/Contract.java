@@ -18,6 +18,9 @@ import javax.validation.constraints.NotNull;
 @Entity
 @Table(name = "contract")
 public class Contract {
+
+    public enum DURATION_UNIT{MONTH, YEAR}
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int contractId;
@@ -38,7 +41,11 @@ public class Contract {
 
     @Column(nullable = false)
     @NotNull(message = "Contract duration is mandatory")
-    private float duration;
+    private Float duration;
+
+    @Column(columnDefinition = "varchar(5) default 'MONTH'", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private DURATION_UNIT durationUnit;
 
     @Column
     private Integer dealId;
@@ -46,8 +53,14 @@ public class Contract {
     @Column
     private Integer bookingId;
 
+
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private Long createdAt;
+
+    @Column(name = "updated_at")
+    private Long updatedAt;
+
     @Column(columnDefinition = "boolean default false")
     private boolean isDeleted;
-
 
 }

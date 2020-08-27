@@ -1,7 +1,7 @@
 package org.avengers.capstone.hostelrenting.service.impl;
 
 import org.avengers.capstone.hostelrenting.Constant;
-import org.avengers.capstone.hostelrenting.dto.user.UserDTOFull;
+import org.avengers.capstone.hostelrenting.dto.vendor.VendorDTOFull;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
 import org.avengers.capstone.hostelrenting.model.User;
 import org.avengers.capstone.hostelrenting.model.Vendor;
@@ -39,7 +39,7 @@ public class VendorServiceImpl implements VendorService {
     }
 
     @Override
-    public User update(UserDTOFull reqDTO) {
+    public Vendor update(VendorDTOFull reqDTO) {
         checkExist(reqDTO.getUserId());
 
         //Update firebase Token

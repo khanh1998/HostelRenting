@@ -1,6 +1,6 @@
 package org.avengers.capstone.hostelrenting.controller;
 
-import org.avengers.capstone.hostelrenting.dto.ProvinceDTO;
+import org.avengers.capstone.hostelrenting.dto.province.ProvinceDTOFull;
 import org.avengers.capstone.hostelrenting.dto.response.ApiSuccess;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
 import org.avengers.capstone.hostelrenting.model.Province;
@@ -13,7 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.ConstraintViolationException;
 import java.util.List;
 
 @RestController
@@ -39,8 +38,8 @@ public class ProvinceController {
      * @return province object has been created
      */
     @PostMapping("/provinces")
-    public ResponseEntity<?> create(@Validated @RequestBody ProvinceDTO reqDTO) throws DuplicateKeyException {
-        ProvinceDTO resDTO = provinceService.save(reqDTO);
+    public ResponseEntity<?> create(@Validated @RequestBody ProvinceDTOFull reqDTO) throws DuplicateKeyException {
+        ProvinceDTOFull resDTO = provinceService.save(reqDTO);
 
         ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTO, "Province has been created successfully!");
 
@@ -55,7 +54,7 @@ public class ProvinceController {
     @GetMapping("/provinces")
     public ResponseEntity<?> getAllProvinces() {
         String resMsg = "Province(s) has been retrieved successfully!";
-        List<ProvinceDTO> resDTOs = provinceService.getAll();
+        List<ProvinceDTOFull> resDTOs = provinceService.getAll();
         if (resDTOs.isEmpty())
             resMsg = "There is no province";
 
@@ -76,7 +75,7 @@ public class ProvinceController {
         String resMsg = "Province has been retrieved successfully!";
 
         Province existedModel = provinceService.findById(provinceId);
-        ProvinceDTO resDTO = modelMapper.map(existedModel, ProvinceDTO.class);
+        ProvinceDTOFull resDTO = modelMapper.map(existedModel, ProvinceDTOFull.class);
 
         ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTO, resMsg);
 

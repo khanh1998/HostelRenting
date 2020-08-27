@@ -14,5 +14,5 @@ public interface DealService {
     List<Deal> findByRenterId(Integer renterId);
     List<Deal> findByVendorId(Integer vendorId);
 
-    Deal changeStatus(Integer id, Deal.Status status);
+    Deal changeStatus(Integer id, Deal.STATUS status);
 }

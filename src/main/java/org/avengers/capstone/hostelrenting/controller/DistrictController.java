@@ -1,6 +1,6 @@
 package org.avengers.capstone.hostelrenting.controller;
 
-import org.avengers.capstone.hostelrenting.dto.DistrictDTO;
+import org.avengers.capstone.hostelrenting.dto.district.DistrictDTOFull;
 import org.avengers.capstone.hostelrenting.dto.response.ApiSuccess;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
 import org.avengers.capstone.hostelrenting.model.District;
@@ -36,9 +36,9 @@ public class DistrictController {
     @GetMapping("/provinces/{provinceId}/districts")
     public ResponseEntity<?> getDistrictsByProvinceId(@PathVariable Integer provinceId) throws EntityNotFoundException {
         Province province = provinceService.findById(provinceId);
-        List<DistrictDTO> districtDTOs = province.getDistricts()
+        List<DistrictDTOFull> districtDTOs = province.getDistricts()
                 .stream()
-                .map((district -> modelMapper.map(district, DistrictDTO.class)))
+                .map((district -> modelMapper.map(district, DistrictDTOFull.class)))
                 .collect(Collectors.toList());
         ApiSuccess<?> apiSuccess = new ApiSuccess<>(districtDTOs, "Districts has been retrieved successfully!");
 
@@ -54,7 +54,7 @@ public class DistrictController {
                 .filter(p -> p.getDistrictId() == districtId)
                 .collect(Collectors.toList())
                 .get(0);
-        DistrictDTO resDTO = modelMapper.map(responseModel, DistrictDTO.class);
+        DistrictDTOFull resDTO = modelMapper.map(responseModel, DistrictDTOFull.class);
 
         ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTO, "District has been retrieved successfully!");
 

@@ -1,13 +1,14 @@
 package org.avengers.capstone.hostelrenting.model;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
 import java.util.List;
 
 @Data
-//@Builder
 @EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
 @AllArgsConstructor
@@ -15,6 +16,20 @@ import java.util.List;
 @Entity
 @Table(name = "renter")
 public class Renter extends User{
+
+    private String idNum;
+
+    private String idFrontImg;
+
+    private String idBackImg;
+
+    @ManyToOne
+    @JoinColumn(name = "school_id")
+    private School school;
+
+    @ManyToOne
+    @JoinColumn(name = "district_id")
+    private District district;
 
     @OneToMany(mappedBy = "renter", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Contract> contracts;

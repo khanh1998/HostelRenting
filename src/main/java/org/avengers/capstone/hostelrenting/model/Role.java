@@ -3,6 +3,7 @@ package org.avengers.capstone.hostelrenting.model;
 import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 @Data
 @NoArgsConstructor
@@ -13,6 +14,8 @@ import javax.persistence.*;
 @Entity
 @Table(name = "role")
 public class Role {
+    public enum CODE{RENTER, VENDOR}
+
     @Id
     @Column(name = "role_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,6 +23,10 @@ public class Role {
 
     @Column(name = "role_name", nullable = false)
     private String roleName;
+
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    private CODE code;
 
     private String description;
 }

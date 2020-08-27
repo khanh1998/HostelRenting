@@ -8,14 +8,13 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 
 @Entity
 @Table(name = "booking")
 public class Booking {
-    public enum Status{INCOMING, MISSING, DONE, CANCELLED}
+    public enum STATUS{INCOMING, MISSING, DONE, CANCELLED}
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,7 +34,7 @@ public class Booking {
 
     @Column(columnDefinition = "varchar(10) default 'INCOMING'")
     @Enumerated(EnumType.STRING)
-    private Status status;
+    private STATUS status;
 
     @Column(columnDefinition = "int default null")
     private Integer dealId;
@@ -45,6 +44,7 @@ public class Booking {
 
     @Column(nullable = false)
     private Long meetTime;
+
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private Long createdAt;

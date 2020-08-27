@@ -34,4 +34,5 @@ public class Ward {
 
     @OneToMany(mappedBy = "ward", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Street> streets;
+
 }

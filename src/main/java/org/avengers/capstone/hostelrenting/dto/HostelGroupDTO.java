@@ -17,9 +17,9 @@ public class HostelGroupDTO implements Serializable {
 
     private String buildingNo;
 
-    private Double longitude;
+    private String longitude;
 
-    private Double latitude;
+    private String latitude;
 
     /**
      * curfewTime that limit the time to come back home

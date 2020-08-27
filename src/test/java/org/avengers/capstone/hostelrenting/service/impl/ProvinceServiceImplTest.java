@@ -1,6 +1,6 @@
 package org.avengers.capstone.hostelrenting.service.impl;
 
-import org.avengers.capstone.hostelrenting.dto.ProvinceDTO;
+import org.avengers.capstone.hostelrenting.dto.province.ProvinceDTOFull;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
 import org.avengers.capstone.hostelrenting.model.Province;
 import org.avengers.capstone.hostelrenting.repository.ProvinceRepository;
@@ -46,7 +46,7 @@ class ProvinceServiceImplTest {
         when(mockRepository.findAll()).thenReturn(Arrays.asList(mockModel1, mockModel2));
 
         // Execute the service call
-        List<ProvinceDTO> resDTOs = service.getAll();
+        List<ProvinceDTOFull> resDTOs = service.getAll();
 
         // Assert the response
         assertEquals(2, resDTOs.size());
@@ -95,13 +95,13 @@ class ProvinceServiceImplTest {
     @DisplayName("Test save success")
     void testSaveSuccess(){
         // Set up mock
-        ProvinceDTO reqDTO = Mockito.mock(ProvinceDTO.class);
-        ProvinceDTO resDTO = Mockito.mock(ProvinceDTO.class);
+        ProvinceDTOFull reqDTO = Mockito.mock(ProvinceDTOFull.class);
+        ProvinceDTOFull resDTO = Mockito.mock(ProvinceDTOFull.class);
         Province resModel = Mockito.mock(Province.class);
         Province reqModel = Mockito.mock(Province.class);
         when(mockMapper.map(reqDTO, Province.class)).thenReturn(reqModel);
         when(mockRepository.save(reqModel)).thenReturn(resModel);
-        when(mockMapper.map(resModel, ProvinceDTO.class)).thenReturn(resDTO);
+        when(mockMapper.map(resModel, ProvinceDTOFull.class)).thenReturn(resDTO);
 
         // Assert the response
         Assertions.assertEquals(resDTO, service.save(reqDTO));

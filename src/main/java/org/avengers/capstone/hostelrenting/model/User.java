@@ -35,10 +35,15 @@ public class User {
     @Column(nullable = false)
     private String avatar;
 
-    @Column
     private String firebaseToken;
 
     @ManyToOne
     @JoinColumn(name = "role_id", nullable = false)
     private Role role;
+
+    @Column(columnDefinition = "boolean default false")
+    private boolean isBlocked;
+
+    @Column(columnDefinition = "boolean default false")
+    private boolean isCensored;
 }

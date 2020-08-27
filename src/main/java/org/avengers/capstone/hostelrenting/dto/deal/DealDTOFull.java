@@ -12,7 +12,7 @@ import org.avengers.capstone.hostelrenting.model.Deal;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class DealDTOFull {
     private int dealId;
-    private Deal.Status status;
+    private Deal.STATUS status;
     private ResTypeDTO type;
     private HostelGroupDTO group;
     private RenterDTOFull renter;

@@ -1,10 +1,8 @@
 package org.avengers.capstone.hostelrenting.controller;
 
-import org.avengers.capstone.hostelrenting.dto.ProvinceDTO;
 import org.avengers.capstone.hostelrenting.dto.TypeStatusDTO;
 import org.avengers.capstone.hostelrenting.dto.response.ApiSuccess;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
-import org.avengers.capstone.hostelrenting.model.Province;
 import org.avengers.capstone.hostelrenting.model.TypeStatus;
 import org.avengers.capstone.hostelrenting.service.TypeStatusService;
 import org.modelmapper.ModelMapper;

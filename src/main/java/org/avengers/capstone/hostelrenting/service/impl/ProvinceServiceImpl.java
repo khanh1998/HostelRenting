@@ -1,15 +1,12 @@
 package org.avengers.capstone.hostelrenting.service.impl;
 
-import org.avengers.capstone.hostelrenting.dto.ProvinceDTO;
+import org.avengers.capstone.hostelrenting.dto.province.ProvinceDTOFull;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
 import org.avengers.capstone.hostelrenting.model.Province;
 import org.avengers.capstone.hostelrenting.repository.ProvinceRepository;
 import org.avengers.capstone.hostelrenting.service.ProvinceService;
-import org.hibernate.exception.ConstraintViolationException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -51,12 +48,12 @@ public class ProvinceServiceImpl implements ProvinceService {
      * @return response DTO
      */
     @Override
-    public ProvinceDTO save(ProvinceDTO reqDTO) {
+    public ProvinceDTOFull save(ProvinceDTOFull reqDTO) {
         Province model = modelMapper.map(reqDTO, Province.class);
 
         Province resModel = provinceRepository.save(model);
 
-        return modelMapper.map(resModel, ProvinceDTO.class);
+        return modelMapper.map(resModel, ProvinceDTOFull.class);
     }
 
 
@@ -66,10 +63,10 @@ public class ProvinceServiceImpl implements ProvinceService {
      * @return list of DTOs
      */
     @Override
-    public List<ProvinceDTO> getAll() {
+    public List<ProvinceDTOFull> getAll() {
         return provinceRepository.findAll()
                 .stream()
-                .map(province -> modelMapper.map(province, ProvinceDTO.class))
+                .map(province -> modelMapper.map(province, ProvinceDTOFull.class))
                 .collect(Collectors.toList());
     }
 

@@ -1,7 +1,7 @@
 package org.avengers.capstone.hostelrenting.controller;
 
 import org.avengers.capstone.hostelrenting.dto.response.ApiSuccess;
-import org.avengers.capstone.hostelrenting.dto.user.UserDTOFull;
+import org.avengers.capstone.hostelrenting.dto.vendor.VendorDTOFull;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
 import org.avengers.capstone.hostelrenting.model.User;
 import org.avengers.capstone.hostelrenting.model.Vendor;
@@ -43,12 +43,12 @@ public class VendorController {
 
     @PutMapping("/vendors/{vendorId}")
     public ResponseEntity<?> update(@PathVariable Integer vendorId,
-                                    @RequestBody UserDTOFull reqDTO) throws EntityNotFoundException {
+                                    @RequestBody VendorDTOFull reqDTO) throws EntityNotFoundException {
         String resMsg = "Your information has been up to date!";
 
         reqDTO.setUserId(vendorId);
         User resModel = vendorService.update(reqDTO);
-        UserDTOFull resDTO = modelMapper.map(resModel, UserDTOFull.class);
+        VendorDTOFull resDTO = modelMapper.map(resModel, VendorDTOFull.class);
         ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTO, resMsg);
 
         return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
@@ -57,7 +57,7 @@ public class VendorController {
     @GetMapping("/vendors/{vendorId}")
     public ResponseEntity<?> getById(@PathVariable Integer vendorId) throws EntityNotFoundException {
         Vendor existedModel = vendorService.findById(vendorId);
-        UserDTOFull resDTO = modelMapper.map(existedModel, UserDTOFull.class);
+        VendorDTOFull resDTO = modelMapper.map(existedModel, VendorDTOFull.class);
 
         ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTO, "Your information has been retrieved successfully!");
 

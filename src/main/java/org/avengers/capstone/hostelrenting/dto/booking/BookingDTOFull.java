@@ -10,14 +10,13 @@ import org.avengers.capstone.hostelrenting.dto.vendor.VendorDTOFull;
 import org.avengers.capstone.hostelrenting.model.Booking;
 
 @Data
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class BookingDTOFull {
     private int bookingId;
     private RenterDTOFull renter;
     private VendorDTOFull vendor;
     private ResTypeDTO type;
     private HostelGroupDTO group;
-    private Booking.Status status;
+    private Booking.STATUS status;
     private DealDTOShort deal;
     private String qrCode;
     private Long meetTime;

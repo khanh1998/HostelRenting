@@ -15,7 +15,7 @@ import java.util.Set;
 @Entity
 @Table(name = "schedule")
 public class Schedule {
-    public enum Code{MON, TUE, WED, THU, FRI, SAT, SUN}
+    public enum CODE{MON, TUE, WED, THU, FRI, SAT, SUN}
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,7 +23,7 @@ public class Schedule {
 
     @NotNull
     @Enumerated(EnumType.STRING)
-    private Code code;
+    private CODE code;
 
     @Column(nullable = false)
     @NotBlank(message = "Start time is mandatory")

@@ -9,7 +9,7 @@ public class BookingDTOShort {
     private Integer renterId;
     private Integer vendorId;
     private Integer typeId;
-    private Booking.Status status;
+    private Booking.STATUS status;
     private Integer dealId;
     private String qrCode;
     private Long meetTime;

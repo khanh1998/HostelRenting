@@ -10,5 +10,5 @@ public class ScheduleDTO {
     private String startTime;
     private String endTime;
     private String dayOfWeek;
-    private Schedule.Code code;
+    private Schedule.CODE code;
 }

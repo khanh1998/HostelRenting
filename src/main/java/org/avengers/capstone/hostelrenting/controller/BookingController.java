@@ -97,7 +97,8 @@ public class BookingController {
 
         // get group
         getGroupForDTO(resDTO);
-        getDealForDTO(resDTO);
+        if (resDTO.getDeal() != null)
+            getDealForDTO(resDTO);
 
         // Response entity
         ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTO, "Your booking has been retrieved successfully!");
@@ -152,7 +153,7 @@ public class BookingController {
      *
      * @param resDTOs list of {@link Booking} need to fill {@link HostelGroup}
      */
-    private void getDealForDTOs(List<BookingDTOFull> resDTOs){
+    private void getDealForDTOs(List<BookingDTOFull> resDTOs) {
         resDTOs.forEach(dto -> {
             Deal existedDeal = dealService.findById(dto.getDeal().getDealId());
             dto.setDeal(modelMapper.map(existedDeal, DealDTOShort.class));
@@ -171,13 +172,13 @@ public class BookingController {
         });
     }
 
-    private void getGroupForDTO(BookingDTOFull resDTO){
+    private void getGroupForDTO(BookingDTOFull resDTO) {
         HostelGroup existedGroup = hostelGroupService.findById(resDTO.getType().getGroupId());
         resDTO.setGroup(modelMapper.map(existedGroup, HostelGroupDTO.class));
     }
 
-    private void getDealForDTO(BookingDTOFull resDTO){
-            Deal existedDeal = dealService.findById(resDTO.getDeal().getDealId());
-            resDTO.setDeal(modelMapper.map(existedDeal, DealDTOShort.class));
+    private void getDealForDTO(BookingDTOFull resDTO) {
+        Deal existedDeal = dealService.findById(resDTO.getDeal().getDealId());
+        resDTO.setDeal(modelMapper.map(existedDeal, DealDTOShort.class));
     }
 }

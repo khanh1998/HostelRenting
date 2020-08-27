@@ -1,8 +1,13 @@
 package org.avengers.capstone.hostelrenting.controller;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import org.avengers.capstone.hostelrenting.dto.View;
+import org.avengers.capstone.hostelrenting.dto.renter.RenterDTOFull;
 import org.avengers.capstone.hostelrenting.dto.response.ApiSuccess;
 import org.avengers.capstone.hostelrenting.dto.user.UserDTOFull;
 import org.avengers.capstone.hostelrenting.dto.user.UserDTOLogin;
+import org.avengers.capstone.hostelrenting.dto.vendor.VendorDTOFull;
+import org.avengers.capstone.hostelrenting.model.Role;
 import org.avengers.capstone.hostelrenting.model.User;
 import org.avengers.capstone.hostelrenting.service.impl.CustomUserService;
 import org.avengers.capstone.hostelrenting.service.impl.FirebaseService;
@@ -55,7 +60,13 @@ public class AuthenticationController {
         final UserDetails userDetails = customUserService.loadUserByUsername(reqDTO.getPhone());
         final String token = firebaseService.generateJwtToken(userDetails);
         User resModel = customUserService.findByPhone(reqDTO.getPhone());
-        UserDTOFull resDTO = modelMapper.map(resModel, UserDTOFull.class);
+        UserDTOFull resDTO;
+        if (resModel.getRole().getCode().equals(Role.CODE.RENTER)){
+            resDTO = modelMapper.map(resModel, RenterDTOFull.class);
+        }else{
+            resDTO = modelMapper.map(resModel, VendorDTOFull.class);
+        }
+
         resDTO.setJwtToken(token);
 
         ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTO, "Login successfully!");

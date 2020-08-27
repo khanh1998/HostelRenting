@@ -6,7 +6,7 @@ import org.avengers.capstone.hostelrenting.model.Deal;
 @Data
 public class DealDTOShort {
     private int dealId;
-    private Deal.Status status;
+    private Deal.STATUS status;
     private int typeId;
     private int renterId;
     private int vendorId;

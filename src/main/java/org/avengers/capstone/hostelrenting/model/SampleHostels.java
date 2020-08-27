@@ -34,9 +34,9 @@ public class SampleHostels {
 
     private Float price;
 
-    private String longitude;
+    private Double longitude;
 
-    private String latitude;
+    private Double latitude;
 
     @ManyToOne
     @JoinColumn(name = "street_id")

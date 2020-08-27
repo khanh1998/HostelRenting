@@ -1,16 +1,19 @@
 package org.avengers.capstone.hostelrenting.dto.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Data;
 import lombok.ToString;
 import org.avengers.capstone.hostelrenting.dto.RoleDTO;
+import org.avengers.capstone.hostelrenting.dto.View;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
+import java.io.Serializable;
 
 @Data
 
-public class UserDTOFull {
+public class UserDTOFull implements Serializable {
     private int userId;
     @NotEmpty(message = "Username is mandatory")
     private String username;
@@ -26,5 +29,6 @@ public class UserDTOFull {
     private String avatar;
     private String firebaseToken;
     private RoleDTO role;
+    @JsonView({View.Internal.class})
     private String jwtToken;
 }

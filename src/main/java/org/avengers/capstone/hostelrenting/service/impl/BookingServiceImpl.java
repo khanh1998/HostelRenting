@@ -72,22 +72,23 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public Booking create(BookingDTOShort reqDTO) {
-        Vendor existedVendor = vendorService.findById(reqDTO.getVendorId());
-        Renter existedRenter = renterService.findById(reqDTO.getRenterId());
-        HostelType existedType = hostelTypeService.findById(reqDTO.getTypeId());
+        Vendor exVendor = vendorService.findById(reqDTO.getVendorId());
+        Renter exRenter = renterService.findById(reqDTO.getRenterId());
+        HostelType exType = hostelTypeService.findById(reqDTO.getTypeId());
 
         Booking reqModel = modelMapper.map(reqDTO, Booking.class);
+
+        // Update deal status if exist (booking created means deal is done)
         Integer dealId = reqDTO.getDealId();
         if (dealId != null) {
             dealService.checkActive(dealId);
-            dealService.changeStatus(dealId, Deal.Status.DONE);
+            dealService.changeStatus(dealId, Deal.STATUS.DONE);
         }
 
-
-        reqModel.setHostelType(existedType);
-        reqModel.setRenter(existedRenter);
-        reqModel.setVendor(existedVendor);
-        reqModel.setStatus(Booking.Status.INCOMING);
+        reqModel.setHostelType(exType);
+        reqModel.setRenter(exRenter);
+        reqModel.setVendor(exVendor);
+        reqModel.setStatus(Booking.STATUS.INCOMING);
         reqModel.setCreatedAt(System.currentTimeMillis());
 
 
@@ -127,18 +128,45 @@ public class BookingServiceImpl implements BookingService {
         bookingRepository.save(exModel);
     }
 
+    /**
+     * Get list of bookings by given renter id
+     *
+     * @param renterId given renter id to get booking
+     * @return list of booking models
+     */
     @Override
     public List<Booking> findByRenterId(Integer renterId) {
         renterService.checkExist(renterId);
 
-        return renterService.findById(renterId).getBookings().stream().filter(booking -> !booking.isDeleted()).collect(Collectors.toList());
+        return renterService.findById(renterId).getBookings()
+                .stream()
+                .filter(booking -> !booking.isDeleted())
+                .collect(Collectors.toList());
     }
 
+    /**
+     * Get list of bookings by given vendor id
+     * @param vendorId given vendor id to get booking
+     * @return list of booking models
+     */
     @Override
     public List<Booking> findByVendorId(Integer vendorId) {
         vendorService.checkExist(vendorId);
 
-        return vendorService.findById(vendorId).getBookings().stream().filter(booking -> !booking.isDeleted()).collect(Collectors.toList());
+        return vendorService.findById(vendorId).getBookings()
+                .stream()
+                .filter(booking -> !booking.isDeleted())
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public Booking changeStatus(Integer id, Booking.STATUS status) {
+        Optional<Booking> existed = bookingRepository.findById(id);
+        if (existed.isPresent() && existed.get().getStatus().equals(Booking.STATUS.INCOMING)){
+            existed.get().setStatus(status);
+            setUpdatedTime(existed.get());
+        }
+        return existed.orElse(null);
     }
 
 
