@@ -26,5 +26,9 @@ public interface HostelTypeRepository extends JpaRepository<HostelType, Integer>
     @Query(value = "SELECT * FROM get_surroundings(?1, ?2, ?3)", nativeQuery = true)
     List<HostelType> getSurroundings(double latitude, double longitude, double distance, Pageable pageable);
 
-    List<HostelType> findByOrderByView(Pageable pageable);
+    @Query(value = "SELECT * FROM get_by_school(?1)", nativeQuery = true)
+    List<HostelType> getBySchoolMates(int schoolId, Pageable pageable);
+
+    @Query(value = "SELECT * FROM get_by_hometown(?1)", nativeQuery = true)
+    List<HostelType> getByHometown(int districtId, Pageable pageable);
 }

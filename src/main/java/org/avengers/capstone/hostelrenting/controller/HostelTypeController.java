@@ -1,11 +1,10 @@
 package org.avengers.capstone.hostelrenting.controller;
 
-import io.swagger.models.Response;
 import org.avengers.capstone.hostelrenting.dto.FacilityDTO;
 import org.avengers.capstone.hostelrenting.dto.HostelGroupDTO;
+import org.avengers.capstone.hostelrenting.dto.TypesAndGroupsDTO;
 import org.avengers.capstone.hostelrenting.dto.hosteltype.ReqTypeDTO;
 import org.avengers.capstone.hostelrenting.dto.hosteltype.ResTypeDTO;
-import org.avengers.capstone.hostelrenting.dto.TypesAndGroupsDTO;
 import org.avengers.capstone.hostelrenting.dto.response.ApiSuccess;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
 import org.avengers.capstone.hostelrenting.model.Facility;
@@ -135,6 +134,8 @@ public class HostelTypeController {
 
     @GetMapping("/types")
     public ResponseEntity<?> getHostelTypes(@RequestParam(required = false) Integer typeId,
+                                            @RequestParam(required = false) Integer schoolId,
+                                            @RequestParam(required = false) Integer districtId,
                                             @RequestParam(required = false) Double latitude,
                                             @RequestParam(required = false) Double longitude,
                                             @RequestParam(required = false, defaultValue = "5.0") Double distance,
@@ -151,7 +152,7 @@ public class HostelTypeController {
                                             @RequestParam(required = false, defaultValue = DEFAULT_SIZE) Integer size,
                                             @RequestParam(required = false, defaultValue = DEFAULT_PAGE) Integer page) throws EntityNotFoundException {
 
-        Set<ResTypeDTO> typeDTOs = hostelTypeService.findByLocationAndDistance(latitude, longitude, distance, sortBy, asc, size, page).stream()
+        Set<ResTypeDTO> typeDTOs = hostelTypeService.searchWithMainFactors(latitude, longitude, distance, schoolId, districtId, sortBy, asc, size, page).stream()
                 .filter(hostelType -> {
                     if (typeId != null)
                         return hostelType.getTypeId() == typeId;

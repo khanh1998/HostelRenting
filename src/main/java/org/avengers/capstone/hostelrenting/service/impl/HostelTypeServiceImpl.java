@@ -12,6 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -77,15 +78,21 @@ public class HostelTypeServiceImpl implements HostelTypeService {
      * @return
      */
     @Override
-    public List<HostelType> findByLocationAndDistance(Double latitude, Double longitude, Double distance, String sortBy, Boolean asc, int size, int page) {
+    public List<HostelType> searchWithMainFactors(Double latitude, Double longitude, Double distance, Integer schoolId, Integer districtId, String sortBy, Boolean asc, int size, int page) {
 
         Sort sort = Sort.by(asc == true ? Sort.Direction.ASC : Sort.Direction.DESC, sortBy);
         Pageable pageable = PageRequest.of(page - 1, size, sort);
-        List<HostelType> types;
+        List<HostelType> types = new ArrayList<>();
         if (latitude != null && longitude != null) {
+            // if long&lat != null ==> get surroundings
             types = hostelTypeRepository.getSurroundings(latitude, longitude, distance, pageable);
+            if (schoolId != null)
+                // retains common elements in both collection
+                types.retainAll(hostelTypeRepository.getBySchoolMates(schoolId, pageable));
+            if (districtId != null)
+                // retains common elements in both collection
+                types.retainAll(hostelTypeRepository.getByHometown(districtId, pageable));
         } else {
-
             //default get highest score
             types = hostelTypeRepository.findAll(pageable).toList();
         }

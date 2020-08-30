@@ -1,7 +1,5 @@
 package org.avengers.capstone.hostelrenting.controller;
 
-import com.fasterxml.jackson.annotation.JsonView;
-import org.avengers.capstone.hostelrenting.dto.View;
 import org.avengers.capstone.hostelrenting.dto.renter.RenterDTOFull;
 import org.avengers.capstone.hostelrenting.dto.response.ApiSuccess;
 import org.avengers.capstone.hostelrenting.dto.user.UserDTOFull;
