@@ -2,14 +2,12 @@ package org.avengers.capstone.hostelrenting.model;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.util.List;
+import java.util.Set;
 
 @Data
 @NoArgsConstructor
@@ -32,7 +30,9 @@ public class Ward {
     @JoinColumn(name = "district_id", nullable = false)
     private District district;
 
-    @OneToMany(mappedBy = "ward", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Street> streets;
+    @ManyToMany(mappedBy = "wards", fetch = FetchType.LAZY)
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    private Set<Street> streets;
 
 }

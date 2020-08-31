@@ -1,14 +1,12 @@
 package org.avengers.capstone.hostelrenting.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.util.List;
+import java.util.Set;
 
 @Data
 @NoArgsConstructor
@@ -27,10 +25,6 @@ public class Street {
     @NotBlank(message = "Street name is mandatory")
     private String streetName;
 
-    @ManyToOne
-    @JoinColumn(name = "ward_id", nullable = false)
-    private Ward ward;
-
     @OneToMany(mappedBy = "street", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore
     private List<HostelGroup> hostelGroups;
@@ -38,4 +32,13 @@ public class Street {
     @OneToMany(mappedBy = "street", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore
     private List<SampleHostels> sampleHostels;
+
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    @JoinTable(name = "street_ward",
+            joinColumns = @JoinColumn(name = "street_id"),
+            inverseJoinColumns = @JoinColumn(name = "ward_id")
+    )
+    private Set<Ward> wards;
 }
