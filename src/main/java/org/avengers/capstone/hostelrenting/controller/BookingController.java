@@ -155,8 +155,10 @@ public class BookingController {
      */
     private void getDealForDTOs(List<BookingDTOFull> resDTOs) {
         resDTOs.forEach(dto -> {
-            Deal existedDeal = dealService.findById(dto.getDeal().getDealId());
-            dto.setDeal(modelMapper.map(existedDeal, DealDTOShort.class));
+            if (dto.getDeal() != null) {
+                Deal existedDeal = dealService.findById(dto.getDeal().getDealId());
+                dto.setDeal(modelMapper.map(existedDeal, DealDTOShort.class));
+            }
         });
     }
 
@@ -178,7 +180,9 @@ public class BookingController {
     }
 
     private void getDealForDTO(BookingDTOFull resDTO) {
-        Deal existedDeal = dealService.findById(resDTO.getDeal().getDealId());
-        resDTO.setDeal(modelMapper.map(existedDeal, DealDTOShort.class));
+        if (resDTO.getDeal() != null) {
+            Deal existedDeal = dealService.findById(resDTO.getDeal().getDealId());
+            resDTO.setDeal(modelMapper.map(existedDeal, DealDTOShort.class));
+        }
     }
 }
