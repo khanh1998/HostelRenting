@@ -34,10 +34,10 @@ public class UtilityController {
     }
 
     @GetMapping("/utilities")
-    public ResponseEntity<?> getAllUtilities(@RequestParam Double lat,
-                                             @RequestParam Double lng,
+    public ResponseEntity<?> getAllUtilities(@RequestParam Double latitude,
+                                             @RequestParam Double longitude,
                                              @RequestParam(defaultValue = "5.0") Double distance){
-        List<UCategoryDTO> resDTOs = utilityService.getNearbyUtilities(lat, lng, distance)
+        List<UCategoryDTO> resDTOs = utilityService.getNearbyUtilities(latitude, longitude, distance)
                 .stream()
                 .map(model -> modelMapper.map(model, UCategoryDTO.class))
                 .collect(Collectors.toList());
