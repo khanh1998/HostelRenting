@@ -19,6 +19,7 @@ import org.springframework.test.context.ActiveProfiles;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.anyInt;
@@ -46,7 +47,10 @@ class ProvinceServiceImplTest {
         when(mockRepository.findAll()).thenReturn(Arrays.asList(mockModel1, mockModel2));
 
         // Execute the service call
-        List<ProvinceDTOFull> resDTOs = service.getAll();
+        List<ProvinceDTOFull> resDTOs = service.getAll()
+                .stream()
+                .map(model -> mockMapper.map(model, ProvinceDTOFull.class))
+                .collect(Collectors.toList());
 
         // Assert the response
         assertEquals(2, resDTOs.size());
@@ -104,7 +108,7 @@ class ProvinceServiceImplTest {
         when(mockMapper.map(resModel, ProvinceDTOFull.class)).thenReturn(resDTO);
 
         // Assert the response
-        Assertions.assertEquals(resDTO, service.save(reqDTO));
+        Assertions.assertEquals(resModel, service.save(reqModel));
     }
 
 

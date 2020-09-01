@@ -1,6 +1,5 @@
 package org.avengers.capstone.hostelrenting.service.impl;
 
-import org.avengers.capstone.hostelrenting.dto.province.ProvinceDTOFull;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
 import org.avengers.capstone.hostelrenting.model.Province;
 import org.avengers.capstone.hostelrenting.repository.ProvinceRepository;
@@ -11,7 +10,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 
 @Service
@@ -44,30 +42,24 @@ public class ProvinceServiceImpl implements ProvinceService {
     /**
      * Create new if not present, otherwise update
      *
-     * @param reqDTO request dto
-     * @return response DTO
+     * @param reqModel request model
+     * @return response model
      */
     @Override
-    public ProvinceDTOFull save(ProvinceDTOFull reqDTO) {
-        Province model = modelMapper.map(reqDTO, Province.class);
+    public Province save(Province reqModel) {
 
-        Province resModel = provinceRepository.save(model);
-
-        return modelMapper.map(resModel, ProvinceDTOFull.class);
+        return provinceRepository.save(reqModel);
     }
 
 
     /**
      * Get all provinces
      *
-     * @return list of DTOs
+     * @return list of models
      */
     @Override
-    public List<ProvinceDTOFull> getAll() {
-        return provinceRepository.findAll()
-                .stream()
-                .map(province -> modelMapper.map(province, ProvinceDTOFull.class))
-                .collect(Collectors.toList());
+    public List<Province> getAll() {
+        return provinceRepository.findAll();
     }
 
 

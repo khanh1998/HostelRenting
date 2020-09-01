@@ -20,9 +20,9 @@ public class Utility {
 
     private String name;
 
-    private String longitude;
+    private Double longitude;
 
-    private String latitude;
+    private Double latitude;
 
     @ManyToOne
     @JoinColumn(name = "u_type_id", nullable = false)

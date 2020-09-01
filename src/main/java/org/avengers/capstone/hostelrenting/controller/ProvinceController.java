@@ -14,6 +14,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -39,7 +40,9 @@ public class ProvinceController {
      */
     @PostMapping("/provinces")
     public ResponseEntity<?> create(@Validated @RequestBody ProvinceDTOFull reqDTO) throws DuplicateKeyException {
-        ProvinceDTOFull resDTO = provinceService.save(reqDTO);
+        Province reqModel = modelMapper.map(reqDTO, Province.class);
+        Province resModel = provinceService.save(reqModel);
+        ProvinceDTOFull resDTO = modelMapper.map(resModel, ProvinceDTOFull.class);
 
         ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTO, "Province has been created successfully!");
 
@@ -54,7 +57,10 @@ public class ProvinceController {
     @GetMapping("/provinces")
     public ResponseEntity<?> getAllProvinces() {
         String resMsg = "Province(s) has been retrieved successfully!";
-        List<ProvinceDTOFull> resDTOs = provinceService.getAll();
+        List<ProvinceDTOFull> resDTOs = provinceService.getAll()
+                .stream()
+                .map(province -> modelMapper.map(province, ProvinceDTOFull.class))
+                .collect(Collectors.toList());
         if (resDTOs.isEmpty())
             resMsg = "There is no province";
 

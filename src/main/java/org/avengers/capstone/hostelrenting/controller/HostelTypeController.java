@@ -82,9 +82,7 @@ public class HostelTypeController {
                                                           @RequestParam(required = false) Float minSuperficiality,
                                                           @RequestParam(required = false) Float maxSuperficiality,
                                                           @RequestParam(required = false) Integer minCapacity,
-                                                          @RequestParam(required = false) Integer maxCapacity,
-                                                          @RequestParam(required = false, defaultValue = "50") Integer size,
-                                                          @RequestParam(required = false, defaultValue = "0") Integer page) throws EntityNotFoundException {
+                                                          @RequestParam(required = false) Integer maxCapacity) throws EntityNotFoundException {
 
         String message = "Hostel types has been retrieved successfully!";
         List<ResTypeDTO> resDTOs = hostelTypeService.findByHostelGroupId(groupId).stream()
@@ -116,8 +114,7 @@ public class HostelTypeController {
                     if (maxCapacity != null)
                         return hostelType.getCapacity() <= maxCapacity;
                     return true;
-                }).skip(page * size)
-                .limit(size)
+                })
                 .map(hostelType -> modelMapper.map(hostelType, ResTypeDTO.class))
                 .collect(Collectors.toList());
 
@@ -134,6 +131,7 @@ public class HostelTypeController {
     public ResponseEntity<?> getHostelTypes(@RequestParam(required = false) Integer typeId,
                                             @RequestParam(required = false) Integer schoolId,
                                             @RequestParam(required = false) Integer districtId,
+                                            @RequestParam(required = false) Integer categoryId,
                                             @RequestParam(required = false) Double latitude,
                                             @RequestParam(required = false) Double longitude,
                                             @RequestParam(required = false, defaultValue = "5.0") Double distance,
@@ -154,6 +152,11 @@ public class HostelTypeController {
                 .filter(hostelType -> {
                     if (typeId != null)
                         return hostelType.getTypeId() == typeId;
+                    return true;
+                })
+                .filter(hostelType -> {
+                    if (categoryId != null)
+                        return hostelType.getCategory().getCategoryId() == categoryId;
                     return true;
                 })
                 .filter(hostelType -> {

@@ -19,7 +19,7 @@ public interface ProvinceService {
      * @param reqDTO request dto
      * @return created model
      */
-    ProvinceDTOFull save(ProvinceDTOFull reqDTO);
+    Province save(Province reqModel);
 
     /**
      * Find province by given id
@@ -34,7 +34,7 @@ public interface ProvinceService {
      *
      * @return list of DTOs
      */
-    List<ProvinceDTOFull> getAll();
+    List<Province> getAll();
 
 
 

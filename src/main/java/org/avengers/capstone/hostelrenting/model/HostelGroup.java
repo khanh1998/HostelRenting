@@ -36,8 +36,6 @@ public class HostelGroup{
     @NotBlank(message = "Latitude is mandatory")
     private Double latitude;
 
-    private String description;
-
     private boolean ownerJoin;
 
     private String curfewTime;
