@@ -26,8 +26,6 @@ public class HostelGroupDTO implements Serializable {
      */
     private String curfewTime;
 
-    private String description;
-
     private boolean ownerJoin;
 
 //    private Collection<HostelTypeDTO> hostelTypes;
