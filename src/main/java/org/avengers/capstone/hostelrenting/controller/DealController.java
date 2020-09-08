@@ -104,7 +104,7 @@ public class DealController {
                 .collect(Collectors.toList());
 
         // Response entity
-        ApiSuccess<?> apiSuccess = new ApiSuccess<>(getGroupForBooking(resDeals),
+        ApiSuccess<?> apiSuccess = new ApiSuccess<>(getGroupForDeal(resDeals),
                 "Your deal(s) has been retrieved successfully!");
 
         return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
@@ -118,7 +118,7 @@ public class DealController {
                 .collect(Collectors.toList());
 
         // Response entity
-        ApiSuccess<?> apiSuccess = new ApiSuccess<>(getGroupForBooking(resDeals),
+        ApiSuccess<?> apiSuccess = new ApiSuccess<>(getGroupForDeal(resDeals),
                 "Your deal(s) has been retrieved successfully!");
 
         return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
