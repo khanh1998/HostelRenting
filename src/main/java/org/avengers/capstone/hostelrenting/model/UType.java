@@ -22,8 +22,6 @@ public class UType{
 
     private String imageUrl;
 
-    private Integer displayOrder;
-
     @ManyToOne
     @JoinColumn(name = "u_category_id", nullable = false)
     private UCategory uCategory;

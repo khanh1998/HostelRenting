@@ -1,7 +1,7 @@
 package org.avengers.capstone.hostelrenting.dto.district;
 
 import lombok.Data;
-import org.avengers.capstone.hostelrenting.dto.WardDTO;
+import org.avengers.capstone.hostelrenting.dto.ward.WardDTOFull;
 
 import java.io.Serializable;
 import java.util.List;
@@ -10,6 +10,5 @@ import java.util.List;
 public class DistrictDTOFull implements Serializable {
     private int districtId;
     private String districtName;
-    private Integer provinceId;
-    private List<WardDTO> wards;
+    private List<WardDTOFull> wards;
 }

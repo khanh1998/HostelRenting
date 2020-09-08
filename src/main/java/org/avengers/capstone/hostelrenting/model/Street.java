@@ -27,18 +27,5 @@ public class Street {
 
     @OneToMany(mappedBy = "street", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore
-    private List<HostelGroup> hostelGroups;
-
-    @OneToMany(mappedBy = "street", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonIgnore
-    private List<SampleHostels> sampleHostels;
-
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @EqualsAndHashCode.Exclude
-    @ToString.Exclude
-    @JoinTable(name = "street_ward",
-            joinColumns = @JoinColumn(name = "street_id"),
-            inverseJoinColumns = @JoinColumn(name = "ward_id")
-    )
-    private Set<Ward> wards;
+    private List<StreetWard> streetWardList;
 }

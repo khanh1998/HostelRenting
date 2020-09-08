@@ -39,8 +39,8 @@ public class SampleHostels {
     private Double latitude;
 
     @ManyToOne
-    @JoinColumn(name = "street_id")
-    private Street street;
+    @JoinColumn(name = "street_ward_id")
+    private StreetWard address;
 
     @Type(type = "list-array")
     @Column(

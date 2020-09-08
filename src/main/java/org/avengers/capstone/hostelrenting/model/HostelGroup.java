@@ -1,13 +1,13 @@
 package org.avengers.capstone.hostelrenting.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import lombok.*;
+import org.avengers.capstone.hostelrenting.util.AddressSerializer;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
-import java.io.Serializable;
-import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -40,12 +40,14 @@ public class HostelGroup{
 
     private String curfewTime;
 
+    private String imgUrl;
+
     @OneToMany(mappedBy = "hostelGroup", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<HostelType> hostelTypes;
 
     @ManyToOne
-    @JoinColumn(name = "street_id", nullable = false)
-    private Street street;
+    @JoinColumn(name = "street_ward_id", nullable = false)
+    private StreetWard address;
 
     @ManyToOne
     @JoinColumn(name="vendor_id", nullable = false)
@@ -68,4 +70,21 @@ public class HostelGroup{
             inverseJoinColumns = @JoinColumn(name = "schedule_id")
     )
     private Set<Schedule> schedules;
+
+    public Address getAddress() {
+        ObjectMapper mapper = new ObjectMapper();
+        SimpleModule module = new SimpleModule();
+
+        module.addSerializer(StreetWard.class, new AddressSerializer());
+        mapper.registerModule(module);
+        try {
+            String serialized = mapper.writeValueAsString(address);
+            Address serializedAddress = mapper.readValue(serialized, Address.class);
+            return serializedAddress;
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 }

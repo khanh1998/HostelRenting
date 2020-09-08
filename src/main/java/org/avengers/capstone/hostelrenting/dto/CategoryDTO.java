@@ -11,4 +11,5 @@ import java.util.List;
 public class CategoryDTO {
     private Integer categoryId;
     private String categoryName;
+    private int displayOrder;
 }

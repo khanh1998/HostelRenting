@@ -1,21 +1,14 @@
 package org.avengers.capstone.hostelrenting.service.impl;
 
-import org.avengers.capstone.hostelrenting.Constant;
-import org.avengers.capstone.hostelrenting.dto.WardDTO;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
-import org.avengers.capstone.hostelrenting.model.Category;
-import org.avengers.capstone.hostelrenting.model.Ward;
 import org.avengers.capstone.hostelrenting.model.Ward;
 import org.avengers.capstone.hostelrenting.repository.WardRepository;
 import org.avengers.capstone.hostelrenting.service.WardService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class WardServiceImpl implements WardService {

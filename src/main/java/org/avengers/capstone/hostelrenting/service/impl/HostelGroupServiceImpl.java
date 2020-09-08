@@ -1,6 +1,5 @@
 package org.avengers.capstone.hostelrenting.service.impl;
 
-import org.avengers.capstone.hostelrenting.Constant;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
 import org.avengers.capstone.hostelrenting.model.HostelGroup;
 import org.avengers.capstone.hostelrenting.repository.HostelGroupRepository;
@@ -22,37 +21,33 @@ public class HostelGroupServiceImpl implements HostelGroupService {
         this.hostelGroupRepository = hostelGroupRepository;
     }
 
+
+    @Override
+    public void checkExist(Integer id) {
+        Optional<HostelGroup> model = hostelGroupRepository.findById(id);
+        if (model.isEmpty())
+            throw new EntityNotFoundException(HostelGroup.class, "id", id.toString());
+    }
+
     @Override
     public HostelGroup findById(Integer id) {
-        if (isNotFound(id)) {
-            throw new EntityNotFoundException(HostelGroup.class, "id", id.toString());
-        }
+        checkExist(id);
         return hostelGroupRepository.getOne(id);
+
     }
 
     @Override
-    public List<HostelGroup> findAll() {
-        return hostelGroupRepository.findAll().stream().collect(Collectors.toList());
+    public HostelGroup create(HostelGroup reqModel) {
+        return hostelGroupRepository.save(reqModel);
     }
 
     @Override
-    public HostelGroup save(HostelGroup hostelGroup) {
-        if (hostelGroupRepository.equals(hostelGroup)) {
-            throw new DuplicateKeyException(String.format("Hostel group is dupplicated"));
-        }
-        return hostelGroupRepository.save(hostelGroup);
+    public HostelGroup update(HostelGroup reqModel) {
+        return hostelGroupRepository.save(reqModel);
     }
 
     @Override
-    public void deleteById(Integer id) {
-        if (isNotFound(id)) {
-            throw new EntityNotFoundException(HostelGroup.class, "id", id.toString());
-        }
-        hostelGroupRepository.deleteById(id);
-    }
+    public void delete(Integer id) {
 
-    private boolean isNotFound(Integer id) {
-        Optional<HostelGroup> hostelGroup = hostelGroupRepository.findById(id);
-        return hostelGroup.isEmpty();
     }
 }

@@ -30,9 +30,8 @@ public class Ward {
     @JoinColumn(name = "district_id", nullable = false)
     private District district;
 
-    @ManyToMany(mappedBy = "wards", fetch = FetchType.LAZY)
-    @EqualsAndHashCode.Exclude
-    @ToString.Exclude
-    private Set<Street> streets;
+    @OneToMany(mappedBy = "ward", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore
+    private List<StreetWard> streetWards;
 
 }

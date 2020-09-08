@@ -66,8 +66,8 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public Booking findById(Integer id) {
         checkActive(id);
-
         return bookingRepository.getOne(id);
+
     }
 
     @Override

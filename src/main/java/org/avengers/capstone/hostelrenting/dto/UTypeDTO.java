@@ -14,6 +14,5 @@ public class UTypeDTO implements Serializable {
     private int uTypeId;
     private String name;
     private String imageUrl;
-    private int displayOrder;
     private List<UtilityDTO> utilities;
 }

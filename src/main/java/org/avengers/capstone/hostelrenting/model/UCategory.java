@@ -23,6 +23,8 @@ public class UCategory {
 
     private String code;
 
+    private Integer displayOrder;
+
     @OneToMany(mappedBy = "uCategory", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<UType> uTypes;
 }
