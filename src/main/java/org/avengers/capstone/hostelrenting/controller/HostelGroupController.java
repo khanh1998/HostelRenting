@@ -91,6 +91,17 @@ public class HostelGroupController {
         return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
     }
 
+    @GetMapping("/groups/{groupId}")
+    public ResponseEntity<?> getHostelGroupById(@PathVariable Integer groupId){
+        HostelGroup resModel = hostelGroupService.findById(groupId);
+        HostelGroupDTO resDTO = modelMapper.map(resModel, HostelGroupDTO.class);
+
+        // Response entity
+        ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTO, "Your hostel group has been retrieved successfully!");
+
+        return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
+    }
+
     @GetMapping("/vendors/{vendorId}/groups")
     public ResponseEntity<?> getGroupsByVendorId(@PathVariable Integer vendorId) throws EntityNotFoundException {
         Vendor existedModel = vendorService.findById(vendorId);

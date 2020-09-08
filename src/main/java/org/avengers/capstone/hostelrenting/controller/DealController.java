@@ -86,7 +86,7 @@ public class DealController {
     }
 
     @GetMapping("/deals/{dealId}")
-    public ResponseEntity<?> getBookingById(@PathVariable Integer dealId) throws EntityNotFoundException {
+    public ResponseEntity<?> getDealById(@PathVariable Integer dealId) throws EntityNotFoundException {
         Deal resModel = dealService.findById(dealId);
         DealDTOFull resDTO = modelMapper.map(resModel, DealDTOFull.class);
 
@@ -97,7 +97,7 @@ public class DealController {
     }
 
     @GetMapping("/renters/{renterId}/deals")
-    public ResponseEntity<?> getByRenterId(@PathVariable Integer renterId) throws EntityNotFoundException {
+    public ResponseEntity<?> getDealsByRenterId(@PathVariable Integer renterId) throws EntityNotFoundException {
         List<DealDTOFull> resDeals = dealService.findByRenterId(renterId)
                 .stream()
                 .map(deal -> modelMapper.map(deal, DealDTOFull.class))
@@ -111,7 +111,7 @@ public class DealController {
     }
 
     @GetMapping("/vendors/{vendorId}/deals")
-    public ResponseEntity<?> getByVendorId(@PathVariable Integer vendorId) throws EntityNotFoundException {
+    public ResponseEntity<?> getDealsByVendorId(@PathVariable Integer vendorId) throws EntityNotFoundException {
         List<DealDTOFull> resDeals = dealService.findByVendorId(vendorId)
                 .stream()
                 .map(deal -> modelMapper.map(deal, DealDTOFull.class))
@@ -130,7 +130,7 @@ public class DealController {
      * @param deals list of {@link org.avengers.capstone.hostelrenting.model.Booking} need to fill {@link HostelGroup}
      * @return list of {@link org.avengers.capstone.hostelrenting.model.Booking} with corresponding {@link HostelGroup}
      */
-    private List<DealDTOFull> getGroupForBooking(List<DealDTOFull> deals) {
+    private List<DealDTOFull> getGroupForDeal(List<DealDTOFull> deals) {
         deals.forEach(deal -> {
             HostelGroup existedGroup = hostelGroupService.findById(deal.getType().getGroupId());
             deal.setGroup(modelMapper.map(existedGroup, HostelGroupDTO.class));
