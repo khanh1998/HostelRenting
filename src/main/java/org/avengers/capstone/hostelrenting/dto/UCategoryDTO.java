@@ -16,4 +16,5 @@ public class UCategoryDTO implements Serializable {
     private String code;
     @JsonProperty("utilityTypes")
     private List<UTypeDTO> uTypes;
+    private int displayOrder;
 }
