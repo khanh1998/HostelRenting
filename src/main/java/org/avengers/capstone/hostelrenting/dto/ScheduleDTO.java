@@ -4,8 +4,10 @@ package org.avengers.capstone.hostelrenting.dto;
 import lombok.Data;
 import org.avengers.capstone.hostelrenting.model.Schedule;
 
+import java.io.Serializable;
+
 @Data
-public class ScheduleDTO {
+public class ScheduleDTO implements Serializable {
     private int scheduleId;
     private String startTime;
     private String endTime;

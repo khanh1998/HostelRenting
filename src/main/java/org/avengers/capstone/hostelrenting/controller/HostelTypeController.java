@@ -193,11 +193,11 @@ public class HostelTypeController {
                     return true;
                 }).filter(hostelType -> {
                     if (serviceIds != null && serviceIds.length > 0)
-                        return hostelType.getTypeServices()
+                        return hostelType.getHostelGroup().getServiceDetails()
                                 .stream()
-                                .anyMatch(typeService -> Arrays
+                                .anyMatch(serviceDetail -> Arrays
                                         .stream(serviceIds)
-                                        .anyMatch(id -> true ? Integer.compare(id, typeService.getService().getServiceId()) == 0 : false));
+                                        .anyMatch(id -> true ? Integer.compare(id, serviceDetail.getServiceId()) == 0 : false));
                     return true;
                 })
                 .map(hostelType -> modelMapper.map(hostelType, ResTypeDTO.class))
@@ -206,6 +206,7 @@ public class HostelTypeController {
         Set<HostelGroupDTO> groupDTOs = typeDTOs.stream()
                 .map(typeDTO -> modelMapper.map(hostelGroupService.findById(typeDTO.getGroupId()), HostelGroupDTO.class))
                 .collect(Collectors.toSet());
+        groupDTOs.forEach(hostelGroupDTO -> hostelGroupDTO.getServiceForDisplay());
 
 
         // DTO contains list of Types and groups follow that type

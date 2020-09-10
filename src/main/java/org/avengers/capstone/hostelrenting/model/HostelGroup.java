@@ -4,12 +4,18 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import lombok.*;
+import org.avengers.capstone.hostelrenting.model.serialized.AddressFull;
+import org.avengers.capstone.hostelrenting.model.serialized.ServiceFull;
 import org.avengers.capstone.hostelrenting.util.AddressSerializer;
+import org.avengers.capstone.hostelrenting.util.ServiceSerializer;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
-import java.util.Set;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Data
 @NoArgsConstructor
@@ -18,7 +24,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "hostel_group")
-public class HostelGroup{
+public class HostelGroup {
     @Id
     @Column(name = "group_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -45,22 +51,16 @@ public class HostelGroup{
     @OneToMany(mappedBy = "hostelGroup", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<HostelType> hostelTypes;
 
+    @OneToMany(mappedBy = "hGroup", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Collection<ServiceDetail> serviceDetails;
+
     @ManyToOne
     @JoinColumn(name = "street_ward_id", nullable = false)
     private StreetWard address;
 
     @ManyToOne
-    @JoinColumn(name="vendor_id", nullable = false)
+    @JoinColumn(name = "vendor_id", nullable = false)
     private Vendor vendor;
-
-//    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-//    @EqualsAndHashCode.Exclude
-//    @ToString.Exclude
-//    @JoinTable(name = "group_service",
-//            joinColumns = @JoinColumn(name = "group_id"),
-//            inverseJoinColumns = @JoinColumn(name = "service_id")
-//    )
-//    private Set<Service> services;
 
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @EqualsAndHashCode.Exclude
@@ -69,9 +69,14 @@ public class HostelGroup{
             joinColumns = @JoinColumn(name = "group_id"),
             inverseJoinColumns = @JoinColumn(name = "schedule_id")
     )
-    private Set<Schedule> schedules;
+    private Collection<Schedule> schedules;
 
-    public Address getAddress() {
+    /**
+     * Serialize StreetWard to Address model
+     *
+     * @return Address obj
+     */
+    public AddressFull getAddress() {
         ObjectMapper mapper = new ObjectMapper();
         SimpleModule module = new SimpleModule();
 
@@ -79,12 +84,35 @@ public class HostelGroup{
         mapper.registerModule(module);
         try {
             String serialized = mapper.writeValueAsString(address);
-            Address serializedAddress = mapper.readValue(serialized, Address.class);
-            return serializedAddress;
+            AddressFull serializedAddressFull = mapper.readValue(serialized, AddressFull.class);
+            return serializedAddressFull;
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
         return null;
     }
 
+    public Collection<ServiceFull> getServiceDetails() {
+        ObjectMapper mapper = new ObjectMapper();
+        SimpleModule module = new SimpleModule();
+
+        module.addSerializer(ServiceDetail.class, new ServiceSerializer());
+        mapper.registerModule(module);
+
+        return serviceDetails
+                .stream()
+                .filter(serviceDetail -> serviceDetail.isActive())
+                .map(service -> {
+                    String serialized = null;
+                    try {
+                        serialized = mapper.writeValueAsString(service);
+                        ServiceFull serializedServiceFull = mapper.readValue(serialized, ServiceFull.class);
+                        return serializedServiceFull;
+                    } catch (JsonProcessingException e) {
+                        e.printStackTrace();
+                    }
+                    return null;
+                }).collect(Collectors.toList());
+
+    }
 }

@@ -15,5 +15,5 @@ public class ContractDTOShort {
     private Integer bookingId;
     private Long startTime;
     private float duration;
-    private Contract.DURATION_UNIT durationUnit;
+    private String durationUnit;
 }

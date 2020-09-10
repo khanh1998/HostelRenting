@@ -27,5 +27,4 @@ public class ResTypeDTO implements Serializable {
 
     private Collection<FacilityDTO> facilities;
     private Collection<TypeImageDTO> typeImages;
-    private Collection<TypeServiceDTO> services;
 }

@@ -27,15 +27,7 @@ public class AddressSerializer extends StdSerializer<StreetWard> {
         gen.writeNumberField("wardId", value.getWard().getWardId());
         gen.writeStringField("wardName", value.getWard().getWardName());
         gen.writeNumberField("streetId", value.getStreet().getStreetId());
-        gen.writeStringField("streetName", value.getStreet().getStreetName());
-//        gen.writeFieldName("province");
-//        gen.writeObject(value.getWard().getDistrict().getProvince());
-//        gen.writeFieldName("district");
-//        gen.writeObject(value.getWard().getDistrict());
-//        gen.writeFieldName("ward");
-//        gen.writeObject(value.getWard());
-//        gen.writeFieldName("street");
-//        gen.writeObject(value.getStreet());
+        gen.writeStringField("streetName", value.getStreet().getStreetName());;
         gen.writeEndObject();
     }
 }

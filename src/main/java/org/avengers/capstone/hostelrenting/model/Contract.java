@@ -1,14 +1,12 @@
 package org.avengers.capstone.hostelrenting.model;
 
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.Collection;
 
 @Data
 @Builder
@@ -19,7 +17,7 @@ import javax.validation.constraints.NotNull;
 @Table(name = "contract")
 public class Contract {
 
-    public enum DURATION_UNIT{MONTH, YEAR}
+//    public enum DURATION_UNIT{MONTH, YEAR}
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -43,9 +41,12 @@ public class Contract {
     @NotNull(message = "Contract duration is mandatory")
     private Float duration;
 
-    @Column(columnDefinition = "varchar(5) default 'MONTH'", nullable = false)
-    @Enumerated(EnumType.STRING)
-    private DURATION_UNIT durationUnit;
+    @Column(nullable = false)
+    @NotNull(message = "Contract duration is mandatory")
+    private Float minDuration;
+
+    @Column(columnDefinition = "varchar(10) default 'tháng'", nullable = false)
+    private String durationUnit;
 
     @Column
     private Integer dealId;
@@ -63,4 +64,12 @@ public class Contract {
     @Column(columnDefinition = "boolean default false")
     private boolean isDeleted;
 
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    @JoinTable(name = "contract_serDetail",
+            joinColumns = @JoinColumn(name = "contractId"),
+            inverseJoinColumns = @JoinColumn(name = "serDetailId")
+    )
+    private Collection<ServiceDetail> serDetails;
 }

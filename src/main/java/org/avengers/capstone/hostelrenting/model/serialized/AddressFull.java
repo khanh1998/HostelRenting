@@ -1,4 +1,4 @@
-package org.avengers.capstone.hostelrenting.model;
+package org.avengers.capstone.hostelrenting.model.serialized;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -8,8 +8,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-public class Address {
+public class AddressFull {
     private Integer provinceId;
     private String provinceName;
     private Integer districtId;

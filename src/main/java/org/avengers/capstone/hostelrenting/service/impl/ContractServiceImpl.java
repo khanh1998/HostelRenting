@@ -100,8 +100,6 @@ public class ContractServiceImpl implements ContractService {
         reqModel.setRenter(exRenter);
         reqModel.setHostelRoom(exRoom);
         reqModel.setCreatedAt(System.currentTimeMillis());
-        if (reqModel.getDurationUnit()== null)
-            reqModel.setDurationUnit(Contract.DURATION_UNIT.MONTH);
 
         return contractRepository.save(reqModel);
     }

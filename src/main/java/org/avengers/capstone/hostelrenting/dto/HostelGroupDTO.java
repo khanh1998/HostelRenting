@@ -1,24 +1,23 @@
 package org.avengers.capstone.hostelrenting.dto;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.google.gson.Gson;
-import lombok.Data;
-import org.avengers.capstone.hostelrenting.model.Address;
-import org.avengers.capstone.hostelrenting.model.StreetWard;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.avengers.capstone.hostelrenting.util.AddressSerializer;
+import lombok.Data;
+import org.avengers.capstone.hostelrenting.model.serialized.AddressFull;
+import org.avengers.capstone.hostelrenting.model.serialized.ServiceFull;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.Comparator;
+import java.util.function.BinaryOperator;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Data
 public class HostelGroupDTO implements Serializable {
     private int groupId;
 
     @JsonProperty("address")
-    private Address address;
+    private AddressFull addressFull;
 
     private Integer vendorId;
 
@@ -39,8 +38,16 @@ public class HostelGroupDTO implements Serializable {
 
     private String imgUrl;
 
-//    private Collection<HostelTypeDTO> hostelTypes;
+    @JsonProperty("services")
+    private Collection<ServiceFull> serviceDetails;
 
-//    private Collection<ServiceDTO> services;
-
+    public void getServiceForDisplay() {
+        serviceDetails = this.serviceDetails
+                .stream()
+                .collect(Collectors
+                        .toMap(ServiceFull::getServiceId,
+                                Function.identity(),
+                                BinaryOperator.maxBy(Comparator.comparing(ServiceFull::getCreatedAt)))
+        ).values();
+    }
 }

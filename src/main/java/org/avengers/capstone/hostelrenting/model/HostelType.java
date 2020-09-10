@@ -73,9 +73,6 @@ public class HostelType {
             joinColumns = @JoinColumn(name = "type_id"),
             inverseJoinColumns = @JoinColumn(name = "facility_id")
     )
-    private Set<Facility> facilities;
-
-    @OneToMany(mappedBy = "hostelType", fetch = FetchType.LAZY)
-    private Collection<TypeService> typeServices;
+    private Collection<Facility> facilities;
 
 }
