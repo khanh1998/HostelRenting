@@ -110,7 +110,7 @@ public class ScheduleController {
         resDTO.setSchedules(scheduleDTOs);
         resDTO.setHGroup(modelMapper.map(hgroupModel, HostelGroupDTOShort.class));
 
-        ApiSuccess<?> apiSuccess = new ApiSuccess<>(scheduleDTOs, "Your schedule has been retrieved successfully!");
+        ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTO, "Your schedule has been retrieved successfully!");
 
         return ResponseEntity.ok(apiSuccess);
 
