@@ -1,19 +1,15 @@
 package org.avengers.capstone.hostelrenting.controller;
 
-import org.apache.catalina.Host;
-import org.avengers.capstone.hostelrenting.dto.HostelGroupDTO;
-import org.avengers.capstone.hostelrenting.dto.ScheduleDTO;
+import org.avengers.capstone.hostelrenting.dto.hostelgroup.HostelGroupDTOFull;
 import org.avengers.capstone.hostelrenting.dto.response.ApiSuccess;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
 import org.avengers.capstone.hostelrenting.model.HostelGroup;
-import org.avengers.capstone.hostelrenting.model.Schedule;
 import org.avengers.capstone.hostelrenting.model.Vendor;
 import org.avengers.capstone.hostelrenting.service.HostelGroupService;
 import org.avengers.capstone.hostelrenting.service.ScheduleService;
 import org.avengers.capstone.hostelrenting.service.StreetService;
 import org.avengers.capstone.hostelrenting.service.VendorService;
 import org.modelmapper.ModelMapper;
-import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @RestController
@@ -63,10 +58,10 @@ public class HostelGroupController {
     }
 
     @PostMapping("/groups")
-    public ResponseEntity<?> createHostelGroup(@Valid @RequestBody HostelGroupDTO reqDTO) throws EntityNotFoundException {
+    public ResponseEntity<?> createHostelGroup(@Valid @RequestBody HostelGroupDTOFull reqDTO) throws EntityNotFoundException {
         HostelGroup hostelGroupModel = modelMapper.map(reqDTO, HostelGroup.class);
         hostelGroupService.create(hostelGroupModel);
-        HostelGroupDTO resDTO = modelMapper.map(hostelGroupModel, HostelGroupDTO.class);
+        HostelGroupDTOFull resDTO = modelMapper.map(hostelGroupModel, HostelGroupDTOFull.class);
 
         ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTO, "Your hostel group has been created successfully!");
 
@@ -75,7 +70,7 @@ public class HostelGroupController {
 
     @PutMapping("/groups/{groupId}")
     public ResponseEntity<?> updateHostelGroup(@PathVariable Integer groupId,
-                                                        @Valid @RequestBody HostelGroupDTO rqHostelGroup) throws EntityNotFoundException {
+                                                        @Valid @RequestBody HostelGroupDTOFull rqHostelGroup) throws EntityNotFoundException {
         rqHostelGroup.setGroupId(groupId);
         HostelGroup existedModel = hostelGroupService.findById(groupId);
         HostelGroup rqModel = modelMapper.map(rqHostelGroup, HostelGroup.class);
@@ -84,7 +79,7 @@ public class HostelGroupController {
 //        rqModel.setStreet(existedModel.getStreet());
         rqModel.setVendor(vendor);
         HostelGroup resModel = hostelGroupService.update(rqModel);
-        HostelGroupDTO resDTO = modelMapper.map(resModel, HostelGroupDTO.class);
+        HostelGroupDTOFull resDTO = modelMapper.map(resModel, HostelGroupDTOFull.class);
 
         ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTO, "Your hostel group has been updated successfully!");
 
@@ -94,7 +89,7 @@ public class HostelGroupController {
     @GetMapping("/groups/{groupId}")
     public ResponseEntity<?> getHostelGroupById(@PathVariable Integer groupId){
         HostelGroup resModel = hostelGroupService.findById(groupId);
-        HostelGroupDTO resDTO = modelMapper.map(resModel, HostelGroupDTO.class);
+        HostelGroupDTOFull resDTO = modelMapper.map(resModel, HostelGroupDTOFull.class);
 
         // Response entity
         ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTO, "Your hostel group has been retrieved successfully!");
@@ -105,9 +100,9 @@ public class HostelGroupController {
     @GetMapping("/vendors/{vendorId}/groups")
     public ResponseEntity<?> getGroupsByVendorId(@PathVariable Integer vendorId) throws EntityNotFoundException {
         Vendor existedModel = vendorService.findById(vendorId);
-        List<HostelGroupDTO> resDTOs = existedModel.getHostelGroups()
+        List<HostelGroupDTOFull> resDTOs = existedModel.getHostelGroups()
                 .stream()
-                .map(hostelGroup -> modelMapper.map(hostelGroup, HostelGroupDTO.class))
+                .map(hostelGroup -> modelMapper.map(hostelGroup, HostelGroupDTOFull.class))
                 .collect(Collectors.toList());
 
         ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTOs, "Your hostel group has been retrieved successfully!");

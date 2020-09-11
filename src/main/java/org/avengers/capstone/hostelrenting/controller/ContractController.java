@@ -1,8 +1,6 @@
 package org.avengers.capstone.hostelrenting.controller;
 
-import io.swagger.models.Response;
-import org.avengers.capstone.hostelrenting.dto.HostelGroupDTO;
-import org.avengers.capstone.hostelrenting.dto.booking.BookingDTOFull;
+import org.avengers.capstone.hostelrenting.dto.hostelgroup.HostelGroupDTOFull;
 import org.avengers.capstone.hostelrenting.dto.booking.BookingDTOShort;
 import org.avengers.capstone.hostelrenting.dto.deal.DealDTOShort;
 import org.avengers.capstone.hostelrenting.dto.hosteltype.ResTypeDTO;
@@ -21,9 +19,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static org.avengers.capstone.hostelrenting.Constant.Message.CREATE_SUCCESS;
-import static org.avengers.capstone.hostelrenting.Constant.Message.GET_SUCCESS;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -166,6 +161,6 @@ public class ContractController {
     private void getTypeAndGroupForDTO(ContractDTOFull resDTO) {
         HostelType exType = typeService.findById(resDTO.getRoom().getTypeId());
         resDTO.setType(modelMapper.map(exType, ResTypeDTO.class));
-        resDTO.setGroup(modelMapper.map(groupService.findById(exType.getHostelGroup().getGroupId()), HostelGroupDTO.class));
+        resDTO.setGroup(modelMapper.map(groupService.findById(exType.getHostelGroup().getGroupId()), HostelGroupDTOFull.class));
     }
 }

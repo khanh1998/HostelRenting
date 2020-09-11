@@ -1,8 +1,8 @@
 package org.avengers.capstone.hostelrenting.controller;
 
 import org.avengers.capstone.hostelrenting.dto.FacilityDTO;
-import org.avengers.capstone.hostelrenting.dto.HostelGroupDTO;
-import org.avengers.capstone.hostelrenting.dto.TypesAndGroupsDTO;
+import org.avengers.capstone.hostelrenting.dto.hostelgroup.HostelGroupDTOFull;
+import org.avengers.capstone.hostelrenting.dto.combination.TypesAndGroupsDTO;
 import org.avengers.capstone.hostelrenting.dto.hosteltype.ReqTypeDTO;
 import org.avengers.capstone.hostelrenting.dto.hosteltype.ResTypeDTO;
 import org.avengers.capstone.hostelrenting.dto.response.ApiSuccess;
@@ -203,8 +203,8 @@ public class HostelTypeController {
                 .map(hostelType -> modelMapper.map(hostelType, ResTypeDTO.class))
                 .collect(Collectors.toSet());
 
-        Set<HostelGroupDTO> groupDTOs = typeDTOs.stream()
-                .map(typeDTO -> modelMapper.map(hostelGroupService.findById(typeDTO.getGroupId()), HostelGroupDTO.class))
+        Set<HostelGroupDTOFull> groupDTOs = typeDTOs.stream()
+                .map(typeDTO -> modelMapper.map(hostelGroupService.findById(typeDTO.getGroupId()), HostelGroupDTOFull.class))
                 .collect(Collectors.toSet());
         groupDTOs.forEach(hostelGroupDTO -> hostelGroupDTO.getServiceForDisplay());
 

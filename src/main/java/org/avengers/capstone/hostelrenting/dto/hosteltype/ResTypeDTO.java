@@ -3,7 +3,7 @@ package org.avengers.capstone.hostelrenting.dto.hosteltype;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 import org.avengers.capstone.hostelrenting.dto.*;
-import org.avengers.capstone.hostelrenting.model.TypeImage;
+import org.avengers.capstone.hostelrenting.dto.TypeStatusDTO;
 
 import java.io.Serializable;
 import java.util.Collection;

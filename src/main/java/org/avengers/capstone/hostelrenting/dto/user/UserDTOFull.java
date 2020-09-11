@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Data;
 import lombok.ToString;
 import org.avengers.capstone.hostelrenting.dto.RoleDTO;
-import org.avengers.capstone.hostelrenting.dto.View;
+import org.avengers.capstone.hostelrenting.dto.Views;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
@@ -29,6 +29,6 @@ public class UserDTOFull implements Serializable {
     private String avatar;
     private String firebaseToken;
     private RoleDTO role;
-    @JsonView({View.Internal.class})
+    @JsonView({Views.Internal.class})
     private String jwtToken;
 }

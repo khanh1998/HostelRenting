@@ -1,7 +1,9 @@
-package org.avengers.capstone.hostelrenting.dto;
+package org.avengers.capstone.hostelrenting.dto.hostelgroup;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Data;
+import org.avengers.capstone.hostelrenting.dto.Views;
 import org.avengers.capstone.hostelrenting.model.serialized.AddressFull;
 import org.avengers.capstone.hostelrenting.model.serialized.ServiceFull;
 
@@ -13,7 +15,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Data
-public class HostelGroupDTO implements Serializable {
+public class HostelGroupDTOFull implements Serializable {
     private int groupId;
 
     @JsonProperty("address")
@@ -41,6 +43,10 @@ public class HostelGroupDTO implements Serializable {
     @JsonProperty("services")
     private Collection<ServiceFull> serviceDetails;
 
+    /**
+     * Transform service to display
+     *
+     */
     public void getServiceForDisplay() {
         serviceDetails = this.serviceDetails
                 .stream()

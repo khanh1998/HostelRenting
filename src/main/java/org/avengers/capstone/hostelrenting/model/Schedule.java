@@ -5,10 +5,11 @@ import lombok.*;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 
@@ -23,22 +24,14 @@ public class Schedule {
 
     @NotNull
     @Enumerated(EnumType.STRING)
+    @Column(unique = true)
     private CODE code;
-
-    @Column(nullable = false)
-    @NotBlank(message = "Start time is mandatory")
-    private String startTime;
-
-    @Column(nullable = false)
-    @NotBlank(message = "End time is mandatory")
-    private String endTime;
 
     @Column(nullable = false)
     @NotBlank(message = "Day of week time is mandatory")
     private String dayOfWeek;
 
-    @ManyToMany(mappedBy = "schedules", fetch = FetchType.LAZY)
-    @EqualsAndHashCode.Exclude
-    @ToString.Exclude
-    private Set<HostelGroup> hostelGroups;
+    @OneToMany(mappedBy = "schedule", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Collection<HGSchedule> hgSchedules;
+
 }

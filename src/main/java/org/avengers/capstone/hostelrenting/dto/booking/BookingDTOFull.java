@@ -1,9 +1,8 @@
 package org.avengers.capstone.hostelrenting.dto.booking;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
-import org.avengers.capstone.hostelrenting.dto.*;
 import org.avengers.capstone.hostelrenting.dto.deal.DealDTOShort;
+import org.avengers.capstone.hostelrenting.dto.hostelgroup.HostelGroupDTOFull;
 import org.avengers.capstone.hostelrenting.dto.hosteltype.ResTypeDTO;
 import org.avengers.capstone.hostelrenting.dto.renter.RenterDTOFull;
 import org.avengers.capstone.hostelrenting.dto.vendor.VendorDTOFull;
@@ -15,7 +14,7 @@ public class BookingDTOFull {
     private RenterDTOFull renter;
     private VendorDTOFull vendor;
     private ResTypeDTO type;
-    private HostelGroupDTO group;
+    private HostelGroupDTOFull group;
     private Booking.STATUS status;
     private DealDTOShort deal;
     private String qrCode;

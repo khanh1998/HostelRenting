@@ -62,14 +62,8 @@ public class HostelGroup {
     @JoinColumn(name = "vendor_id", nullable = false)
     private Vendor vendor;
 
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @EqualsAndHashCode.Exclude
-    @ToString.Exclude
-    @JoinTable(name = "group_schedule",
-            joinColumns = @JoinColumn(name = "group_id"),
-            inverseJoinColumns = @JoinColumn(name = "schedule_id")
-    )
-    private Collection<Schedule> schedules;
+    @OneToMany(mappedBy = "hGroup", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Collection<HGSchedule> hgSchedules;
 
     /**
      * Serialize StreetWard to Address model
