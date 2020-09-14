@@ -25,7 +25,7 @@ public class Statistic {
     private Float avgSuperficiality;
 
     @Column(nullable = false, unique = true)
-    private Integer streetId;
+    private Integer streetWardId;
 
     private Long count;
 }
