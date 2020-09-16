@@ -79,42 +79,49 @@ public class HostelTypeServiceImpl implements HostelTypeService {
      * @return
      */
     @Override
-    public List<HostelType> searchWithMainFactors(Double latitude, Double longitude, Double distance, Integer schoolId, Integer provinceId, String sortBy, Boolean asc, int size, int page) {
+    public Collection<HostelType> searchWithMainFactors(Double latitude, Double longitude, Double distance, Integer schoolId, Integer provinceId, String sortBy, Boolean asc, int size, int page) {
 
         Sort sort = Sort.by(asc == true ? Sort.Direction.ASC : Sort.Direction.DESC, sortBy);
         Pageable pageable = PageRequest.of(page - 1, size, sort);
-        List<HostelType> locTypes = new ArrayList<>();
-        List<HostelType> schoolMateTypes = new ArrayList<>();
-        List<HostelType> compatriotTypes = new ArrayList<>();
+        Collection<HostelType> locTypes = new ArrayList<>();
+        Collection<HostelType> schoolMateTypes = new ArrayList<>();
+        Collection<HostelType> compatriotTypes = new ArrayList<>();
         if (latitude != null && longitude != null) {
             // if long&lat != null ==> get surroundings
             locTypes = hostelTypeRepository.getSurroundings(latitude, longitude, distance, pageable);
-            if (schoolId != null)
-                // retains common elements in both collection
-                schoolMateTypes = convertMapToList(hostelTypeRepository.getBySchoolMates(schoolId), 1);
-            if (provinceId != null)
-                // retains common elements in both collection
-                compatriotTypes = convertMapToList(hostelTypeRepository.getByCompatriot(provinceId),2);
-        } else {
-            //default get highest score
+        }else {
+            //default get ...
             locTypes = hostelTypeRepository.findAll(pageable).toList();
         }
-        List<HostelType> tmp = Stream.concat(schoolMateTypes.stream(), compatriotTypes.stream()).collect(Collectors.toList());
-        locTypes.retainAll(tmp);
-        return locTypes;
+
+        if (schoolId != null) {
+            schoolMateTypes = convertMapToList(hostelTypeRepository.getBySchoolMates(schoolId), 1);
+            // retains common elements in both collection
+        }
+
+        if (provinceId != null) {
+            compatriotTypes = convertMapToList(hostelTypeRepository.getByCompatriot(provinceId), 2);
+            // retains common elements in both collection
+        }
+
+        Collection temp = new ArrayList(locTypes);
+        if (!compatriotTypes.isEmpty() || !schoolMateTypes.isEmpty()){
+            temp.retainAll(Stream.concat(compatriotTypes.stream(), schoolMateTypes.stream()).collect(Collectors.toList()));
+        }
+
+        return temp;
     }
 
     /**
-     *
-     * @param inputMap
-     * @param code == 1 is schoolmate, otherwise is compatriot
+     * @param inputList
+     * @param code     == 1 is schoolmate, otherwise is compatriot
      * @return
      */
     public List<HostelType> convertMapToList(List<Object[]> inputList, int code) {
         if (inputList.isEmpty())
             return null;
         Map<Integer, Integer> inputMap = new HashMap<>();
-        for (Object[] obj : inputList ) {
+        for (Object[] obj : inputList) {
             Integer typeId = (Integer) obj[0];
             Integer count = ((BigInteger) obj[1]).intValue();
             inputMap.put(typeId, count);

@@ -3,6 +3,7 @@ package org.avengers.capstone.hostelrenting.service;
 import org.avengers.capstone.hostelrenting.model.HostelType;
 import org.springframework.data.domain.Pageable;
 
+import java.util.Collection;
 import java.util.List;
 
 public interface HostelTypeService {
@@ -27,5 +28,5 @@ public interface HostelTypeService {
      * @param page page of the result
      * @return corresponding hostel types with factors
      */
-    List<HostelType> searchWithMainFactors(Double latitude, Double longitude, Double distance, Integer schoolId, Integer districtId, String sortBy, Boolean asc, int size, int page);
+    Collection<HostelType> searchWithMainFactors(Double latitude, Double longitude, Double distance, Integer schoolId, Integer districtId, String sortBy, Boolean asc, int size, int page);
 }
