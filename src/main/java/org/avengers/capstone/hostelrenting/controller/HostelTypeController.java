@@ -147,13 +147,12 @@ public class HostelTypeController {
                                             @RequestParam(required = false, defaultValue = "false") Boolean asc,
                                             @RequestParam(required = false, defaultValue = DEFAULT_SIZE) Integer size,
                                             @RequestParam(required = false, defaultValue = DEFAULT_PAGE) Integer page) throws EntityNotFoundException {
+        if (typeId != null){
+            ApiSuccess<?> apiSuccess = new ApiSuccess<>(modelMapper.map(hostelTypeService.findById(typeId), ResTypeDTO.class), "Hostel type(s) has been retrieved successfully!");
+            return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
+        }
 
         Set<ResTypeDTO> typeDTOs = hostelTypeService.searchWithMainFactors(latitude, longitude, distance, schoolId, provinceId, sortBy, asc, size, page).stream()
-                .filter(hostelType -> {
-                    if (typeId != null)
-                        return hostelType.getTypeId() == typeId;
-                    return true;
-                })
                 .filter(hostelType -> {
                     if (categoryId != null)
                         return hostelType.getCategory().getCategoryId() == categoryId;
@@ -212,7 +211,7 @@ public class HostelTypeController {
         // DTO contains list of Types and groups follow that type
         TypesAndGroupsDTO resDTO = new TypesAndGroupsDTO(typeDTOs, groupDTOs);
 
-        ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTO, "Hostel type has been retrieved successfully!");
+        ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTO, "Hostel type(s) has been retrieved successfully!");
 
         return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
     }
