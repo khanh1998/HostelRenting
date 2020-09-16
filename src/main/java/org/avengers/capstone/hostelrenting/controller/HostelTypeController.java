@@ -1,6 +1,7 @@
 package org.avengers.capstone.hostelrenting.controller;
 
 import org.avengers.capstone.hostelrenting.dto.FacilityDTO;
+import org.avengers.capstone.hostelrenting.dto.combination.TypeAndGroupDTO;
 import org.avengers.capstone.hostelrenting.dto.hostelgroup.HostelGroupDTOFull;
 import org.avengers.capstone.hostelrenting.dto.combination.TypesAndGroupsDTO;
 import org.avengers.capstone.hostelrenting.dto.hosteltype.ReqTypeDTO;
@@ -148,7 +149,13 @@ public class HostelTypeController {
                                             @RequestParam(required = false, defaultValue = DEFAULT_SIZE) Integer size,
                                             @RequestParam(required = false, defaultValue = DEFAULT_PAGE) Integer page) throws EntityNotFoundException {
         if (typeId != null){
-            ApiSuccess<?> apiSuccess = new ApiSuccess<>(modelMapper.map(hostelTypeService.findById(typeId), ResTypeDTO.class), "Hostel type(s) has been retrieved successfully!");
+            // handle hosteltype and corresponding hostelgroup
+            ResTypeDTO resTypeDTO = modelMapper.map(hostelTypeService.findById(typeId), ResTypeDTO.class);
+            HostelGroupDTOFull resGroupDTO = modelMapper.map(hostelGroupService.findById(resTypeDTO.getGroupId()), HostelGroupDTOFull.class);
+            TypeAndGroupDTO resDTO = TypeAndGroupDTO.builder().groupDTOFull(resGroupDTO).type(resTypeDTO).build();
+
+            ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTO, "Hostel type(s) has been retrieved successfully!");
+            
             return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
         }
 

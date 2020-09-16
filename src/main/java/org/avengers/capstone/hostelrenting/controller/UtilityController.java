@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -40,6 +41,7 @@ public class UtilityController {
         List<UCategoryDTO> resDTOs = utilityService.getNearbyUtilities(latitude, longitude, distance)
                 .stream()
                 .map(model -> modelMapper.map(model, UCategoryDTO.class))
+                .sorted(Comparator.comparingInt(UCategoryDTO::getDisplayOrder))
                 .collect(Collectors.toList());
         ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTOs, "Utilities has been retrieved successfully!");
 
