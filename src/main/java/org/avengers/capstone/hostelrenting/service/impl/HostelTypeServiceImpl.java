@@ -12,9 +12,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.math.BigInteger;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class HostelTypeServiceImpl implements HostelTypeService {
@@ -78,25 +79,57 @@ public class HostelTypeServiceImpl implements HostelTypeService {
      * @return
      */
     @Override
-    public List<HostelType> searchWithMainFactors(Double latitude, Double longitude, Double distance, Integer schoolId, Integer districtId, String sortBy, Boolean asc, int size, int page) {
+    public List<HostelType> searchWithMainFactors(Double latitude, Double longitude, Double distance, Integer schoolId, Integer provinceId, String sortBy, Boolean asc, int size, int page) {
 
         Sort sort = Sort.by(asc == true ? Sort.Direction.ASC : Sort.Direction.DESC, sortBy);
         Pageable pageable = PageRequest.of(page - 1, size, sort);
-        List<HostelType> types = new ArrayList<>();
+        List<HostelType> locTypes = new ArrayList<>();
+        List<HostelType> schoolMateTypes = new ArrayList<>();
+        List<HostelType> compatriotTypes = new ArrayList<>();
         if (latitude != null && longitude != null) {
             // if long&lat != null ==> get surroundings
-            types = hostelTypeRepository.getSurroundings(latitude, longitude, distance, pageable);
+            locTypes = hostelTypeRepository.getSurroundings(latitude, longitude, distance, pageable);
             if (schoolId != null)
                 // retains common elements in both collection
-                types.retainAll(hostelTypeRepository.getBySchoolMates(schoolId, pageable));
-            if (districtId != null)
+                schoolMateTypes = convertMapToList(hostelTypeRepository.getBySchoolMates(schoolId), 1);
+            if (provinceId != null)
                 // retains common elements in both collection
-                types.retainAll(hostelTypeRepository.getByHometown(districtId, pageable));
+                compatriotTypes = convertMapToList(hostelTypeRepository.getByCompatriot(provinceId),2);
         } else {
             //default get highest score
-            types = hostelTypeRepository.findAll(pageable).toList();
+            locTypes = hostelTypeRepository.findAll(pageable).toList();
         }
-        return types;
+        List<HostelType> tmp = Stream.concat(schoolMateTypes.stream(), compatriotTypes.stream()).collect(Collectors.toList());
+        locTypes.retainAll(tmp);
+        return locTypes;
+    }
+
+    /**
+     *
+     * @param inputMap
+     * @param code == 1 is schoolmate, otherwise is compatriot
+     * @return
+     */
+    public List<HostelType> convertMapToList(List<Object[]> inputList, int code) {
+        if (inputList.isEmpty())
+            return null;
+        Map<Integer, Integer> inputMap = new HashMap<>();
+        for (Object[] obj : inputList ) {
+            Integer typeId = (Integer) obj[0];
+            Integer count = ((BigInteger) obj[1]).intValue();
+            inputMap.put(typeId, count);
+        }
+
+        List<HostelType> hostelTypes = inputMap.keySet().stream()
+                .map(integer -> {
+                    HostelType temp = findById(integer);
+                    if (code == 1)
+                        temp.setSchoolmate(Math.toIntExact(inputMap.get(integer)));
+                    else
+                        temp.setCompatriot(Math.toIntExact(inputMap.get(integer)));
+                    return temp;
+                }).collect(Collectors.toList());
+        return hostelTypes;
     }
 
     private boolean isNotFound(Integer id) {

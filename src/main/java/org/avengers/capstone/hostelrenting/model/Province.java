@@ -1,5 +1,6 @@
 package org.avengers.capstone.hostelrenting.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -25,4 +26,8 @@ public class Province {
 
     @OneToMany(mappedBy = "province", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<District> districts;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "province", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Renter> renters;
 }

@@ -28,8 +28,8 @@ public class Renter extends User{
     private School school;
 
     @ManyToOne
-    @JoinColumn(name = "district_id")
-    private District district;
+    @JoinColumn(name = "province_id")
+    private Province province;
 
     @OneToMany(mappedBy = "renter", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Contract> contracts;

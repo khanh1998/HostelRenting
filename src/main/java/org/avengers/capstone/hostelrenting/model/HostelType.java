@@ -45,6 +45,12 @@ public class HostelType {
     @Column(nullable = false)
     private float deposit;
 
+    @Transient
+    private int schoolmate;
+
+    @Transient
+    private int compatriot;
+
     @Column(columnDefinition = "boolean default false")
     private boolean isDeleted;
 

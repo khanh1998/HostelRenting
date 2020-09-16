@@ -23,6 +23,10 @@ public class ResTypeDTO implements Serializable {
     private int capacity;
     private int view;
     private float deposit;
+    // the same school
+    private int schoolMate;
+    // the same hometown
+    private int compatriot;
     private boolean isDeleted;
 
     private Collection<FacilityDTO> facilities;

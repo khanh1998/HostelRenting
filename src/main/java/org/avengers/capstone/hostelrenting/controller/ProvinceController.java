@@ -1,6 +1,7 @@
 package org.avengers.capstone.hostelrenting.controller;
 
 import org.avengers.capstone.hostelrenting.dto.province.ProvinceDTOFull;
+import org.avengers.capstone.hostelrenting.dto.province.ProvinceDTOShort;
 import org.avengers.capstone.hostelrenting.dto.response.ApiSuccess;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
 import org.avengers.capstone.hostelrenting.model.Province;
@@ -55,11 +56,16 @@ public class ProvinceController {
      * @return List of all provinces
      */
     @GetMapping("/provinces")
-    public ResponseEntity<?> getAllProvinces() {
+    public ResponseEntity<?> getAllProvinces(@RequestParam(defaultValue = "false") boolean truncated) {
         String resMsg = "Province(s) has been retrieved successfully!";
-        List<ProvinceDTOFull> resDTOs = provinceService.getAll()
+        List<ProvinceDTOShort> resDTOs = provinceService.getAll()
                 .stream()
-                .map(province -> modelMapper.map(province, ProvinceDTOFull.class))
+                .map(province -> {
+                    if (truncated)
+                        return modelMapper.map(province, ProvinceDTOShort.class);
+                    else
+                        return modelMapper.map(province, ProvinceDTOFull.class);
+                })
                 .collect(Collectors.toList());
         if (resDTOs.isEmpty())
             resMsg = "There is no province";

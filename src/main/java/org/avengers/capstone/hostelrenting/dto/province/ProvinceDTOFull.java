@@ -9,8 +9,6 @@ import java.util.List;
 
 @Data
 @NoArgsConstructor
-public class ProvinceDTOFull implements Serializable {
-    private int provinceId;
-    private String provinceName;
+public class ProvinceDTOFull extends ProvinceDTOShort implements Serializable {
     private List<DistrictDTOFull> districts;
 }

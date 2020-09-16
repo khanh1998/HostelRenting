@@ -130,7 +130,7 @@ public class HostelTypeController {
     @GetMapping("/types")
     public ResponseEntity<?> getHostelTypes(@RequestParam(required = false) Integer typeId,
                                             @RequestParam(required = false) Integer schoolId,
-                                            @RequestParam(required = false) Integer districtId,
+                                            @RequestParam(required = false) Integer provinceId,
                                             @RequestParam(required = false) Integer categoryId,
                                             @RequestParam(required = false) Double latitude,
                                             @RequestParam(required = false) Double longitude,
@@ -148,7 +148,7 @@ public class HostelTypeController {
                                             @RequestParam(required = false, defaultValue = DEFAULT_SIZE) Integer size,
                                             @RequestParam(required = false, defaultValue = DEFAULT_PAGE) Integer page) throws EntityNotFoundException {
 
-        Set<ResTypeDTO> typeDTOs = hostelTypeService.searchWithMainFactors(latitude, longitude, distance, schoolId, districtId, sortBy, asc, size, page).stream()
+        Set<ResTypeDTO> typeDTOs = hostelTypeService.searchWithMainFactors(latitude, longitude, distance, schoolId, provinceId, sortBy, asc, size, page).stream()
                 .filter(hostelType -> {
                     if (typeId != null)
                         return hostelType.getTypeId() == typeId;

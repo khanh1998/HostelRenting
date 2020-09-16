@@ -37,9 +37,5 @@ public class District {
 
     @JsonIgnore
     @OneToMany(mappedBy = "district", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Renter> renters;
-
-    @JsonIgnore
-    @OneToMany(mappedBy = "district", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<School> schools;
 }

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import org.avengers.capstone.hostelrenting.dto.SchoolDTOFull;
 import org.avengers.capstone.hostelrenting.dto.district.DistrictDTOShort;
+import org.avengers.capstone.hostelrenting.dto.province.ProvinceDTOShort;
 import org.avengers.capstone.hostelrenting.dto.user.UserDTOFull;
 
 import java.io.Serializable;
@@ -22,7 +23,7 @@ public class RenterDTOFull extends UserDTOFull implements Serializable  {
     private SchoolDTOFull school;
 
     @JsonProperty("hometown")
-    private DistrictDTOShort district;
+    private ProvinceDTOShort province;
 
 //    private Collection<BookingDTO> bookings;
 //    private Collection<DealDTO> deals;

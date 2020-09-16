@@ -20,8 +20,6 @@ public class UType{
 
     private String name;
 
-    private String imageUrl;
-
     @ManyToOne
     @JoinColumn(name = "u_category_id", nullable = false)
     private UCategory uCategory;
