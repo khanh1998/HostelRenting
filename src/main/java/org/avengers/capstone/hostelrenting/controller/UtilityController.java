@@ -35,7 +35,7 @@ public class UtilityController {
     }
 
     @GetMapping("/utilities")
-    public ResponseEntity<?> getAllUtilities(@RequestParam Double latitude,
+    public ResponseEntity<?> getNearbyUtilities(@RequestParam Double latitude,
                                              @RequestParam Double longitude,
                                              @RequestParam(defaultValue = "5.0") Double distance){
         List<UCategoryDTO> resDTOs = utilityService.getNearbyUtilities(latitude, longitude, distance)

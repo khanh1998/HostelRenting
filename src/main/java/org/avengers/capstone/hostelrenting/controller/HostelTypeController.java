@@ -155,7 +155,7 @@ public class HostelTypeController {
             TypeAndGroupDTO resDTO = TypeAndGroupDTO.builder().groupDTOFull(resGroupDTO).type(resTypeDTO).build();
 
             ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTO, "Hostel type(s) has been retrieved successfully!");
-            
+
             return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
         }
 

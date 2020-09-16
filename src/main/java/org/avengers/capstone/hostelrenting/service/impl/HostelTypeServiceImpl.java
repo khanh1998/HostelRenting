@@ -67,7 +67,8 @@ public class HostelTypeServiceImpl implements HostelTypeService {
     }
 
     /**
-     * Get list of HostelTypes around the given location and distance
+     * Default: hosteltype with score
+     * Retain location with concat schoolmate and compatriot
      *
      * @param latitude
      * @param longitude
@@ -96,14 +97,13 @@ public class HostelTypeServiceImpl implements HostelTypeService {
 
         if (schoolId != null) {
             schoolMateTypes = convertMapToList(hostelTypeRepository.getBySchoolMates(schoolId), 1);
-            // retains common elements in both collection
         }
 
         if (provinceId != null) {
             compatriotTypes = convertMapToList(hostelTypeRepository.getByCompatriot(provinceId), 2);
-            // retains common elements in both collection
         }
 
+        // new collection to retainAll (unmodifiable collection cannot be removed)
         Collection temp = new ArrayList(locTypes);
         if (!compatriotTypes.isEmpty() || !schoolMateTypes.isEmpty()){
             temp.retainAll(Stream.concat(compatriotTypes.stream(), schoolMateTypes.stream()).collect(Collectors.toList()));

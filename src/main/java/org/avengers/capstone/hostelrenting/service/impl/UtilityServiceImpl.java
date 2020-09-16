@@ -5,6 +5,7 @@ import org.avengers.capstone.hostelrenting.model.UType;
 import org.avengers.capstone.hostelrenting.model.Utility;
 import org.avengers.capstone.hostelrenting.repository.UtilityRepository;
 import org.avengers.capstone.hostelrenting.service.UtilityService;
+import org.avengers.capstone.hostelrenting.util.Utilities;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +28,10 @@ public class UtilityServiceImpl implements UtilityService {
         Set<UCategory> resCategories = new HashSet<>();
         Set<UType> resTypes = new HashSet<>();
         List<Utility> resUtilities = utilityRepository.getNearbyUtilities(latitude, longitude, distance);
+
+        resUtilities.forEach(utility -> {
+            utility.setDistance(Utilities.calculateDistance(latitude, longitude, utility.getLatitude(), utility.getLongitude()));
+        });
 
         resUtilities.forEach(utility -> resTypes.add(utility.getUType()));
 

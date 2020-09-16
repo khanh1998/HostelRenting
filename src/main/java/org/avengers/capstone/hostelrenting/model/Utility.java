@@ -24,6 +24,9 @@ public class Utility {
 
     private Double latitude;
 
+    @Transient
+    private Double distance;
+
     @ManyToOne
     @JoinColumn(name = "u_type_id", nullable = false)
     private UType uType;
