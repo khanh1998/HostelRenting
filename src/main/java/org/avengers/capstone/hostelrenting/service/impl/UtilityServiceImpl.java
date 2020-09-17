@@ -9,10 +9,8 @@ import org.avengers.capstone.hostelrenting.util.Utilities;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class UtilityServiceImpl implements UtilityService {
@@ -48,6 +46,7 @@ public class UtilityServiceImpl implements UtilityService {
                     uType.setUtilities(tempUtility);
                 }
             });
+            uType.setUtilities(uType.getUtilities().stream().sorted(Comparator.comparingDouble(Utility::getDistance)).collect(Collectors.toList()));
         });
 
         resCategories.forEach(uCategory -> {
