@@ -21,10 +21,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.AbstractMap;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -74,7 +71,6 @@ public class ScheduleController {
         return ResponseEntity.status(HttpStatus.CREATED).body(apiSuccess);
     }
 
-
     @GetMapping("/groups/{groupId}/schedules")
     public ResponseEntity<?> getScheduleByGroupId(@PathVariable Integer groupId) {
         HostelGroup hgroupModel = hostelGroupService.findById(groupId);
@@ -101,7 +97,11 @@ public class ScheduleController {
                 .endTime(scheduleDTO.get(0).getEndTime())
                         .timeRange(scheduleDTO
                                 .stream()
-                                .map(ScheduleDTO::getTimeRange)
+                                .map(dto ->{
+                                    ArrayList<String> timeRange = new ArrayList<>();
+                                    timeRange.add(dto.getStartTime() + " - " + dto.getEndTime());
+                                    return timeRange;
+                                })
                                 .flatMap(Collection::stream)
                                 .collect(Collectors.toList())).build()).collect(Collectors.toList());
 

@@ -29,7 +29,6 @@ public class ScheduleDTO implements Serializable {
     public List<String> getTimeRange() {
         if (timeRange == null)
             timeRange = new ArrayList<>();
-        timeRange.add(startTime + " - " + endTime);
         return timeRange;
     }
 }
