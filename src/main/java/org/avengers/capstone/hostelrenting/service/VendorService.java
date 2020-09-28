@@ -9,12 +9,12 @@ import org.avengers.capstone.hostelrenting.model.Vendor;
 import java.util.List;
 
 public interface VendorService {
-    void checkExist(Integer id);
+    void checkExist(Long id);
 
     Vendor update(VendorDTOFull reqDTO);
-    Vendor findById(Integer id);
+    Vendor findById(Long id);
     List<Vendor> findAll();
     Vendor save(Vendor vendor);
-    void deleteById(Integer id);
+    void deleteById(Long id);
 
 }

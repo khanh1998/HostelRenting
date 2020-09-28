@@ -127,7 +127,7 @@ public class ContractServiceImpl implements ContractService {
      * @return list of contract models
      */
     @Override
-    public List<Contract> findByRenterId(Integer renterId) {
+    public List<Contract> findByRenterId(Long renterId) {
         renterService.checkExist(renterId);
 
         return renterService.findById(renterId).getContracts()
@@ -143,7 +143,7 @@ public class ContractServiceImpl implements ContractService {
      * @return list of contract models
      */
     @Override
-    public List<Contract> findByVendorId(Integer vendorId) {
+    public List<Contract> findByVendorId(Long vendorId) {
         vendorService.checkExist(vendorId);
 
         return vendorService.findById(vendorId).getContracts()

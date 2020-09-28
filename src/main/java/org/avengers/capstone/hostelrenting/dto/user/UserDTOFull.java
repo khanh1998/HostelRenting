@@ -14,21 +14,18 @@ import java.io.Serializable;
 @Data
 
 public class UserDTOFull implements Serializable {
-    private int userId;
+    private Long userId;
     @NotEmpty(message = "Username is mandatory")
     private String username;
-    @NotEmpty(message = "Password is mandatory")
     @JsonIgnore
     @ToString.Exclude
     private String password;
     @Email
-    @NotEmpty(message = "Email is mandatory")
     private String email;
     @NotEmpty(message = "Phone is mandatory")
     private String phone;
     private String avatar;
     private String firebaseToken;
     private RoleDTO role;
-    @JsonView({Views.Internal.class})
     private String jwtToken;
 }

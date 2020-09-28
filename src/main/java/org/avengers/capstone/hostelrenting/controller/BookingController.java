@@ -107,7 +107,7 @@ public class BookingController {
     }
 
     @GetMapping("/renters/{renterId}/bookings")
-    public ResponseEntity<?> getByRenterId(@PathVariable Integer renterId) throws EntityNotFoundException {
+    public ResponseEntity<?> getByRenterId(@PathVariable Long renterId) throws EntityNotFoundException {
         String resMsg = "Your booking(s) has been retrieved successfully!";
 
         List<BookingDTOFull> resDTOs = bookingService.findByRenterId(renterId)
@@ -128,7 +128,7 @@ public class BookingController {
     }
 
     @GetMapping("/vendors/{vendorId}/bookings")
-    public ResponseEntity<?> getByVendorId(@PathVariable Integer vendorId) throws EntityNotFoundException {
+    public ResponseEntity<?> getByVendorId(@PathVariable Long vendorId) throws EntityNotFoundException {
         String resMsg = "Your booking(s) has been retrieved successfully!";
 
         List<BookingDTOFull> resDTOs = bookingService.findByVendorId(vendorId)

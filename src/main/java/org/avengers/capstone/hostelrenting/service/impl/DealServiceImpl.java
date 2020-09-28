@@ -130,14 +130,14 @@ public class DealServiceImpl implements DealService {
     }
 
     @Override
-    public List<Deal> findByRenterId(Integer renterId) {
+    public List<Deal> findByRenterId(Long renterId) {
         renterService.checkExist(renterId);
 
         return renterService.findById(renterId).getDeals();
     }
 
     @Override
-    public List<Deal> findByVendorId(Integer vendorId) {
+    public List<Deal> findByVendorId(Long vendorId) {
         vendorService.checkExist(vendorId);
 
         return vendorService.findById(vendorId).getDeals();

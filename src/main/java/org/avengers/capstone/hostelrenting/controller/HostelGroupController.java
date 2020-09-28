@@ -1,14 +1,11 @@
 package org.avengers.capstone.hostelrenting.controller;
 
 import org.avengers.capstone.hostelrenting.dto.hostelgroup.HostelGroupDTOFull;
+import org.avengers.capstone.hostelrenting.dto.hostelgroup.HostelGroupDTOShort;
 import org.avengers.capstone.hostelrenting.dto.response.ApiSuccess;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
-import org.avengers.capstone.hostelrenting.model.HostelGroup;
-import org.avengers.capstone.hostelrenting.model.Vendor;
-import org.avengers.capstone.hostelrenting.service.HostelGroupService;
-import org.avengers.capstone.hostelrenting.service.ScheduleService;
-import org.avengers.capstone.hostelrenting.service.StreetService;
-import org.avengers.capstone.hostelrenting.service.VendorService;
+import org.avengers.capstone.hostelrenting.model.*;
+import org.avengers.capstone.hostelrenting.service.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,6 +13,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,22 +23,34 @@ import java.util.stream.Collectors;
 public class HostelGroupController {
     private HostelGroupService hostelGroupService;
 
-    private StreetService streetService;
-
-    private ScheduleService scheduleService;
+    private StreetWardService streetWardService;
 
     private VendorService vendorService;
+
+    private ServiceDetailService serviceDetailService;
+
+    private ServiceService serviceService;
 
     private ModelMapper modelMapper;
 
     @Autowired
-    public void setVendorService(VendorService vendorService) {
-        this.vendorService = vendorService;
+    public void setServiceDetailService(ServiceDetailService serviceDetailService) {
+        this.serviceDetailService = serviceDetailService;
     }
 
     @Autowired
-    public void setScheduleService(ScheduleService scheduleService) {
-        this.scheduleService = scheduleService;
+    public void setServiceService(ServiceService serviceService) {
+        this.serviceService = serviceService;
+    }
+
+    @Autowired
+    public void setStreetWardService(StreetWardService streetWardService) {
+        this.streetWardService = streetWardService;
+    }
+
+    @Autowired
+    public void setVendorService(VendorService vendorService) {
+        this.vendorService = vendorService;
     }
 
     @Autowired
@@ -52,25 +63,38 @@ public class HostelGroupController {
         this.modelMapper = modelMapper;
     }
 
-    @Autowired
-    public void setStreetService(StreetService streetService) {
-        this.streetService = streetService;
-    }
-
     @PostMapping("/groups")
-    public ResponseEntity<?> createHostelGroup(@Valid @RequestBody HostelGroupDTOFull reqDTO) throws EntityNotFoundException {
+    public ResponseEntity<?> createHostelGroup(@Valid @RequestBody HostelGroupDTOShort reqDTO) throws EntityNotFoundException {
+        // get necessary for model: vendor, address, services
         HostelGroup hostelGroupModel = modelMapper.map(reqDTO, HostelGroup.class);
+        hostelGroupModel.setVendor(vendorService.findById(reqDTO.getVendorId()));
+        hostelGroupModel.setAddress(streetWardService.findByStreetIdAndWardId(reqDTO.getAddressFull().getStreetId(), reqDTO.getAddressFull().getWardId()));
+        Collection<ServiceDetail> serviceDetails = reqDTO.getServices()
+                .stream()
+                .map(dto -> {
+                    dto.setCreatedAt(System.currentTimeMillis());
+                    ServiceDetail serviceDetail = modelMapper.map(dto, ServiceDetail.class);
+                    serviceDetail.setHGroup(hostelGroupModel);
+                    return serviceDetail;
+                })
+                .collect(Collectors.toList());
+        hostelGroupModel.setServiceDetails(serviceDetails);
+
+
         hostelGroupService.create(hostelGroupModel);
-        HostelGroupDTOFull resDTO = modelMapper.map(hostelGroupModel, HostelGroupDTOFull.class);
+        HostelGroupDTOShort resDTO = modelMapper.map(hostelGroupModel, HostelGroupDTOShort.class);
 
         ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTO, "Your hostel group has been created successfully!");
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(apiSuccess);
+        return ResponseEntity.status(HttpStatus.CREATED).
+
+                body(apiSuccess);
+
     }
 
     @PutMapping("/groups/{groupId}")
     public ResponseEntity<?> updateHostelGroup(@PathVariable Integer groupId,
-                                                        @Valid @RequestBody HostelGroupDTOFull rqHostelGroup) throws EntityNotFoundException {
+                                               @Valid @RequestBody HostelGroupDTOFull rqHostelGroup) throws EntityNotFoundException {
         rqHostelGroup.setGroupId(groupId);
         HostelGroup existedModel = hostelGroupService.findById(groupId);
         HostelGroup rqModel = modelMapper.map(rqHostelGroup, HostelGroup.class);
@@ -87,7 +111,7 @@ public class HostelGroupController {
     }
 
     @GetMapping("/groups/{groupId}")
-    public ResponseEntity<?> getHostelGroupById(@PathVariable Integer groupId){
+    public ResponseEntity<?> getHostelGroupById(@PathVariable Integer groupId) {
         HostelGroup resModel = hostelGroupService.findById(groupId);
         HostelGroupDTOFull resDTO = modelMapper.map(resModel, HostelGroupDTOFull.class);
 
@@ -98,7 +122,7 @@ public class HostelGroupController {
     }
 
     @GetMapping("/vendors/{vendorId}/groups")
-    public ResponseEntity<?> getGroupsByVendorId(@PathVariable Integer vendorId) throws EntityNotFoundException {
+    public ResponseEntity<?> getGroupsByVendorId(@PathVariable Long vendorId) throws EntityNotFoundException {
         Vendor existedModel = vendorService.findById(vendorId);
         List<HostelGroupDTOFull> resDTOs = existedModel.getHostelGroups()
                 .stream()

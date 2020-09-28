@@ -9,8 +9,8 @@ import javax.validation.constraints.NotNull;
 public class ContractDTOShort {
     private Integer contractId;
     private Integer roomId;
-    private Integer vendorId;
-    private Integer renterId;
+    private Long vendorId;
+    private Long renterId;
     private Integer dealId;
     private Integer bookingId;
     private Long startTime;

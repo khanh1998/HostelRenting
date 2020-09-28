@@ -21,7 +21,7 @@ public class HostelGroupDTOFull implements Serializable {
     @JsonProperty("address")
     private AddressFull addressFull;
 
-    private Integer vendorId;
+    private Long vendorId;
 
     private String groupName;
 

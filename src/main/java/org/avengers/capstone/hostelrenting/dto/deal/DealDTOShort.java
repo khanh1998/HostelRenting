@@ -8,7 +8,7 @@ public class DealDTOShort {
     private int dealId;
     private Deal.STATUS status;
     private int typeId;
-    private int renterId;
-    private int vendorId;
+    private Long renterId;
+    private Long vendorId;
     private float offeredPrice;
 }

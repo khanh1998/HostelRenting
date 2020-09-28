@@ -7,6 +7,7 @@ import java.io.Serializable;
 @Data
 public class ServiceDetailDTO implements Serializable {
     private Integer serDetailId;
+    private Integer serviceId;
     private Float price;
     private String priceUnit;
     private String timeUnit;

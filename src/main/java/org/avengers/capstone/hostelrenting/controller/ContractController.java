@@ -92,7 +92,7 @@ public class ContractController {
     }
 
     @GetMapping("/renters/{renterId}/contracts")
-    public ResponseEntity<?> getByRenterId(@PathVariable Integer renterId) throws EntityNotFoundException {
+    public ResponseEntity<?> getByRenterId(@PathVariable Long renterId) throws EntityNotFoundException {
         String resMsg = "Your contract(s) has been retrieved successfully!";
 
         List<ContractDTOFull> resDTOs = contractService.findByRenterId(renterId)
@@ -113,7 +113,7 @@ public class ContractController {
     }
 
     @GetMapping("/vendors/{vendorId}/contracts")
-    public ResponseEntity<?> getByVendorId(@PathVariable Integer vendorId) throws EntityNotFoundException {
+    public ResponseEntity<?> getByVendorId(@PathVariable Long vendorId) throws EntityNotFoundException {
         String resMsg = "Your contract(s) has been retrieved successfully!";
 
         List<ContractDTOFull> resDTOs = contractService.findByVendorId(vendorId)

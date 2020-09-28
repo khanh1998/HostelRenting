@@ -220,6 +220,14 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         return buildResponseEntity(apiError);
     }
 
+    @ExceptionHandler(org.avengers.capstone.hostelrenting.exception.MethodArgumentNotValidException.class)
+    public ResponseEntity<?> handleCustomMethodArgumentNotValidException(org.avengers.capstone.hostelrenting.exception.MethodArgumentNotValidException ex) {
+        ApiError apiError = new ApiError(BAD_REQUEST);
+        apiError.setMessage(ex.getMessage());
+        apiError.setDebugMessage(ex.getLocalizedMessage());
+        return buildResponseEntity(apiError);
+    }
+
     private ResponseEntity<Object> buildResponseEntity(ApiError apiError) {
         return new ResponseEntity<>(apiError, apiError.getStatus());
     }

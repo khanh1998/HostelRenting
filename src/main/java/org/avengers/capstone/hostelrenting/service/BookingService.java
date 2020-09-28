@@ -11,8 +11,8 @@ public interface BookingService {
     Booking create(BookingDTOShort reqDTO);
     Booking update(BookingDTOShort reqDTO);
     void delete(Integer id);
-    List<Booking> findByRenterId(Integer renterId);
-    List<Booking> findByVendorId(Integer vendorId);
+    List<Booking> findByRenterId(Long renterId);
+    List<Booking> findByVendorId(Long vendorId);
 
     Booking changeStatus(Integer id, Booking.STATUS status);
 }

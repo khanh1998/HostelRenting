@@ -31,7 +31,7 @@ public class RenterServiceIml implements RenterService {
     }
 
     @Override
-    public void checkExist(Integer id) {
+    public void checkExist(Long id) {
         Optional<Renter> model = renterRepository.findById(id);
         if (model.isEmpty())
             throw new EntityNotFoundException(Renter.class, "id", id.toString());
@@ -54,7 +54,7 @@ public class RenterServiceIml implements RenterService {
     }
 
     @Override
-    public Renter findById(Integer id) {
+    public Renter findById(Long id) {
         checkExist(id);
         return renterRepository.getOne(id);
 
@@ -75,7 +75,7 @@ public class RenterServiceIml implements RenterService {
     }
 
     @Override
-    public void deleteById(Integer id) {
+    public void deleteById(Long id) {
         if (isNotFound(id)){
             throw new EntityNotFoundException(Renter.class, "id", id.toString());
         }
@@ -83,7 +83,7 @@ public class RenterServiceIml implements RenterService {
         renterRepository.deleteById(id);
     }
 
-    private boolean isNotFound(Integer id) {
+    private boolean isNotFound(Long id) {
         Optional<Renter> renter = renterRepository.findById(id);
         return renter.isEmpty();
     }

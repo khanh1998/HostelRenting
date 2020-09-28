@@ -3,26 +3,33 @@ package org.avengers.capstone.hostelrenting.controller;
 import org.avengers.capstone.hostelrenting.dto.renter.RenterDTOFull;
 import org.avengers.capstone.hostelrenting.dto.response.ApiSuccess;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
+import org.avengers.capstone.hostelrenting.exception.MethodArgumentNotValidException;
 import org.avengers.capstone.hostelrenting.model.Renter;
 import org.avengers.capstone.hostelrenting.model.User;
 import org.avengers.capstone.hostelrenting.service.RenterService;
+import org.avengers.capstone.hostelrenting.service.RoleService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static org.avengers.capstone.hostelrenting.Constant.Message.GET_SUCCESS;
 
 @RestController
 @RequestMapping("/api/v1")
 public class RenterController {
     private ModelMapper modelMapper;
     private RenterService renterService;
+    private RoleService roleService;
+
+    @Autowired
+    public void setRoleService(RoleService roleService) {
+        this.roleService = roleService;
+    }
 
     @Autowired
     public void setModelMapper(ModelMapper modelMapper) {
@@ -34,21 +41,25 @@ public class RenterController {
         this.renterService = renterService;
     }
 
-//
-//    @PostMapping("/renters/register")
-//    public ResponseEntity<ApiSuccess> create(@Valid @RequestBody RenterDTOFull reqDTO){
-//        Renter reqModel = modelMapper.map(reqDTO, Renter.class);
-//        Renter createdModel = renterService.save(reqModel);
-//
-//        RenterDTOFull resDTO = modelMapper.map(createdModel, RenterDTOFull.class);
-//
-//        return ResponseEntity
-//                .status(HttpStatus.CREATED)
-//                .body(new ApiSuccess(resDTO, String.format(CREATE_SUCCESS, Renter.class.getSimpleName())));
-//    }
+
+    @PostMapping("/renters/register")
+    public ResponseEntity<?> create(@Valid @RequestBody RenterDTOFull reqDTO) {
+        if (reqDTO.getRole().getRoleId() != 2) {
+            throw new MethodArgumentNotValidException(Renter.class, "roleId", String.valueOf(reqDTO.getRole().getRoleId()));
+        }
+        Renter reqModel = modelMapper.map(reqDTO, Renter.class);
+        reqModel.setRole(roleService.findById(reqDTO.getRole().getRoleId()));
+        Renter createdModel = renterService.save(reqModel);
+
+        RenterDTOFull resDTO = modelMapper.map(createdModel, RenterDTOFull.class);
+
+        ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTO, "Your account has been created successfully!");
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(apiSuccess);
+    }
 
     @PutMapping("/renters/{renterId}")
-    public ResponseEntity<?> update(@PathVariable Integer renterId,
+    public ResponseEntity<?> update(@PathVariable Long renterId,
                                     @RequestBody RenterDTOFull reqDTO) throws EntityNotFoundException {
         String resMsg = "Your information has been up to date!";
 
@@ -61,24 +72,24 @@ public class RenterController {
     }
 
     @GetMapping("/renters/{renterId}")
-    public ResponseEntity<ApiSuccess> getById(@PathVariable Integer renterId) throws EntityNotFoundException {
+    public ResponseEntity<?> getById(@PathVariable Long renterId) throws EntityNotFoundException {
         Renter existedModel = renterService.findById(renterId);
         RenterDTOFull resDTO = modelMapper.map(existedModel, RenterDTOFull.class);
 
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(new ApiSuccess(resDTO, String.format(GET_SUCCESS, Renter.class.getSimpleName())));
+        ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTO, "Your information has been retrieved successfully!");
+
+        return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
     }
 
     @GetMapping("/renters")
-    public ResponseEntity<ApiSuccess> getRenterByIds(@RequestParam Integer[] renterIds){
+    public ResponseEntity<?> getRenterByIds(@RequestParam Long[] renterIds) {
         List<RenterDTOFull> resDTOs = Arrays.stream(renterIds)
                 .map(id -> modelMapper.map(renterService.findById(id), RenterDTOFull.class))
                 .collect(Collectors.toList());
 
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(new ApiSuccess(resDTOs, String.format(GET_SUCCESS, Renter.class.getSimpleName())));
+        ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTOs, "Renter information have been retrieved successfully!");
+
+        return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
     }
 
 }

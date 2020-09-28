@@ -32,7 +32,7 @@ public class VendorServiceImpl implements VendorService {
     }
 
     @Override
-    public void checkExist(Integer id) {
+    public void checkExist(Long id) {
         Optional<Vendor> model = vendorRepository.findById(id);
         if (model.isEmpty())
             throw new EntityNotFoundException(Vendor.class, "id", id.toString());
@@ -55,7 +55,7 @@ public class VendorServiceImpl implements VendorService {
     }
 
     @Override
-    public Vendor findById(Integer id) {
+    public Vendor findById(Long id) {
         checkExist(id);
         return vendorRepository.getOne(id);
 
@@ -78,7 +78,7 @@ public class VendorServiceImpl implements VendorService {
     }
 
     @Override
-    public void deleteById(Integer id) {
+    public void deleteById(Long id) {
         if (isNotFound(id)) {
             throw new EntityNotFoundException(Vendor.class, "id", id.toString());
         }
@@ -86,7 +86,7 @@ public class VendorServiceImpl implements VendorService {
         vendorRepository.deleteById(id);
     }
 
-    private boolean isNotFound(Integer id) {
+    private boolean isNotFound(Long id) {
         Optional<Vendor> vendor = vendorRepository.findById(id);
         return vendor.isEmpty();
     }

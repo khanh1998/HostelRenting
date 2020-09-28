@@ -11,8 +11,8 @@ public interface DealService {
     Deal create(DealDTOShort reqDTO);
     Deal update(DealDTOShort reqDTO);
     void delete(Integer id);
-    List<Deal> findByRenterId(Integer renterId);
-    List<Deal> findByVendorId(Integer vendorId);
+    List<Deal> findByRenterId(Long renterId);
+    List<Deal> findByVendorId(Long vendorId);
 
     Deal changeStatus(Integer id, Deal.STATUS status);
 }

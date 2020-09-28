@@ -14,7 +14,7 @@ public interface ContractService {
     Contract create(ContractDTOShort reqDTO);
     Contract update(ContractDTOShort reqDTO);
     void delete(Integer id);
-    List<Contract> findByRenterId(Integer renterId);
-    List<Contract> findByVendorId(Integer vendorId);
+    List<Contract> findByRenterId(Long renterId);
+    List<Contract> findByVendorId(Long vendorId);
 
 }

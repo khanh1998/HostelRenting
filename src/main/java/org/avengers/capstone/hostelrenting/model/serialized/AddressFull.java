@@ -17,4 +17,5 @@ public class AddressFull {
     private String wardName;
     private Integer streetId;
     private String streetName;
+    private Integer streetWardId;
 }

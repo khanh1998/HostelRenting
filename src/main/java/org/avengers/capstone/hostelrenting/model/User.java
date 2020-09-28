@@ -17,13 +17,12 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int userId;
+    private Long userId;
 
     @Column(nullable = false, unique = true)
     @NotBlank(message = "Username is mandatory")
     private String username;
 
-    @Column(nullable = false)
     private String password;
 
     @Column(unique = true)
@@ -32,7 +31,6 @@ public class User {
     @Column(unique = true)
     private String phone;
 
-    @Column(nullable = false)
     private String avatar;
 
     private String firebaseToken;

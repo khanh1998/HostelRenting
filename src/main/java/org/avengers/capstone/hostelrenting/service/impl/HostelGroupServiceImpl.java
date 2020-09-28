@@ -48,6 +48,5 @@ public class HostelGroupServiceImpl implements HostelGroupService {
 
     @Override
     public void delete(Integer id) {
-
     }
 }

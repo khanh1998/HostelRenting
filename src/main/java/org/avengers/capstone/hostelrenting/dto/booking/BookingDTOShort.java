@@ -6,8 +6,8 @@ import org.avengers.capstone.hostelrenting.model.Booking;
 @Data
 public class BookingDTOShort {
     private Integer bookingId;
-    private Integer renterId;
-    private Integer vendorId;
+    private Long renterId;
+    private Long vendorId;
     private Integer typeId;
     private Booking.STATUS status;
     private Integer dealId;

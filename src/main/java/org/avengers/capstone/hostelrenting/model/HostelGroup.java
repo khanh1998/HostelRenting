@@ -36,10 +36,10 @@ public class HostelGroup {
     @Column(name = "building_no", nullable = false)
     private String buildingNo;
 
-    @NotBlank(message = "Longitude is mandatory")
+//    @NotBlank(message = "Longitude is mandatory")
     private Double longitude;
 
-    @NotBlank(message = "Latitude is mandatory")
+//    @NotBlank(message = "Latitude is mandatory")
     private Double latitude;
 
     private boolean ownerJoin;
@@ -64,6 +64,7 @@ public class HostelGroup {
 
     @OneToMany(mappedBy = "hGroup", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Collection<HGSchedule> hgSchedules;
+
 
     /**
      * Serialize StreetWard to Address model

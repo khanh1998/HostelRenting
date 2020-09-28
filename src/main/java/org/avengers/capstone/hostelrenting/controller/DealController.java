@@ -97,7 +97,7 @@ public class DealController {
     }
 
     @GetMapping("/renters/{renterId}/deals")
-    public ResponseEntity<?> getDealsByRenterId(@PathVariable Integer renterId) throws EntityNotFoundException {
+    public ResponseEntity<?> getDealsByRenterId(@PathVariable Long renterId) throws EntityNotFoundException {
         List<DealDTOFull> resDeals = dealService.findByRenterId(renterId)
                 .stream()
                 .map(deal -> modelMapper.map(deal, DealDTOFull.class))
@@ -111,7 +111,7 @@ public class DealController {
     }
 
     @GetMapping("/vendors/{vendorId}/deals")
-    public ResponseEntity<?> getDealsByVendorId(@PathVariable Integer vendorId) throws EntityNotFoundException {
+    public ResponseEntity<?> getDealsByVendorId(@PathVariable Long vendorId) throws EntityNotFoundException {
         List<DealDTOFull> resDeals = dealService.findByVendorId(vendorId)
                 .stream()
                 .map(deal -> modelMapper.map(deal, DealDTOFull.class))
