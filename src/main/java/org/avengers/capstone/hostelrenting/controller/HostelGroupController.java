@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -63,33 +64,55 @@ public class HostelGroupController {
         this.modelMapper = modelMapper;
     }
 
+//    @PostMapping("/groups")
+//    public ResponseEntity<?> createHostelGroup(@Valid @RequestBody HostelGroupDTOShort reqDTO) throws EntityNotFoundException {
+//        // get necessary for model: vendor, address, services
+//        HostelGroup hostelGroupModel = modelMapper.map(reqDTO, HostelGroup.class);
+//        hostelGroupModel.setVendor(vendorService.findById(reqDTO.getVendorId()));
+//        hostelGroupModel.setAddress(streetWardService.findByStreetIdAndWardId(reqDTO.getAddressFull().getStreetId(), reqDTO.getAddressFull().getWardId()));
+//        Collection<ServiceDetail> serviceDetails = reqDTO.getServices()
+//                .stream()
+//                .map(dto -> {
+//                    dto.setCreatedAt(System.currentTimeMillis());
+//                    ServiceDetail serviceDetail = modelMapper.map(dto, ServiceDetail.class);
+//                    serviceDetail.setHGroup(hostelGroupModel);
+//                    return serviceDetail;
+//                })
+//                .collect(Collectors.toList());
+//        hostelGroupModel.setServiceDetails(serviceDetails);
+//        hostelGroupService.create(hostelGroupModel);
+//        HostelGroupDTOShort resDTO = modelMapper.map(hostelGroupModel, HostelGroupDTOShort.class);
+//        ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTO, "Your hostel group has been created successfully!");
+//
+//        return ResponseEntity.status(HttpStatus.CREATED).body(apiSuccess);
+//    }
+
     @PostMapping("/groups")
-    public ResponseEntity<?> createHostelGroup(@Valid @RequestBody HostelGroupDTOShort reqDTO) throws EntityNotFoundException {
+    public ResponseEntity<?> createHostelGroup(@Valid @RequestBody List<HostelGroupDTOShort> reqDTOs) throws EntityNotFoundException {
         // get necessary for model: vendor, address, services
-        HostelGroup hostelGroupModel = modelMapper.map(reqDTO, HostelGroup.class);
-        hostelGroupModel.setVendor(vendorService.findById(reqDTO.getVendorId()));
-        hostelGroupModel.setAddress(streetWardService.findByStreetIdAndWardId(reqDTO.getAddressFull().getStreetId(), reqDTO.getAddressFull().getWardId()));
-        Collection<ServiceDetail> serviceDetails = reqDTO.getServices()
-                .stream()
-                .map(dto -> {
-                    dto.setCreatedAt(System.currentTimeMillis());
-                    ServiceDetail serviceDetail = modelMapper.map(dto, ServiceDetail.class);
-                    serviceDetail.setHGroup(hostelGroupModel);
-                    return serviceDetail;
-                })
-                .collect(Collectors.toList());
-        hostelGroupModel.setServiceDetails(serviceDetails);
+        List<HostelGroupDTOShort> resDTOs = new ArrayList<>();
+        reqDTOs.forEach(reqDTO -> {
+            HostelGroup hostelGroupModel = modelMapper.map(reqDTO, HostelGroup.class);
+            hostelGroupModel.setVendor(vendorService.findById(reqDTO.getVendorId()));
+            hostelGroupModel.setAddress(streetWardService.findByStreetIdAndWardId(reqDTO.getAddressFull().getStreetId(), reqDTO.getAddressFull().getWardId()));
+            Collection<ServiceDetail> serviceDetails = reqDTO.getServices()
+                    .stream()
+                    .map(dto -> {
+                        dto.setCreatedAt(System.currentTimeMillis());
+                        ServiceDetail serviceDetail = modelMapper.map(dto, ServiceDetail.class);
+                        serviceDetail.setHGroup(hostelGroupModel);
+                        return serviceDetail;
+                    })
+                    .collect(Collectors.toList());
+            hostelGroupModel.setServiceDetails(serviceDetails);
+            hostelGroupService.create(hostelGroupModel);
+            HostelGroupDTOShort resDTO = modelMapper.map(hostelGroupModel, HostelGroupDTOShort.class);
+            resDTOs.add(resDTO);
+        });
 
+        ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTOs, "Your hostel group has been created successfully!");
 
-        hostelGroupService.create(hostelGroupModel);
-        HostelGroupDTOShort resDTO = modelMapper.map(hostelGroupModel, HostelGroupDTOShort.class);
-
-        ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTO, "Your hostel group has been created successfully!");
-
-        return ResponseEntity.status(HttpStatus.CREATED).
-
-                body(apiSuccess);
-
+        return ResponseEntity.status(HttpStatus.CREATED).body(apiSuccess);
     }
 
     @PutMapping("/groups/{groupId}")
