@@ -41,11 +41,8 @@ public class VendorController {
 
     @PostMapping("/vendors/register")
     public ResponseEntity<?> create(@Valid @RequestBody VendorDTOFull reqDTO) throws EntityNotFoundException {
-        if (reqDTO.getRole().getRoleId() != 1){
-            throw new MethodArgumentNotValidException(Vendor.class, "roleId", String.valueOf(reqDTO.getRole().getRoleId()));
-        }
         Vendor rqModel = modelMapper.map(reqDTO, Vendor.class);
-        rqModel.setRole(roleService.findById(reqDTO.getRole().getRoleId()));
+        rqModel.setRole(roleService.findById(1));
         Vendor createdModel = vendorService.save(rqModel);
 
         VendorDTOFull resDTO = modelMapper.map(createdModel, VendorDTOFull.class);

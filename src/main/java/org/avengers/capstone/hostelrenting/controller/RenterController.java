@@ -44,11 +44,8 @@ public class RenterController {
 
     @PostMapping("/renters/register")
     public ResponseEntity<?> create(@Valid @RequestBody RenterDTOFull reqDTO) {
-        if (reqDTO.getRole().getRoleId() != 2) {
-            throw new MethodArgumentNotValidException(Renter.class, "roleId", String.valueOf(reqDTO.getRole().getRoleId()));
-        }
         Renter reqModel = modelMapper.map(reqDTO, Renter.class);
-        reqModel.setRole(roleService.findById(reqDTO.getRole().getRoleId()));
+        reqModel.setRole(roleService.findById(2));
         Renter createdModel = renterService.save(reqModel);
 
         RenterDTOFull resDTO = modelMapper.map(createdModel, RenterDTOFull.class);
