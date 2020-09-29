@@ -1,7 +1,7 @@
 package org.avengers.capstone.hostelrenting.service.impl;
 
 import org.avengers.capstone.hostelrenting.Constant;
-import org.avengers.capstone.hostelrenting.dto.renter.RenterDTOFull;
+import org.avengers.capstone.hostelrenting.dto.renter.ResRenterDTO;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
 import org.avengers.capstone.hostelrenting.model.Renter;
 import org.avengers.capstone.hostelrenting.model.User;
@@ -38,7 +38,7 @@ public class RenterServiceIml implements RenterService {
     }
 
     @Override
-    public Renter update(RenterDTOFull reqDTO) {
+    public Renter update(ResRenterDTO reqDTO) {
         checkExist(reqDTO.getUserId());
 
         //Update firebase Token

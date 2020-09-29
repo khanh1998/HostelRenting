@@ -4,8 +4,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 import org.avengers.capstone.hostelrenting.dto.hostelgroup.HostelGroupDTOFull;
 import org.avengers.capstone.hostelrenting.dto.hosteltype.ResTypeDTO;
-import org.avengers.capstone.hostelrenting.dto.renter.RenterDTOFull;
-import org.avengers.capstone.hostelrenting.dto.vendor.VendorDTOFull;
+import org.avengers.capstone.hostelrenting.dto.renter.ResRenterDTO;
+import org.avengers.capstone.hostelrenting.dto.vendor.ResVendorDTO;
 import org.avengers.capstone.hostelrenting.model.Deal;
 
 @Data
@@ -15,8 +15,8 @@ public class DealDTOFull {
     private Deal.STATUS status;
     private ResTypeDTO type;
     private HostelGroupDTOFull group;
-    private RenterDTOFull renter;
-    private VendorDTOFull vendor;
+    private ResRenterDTO renter;
+    private ResVendorDTO vendor;
     private float offeredPrice;
 
     private long createdAt;

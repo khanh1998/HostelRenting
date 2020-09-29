@@ -8,7 +8,7 @@ import java.io.Serializable;
 
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class VendorDTOFull extends UserDTOFull implements Serializable {
+public class ResVendorDTO extends UserDTOFull implements Serializable {
 
 //    private List<ContractDTOShort> contracts;
 //    private List<HostelGroupDTO> hostelGroups;

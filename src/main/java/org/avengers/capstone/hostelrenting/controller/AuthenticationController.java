@@ -1,10 +1,10 @@
 package org.avengers.capstone.hostelrenting.controller;
 
-import org.avengers.capstone.hostelrenting.dto.renter.RenterDTOFull;
+import org.avengers.capstone.hostelrenting.dto.renter.ResRenterDTO;
 import org.avengers.capstone.hostelrenting.dto.response.ApiSuccess;
 import org.avengers.capstone.hostelrenting.dto.user.UserDTOFull;
 import org.avengers.capstone.hostelrenting.dto.user.UserDTOLogin;
-import org.avengers.capstone.hostelrenting.dto.vendor.VendorDTOFull;
+import org.avengers.capstone.hostelrenting.dto.vendor.ResVendorDTO;
 import org.avengers.capstone.hostelrenting.model.Role;
 import org.avengers.capstone.hostelrenting.model.User;
 import org.avengers.capstone.hostelrenting.service.impl.CustomUserService;
@@ -60,9 +60,9 @@ public class AuthenticationController {
         User resModel = customUserService.findByPhone(reqDTO.getPhone());
         UserDTOFull resDTO;
         if (resModel.getRole().getCode().equals(Role.CODE.RENTER)){
-            resDTO = modelMapper.map(resModel, RenterDTOFull.class);
+            resDTO = modelMapper.map(resModel, ResRenterDTO.class);
         }else{
-            resDTO = modelMapper.map(resModel, VendorDTOFull.class);
+            resDTO = modelMapper.map(resModel, ResVendorDTO.class);
         }
 
         resDTO.setJwtToken(token);

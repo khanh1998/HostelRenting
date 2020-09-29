@@ -6,8 +6,8 @@ import org.avengers.capstone.hostelrenting.dto.HostelRoomDTO;
 import org.avengers.capstone.hostelrenting.dto.booking.BookingDTOShort;
 import org.avengers.capstone.hostelrenting.dto.deal.DealDTOShort;
 import org.avengers.capstone.hostelrenting.dto.hosteltype.ResTypeDTO;
-import org.avengers.capstone.hostelrenting.dto.renter.RenterDTOFull;
-import org.avengers.capstone.hostelrenting.dto.vendor.VendorDTOFull;
+import org.avengers.capstone.hostelrenting.dto.renter.ResRenterDTO;
+import org.avengers.capstone.hostelrenting.dto.vendor.ResVendorDTO;
 
 /**
  * Contains all information that relative with contract
@@ -19,8 +19,8 @@ public class ContractDTOFull {
     private HostelRoomDTO room;
     private ResTypeDTO type;
     private HostelGroupDTOFull group;
-    private VendorDTOFull vendor;
-    private RenterDTOFull renter;
+    private ResVendorDTO vendor;
+    private ResRenterDTO renter;
     private DealDTOShort deal;
     private BookingDTOShort booking;
     private long startTime;

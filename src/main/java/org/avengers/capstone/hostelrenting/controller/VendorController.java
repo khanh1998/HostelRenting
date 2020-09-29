@@ -1,9 +1,9 @@
 package org.avengers.capstone.hostelrenting.controller;
 
 import org.avengers.capstone.hostelrenting.dto.response.ApiSuccess;
-import org.avengers.capstone.hostelrenting.dto.vendor.VendorDTOFull;
+import org.avengers.capstone.hostelrenting.dto.user.UserDTORegister;
+import org.avengers.capstone.hostelrenting.dto.vendor.ResVendorDTO;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
-import org.avengers.capstone.hostelrenting.exception.MethodArgumentNotValidException;
 import org.avengers.capstone.hostelrenting.model.User;
 import org.avengers.capstone.hostelrenting.model.Vendor;
 import org.avengers.capstone.hostelrenting.service.RoleService;
@@ -40,12 +40,12 @@ public class VendorController {
     }
 
     @PostMapping("/vendors/register")
-    public ResponseEntity<?> create(@Valid @RequestBody VendorDTOFull reqDTO) throws EntityNotFoundException {
+    public ResponseEntity<?> create(@Valid @RequestBody UserDTORegister reqDTO) throws EntityNotFoundException {
         Vendor rqModel = modelMapper.map(reqDTO, Vendor.class);
         rqModel.setRole(roleService.findById(1));
         Vendor createdModel = vendorService.save(rqModel);
 
-        VendorDTOFull resDTO = modelMapper.map(createdModel, VendorDTOFull.class);
+        ResVendorDTO resDTO = modelMapper.map(createdModel, ResVendorDTO.class);
         ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTO, "Your account has been created successfully!");
 
         return ResponseEntity.status(HttpStatus.CREATED).body(apiSuccess);
@@ -53,12 +53,12 @@ public class VendorController {
 
     @PutMapping("/vendors/{vendorId}")
     public ResponseEntity<?> update(@PathVariable Long vendorId,
-                                    @RequestBody VendorDTOFull reqDTO) throws EntityNotFoundException {
+                                    @RequestBody ResVendorDTO reqDTO) throws EntityNotFoundException {
         String resMsg = "Your information has been up to date!";
 
         reqDTO.setUserId(vendorId);
         User resModel = vendorService.update(reqDTO);
-        VendorDTOFull resDTO = modelMapper.map(resModel, VendorDTOFull.class);
+        ResVendorDTO resDTO = modelMapper.map(resModel, ResVendorDTO.class);
         ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTO, resMsg);
 
         return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
@@ -67,7 +67,7 @@ public class VendorController {
     @GetMapping("/vendors/{vendorId}")
     public ResponseEntity<?> getById(@PathVariable Long vendorId) throws EntityNotFoundException {
         Vendor existedModel = vendorService.findById(vendorId);
-        VendorDTOFull resDTO = modelMapper.map(existedModel, VendorDTOFull.class);
+        ResVendorDTO resDTO = modelMapper.map(existedModel, ResVendorDTO.class);
 
         ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTO, "Your information has been retrieved successfully!");
 

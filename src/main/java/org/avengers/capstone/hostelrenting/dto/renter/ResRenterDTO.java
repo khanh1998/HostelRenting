@@ -10,7 +10,7 @@ import org.avengers.capstone.hostelrenting.dto.user.UserDTOFull;
 import java.io.Serializable;
 
 @Data
-public class RenterDTOFull extends UserDTOFull implements Serializable  {
+public class ResRenterDTO extends UserDTOFull implements Serializable  {
 
     private String idNum;
 

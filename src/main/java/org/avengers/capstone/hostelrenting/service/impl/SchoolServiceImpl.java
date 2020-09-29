@@ -21,4 +21,9 @@ public class SchoolServiceImpl implements SchoolService {
     public List<School> getAll() {
         return schoolRepository.findAll();
     }
+
+    @Override
+    public School findById(Integer id) {
+        return schoolRepository.getOne(id);
+    }
 }
