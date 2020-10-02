@@ -1,6 +1,7 @@
 package org.avengers.capstone.hostelrenting.model;
 
 import lombok.*;
+import org.springframework.beans.factory.annotation.Value;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -27,11 +28,9 @@ public class HostelType {
     @NotBlank(message = "Title is mandatory")
     private String title;
 
+    // unit: milion VND
     @Column(nullable = false)
     private float price;
-
-    @Column(nullable = false)
-    private String priceUnit;
 
     @Column(nullable = false)
     private float superficiality;
@@ -39,9 +38,10 @@ public class HostelType {
     @Column(nullable = false)
     private int capacity;
 
-    @Column(nullable = false)
+    @Column(columnDefinition = "integer default 0", nullable = false)
     private int view;
 
+    // unit: month
     @Column(nullable = false)
     private float deposit;
 

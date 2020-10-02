@@ -87,6 +87,13 @@ public class HostelGroupController {
 //        return ResponseEntity.status(HttpStatus.CREATED).body(apiSuccess);
 //    }
 
+    /**
+     * Create list of hostel groups from request body
+     *
+     * @param reqDTOs list of {@link HostelGroupDTOShort} obj from request
+     * @return list of {@link HostelGroupDTOShort} obj has been created
+     * @throws EntityNotFoundException
+     */
     @PostMapping("/groups")
     public ResponseEntity<?> createHostelGroup(@Valid @RequestBody List<HostelGroupDTOShort> reqDTOs) throws EntityNotFoundException {
         // get necessary for model: vendor, address, services
@@ -105,8 +112,8 @@ public class HostelGroupController {
                     })
                     .collect(Collectors.toList());
             hostelGroupModel.setServiceDetails(serviceDetails);
-            hostelGroupService.create(hostelGroupModel);
-            HostelGroupDTOShort resDTO = modelMapper.map(hostelGroupModel, HostelGroupDTOShort.class);
+            HostelGroup resModel = hostelGroupService.create(hostelGroupModel);
+            HostelGroupDTOShort resDTO = modelMapper.map(resModel, HostelGroupDTOShort.class);
             resDTOs.add(resDTO);
         });
 

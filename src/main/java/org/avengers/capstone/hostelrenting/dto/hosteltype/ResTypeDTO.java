@@ -14,9 +14,9 @@ public class ResTypeDTO implements Serializable {
     private int typeId;
     private float score;
     private int groupId;
+    private String title;
     private CategoryDTO category;
     private TypeStatusDTO typeStatus;
-    private String title;
     private float price;
     private String priceUnit;
     private float superficiality;
@@ -29,6 +29,6 @@ public class ResTypeDTO implements Serializable {
     private int compatriot;
     private boolean isDeleted;
 
-    private Collection<FacilityDTO> facilities;
-    private Collection<TypeImageDTO> typeImages;
+//    private Collection<FacilityDTO> facilities;
+//    private Collection<TypeImageDTO> typeImages;
 }

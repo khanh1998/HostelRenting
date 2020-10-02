@@ -52,4 +52,9 @@ public class CategoryServiceImpl implements CategoryService {
                 .map(category -> modelMapper.map(category, CategoryDTO.class))
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public Category findById(Integer id) {
+        return categoryRepository.getOne(id);
+    }
 }

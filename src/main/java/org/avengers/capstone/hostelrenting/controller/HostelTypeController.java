@@ -8,12 +8,8 @@ import org.avengers.capstone.hostelrenting.dto.hosteltype.ReqTypeDTO;
 import org.avengers.capstone.hostelrenting.dto.hosteltype.ResTypeDTO;
 import org.avengers.capstone.hostelrenting.dto.response.ApiSuccess;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
-import org.avengers.capstone.hostelrenting.model.Facility;
-import org.avengers.capstone.hostelrenting.model.HostelGroup;
-import org.avengers.capstone.hostelrenting.model.HostelType;
-import org.avengers.capstone.hostelrenting.service.FacilityService;
-import org.avengers.capstone.hostelrenting.service.HostelGroupService;
-import org.avengers.capstone.hostelrenting.service.HostelTypeService;
+import org.avengers.capstone.hostelrenting.model.*;
+import org.avengers.capstone.hostelrenting.service.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
@@ -34,9 +31,21 @@ import static org.avengers.capstone.hostelrenting.Constant.Pagination.DEFAULT_SI
 public class HostelTypeController {
 
     private HostelTypeService hostelTypeService;
-    private ModelMapper modelMapper;
     private HostelGroupService hostelGroupService;
+    private CategoryService categoryService;
+    private TypeStatusService typeStatusService;
     private FacilityService facilityService;
+    private ModelMapper modelMapper;
+
+    @Autowired
+    public void setCategoryService(CategoryService categoryService) {
+        this.categoryService = categoryService;
+    }
+
+    @Autowired
+    public void setTypeStatusService(TypeStatusService typeStatusService) {
+        this.typeStatusService = typeStatusService;
+    }
 
     @Autowired
     public void setFacilityService(FacilityService facilityService) {
@@ -61,16 +70,26 @@ public class HostelTypeController {
 
     @PostMapping("groups/{groupId}/types")
     public ResponseEntity<?> createNewType(@PathVariable Integer groupId,
-                                    @Valid @RequestBody ReqTypeDTO reqDTO) throws EntityNotFoundException {
-        HostelType reqModel = modelMapper.map(reqDTO, HostelType.class);
-        HostelGroup hostelGroup = hostelGroupService.findById(groupId);
-        reqModel.setHostelGroup(hostelGroup);
-        reqModel.setHostelRooms(null);
-        //TODO: category and typestatus
-        HostelType resModel = hostelTypeService.save(reqModel);
-        ResTypeDTO resDTO = modelMapper.map(resModel, ResTypeDTO.class);
+                                           @Valid @RequestBody List<ReqTypeDTO> reqDTOs) throws EntityNotFoundException {
+        List<ResTypeDTO> resDTOs = new ArrayList<>();
+        // set necessary for model:
+        reqDTOs.forEach(reqDTO -> {
+            HostelType reqModel = modelMapper.map(reqDTO, HostelType.class);
+            HostelGroup hostelGroup = hostelGroupService.findById(groupId);
+            Category category = categoryService.findById(reqDTO.getCategoryId());
+            TypeStatus typeStatus = typeStatusService.findById(reqDTO.getStatusId());
 
-        ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTO, "Hostel type has been created successfully!");
+            reqModel.setCategory(category);
+            reqModel.setTypeStatus(typeStatus);
+            reqModel.setHostelGroup(hostelGroup);
+            reqModel.setHostelRooms(null);
+
+            HostelType resModel = hostelTypeService.save(reqModel);
+            ResTypeDTO resDTO = modelMapper.map(resModel, ResTypeDTO.class);
+            resDTOs.add(resDTO);
+        });
+
+        ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTOs, "Hostel type has been created successfully!");
 
         return ResponseEntity.status(HttpStatus.CREATED).body(apiSuccess);
     }
@@ -148,7 +167,7 @@ public class HostelTypeController {
                                             @RequestParam(required = false, defaultValue = "false") Boolean asc,
                                             @RequestParam(required = false, defaultValue = DEFAULT_SIZE) Integer size,
                                             @RequestParam(required = false, defaultValue = DEFAULT_PAGE) Integer page) throws EntityNotFoundException {
-        if (typeId != null){
+        if (typeId != null) {
             // handle hosteltype and corresponding hostelgroup
             ResTypeDTO resTypeDTO = modelMapper.map(hostelTypeService.findById(typeId), ResTypeDTO.class);
             HostelGroupDTOFull resGroupDTO = modelMapper.map(hostelGroupService.findById(resTypeDTO.getGroupId()), HostelGroupDTOFull.class);
@@ -227,7 +246,7 @@ public class HostelTypeController {
     /**
      * Add Facilities to hostel type
      *
-     * @param typeId hostel type id
+     * @param typeId     hostel type id
      * @param facilities list of facilities
      * @return ResponseEntity
      */
