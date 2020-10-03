@@ -1,12 +1,11 @@
 package org.avengers.capstone.hostelrenting.dto.hosteltype;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
-import org.avengers.capstone.hostelrenting.dto.*;
+import lombok.Getter;
+import lombok.Setter;
 
-import java.util.Collection;
-
-@Data
+@Getter
+@Setter
 public class ReqTypeDTO {
     private Integer typeId;
     private Integer groupId;
@@ -17,5 +16,6 @@ public class ReqTypeDTO {
     private float superficiality;
     private int capacity;
     private float deposit;
-//    private Collection<Integer> facilityIds;
+    private Integer[] facilityIds;
+    private String[] imageUrls;
 }

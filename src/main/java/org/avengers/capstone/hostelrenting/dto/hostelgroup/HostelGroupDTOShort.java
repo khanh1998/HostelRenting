@@ -2,6 +2,8 @@ package org.avengers.capstone.hostelrenting.dto.hostelgroup;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.avengers.capstone.hostelrenting.dto.ServiceDetailDTO;
 import org.avengers.capstone.hostelrenting.model.ServiceDetail;
 import org.avengers.capstone.hostelrenting.model.serialized.AddressFull;
@@ -9,7 +11,8 @@ import org.avengers.capstone.hostelrenting.model.serialized.AddressFull;
 import java.io.Serializable;
 import java.util.List;
 
-@Data
+@Getter
+@Setter
 public class HostelGroupDTOShort implements Serializable {
     private int groupId;
 

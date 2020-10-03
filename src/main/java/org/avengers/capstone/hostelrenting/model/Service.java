@@ -8,7 +8,8 @@ import javax.validation.constraints.NotNull;
 import java.util.Collection;
 import java.util.Set;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 

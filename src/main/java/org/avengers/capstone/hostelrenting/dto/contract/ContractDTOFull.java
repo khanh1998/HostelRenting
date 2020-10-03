@@ -1,6 +1,8 @@
 package org.avengers.capstone.hostelrenting.dto.contract;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.avengers.capstone.hostelrenting.dto.hostelgroup.HostelGroupDTOFull;
 import org.avengers.capstone.hostelrenting.dto.HostelRoomDTO;
 import org.avengers.capstone.hostelrenting.dto.booking.BookingDTOShort;
@@ -13,7 +15,8 @@ import org.avengers.capstone.hostelrenting.dto.vendor.ResVendorDTO;
  * Contains all information that relative with contract
  */
 
-@Data
+@Getter
+@Setter
 public class ContractDTOFull {
     private int contractId;
     private HostelRoomDTO room;

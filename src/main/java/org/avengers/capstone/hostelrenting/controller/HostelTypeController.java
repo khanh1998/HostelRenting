@@ -2,8 +2,8 @@ package org.avengers.capstone.hostelrenting.controller;
 
 import org.avengers.capstone.hostelrenting.dto.FacilityDTO;
 import org.avengers.capstone.hostelrenting.dto.combination.TypeAndGroupDTO;
-import org.avengers.capstone.hostelrenting.dto.hostelgroup.HostelGroupDTOFull;
 import org.avengers.capstone.hostelrenting.dto.combination.TypesAndGroupsDTO;
+import org.avengers.capstone.hostelrenting.dto.hostelgroup.HostelGroupDTOFull;
 import org.avengers.capstone.hostelrenting.dto.hosteltype.ReqTypeDTO;
 import org.avengers.capstone.hostelrenting.dto.hosteltype.ResTypeDTO;
 import org.avengers.capstone.hostelrenting.dto.response.ApiSuccess;
@@ -17,10 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.avengers.capstone.hostelrenting.Constant.Pagination.DEFAULT_PAGE;
@@ -67,22 +64,41 @@ public class HostelTypeController {
         this.modelMapper = modelMapper;
     }
 
-
+    /**
+     * Create new Type with group Id
+     * @param groupId id of group
+     * @param reqDTOs list of request hostel type dto
+     * @return list of created hostel type model that converted to dto
+     * @throws EntityNotFoundException when group id is not found
+     */
     @PostMapping("groups/{groupId}/types")
     public ResponseEntity<?> createNewType(@PathVariable Integer groupId,
                                            @Valid @RequestBody List<ReqTypeDTO> reqDTOs) throws EntityNotFoundException {
         List<ResTypeDTO> resDTOs = new ArrayList<>();
-        // set necessary for model:
+        // handle each of request DTO
         reqDTOs.forEach(reqDTO -> {
             HostelType reqModel = modelMapper.map(reqDTO, HostelType.class);
+            // set hostel group
             HostelGroup hostelGroup = hostelGroupService.findById(groupId);
+            // set category
             Category category = categoryService.findById(reqDTO.getCategoryId());
+            // set status of type
             TypeStatus typeStatus = typeStatusService.findById(reqDTO.getStatusId());
+            // set facilities
+            Collection<Facility> facilities = Arrays.stream(reqDTO.getFacilityIds()).map(id -> facilityService.findById(id)).collect(Collectors.toList());
+            // set images
+            Collection<TypeImage> images = Arrays.stream(reqDTO.getImageUrls()).map(imgUrl ->{
+                TypeImage imgModel = TypeImage.builder().resourceUrl(imgUrl).build();
+                imgModel.setHostelType(reqModel);
+                return imgModel;
+            }).collect(Collectors.toList());
 
             reqModel.setCategory(category);
             reqModel.setTypeStatus(typeStatus);
             reqModel.setHostelGroup(hostelGroup);
             reqModel.setHostelRooms(null);
+            reqModel.setFacilities(facilities);
+            reqModel.setTypeImages(images);
 
             HostelType resModel = hostelTypeService.save(reqModel);
             ResTypeDTO resDTO = modelMapper.map(resModel, ResTypeDTO.class);
@@ -142,7 +158,7 @@ public class HostelTypeController {
             message = "There is no hostel types found!";
         }
 
-        ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTOs, "Hostel type has been retrieved successfully!");
+        ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTOs, message);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(apiSuccess);
     }
@@ -168,7 +184,7 @@ public class HostelTypeController {
                                             @RequestParam(required = false, defaultValue = DEFAULT_SIZE) Integer size,
                                             @RequestParam(required = false, defaultValue = DEFAULT_PAGE) Integer page) throws EntityNotFoundException {
         if (typeId != null) {
-            // handle hosteltype and corresponding hostelgroup
+            // handle hostel type and corresponding hostel group
             ResTypeDTO resTypeDTO = modelMapper.map(hostelTypeService.findById(typeId), ResTypeDTO.class);
             HostelGroupDTOFull resGroupDTO = modelMapper.map(hostelGroupService.findById(resTypeDTO.getGroupId()), HostelGroupDTOFull.class);
             TypeAndGroupDTO resDTO = TypeAndGroupDTO.builder().groupDTOFull(resGroupDTO).type(resTypeDTO).build();
@@ -214,7 +230,7 @@ public class HostelTypeController {
                                 .stream()
                                 .anyMatch(facility -> Arrays
                                         .stream(facilityIds)
-                                        .anyMatch(id -> true ? Integer.compare(id, facility.getFacilityId()) == 0 : false));
+                                        .anyMatch(id -> id == facility.getFacilityId()));
                     return true;
                 }).filter(hostelType -> {
                     if (serviceIds != null && serviceIds.length > 0)
@@ -222,7 +238,7 @@ public class HostelTypeController {
                                 .stream()
                                 .anyMatch(serviceDetail -> Arrays
                                         .stream(serviceIds)
-                                        .anyMatch(id -> true ? Integer.compare(id, serviceDetail.getServiceId()) == 0 : false));
+                                        .anyMatch(id -> id == serviceDetail.getServiceId()));
                     return true;
                 })
                 .map(hostelType -> modelMapper.map(hostelType, ResTypeDTO.class))
@@ -231,7 +247,7 @@ public class HostelTypeController {
         Set<HostelGroupDTOFull> groupDTOs = typeDTOs.stream()
                 .map(typeDTO -> modelMapper.map(hostelGroupService.findById(typeDTO.getGroupId()), HostelGroupDTOFull.class))
                 .collect(Collectors.toSet());
-        groupDTOs.forEach(hostelGroupDTO -> hostelGroupDTO.getServiceForDisplay());
+        groupDTOs.forEach(HostelGroupDTOFull::getServiceForDisplay);
 
 
         // DTO contains list of Types and groups follow that type
@@ -260,7 +276,7 @@ public class HostelTypeController {
                 .filter(f -> {
                     Facility existedFacility = facilityService.findById(f.getFacilityId());
                     f.setFacilityName(existedFacility.getFacilityName());
-                    return existedFacility != null;
+                    return true;
                 }).map(f -> modelMapper.map(f, Facility.class))
                 .collect(Collectors.toSet());
 

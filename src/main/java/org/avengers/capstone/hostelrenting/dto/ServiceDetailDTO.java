@@ -1,10 +1,13 @@
 package org.avengers.capstone.hostelrenting.dto;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.Serializable;
 
-@Data
+@Getter
+@Setter
 public class ServiceDetailDTO implements Serializable {
     private Integer serDetailId;
     private Integer serviceId;

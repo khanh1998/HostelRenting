@@ -1,10 +1,9 @@
 package org.avengers.capstone.hostelrenting.dto.response;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 
-@Data
+@Getter
+@Setter
 @EqualsAndHashCode(callSuper = false)
 @AllArgsConstructor
 public class ApiValidationError extends ApiSubError {

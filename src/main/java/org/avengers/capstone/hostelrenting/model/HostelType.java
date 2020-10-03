@@ -8,7 +8,8 @@ import javax.validation.constraints.NotBlank;
 import java.util.Collection;
 import java.util.Set;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -69,7 +70,7 @@ public class HostelType {
     @OneToMany(mappedBy = "hostelType", fetch = FetchType.LAZY)
     private Collection<HostelRoom> hostelRooms;
 
-    @OneToMany(mappedBy = "hostelType", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "hostelType", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Collection<TypeImage> typeImages;
 
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
