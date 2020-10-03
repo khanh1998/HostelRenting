@@ -24,6 +24,6 @@ public class TypeImage {
     private String resourceUrl;
 
     @ManyToOne
-    @JoinColumn(name = "type_id")
+    @JoinColumn(name = "type_id", nullable = false)
     private HostelType hostelType;
 }

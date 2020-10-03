@@ -41,6 +41,8 @@ public class HostelTypeServiceImpl implements HostelTypeService {
         if (hostelTypeRepository.equals(hostelType)) {
             throw new DuplicateKeyException(String.format(Constant.Message.DUPLICATED_ERROR, "all", "all"));
         }
+        // Set createdAt
+        hostelType.setCreatedAt(System.currentTimeMillis());
 
         return hostelTypeRepository.save(hostelType);
     }

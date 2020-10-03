@@ -18,4 +18,5 @@ public class ReqTypeDTO {
     private float deposit;
     private Integer[] facilityIds;
     private String[] imageUrls;
+    private String[] roomNames;
 }

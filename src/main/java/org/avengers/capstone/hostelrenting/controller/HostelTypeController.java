@@ -92,11 +92,17 @@ public class HostelTypeController {
                 imgModel.setHostelType(reqModel);
                 return imgModel;
             }).collect(Collectors.toList());
+            // set rooms
+            Collection<HostelRoom> rooms = Arrays.stream(reqDTO.getRoomNames()).map(room ->{
+                HostelRoom roomModel = HostelRoom.builder().roomName(room).isAvailable(true).build();
+                roomModel.setHostelType(reqModel);
+                return roomModel;
+            }).collect(Collectors.toList());
 
+            reqModel.setHostelRooms(rooms);
             reqModel.setCategory(category);
             reqModel.setTypeStatus(typeStatus);
             reqModel.setHostelGroup(hostelGroup);
-            reqModel.setHostelRooms(null);
             reqModel.setFacilities(facilities);
             reqModel.setTypeImages(images);
 

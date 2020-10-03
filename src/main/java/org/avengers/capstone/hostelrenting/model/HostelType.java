@@ -1,7 +1,10 @@
 package org.avengers.capstone.hostelrenting.model;
 
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -67,7 +70,7 @@ public class HostelType {
     @JoinColumn(name = "status_id")
     private TypeStatus typeStatus;
 
-    @OneToMany(mappedBy = "hostelType", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "hostelType", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Collection<HostelRoom> hostelRooms;
 
     @OneToMany(mappedBy = "hostelType", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
@@ -82,4 +85,9 @@ public class HostelType {
     )
     private Collection<Facility> facilities;
 
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private Long createdAt;
+
+    @Column(name = "updated_at")
+    private Long updatedAt;
 }
