@@ -64,8 +64,6 @@ public class ContractServiceImpl implements ContractService {
         Optional<Contract> model = contractRepository.findById(id);
         if (model.isEmpty())
             throw new EntityNotFoundException(Contract.class, "id", id.toString());
-        else if (model.get().isDeleted())
-            throw new EntityNotFoundException(Contract.class, "id", id.toString());
     }
 
     @Override
@@ -96,6 +94,7 @@ public class ContractServiceImpl implements ContractService {
             bookingService.changeStatus(bookingId, Booking.STATUS.DONE);
         }
 
+        reqModel.setStatus(Contract.STATUS.WORKING);
         reqModel.setVendor(exVendor);
         reqModel.setRenter(exRenter);
         reqModel.setHostelRoom(exRoom);
@@ -109,17 +108,6 @@ public class ContractServiceImpl implements ContractService {
         return null;
     }
 
-    @Override
-    public void delete(Integer id) {
-        checkActive(id);
-        Contract exModel = contractRepository.getOne(id);
-        if (exModel.isDeleted())
-            throw new EntityNotFoundException(Contract.class, "id", id.toString());
-        exModel.setDeleted(true);
-        setUpdatedTime(exModel);
-        contractRepository.save(exModel);
-    }
-
     /**
      * Get list of contracts by given renter id
      *
@@ -130,10 +118,7 @@ public class ContractServiceImpl implements ContractService {
     public List<Contract> findByRenterId(Long renterId) {
         renterService.checkExist(renterId);
 
-        return renterService.findById(renterId).getContracts()
-                .stream()
-                .filter(contract -> !contract.isDeleted())
-                .collect(Collectors.toList());
+        return renterService.findById(renterId).getContracts();
     }
 
     /**
@@ -146,10 +131,7 @@ public class ContractServiceImpl implements ContractService {
     public List<Contract> findByVendorId(Long vendorId) {
         vendorService.checkExist(vendorId);
 
-        return vendorService.findById(vendorId).getContracts()
-                .stream()
-                .filter(contract -> !contract.isDeleted())
-                .collect(Collectors.toList());
+        return vendorService.findById(vendorId).getContracts();
     }
 
     private void setUpdatedTime(Contract exModel){

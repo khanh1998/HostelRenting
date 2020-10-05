@@ -79,17 +79,6 @@ public class BookingController {
         return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
     }
 
-    @DeleteMapping("/bookings/{bookingId}")
-    public ResponseEntity<?> deleteDeal(@PathVariable Integer bookingId) {
-
-        bookingService.delete(bookingId);
-
-        // Response entity
-        ApiSuccess<?> apiSuccess = new ApiSuccess<>(null, "Your booking has been deleted successfully");
-
-        return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
-    }
-
     @GetMapping("/bookings/{bookingId}")
     public ResponseEntity<?> getBookingById(@PathVariable Integer bookingId) {
         Booking resModel = bookingService.findById(bookingId);

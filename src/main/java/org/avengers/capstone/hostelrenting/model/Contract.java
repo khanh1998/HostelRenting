@@ -18,7 +18,7 @@ import java.util.Collection;
 @Table(name = "contract")
 public class Contract {
 
-//    public enum DURATION_UNIT{MONTH, YEAR}
+    public enum STATUS{EXPIRED, WORKING}
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,16 +38,10 @@ public class Contract {
 
     private Long startTime;
 
+    // month
     @Column(nullable = false)
     @NotNull(message = "Contract duration is mandatory")
     private Float duration;
-
-    @Column(nullable = false)
-    @NotNull(message = "Contract duration is mandatory")
-    private Float minDuration;
-
-    @Column(columnDefinition = "varchar(10) default 'tháng'", nullable = false)
-    private String durationUnit;
 
     @Column
     private Integer dealId;
@@ -55,15 +49,16 @@ public class Contract {
     @Column
     private Integer bookingId;
 
+    @Column(columnDefinition = "varchar(10) default 'WORKING'")
+    @Enumerated(EnumType.STRING)
+    private Contract.STATUS status;
+
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private Long createdAt;
 
     @Column(name = "updated_at")
     private Long updatedAt;
-
-    @Column(columnDefinition = "boolean default false")
-    private boolean isDeleted;
 
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @EqualsAndHashCode.Exclude

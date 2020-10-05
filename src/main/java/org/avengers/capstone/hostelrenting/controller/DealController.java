@@ -74,17 +74,6 @@ public class DealController {
         return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
     }
 
-    @DeleteMapping("/deals/{dealId}")
-    public ResponseEntity<?> deleteDeal(@PathVariable Integer dealId) {
-
-        dealService.delete(dealId);
-
-        // Response entity
-        ApiSuccess<?> apiSuccess = new ApiSuccess<>(null, "Your deal has been deleted successfully");
-
-        return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
-    }
-
     @GetMapping("/deals/{dealId}")
     public ResponseEntity<?> getDealById(@PathVariable Integer dealId) throws EntityNotFoundException {
         Deal resModel = dealService.findById(dealId);

@@ -46,6 +46,4 @@ public class Deal {
     @Column(name = "updated_at")
     private Long updatedAt;
 
-    @Column(columnDefinition = "boolean default false")
-    private boolean isDeleted;
 }

@@ -60,8 +60,6 @@ public class DealServiceImpl implements DealService {
         Optional<Deal> model = dealRepository.findById(id);
         if (model.isEmpty())
             throw new EntityNotFoundException(Deal.class, "id", id.toString());
-        else if (model.get().isDeleted())
-            throw new EntityNotFoundException(Deal.class, "id", id.toString());
     }
 
     @Override
@@ -116,17 +114,6 @@ public class DealServiceImpl implements DealService {
         }
 
         return null;
-    }
-
-    @Override
-    public void delete(Integer id) {
-        checkActive(id);
-        Deal exModel = dealRepository.getOne(id);
-        if (exModel.isDeleted())
-            throw new EntityNotFoundException(Deal.class, "id", id.toString());
-        exModel.setDeleted(true);
-        setUpdatedTime(exModel);
-        dealRepository.save(exModel);
     }
 
     @Override
