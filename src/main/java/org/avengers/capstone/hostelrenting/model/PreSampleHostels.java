@@ -5,24 +5,27 @@ import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 
 import javax.persistence.*;
-import java.sql.Array;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+
+/**
+ * @author duattt on 10/5/20
+ * @created 05/10/2020 - 14:01
+ * @project youthhostelapp
+ */
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 
 @Entity
-@Table(name = "sample")
+@Table(name = "samplePre")
 @TypeDef(
         name = "list-array",
         typeClass = ArrayList.class
 )
-public class SampleHostels {
+public class PreSampleHostels {
+
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,9 +39,7 @@ public class SampleHostels {
 
     private Double latitude;
 
-    @ManyToOne
-    @JoinColumn(name = "street_ward_id")
-    private StreetWard address;
+    private Integer streetWardId;
 
     @Type(type = "list-array")
     @Column(
