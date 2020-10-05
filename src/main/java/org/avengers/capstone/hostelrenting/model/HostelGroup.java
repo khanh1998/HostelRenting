@@ -66,6 +66,10 @@ public class HostelGroup {
     @OneToMany(mappedBy = "hGroup", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Collection<HGSchedule> hgSchedules;
 
+    private String managerName;
+
+    private String managerPhone;
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private Long createdAt;
 

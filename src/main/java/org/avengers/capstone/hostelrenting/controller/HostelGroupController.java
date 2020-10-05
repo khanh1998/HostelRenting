@@ -6,6 +6,7 @@ import org.avengers.capstone.hostelrenting.dto.response.ApiSuccess;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
 import org.avengers.capstone.hostelrenting.model.HostelGroup;
 import org.avengers.capstone.hostelrenting.model.ServiceDetail;
+import org.avengers.capstone.hostelrenting.model.StreetWard;
 import org.avengers.capstone.hostelrenting.model.Vendor;
 import org.avengers.capstone.hostelrenting.service.*;
 import org.modelmapper.ModelMapper;
@@ -68,20 +69,26 @@ public class HostelGroupController {
         // get necessary for model: vendor, address, services
         List<GroupDTOCreate> resDTOs = new ArrayList<>();
         reqDTOs.forEach(reqDTO -> {
-            HostelGroup hostelGroupModel = modelMapper.map(reqDTO, HostelGroup.class);
-            hostelGroupModel.setVendor(vendorService.findById(reqDTO.getVendorId()));
-            hostelGroupModel.setAddress(streetWardService.findByStreetIdAndWardId(reqDTO.getAddressFull().getStreetId(), reqDTO.getAddressFull().getWardId()));
+            HostelGroup reqModel = modelMapper.map(reqDTO, HostelGroup.class);
+            // set vendor object
+            Vendor vendor = vendorService.findById(reqDTO.getVendorId());
+            reqModel.setVendor(vendor);
+            // set address object
+            StreetWard address = streetWardService.findByStreetIdAndWardId(reqDTO.getAddressFull().getStreetId(), reqDTO.getAddressFull().getWardId());
+            reqModel.setAddress(address);
+            // set services object
             Collection<ServiceDetail> serviceDetails = reqDTO.getServices()
                     .stream()
                     .map(dto -> {
                         dto.setCreatedAt(System.currentTimeMillis());
                         ServiceDetail serviceDetail = modelMapper.map(dto, ServiceDetail.class);
-                        serviceDetail.setHGroup(hostelGroupModel);
+                        serviceDetail.setHGroup(reqModel);
                         return serviceDetail;
                     })
                     .collect(Collectors.toList());
-            hostelGroupModel.setServiceDetails(serviceDetails);
-            HostelGroup resModel = hostelGroupService.create(hostelGroupModel);
+            reqModel.setServiceDetails(serviceDetails);
+
+            HostelGroup resModel = hostelGroupService.create(reqModel);
 
             // log created group
             logger.info("CREATED Group with id: " + resModel.getGroupId());

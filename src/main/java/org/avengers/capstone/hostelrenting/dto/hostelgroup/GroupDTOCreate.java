@@ -44,5 +44,9 @@ public class GroupDTOCreate implements Serializable {
 
     private String imgUrl;
 
+    private String managerName;
+
+    private String managerPhone;
+
     private List<ServiceDetailDTO> services;
 }
