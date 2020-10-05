@@ -55,6 +55,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public Category findById(Integer id) {
+        checkExist(id);
         return categoryRepository.getOne(id);
     }
 }

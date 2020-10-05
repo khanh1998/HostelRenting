@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 
 @Getter
 @Setter
-public class HostelGroupDTOFull implements Serializable {
+public class GroupDTOResponse implements Serializable {
     private int groupId;
 
     @JsonProperty("address")

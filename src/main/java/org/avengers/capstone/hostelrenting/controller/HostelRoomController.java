@@ -1,7 +1,7 @@
 package org.avengers.capstone.hostelrenting.controller;
 
 import org.avengers.capstone.hostelrenting.dto.HostelRoomDTO;
-import org.avengers.capstone.hostelrenting.dto.hosteltype.ResTypeDTO;
+import org.avengers.capstone.hostelrenting.dto.hosteltype.TypeDTOResponse;
 import org.avengers.capstone.hostelrenting.dto.response.ApiSuccess;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
 import org.avengers.capstone.hostelrenting.model.HostelRoom;
@@ -66,7 +66,7 @@ public class HostelRoomController {
                 .filter(r -> r.getRoomId() == roomId)
                 .collect(Collectors.toList())
                 .get(0);
-        ResTypeDTO resDTO = modelMapper.map(resModel, ResTypeDTO.class);
+        TypeDTOResponse resDTO = modelMapper.map(resModel, TypeDTOResponse.class);
 
         return ResponseEntity
                 .status(HttpStatus.OK)

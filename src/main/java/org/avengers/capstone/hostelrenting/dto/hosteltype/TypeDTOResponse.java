@@ -1,10 +1,10 @@
 package org.avengers.capstone.hostelrenting.dto.hosteltype;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
-import org.avengers.capstone.hostelrenting.dto.*;
+import org.avengers.capstone.hostelrenting.dto.CategoryDTO;
+import org.avengers.capstone.hostelrenting.dto.FacilityDTO;
+import org.avengers.capstone.hostelrenting.dto.TypeImageDTO;
 import org.avengers.capstone.hostelrenting.dto.TypeStatusDTO;
 
 import java.io.Serializable;
@@ -13,7 +13,7 @@ import java.util.Collection;
 @Getter
 @Setter
 //@JsonInclude(JsonInclude.Include.NON_NULL)
-public class ResTypeDTO implements Serializable {
+public class TypeDTOResponse implements Serializable {
     private int typeId;
     private float score;
     private int groupId;

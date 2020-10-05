@@ -66,6 +66,12 @@ public class HostelGroup {
     @OneToMany(mappedBy = "hGroup", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Collection<HGSchedule> hgSchedules;
 
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private Long createdAt;
+
+    @Column(name = "updated_at")
+    private Long updatedAt;
+
 
     /**
      * Serialize StreetWard to Address model

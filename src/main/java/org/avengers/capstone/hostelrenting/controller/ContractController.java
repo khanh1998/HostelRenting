@@ -1,9 +1,9 @@
 package org.avengers.capstone.hostelrenting.controller;
 
-import org.avengers.capstone.hostelrenting.dto.hostelgroup.HostelGroupDTOFull;
+import org.avengers.capstone.hostelrenting.dto.hostelgroup.GroupDTOResponse;
 import org.avengers.capstone.hostelrenting.dto.booking.BookingDTOShort;
 import org.avengers.capstone.hostelrenting.dto.deal.DealDTOShort;
-import org.avengers.capstone.hostelrenting.dto.hosteltype.ResTypeDTO;
+import org.avengers.capstone.hostelrenting.dto.hosteltype.TypeDTOResponse;
 import org.avengers.capstone.hostelrenting.dto.contract.ContractDTOFull;
 import org.avengers.capstone.hostelrenting.dto.contract.ContractDTOShort;
 import org.avengers.capstone.hostelrenting.dto.response.ApiSuccess;
@@ -160,7 +160,7 @@ public class ContractController {
 
     private void getTypeAndGroupForDTO(ContractDTOFull resDTO) {
         HostelType exType = typeService.findById(resDTO.getRoom().getTypeId());
-        resDTO.setType(modelMapper.map(exType, ResTypeDTO.class));
-        resDTO.setGroup(modelMapper.map(groupService.findById(exType.getHostelGroup().getGroupId()), HostelGroupDTOFull.class));
+        resDTO.setType(modelMapper.map(exType, TypeDTOResponse.class));
+        resDTO.setGroup(modelMapper.map(groupService.findById(exType.getHostelGroup().getGroupId()), GroupDTOResponse.class));
     }
 }

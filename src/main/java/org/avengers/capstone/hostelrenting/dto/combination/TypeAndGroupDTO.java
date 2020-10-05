@@ -1,8 +1,8 @@
 package org.avengers.capstone.hostelrenting.dto.combination;
 
 import lombok.*;
-import org.avengers.capstone.hostelrenting.dto.hostelgroup.HostelGroupDTOFull;
-import org.avengers.capstone.hostelrenting.dto.hosteltype.ResTypeDTO;
+import org.avengers.capstone.hostelrenting.dto.hostelgroup.GroupDTOResponse;
+import org.avengers.capstone.hostelrenting.dto.hosteltype.TypeDTOResponse;
 
 import java.io.Serializable;
 
@@ -11,6 +11,6 @@ import java.io.Serializable;
 @Builder
 @AllArgsConstructor
 public class TypeAndGroupDTO implements Serializable {
-    ResTypeDTO type;
-    HostelGroupDTOFull groupDTOFull;
+    TypeDTOResponse type;
+    GroupDTOResponse groupDTOFull;
 }

@@ -7,5 +7,5 @@ public interface HostelGroupService {
     HostelGroup findById(Integer id);
     HostelGroup create(HostelGroup reqModel);
     HostelGroup update(HostelGroup reqModel);
-    void delete(Integer id);
+    void deleteById(Integer id);
 }

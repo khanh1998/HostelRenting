@@ -2,8 +2,10 @@ package org.avengers.capstone.hostelrenting.service.impl;
 
 import org.avengers.capstone.hostelrenting.Constant;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
+import org.avengers.capstone.hostelrenting.model.HostelGroup;
 import org.avengers.capstone.hostelrenting.model.HostelType;
 import org.avengers.capstone.hostelrenting.repository.HostelTypeRepository;
+import org.avengers.capstone.hostelrenting.service.HostelGroupService;
 import org.avengers.capstone.hostelrenting.service.HostelTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
@@ -20,6 +22,12 @@ import java.util.stream.Stream;
 @Service
 public class HostelTypeServiceImpl implements HostelTypeService {
     private HostelTypeRepository hostelTypeRepository;
+    private HostelGroupService hostelGroupService;
+
+    @Autowired
+    public void setHostelGroupService(HostelGroupService hostelGroupService) {
+        this.hostelGroupService = hostelGroupService;
+    }
 
     @Autowired
     public void setHostelTypeRepository(HostelTypeRepository hostelTypeRepository) {
@@ -27,43 +35,50 @@ public class HostelTypeServiceImpl implements HostelTypeService {
     }
 
     @Override
-    public HostelType findById(Integer id) {
-        if (isNotFound(id)) {
+    public void checkExist(Integer id) {
+        Optional<HostelType> model = hostelTypeRepository.findById(id);
+        if (model.isEmpty())
             throw new EntityNotFoundException(HostelType.class, "id", id.toString());
-        }
+    }
+
+    @Override
+    public HostelType findById(Integer id) {
+        checkExist(id);
 
         return hostelTypeRepository.getOne(id);
     }
 
     @Override
-    public HostelType save(HostelType hostelType) {
-        //TODO: Check duplicate object
-        if (hostelTypeRepository.equals(hostelType)) {
-            throw new DuplicateKeyException(String.format(Constant.Message.DUPLICATED_ERROR, "all", "all"));
-        }
+    public HostelType create(HostelType reqModel) {
+        //TODO: check duplicate
         // Set createdAt
-        hostelType.setCreatedAt(System.currentTimeMillis());
+        reqModel.setCreatedAt(System.currentTimeMillis());
 
-        return hostelTypeRepository.save(hostelType);
+        return hostelTypeRepository.save(reqModel);
+    }
+
+    @Override
+    public HostelType update(HostelType reqModel) {
+        // Set updatedAt
+        reqModel.setUpdatedAt(System.currentTimeMillis());
+
+        return hostelTypeRepository.save(reqModel);
     }
 
     @Override
     public void deleteById(Integer id) {
-        if (isNotFound(id)) {
-            throw new EntityNotFoundException(HostelType.class, "id", id.toString());
-        }
-
-        hostelTypeRepository.deleteById(id);
+        //TODO: Implement
     }
 
     /**
-     * Get all Types by groupId
+     * Get all types by groupId
      *
      * @param hostelGroupId
      * @return HostelTypes of given group, otherwise null
      */
     @Override
     public List<HostelType> findByHostelGroupId(Integer hostelGroupId) {
+        hostelGroupService.checkExist(hostelGroupId);
         List<HostelType> hostelTypes = hostelTypeRepository.findByHostelGroup_GroupId((hostelGroupId));
         return hostelTypes;
     }
@@ -92,7 +107,7 @@ public class HostelTypeServiceImpl implements HostelTypeService {
         if (latitude != null && longitude != null) {
             // if long&lat != null ==> get surroundings
             locTypes = hostelTypeRepository.getSurroundings(latitude, longitude, distance, pageable);
-        }else {
+        } else {
             //default get ...
             locTypes = hostelTypeRepository.findAll(pageable).toList();
         }
@@ -107,7 +122,7 @@ public class HostelTypeServiceImpl implements HostelTypeService {
 
         // new collection to retainAll (unmodifiable collection cannot be removed)
         Collection temp = new ArrayList(locTypes);
-        if (!compatriotTypes.isEmpty() || !schoolMateTypes.isEmpty()){
+        if (!compatriotTypes.isEmpty() || !schoolMateTypes.isEmpty()) {
             temp.retainAll(Stream.concat(compatriotTypes.stream(), schoolMateTypes.stream()).collect(Collectors.toList()));
         }
 
@@ -116,7 +131,7 @@ public class HostelTypeServiceImpl implements HostelTypeService {
 
     /**
      * @param inputList
-     * @param code     == 1 is schoolmate, otherwise is compatriot
+     * @param code      == 1 is schoolmate, otherwise is compatriot
      * @return
      */
     public List<HostelType> convertMapToList(List<Object[]> inputList, int code) {

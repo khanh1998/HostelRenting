@@ -1,6 +1,6 @@
 package org.avengers.capstone.hostelrenting.controller;
 
-import org.avengers.capstone.hostelrenting.dto.hostelgroup.HostelGroupDTOFull;
+import org.avengers.capstone.hostelrenting.dto.hostelgroup.GroupDTOResponse;
 import org.avengers.capstone.hostelrenting.dto.booking.BookingDTOFull;
 import org.avengers.capstone.hostelrenting.dto.booking.BookingDTOShort;
 import org.avengers.capstone.hostelrenting.dto.deal.DealDTOShort;
@@ -170,13 +170,13 @@ public class BookingController {
     private void getGroupForDTOs(List<BookingDTOFull> resDTOs) {
         resDTOs.forEach(resDTO -> {
             HostelGroup existedGroup = hostelGroupService.findById(resDTO.getType().getGroupId());
-            resDTO.setGroup(modelMapper.map(existedGroup, HostelGroupDTOFull.class));
+            resDTO.setGroup(modelMapper.map(existedGroup, GroupDTOResponse.class));
         });
     }
 
     private void getGroupForDTO(BookingDTOFull resDTO) {
         HostelGroup existedGroup = hostelGroupService.findById(resDTO.getType().getGroupId());
-        resDTO.setGroup(modelMapper.map(existedGroup, HostelGroupDTOFull.class));
+        resDTO.setGroup(modelMapper.map(existedGroup, GroupDTOResponse.class));
     }
 
     private void getDealForDTO(BookingDTOFull resDTO) {

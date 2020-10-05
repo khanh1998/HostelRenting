@@ -1,5 +1,6 @@
 package org.avengers.capstone.hostelrenting.service;
 
+import org.avengers.capstone.hostelrenting.model.HostelGroup;
 import org.avengers.capstone.hostelrenting.model.HostelType;
 import org.springframework.data.domain.Pageable;
 
@@ -7,12 +8,12 @@ import java.util.Collection;
 import java.util.List;
 
 public interface HostelTypeService {
+
+    void checkExist(Integer id);
     HostelType findById(Integer id);
-
-    HostelType save(HostelType hostelType);
-
+    HostelType create(HostelType reqModel);
+    HostelType update(HostelType reqModel);
     void deleteById(Integer id);
-
     List<HostelType> findByHostelGroupId(Integer hostelGroupId);
 
     /**
