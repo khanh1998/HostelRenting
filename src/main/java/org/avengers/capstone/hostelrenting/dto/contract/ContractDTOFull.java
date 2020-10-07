@@ -2,11 +2,11 @@ package org.avengers.capstone.hostelrenting.dto.contract;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.avengers.capstone.hostelrenting.dto.hostelgroup.GroupDTOResponse;
+import org.avengers.capstone.hostelrenting.dto.group.GroupDTOResponse;
 import org.avengers.capstone.hostelrenting.dto.HostelRoomDTO;
 import org.avengers.capstone.hostelrenting.dto.booking.BookingDTOShort;
 import org.avengers.capstone.hostelrenting.dto.deal.DealDTOShort;
-import org.avengers.capstone.hostelrenting.dto.hosteltype.TypeDTOResponse;
+import org.avengers.capstone.hostelrenting.dto.type.TypeDTOResponse;
 import org.avengers.capstone.hostelrenting.dto.renter.ResRenterDTO;
 import org.avengers.capstone.hostelrenting.dto.vendor.ResVendorDTO;
 

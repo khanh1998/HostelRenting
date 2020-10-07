@@ -2,11 +2,11 @@ package org.avengers.capstone.hostelrenting.controller;
 
 import org.avengers.capstone.hostelrenting.dto.HGScheduleDTO;
 import org.avengers.capstone.hostelrenting.dto.ScheduleDTO;
-import org.avengers.capstone.hostelrenting.dto.hostelgroup.GroupDTOCreate;
+import org.avengers.capstone.hostelrenting.dto.group.GroupDTOCreate;
 import org.avengers.capstone.hostelrenting.dto.response.ApiSuccess;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
-import org.avengers.capstone.hostelrenting.model.HGSchedule;
-import org.avengers.capstone.hostelrenting.model.HostelGroup;
+import org.avengers.capstone.hostelrenting.model.GroupSchedule;
+import org.avengers.capstone.hostelrenting.model.Group;
 import org.avengers.capstone.hostelrenting.model.Schedule;
 import org.avengers.capstone.hostelrenting.service.HostelGroupService;
 import org.avengers.capstone.hostelrenting.service.ScheduleService;
@@ -65,13 +65,13 @@ public class ScheduleController {
 
     @GetMapping("/groups/{groupId}/schedules")
     public ResponseEntity<?> getScheduleByGroupId(@PathVariable Integer groupId) {
-        HostelGroup hgroupModel = hostelGroupService.findById(groupId);
-        Collection<HGSchedule> HGSchedules = hgroupModel.getHgSchedules();
-        Collection<ScheduleDTO> scheduleDTOs = HGSchedules.stream()
-                .map(hgSchedule -> {
-                    ScheduleDTO dto = modelMapper.map(hgSchedule.getSchedule(), ScheduleDTO.class);
-                    dto.setStartTime(hgSchedule.getStartTime());
-                    dto.setEndTime(hgSchedule.getEndTime());
+        Group hgroupModel = hostelGroupService.findById(groupId);
+        Collection<GroupSchedule> GroupSchedules = hgroupModel.getGroupSchedules();
+        Collection<ScheduleDTO> scheduleDTOs = GroupSchedules.stream()
+                .map(groupSchedule -> {
+                    ScheduleDTO dto = modelMapper.map(groupSchedule.getSchedule(), ScheduleDTO.class);
+                    dto.setStartTime(groupSchedule.getStartTime());
+                    dto.setEndTime(groupSchedule.getEndTime());
                     return dto;
                 })
                 .collect(Collectors.toList());

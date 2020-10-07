@@ -1,6 +1,5 @@
 package org.avengers.capstone.hostelrenting.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
@@ -25,5 +24,5 @@ public class TypeImage {
 
     @ManyToOne
     @JoinColumn(name = "type_id", nullable = false)
-    private HostelType hostelType;
+    private Type type;
 }

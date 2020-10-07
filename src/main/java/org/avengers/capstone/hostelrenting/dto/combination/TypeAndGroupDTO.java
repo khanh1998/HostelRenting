@@ -1,8 +1,8 @@
 package org.avengers.capstone.hostelrenting.dto.combination;
 
 import lombok.*;
-import org.avengers.capstone.hostelrenting.dto.hostelgroup.GroupDTOResponse;
-import org.avengers.capstone.hostelrenting.dto.hosteltype.TypeDTOResponse;
+import org.avengers.capstone.hostelrenting.dto.group.GroupDTOResponse;
+import org.avengers.capstone.hostelrenting.dto.type.TypeDTOResponse;
 
 import java.io.Serializable;
 

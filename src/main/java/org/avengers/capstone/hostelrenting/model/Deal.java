@@ -26,7 +26,7 @@ public class Deal {
 
     @ManyToOne
     @JoinColumn(name = "type_id", nullable = false)
-    private HostelType hostelType;
+    private Type type;
 
     @ManyToOne
     @JoinColumn(name = "vendor_id", nullable = false)

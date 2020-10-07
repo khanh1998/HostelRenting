@@ -2,9 +2,9 @@ package org.avengers.capstone.hostelrenting.controller;
 
 import org.avengers.capstone.hostelrenting.dto.combination.TypeAndGroupDTO;
 import org.avengers.capstone.hostelrenting.dto.combination.TypesAndGroupsDTO;
-import org.avengers.capstone.hostelrenting.dto.hostelgroup.GroupDTOResponse;
-import org.avengers.capstone.hostelrenting.dto.hosteltype.TypeDTOCreate;
-import org.avengers.capstone.hostelrenting.dto.hosteltype.TypeDTOResponse;
+import org.avengers.capstone.hostelrenting.dto.group.GroupDTOResponse;
+import org.avengers.capstone.hostelrenting.dto.type.TypeDTOCreate;
+import org.avengers.capstone.hostelrenting.dto.type.TypeDTOResponse;
 import org.avengers.capstone.hostelrenting.dto.response.ApiSuccess;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
 import org.avengers.capstone.hostelrenting.model.*;
@@ -86,9 +86,9 @@ public class HostelTypeController {
         List<TypeDTOResponse> resDTOs = new ArrayList<>();
         // handle each of request DTO
         reqDTOs.forEach(reqDTO -> {
-            HostelType reqModel = modelMapper.map(reqDTO, HostelType.class);
+            Type reqModel = modelMapper.map(reqDTO, Type.class);
             // set hostel group
-            HostelGroup hostelGroup = hostelGroupService.findById(groupId);
+            Group group = hostelGroupService.findById(groupId);
             // set category
             Category category = categoryService.findById(reqDTO.getCategoryId());
             // set status of type
@@ -98,24 +98,24 @@ public class HostelTypeController {
             // set images
             Collection<TypeImage> images = Arrays.stream(reqDTO.getImageUrls()).map(imgUrl -> {
                 TypeImage imgModel = TypeImage.builder().resourceUrl(imgUrl).build();
-                imgModel.setHostelType(reqModel);
+                imgModel.setType(reqModel);
                 return imgModel;
             }).collect(Collectors.toList());
             // set rooms
-            Collection<HostelRoom> rooms = Arrays.stream(reqDTO.getRoomNames()).map(room -> {
-                HostelRoom roomModel = HostelRoom.builder().roomName(room).isAvailable(true).build();
-                roomModel.setHostelType(reqModel);
+            Collection<Room> rooms = Arrays.stream(reqDTO.getRoomNames()).map(room -> {
+                Room roomModel = Room.builder().roomName(room).isAvailable(true).build();
+                roomModel.setType(reqModel);
                 return roomModel;
             }).collect(Collectors.toList());
             // set data for model
-            reqModel.setHostelRooms(rooms);
+            reqModel.setRooms(rooms);
             reqModel.setCategory(category);
             reqModel.setTypeStatus(typeStatus);
-            reqModel.setHostelGroup(hostelGroup);
+            reqModel.setGroup(group);
             reqModel.setFacilities(facilities);
             reqModel.setTypeImages(images);
             // create model
-            HostelType resModel = hostelTypeService.create(reqModel);
+            Type resModel = hostelTypeService.create(reqModel);
             // log created type
             if (resModel!= null){
                 logger.info("CREATED Type with id: " + reqModel.getTypeId());
@@ -261,7 +261,7 @@ public class HostelTypeController {
                     return true;
                 }).filter(hostelType -> {
                     if (serviceIds != null && serviceIds.length > 0)
-                        return hostelType.getHostelGroup().getServiceDetails()
+                        return hostelType.getGroup().getServiceDetails()
                                 .stream()
                                 .anyMatch(serviceDetail -> Arrays
                                         .stream(serviceIds)

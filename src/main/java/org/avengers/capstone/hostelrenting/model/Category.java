@@ -23,5 +23,5 @@ public class Category {
     private String categoryName;
 
     @OneToMany(mappedBy = "category",cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<HostelType> hostelTypes;
+    private List<Type> types;
 }

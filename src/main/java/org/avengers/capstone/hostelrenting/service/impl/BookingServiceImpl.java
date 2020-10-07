@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
-import java.util.stream.Collectors;
 
 @Service
 public class BookingServiceImpl implements BookingService {
@@ -72,7 +71,7 @@ public class BookingServiceImpl implements BookingService {
     public Booking create(BookingDTOShort reqDTO) {
         Vendor exVendor = vendorService.findById(reqDTO.getVendorId());
         Renter exRenter = renterService.findById(reqDTO.getRenterId());
-        HostelType exType = hostelTypeService.findById(reqDTO.getTypeId());
+        Type exType = hostelTypeService.findById(reqDTO.getTypeId());
 
         Booking reqModel = modelMapper.map(reqDTO, Booking.class);
 
@@ -83,7 +82,7 @@ public class BookingServiceImpl implements BookingService {
             dealService.changeStatus(dealId, Deal.STATUS.DONE);
         }
 
-        reqModel.setHostelType(exType);
+        reqModel.setType(exType);
         reqModel.setRenter(exRenter);
         reqModel.setVendor(exVendor);
         reqModel.setStatus(Booking.STATUS.INCOMING);

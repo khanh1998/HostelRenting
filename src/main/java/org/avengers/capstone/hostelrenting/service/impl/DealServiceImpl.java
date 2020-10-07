@@ -3,7 +3,7 @@ package org.avengers.capstone.hostelrenting.service.impl;
 import org.avengers.capstone.hostelrenting.dto.deal.DealDTOShort;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
 import org.avengers.capstone.hostelrenting.model.Deal;
-import org.avengers.capstone.hostelrenting.model.HostelType;
+import org.avengers.capstone.hostelrenting.model.Type;
 import org.avengers.capstone.hostelrenting.model.Renter;
 import org.avengers.capstone.hostelrenting.model.Vendor;
 import org.avengers.capstone.hostelrenting.repository.DealRepository;
@@ -88,12 +88,12 @@ public class DealServiceImpl implements DealService {
     public Deal create(DealDTOShort reqDTO) {
         Vendor existedVendor = vendorService.findById(reqDTO.getVendorId());
         Renter existedRenter = renterService.findById(reqDTO.getRenterId());
-        HostelType existedType = hostelTypeService.findById(reqDTO.getTypeId());
+        Type existedType = hostelTypeService.findById(reqDTO.getTypeId());
 
         Deal reqModel = modelMapper.map(reqDTO, Deal.class);
         reqModel.setVendor(existedVendor);
         reqModel.setRenter(existedRenter);
-        reqModel.setHostelType(existedType);
+        reqModel.setType(existedType);
         reqModel.setStatus(Deal.STATUS.CREATED);
         reqModel.setCreatedAt(System.currentTimeMillis());
 

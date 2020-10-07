@@ -1,13 +1,10 @@
 package org.avengers.capstone.hostelrenting.controller;
 
-import org.avengers.capstone.hostelrenting.dto.hostelgroup.GroupDTOResponse;
-import org.avengers.capstone.hostelrenting.dto.hostelgroup.GroupDTOCreate;
+import org.avengers.capstone.hostelrenting.dto.group.GroupDTOResponse;
+import org.avengers.capstone.hostelrenting.dto.group.GroupDTOCreate;
 import org.avengers.capstone.hostelrenting.dto.response.ApiSuccess;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
-import org.avengers.capstone.hostelrenting.model.HostelGroup;
-import org.avengers.capstone.hostelrenting.model.ServiceDetail;
-import org.avengers.capstone.hostelrenting.model.StreetWard;
-import org.avengers.capstone.hostelrenting.model.Vendor;
+import org.avengers.capstone.hostelrenting.model.*;
 import org.avengers.capstone.hostelrenting.service.*;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
@@ -69,7 +66,7 @@ public class HostelGroupController {
         // get necessary for model: vendor, address, services
         List<GroupDTOCreate> resDTOs = new ArrayList<>();
         reqDTOs.forEach(reqDTO -> {
-            HostelGroup reqModel = modelMapper.map(reqDTO, HostelGroup.class);
+            Group reqModel = modelMapper.map(reqDTO, Group.class);
             // set vendor object
             Vendor vendor = vendorService.findById(reqDTO.getVendorId());
             reqModel.setVendor(vendor);
@@ -82,13 +79,23 @@ public class HostelGroupController {
                     .map(dto -> {
                         dto.setCreatedAt(System.currentTimeMillis());
                         ServiceDetail serviceDetail = modelMapper.map(dto, ServiceDetail.class);
-                        serviceDetail.setHGroup(reqModel);
+                        serviceDetail.setGroup(reqModel);
                         return serviceDetail;
                     })
                     .collect(Collectors.toList());
             reqModel.setServiceDetails(serviceDetails);
+            // set regulation
+            Collection<GroupRegulation> regulations = reqDTO.getRegulations()
+                    .stream()
+                    .map(dto -> {
+                        GroupRegulation model = modelMapper.map(dto, GroupRegulation.class);
+                        model.setGroup(reqModel);
+                        return model;
+                    })
+                    .collect(Collectors.toList());
+            reqModel.setGroupRegulations(regulations);
 
-            HostelGroup resModel = hostelGroupService.create(reqModel);
+            Group resModel = hostelGroupService.create(reqModel);
 
             // log created group
             logger.info("CREATED Group with id: " + resModel.getGroupId());
@@ -113,7 +120,7 @@ public class HostelGroupController {
     @GetMapping("/groups/{groupId}")
     public ResponseEntity<?> getGroupById(@PathVariable Integer groupId) {
         logger.info("START - Get group with id: " + groupId);
-        HostelGroup resModel = hostelGroupService.findById(groupId);
+        Group resModel = hostelGroupService.findById(groupId);
         GroupDTOResponse resDTO = modelMapper.map(resModel, GroupDTOResponse.class);
         if (resModel != null) {
             logger.info("SUCCESSFUL - Get group by id");
@@ -137,7 +144,7 @@ public class HostelGroupController {
         //log start
         logger.info("START - Get group by vendor with id: " + vendorId);
         Vendor existedModel = vendorService.findById(vendorId);
-        List<GroupDTOResponse> resDTOs = existedModel.getHostelGroups()
+        List<GroupDTOResponse> resDTOs = existedModel.getGroups()
                 .stream()
                 .map(hostelGroup -> {
                     logger.info("RETRIEVED - groupId: " + hostelGroup.getGroupId());

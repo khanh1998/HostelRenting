@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class ContractServiceImpl implements ContractService {
@@ -77,7 +76,7 @@ public class ContractServiceImpl implements ContractService {
     public Contract create(ContractDTOShort reqDTO) {
         Vendor exVendor = vendorService.findById(reqDTO.getVendorId());
         Renter exRenter = renterService.findById(reqDTO.getVendorId());
-        HostelRoom exRoom = roomService.findById(reqDTO.getRoomId());
+        Room exRoom = roomService.findById(reqDTO.getRoomId());
 
         Contract reqModel = modelMapper.map(reqDTO, Contract.class);
 
@@ -97,7 +96,7 @@ public class ContractServiceImpl implements ContractService {
         reqModel.setStatus(Contract.STATUS.WORKING);
         reqModel.setVendor(exVendor);
         reqModel.setRenter(exRenter);
-        reqModel.setHostelRoom(exRoom);
+        reqModel.setRoom(exRoom);
         reqModel.setCreatedAt(System.currentTimeMillis());
 
         return contractRepository.save(reqModel);

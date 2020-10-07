@@ -1,11 +1,9 @@
-package org.avengers.capstone.hostelrenting.dto.hostelgroup;
+package org.avengers.capstone.hostelrenting.dto.group;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.avengers.capstone.hostelrenting.dto.ServiceDetailDTO;
-import org.avengers.capstone.hostelrenting.model.ServiceDetail;
 import org.avengers.capstone.hostelrenting.model.serialized.AddressFull;
 
 import javax.validation.constraints.NotNull;
@@ -48,5 +46,9 @@ public class GroupDTOCreate implements Serializable {
 
     private String managerPhone;
 
+    private Float downPayment;
+
     private List<ServiceDetailDTO> services;
+
+    private List<GroupRegulationDTOCreate> regulations;
 }

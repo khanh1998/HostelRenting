@@ -1,4 +1,4 @@
-package org.avengers.capstone.hostelrenting.dto.hosteltype;
+package org.avengers.capstone.hostelrenting.dto.type;
 
 import lombok.Getter;
 import lombok.Setter;

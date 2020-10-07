@@ -3,7 +3,6 @@ package org.avengers.capstone.hostelrenting.model;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.Collection;
 import java.util.Set;
 
 @Getter
@@ -45,7 +44,7 @@ public class ServiceDetail {
 
     @ManyToOne
     @JoinColumn(name = "group_id", nullable = false)
-    private HostelGroup hGroup;
+    private Group group;
 
     @ManyToMany(mappedBy = "serDetails", fetch = FetchType.LAZY)
     @EqualsAndHashCode.Exclude

@@ -24,5 +24,5 @@ public class TypeStatus {
     private String statusName;
 
     @OneToMany(mappedBy = "typeStatus", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<HostelType> hostelTypes;
+    private List<Type> types;
 }

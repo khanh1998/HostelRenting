@@ -1,7 +1,6 @@
 package org.avengers.capstone.hostelrenting.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.*;
 
 import javax.persistence.*;
@@ -30,7 +29,7 @@ public class StreetWard {
 
     @OneToMany(mappedBy = "address", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore
-    private List<HostelGroup> hostelGroups;
+    private List<Group> groups;
 
     @OneToMany(mappedBy = "address", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore

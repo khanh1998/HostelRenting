@@ -4,8 +4,6 @@ import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
-import java.util.Collection;
-import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -27,5 +25,5 @@ public class Facility {
     @ManyToMany(mappedBy = "facilities", fetch = FetchType.LAZY)
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
-    private Set<HostelType> hostelTypes;
+    private Set<Type> types;
 }

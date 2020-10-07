@@ -11,11 +11,11 @@ import javax.validation.constraints.NotBlank;
 @AllArgsConstructor
 
 @Entity
-@Table(name = "hg_schedule")
-public class HGSchedule {
+@Table(name = "group_schedule")
+public class GroupSchedule {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer hgroupScheduleId;
+    private Integer id;
 
     @ManyToOne
     @JoinColumn(name = "schedule_id", nullable = false)
@@ -23,7 +23,7 @@ public class HGSchedule {
 
     @ManyToOne
     @JoinColumn(name = "group_id", nullable = false)
-    private HostelGroup hGroup;
+    private Group group;
 
     @Column(nullable = false)
     @NotBlank(message = "Start time is mandatory")

@@ -101,8 +101,9 @@
         <!--            <AppenderRef ref="Console"/>-->
         <!--        </Logger>-->
 
-        <Root level="warn">
+        <Root level="error">
             <AppenderRef ref="Console"/>
+            <AppenderRef ref="errorLog"/>
         </Root>
 
     </Loggers>

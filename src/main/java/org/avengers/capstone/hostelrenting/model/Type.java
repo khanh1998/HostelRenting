@@ -1,15 +1,10 @@
 package org.avengers.capstone.hostelrenting.model;
 
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.util.Collection;
-import java.util.Set;
 
 @Getter
 @Setter
@@ -19,8 +14,8 @@ import java.util.Set;
 @EqualsAndHashCode
 
 @Entity
-@Table(name = "hostel_type")
-public class HostelType {
+@Table(name = "type_hostel")
+public class Type {
     @Id
     @Column(name = "type_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -60,7 +55,7 @@ public class HostelType {
 
     @ManyToOne
     @JoinColumn(name = "group_id")
-    private HostelGroup hostelGroup;
+    private Group group;
 
     @ManyToOne
     @JoinColumn(name = "category_id")
@@ -70,10 +65,10 @@ public class HostelType {
     @JoinColumn(name = "status_id")
     private TypeStatus typeStatus;
 
-    @OneToMany(mappedBy = "hostelType", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private Collection<HostelRoom> hostelRooms;
+    @OneToMany(mappedBy = "type", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Collection<Room> rooms;
 
-    @OneToMany(mappedBy = "hostelType", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "type", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Collection<TypeImage> typeImages;
 
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)

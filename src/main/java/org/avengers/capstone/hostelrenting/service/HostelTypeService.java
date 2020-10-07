@@ -1,8 +1,6 @@
 package org.avengers.capstone.hostelrenting.service;
 
-import org.avengers.capstone.hostelrenting.model.HostelGroup;
-import org.avengers.capstone.hostelrenting.model.HostelType;
-import org.springframework.data.domain.Pageable;
+import org.avengers.capstone.hostelrenting.model.Type;
 
 import java.util.Collection;
 import java.util.List;
@@ -10,11 +8,11 @@ import java.util.List;
 public interface HostelTypeService {
 
     void checkExist(Integer id);
-    HostelType findById(Integer id);
-    HostelType create(HostelType reqModel);
-    HostelType update(HostelType reqModel);
+    Type findById(Integer id);
+    Type create(Type reqModel);
+    Type update(Type reqModel);
     void deleteById(Integer id);
-    List<HostelType> findByHostelGroupId(Integer hostelGroupId);
+    List<Type> findByHostelGroupId(Integer hostelGroupId);
 
     /**
      * Get hostel types based on input factors
@@ -29,5 +27,5 @@ public interface HostelTypeService {
      * @param page page of the result
      * @return corresponding hostel types with factors
      */
-    Collection<HostelType> searchWithMainFactors(Double latitude, Double longitude, Double distance, Integer schoolId, Integer districtId, String sortBy, Boolean asc, int size, int page);
+    Collection<Type> searchWithMainFactors(Double latitude, Double longitude, Double distance, Integer schoolId, Integer districtId, String sortBy, Boolean asc, int size, int page);
 }

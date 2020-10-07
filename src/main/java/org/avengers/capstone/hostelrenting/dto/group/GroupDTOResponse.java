@@ -1,11 +1,8 @@
-package org.avengers.capstone.hostelrenting.dto.hostelgroup;
+package org.avengers.capstone.hostelrenting.dto.group;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonView;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
-import org.avengers.capstone.hostelrenting.dto.Views;
 import org.avengers.capstone.hostelrenting.model.serialized.AddressFull;
 import org.avengers.capstone.hostelrenting.model.serialized.ServiceFull;
 
@@ -43,6 +40,8 @@ public class GroupDTOResponse implements Serializable {
 
     private String imgUrl;
 
+    private float downPayment;
+
     @JsonProperty("services")
     private Collection<ServiceFull> serviceDetails;
 
@@ -59,4 +58,7 @@ public class GroupDTOResponse implements Serializable {
                                 BinaryOperator.maxBy(Comparator.comparing(ServiceFull::getCreatedAt)))
         ).values();
     }
+
+    @JsonProperty("regulations")
+    private Collection<GroupRegulationDTOResponse> groupRegulations;
 }

@@ -10,11 +10,8 @@ import org.avengers.capstone.hostelrenting.util.AddressSerializer;
 import org.avengers.capstone.hostelrenting.util.ServiceSerializer;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Getter
@@ -24,55 +21,118 @@ import java.util.stream.Collectors;
 @Builder
 
 @Entity
-@Table(name = "hostel_group")
-public class HostelGroup {
+@Table(name = "group_hostel")
+public class Group {
+    /**
+     * group id
+     */
     @Id
     @Column(name = "group_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int groupId;
 
+    /**
+     * group name
+     */
     @Column(name = "group_name", nullable = false)
     private String groupName;
 
-    @Column(name = "building_no", nullable = false)
-    private String buildingNo;
-
-//    @NotBlank(message = "Longitude is mandatory")
-    private Double longitude;
-
-//    @NotBlank(message = "Latitude is mandatory")
-    private Double latitude;
-
-    private boolean ownerJoin;
-
-    private String curfewTime;
-
-    private String imgUrl;
-
-    @OneToMany(mappedBy = "hostelGroup", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<HostelType> hostelTypes;
-
-    @OneToMany(mappedBy = "hGroup", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Collection<ServiceDetail> serviceDetails;
-
+    /**
+     * street ward object
+     */
     @ManyToOne
     @JoinColumn(name = "street_ward_id", nullable = false)
     private StreetWard address;
 
+    /**
+     * building number
+     */
+    @Column(name = "building_no", nullable = false)
+    private String buildingNo;
+
+    /**
+     * longitude of the group
+     */
+//    @NotBlank(message = "Longitude is mandatory")
+    private Double longitude;
+
+    /**
+     * latitude of the group
+     */
+//    @NotBlank(message = "Latitude is mandatory")
+    private Double latitude;
+
+    /**
+     * manager name of this group
+     */
+    private String managerName;
+
+    /**
+     * manager phone number of this group
+     */
+    private String managerPhone;
+
+    /**
+     * living in the same building with the owner or not
+     */
+    private boolean ownerJoin;
+
+    /**
+     * curfew time range. Ex: 23:00 - 05:00
+     */
+    private String curfewTime;
+
+    /**
+     * image url of hostel group
+     */
+    private String imgUrl;
+
+    /**
+     * Down payment for keeping a particular room in 7 days
+     */
+    @Column(nullable = false, columnDefinition = "float(4) DEFAULT 0")
+    private float downPayment;
+
+    /**
+     * vendor object
+     */
     @ManyToOne
     @JoinColumn(name = "vendor_id", nullable = false)
     private Vendor vendor;
 
-    @OneToMany(mappedBy = "hGroup", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Collection<HGSchedule> hgSchedules;
+    /**
+     * List of hostel types
+     */
+    @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Type> types;
 
-    private String managerName;
+    /**
+     * list of service details of group
+     */
+    @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Collection<ServiceDetail> serviceDetails;
 
-    private String managerPhone;
+    /**
+     * list of group_schedules
+     */
+    @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Collection<GroupSchedule> groupSchedules;
 
+    /**
+     * list of group_schedules
+     */
+    @OneToMany(mappedBy = "group", cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
+    private Collection<GroupRegulation> groupRegulations;
+
+    /**
+     * creating timestamp
+     */
     @Column(name = "created_at", nullable = false, updatable = false)
     private Long createdAt;
 
+    /**
+     * updating timestamp
+     */
     @Column(name = "updated_at")
     private Long updatedAt;
 
@@ -90,14 +150,18 @@ public class HostelGroup {
         mapper.registerModule(module);
         try {
             String serialized = mapper.writeValueAsString(address);
-            AddressFull serializedAddressFull = mapper.readValue(serialized, AddressFull.class);
-            return serializedAddressFull;
+            return mapper.readValue(serialized, AddressFull.class);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
         return null;
     }
 
+    /**
+     * Get service Details
+     *
+     * @return list of {@link ServiceFull} object
+     */
     public Collection<ServiceFull> getServiceDetails() {
         ObjectMapper mapper = new ObjectMapper();
         SimpleModule module = new SimpleModule();
@@ -107,13 +171,12 @@ public class HostelGroup {
 
         return serviceDetails
                 .stream()
-                .filter(serviceDetail -> serviceDetail.isActive())
+                .filter(ServiceDetail::isActive)
                 .map(service -> {
-                    String serialized = null;
+                    String serialized;
                     try {
                         serialized = mapper.writeValueAsString(service);
-                        ServiceFull serializedServiceFull = mapper.readValue(serialized, ServiceFull.class);
-                        return serializedServiceFull;
+                        return mapper.readValue(serialized, ServiceFull.class);
                     } catch (JsonProcessingException e) {
                         e.printStackTrace();
                     }
