@@ -3,7 +3,6 @@ package org.avengers.capstone.hostelrenting.dto.group;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
-import org.avengers.capstone.hostelrenting.dto.ServiceDetailDTO;
 import org.avengers.capstone.hostelrenting.model.serialized.AddressFull;
 
 import javax.validation.constraints.NotNull;
@@ -48,7 +47,7 @@ public class GroupDTOCreate implements Serializable {
 
     private Float downPayment;
 
-    private List<ServiceDetailDTO> services;
+    private List<GroupServiceDTOCreate> services;
 
     private List<GroupRegulationDTOCreate> regulations;
 }

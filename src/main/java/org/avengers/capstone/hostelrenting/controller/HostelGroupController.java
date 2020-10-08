@@ -31,7 +31,21 @@ public class HostelGroupController {
 
     private VendorService vendorService;
 
+    private RegulationService regulationService;
+
+    private ServiceService serviceService;
+
     private ModelMapper modelMapper;
+
+    @Autowired
+    public void setServiceService(ServiceService serviceService) {
+        this.serviceService = serviceService;
+    }
+
+    @Autowired
+    public void setRegulationService(RegulationService regulationService) {
+        this.regulationService = regulationService;
+    }
 
     @Autowired
     public void setStreetWardService(StreetWardService streetWardService) {
@@ -64,7 +78,7 @@ public class HostelGroupController {
     public ResponseEntity<?> createHostelGroup(@Valid @RequestBody List<GroupDTOCreate> reqDTOs) throws EntityNotFoundException {
         logger.info("START - creating group(s)");
         // get necessary for model: vendor, address, services
-        List<GroupDTOCreate> resDTOs = new ArrayList<>();
+        List<GroupDTOResponse> resDTOs = new ArrayList<>();
         reqDTOs.forEach(reqDTO -> {
             Group reqModel = modelMapper.map(reqDTO, Group.class);
             // set vendor object
@@ -74,33 +88,49 @@ public class HostelGroupController {
             StreetWard address = streetWardService.findByStreetIdAndWardId(reqDTO.getAddressFull().getStreetId(), reqDTO.getAddressFull().getWardId());
             reqModel.setAddress(address);
             // set services object
-            Collection<ServiceDetail> serviceDetails = reqDTO.getServices()
-                    .stream()
-                    .map(dto -> {
-                        dto.setCreatedAt(System.currentTimeMillis());
-                        ServiceDetail serviceDetail = modelMapper.map(dto, ServiceDetail.class);
-                        serviceDetail.setGroup(reqModel);
-                        return serviceDetail;
-                    })
-                    .collect(Collectors.toList());
-            reqModel.setServiceDetails(serviceDetails);
+            if (reqDTO.getServices() != null) {
+                Collection<GroupService> groupServices = reqDTO.getServices()
+                        .stream()
+                        .map(dto -> {
+                            GroupService groupService = GroupService.builder()
+                                    .createdAt(System.currentTimeMillis())
+                                    .group(reqModel)
+                                    .priceUnit(dto.getPriceUnit())
+                                    .price(dto.getPrice())
+                                    .timeUnit(dto.getTimeUnit())
+                                    .userUnit(dto.getUserUnit())
+                                    .service(serviceService.findById(dto.getServiceId()))
+                                    .isActive(true)
+                                    .isRequired(true)
+                                    .build();
+                            return groupService;
+                        })
+                        .collect(Collectors.toList());
+                reqModel.setGroupServices(groupServices);
+            }
             // set regulation
-            Collection<GroupRegulation> regulations = reqDTO.getRegulations()
-                    .stream()
-                    .map(dto -> {
-                        GroupRegulation model = modelMapper.map(dto, GroupRegulation.class);
-                        model.setGroup(reqModel);
-                        return model;
-                    })
-                    .collect(Collectors.toList());
-            reqModel.setGroupRegulations(regulations);
+            if (reqDTO.getRegulations() != null) {
+                Collection<GroupRegulation> regulations = reqDTO.getRegulations()
+                        .stream()
+                        .map(dto -> {
+                            GroupRegulation model = GroupRegulation.builder()
+                                    .group(reqModel)
+                                    .isActive(dto.isActive())
+                                    .isAllowed(dto.isAllowed())
+                                    .regulation(regulationService.findById(dto.getRegulationId()))
+                                    .build();
+                            return model;
+                        })
+                        .collect(Collectors.toList());
+                reqModel.setGroupRegulations(regulations);
+            }
 
             Group resModel = hostelGroupService.create(reqModel);
 
             // log created group
             logger.info("CREATED Group with id: " + resModel.getGroupId());
 
-            GroupDTOCreate resDTO = modelMapper.map(resModel, GroupDTOCreate.class);
+            GroupDTOResponse resDTO = modelMapper.map(resModel, GroupDTOResponse.class);
             resDTOs.add(resDTO);
         });
 

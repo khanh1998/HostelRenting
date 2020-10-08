@@ -109,5 +109,5 @@ public class Contract {
             joinColumns = @JoinColumn(name = "contractId"),
             inverseJoinColumns = @JoinColumn(name = "serDetailId")
     )
-    private Collection<ServiceDetail> serDetails;
+    private Collection<GroupService> serDetails;
 }

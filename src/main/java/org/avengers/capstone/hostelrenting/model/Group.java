@@ -110,7 +110,7 @@ public class Group {
      * list of service details of group
      */
     @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Collection<ServiceDetail> serviceDetails;
+    private Collection<GroupService> groupServices;
 
     /**
      * list of group_schedules
@@ -121,7 +121,7 @@ public class Group {
     /**
      * list of group_schedules
      */
-    @OneToMany(mappedBy = "group", cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Collection<GroupRegulation> groupRegulations;
 
     /**
@@ -162,16 +162,16 @@ public class Group {
      *
      * @return list of {@link ServiceFull} object
      */
-    public Collection<ServiceFull> getServiceDetails() {
+    public Collection<ServiceFull> getGroupServices() {
         ObjectMapper mapper = new ObjectMapper();
         SimpleModule module = new SimpleModule();
 
-        module.addSerializer(ServiceDetail.class, new ServiceSerializer());
+        module.addSerializer(GroupService.class, new ServiceSerializer());
         mapper.registerModule(module);
 
-        return serviceDetails
+        return groupServices
                 .stream()
-                .filter(ServiceDetail::isActive)
+                .filter(GroupService::isActive)
                 .map(service -> {
                     String serialized;
                     try {

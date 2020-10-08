@@ -14,7 +14,6 @@ import java.io.Serializable;
 @Setter
 public class GroupRegulationDTOCreate implements Serializable {
     private int regulationId;
-    private float finePayment;
     private boolean isAllowed;
     private boolean isActive;
 }

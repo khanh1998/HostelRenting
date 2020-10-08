@@ -42,22 +42,25 @@ public class GroupDTOResponse implements Serializable {
 
     private float downPayment;
 
-    @JsonProperty("services")
-    private Collection<ServiceFull> serviceDetails;
+//    @JsonProperty("services")
+//    private Collection<ServiceFull> serviceDetails;
+//
+//    /**
+//     * Transform service to display
+//     *
+//     */
+//    public void getGroupServices() {
+//        groupServices = this.groupServices
+//                .stream()
+//                .collect(Collectors
+//                        .toMap(ServiceFull::getServiceId,
+//                                Function.identity(),
+//                                BinaryOperator.maxBy(Comparator.comparing(ServiceFull::getCreatedAt)))
+//        ).values();
+//    }
 
-    /**
-     * Transform service to display
-     *
-     */
-    public void getServiceForDisplay() {
-        serviceDetails = this.serviceDetails
-                .stream()
-                .collect(Collectors
-                        .toMap(ServiceFull::getServiceId,
-                                Function.identity(),
-                                BinaryOperator.maxBy(Comparator.comparing(ServiceFull::getCreatedAt)))
-        ).values();
-    }
+    @JsonProperty("services")
+    private Collection<ServiceFull> groupServices;
 
     @JsonProperty("regulations")
     private Collection<GroupRegulationDTOResponse> groupRegulations;

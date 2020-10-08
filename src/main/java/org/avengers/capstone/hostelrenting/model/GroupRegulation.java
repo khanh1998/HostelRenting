@@ -1,9 +1,6 @@
 package org.avengers.capstone.hostelrenting.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 
@@ -14,6 +11,7 @@ import javax.persistence.*;
  */
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 
@@ -40,12 +38,6 @@ public class GroupRegulation {
     @ManyToOne
     @JoinColumn(name = "regulation_id", nullable = false)
     private Regulation regulation;
-
-    /**
-     * fine payment when the renter violate
-     */
-    @Column(columnDefinition = "float(4) default 0")
-    private float finePayment;
 
     /**
      * define the regulation is allowed or not

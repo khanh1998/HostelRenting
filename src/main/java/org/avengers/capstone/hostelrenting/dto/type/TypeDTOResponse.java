@@ -21,7 +21,6 @@ public class TypeDTOResponse implements Serializable {
     private CategoryDTO category;
     private TypeStatusDTO typeStatus;
     private float price;
-    private String priceUnit;
     private float superficiality;
     private int capacity;
     private int view;
