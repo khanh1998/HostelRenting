@@ -4,7 +4,7 @@
 # https://docs.microsoft.com/azure/devops/pipelines/languages/java
 
 trigger:
-- master
+- development
 
 variables:
 
@@ -12,10 +12,10 @@ variables:
   azureSubscription: '6fa5bc09-252c-4f98-b99e-eaf6bc7a2673'
   
   # Web app name
-  webAppName: 'youthhostel-api'
+  webAppName: 'youthhosteldev-api'
 
   # Environment name
-  environmentName: 'youthhostel-api'
+  environmentName: 'youthhosteldev-api'
   
   # Agent VM image name
   vmImageName: 'ubuntu-latest'
