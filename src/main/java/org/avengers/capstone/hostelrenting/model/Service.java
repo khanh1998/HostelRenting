@@ -4,11 +4,10 @@ import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.util.Collection;
-import java.util.Set;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 
@@ -24,5 +23,5 @@ public class Service {
     private String serviceName;
 
     @OneToMany(mappedBy = "service", fetch = FetchType.LAZY)
-    private Collection<ServiceDetail> serviceDetails;
+    private Collection<GroupService> groupServices;
 }

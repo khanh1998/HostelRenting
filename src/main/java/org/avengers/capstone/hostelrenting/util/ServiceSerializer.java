@@ -3,14 +3,12 @@ package org.avengers.capstone.hostelrenting.util;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import org.avengers.capstone.hostelrenting.model.ServiceDetail;
+import org.avengers.capstone.hostelrenting.model.GroupService;
 
 import java.io.IOException;
 
-public class ServiceSerializer extends StdSerializer<ServiceDetail> {
-    public ServiceSerializer(Class<ServiceDetail> t) {
+public class ServiceSerializer extends StdSerializer<GroupService> {
+    public ServiceSerializer(Class<GroupService> t) {
         super(t);
     }
 
@@ -19,7 +17,7 @@ public class ServiceSerializer extends StdSerializer<ServiceDetail> {
     }
 
     @Override
-    public void serialize(ServiceDetail value, JsonGenerator gen, SerializerProvider provider) throws IOException {
+    public void serialize(GroupService value, JsonGenerator gen, SerializerProvider provider) throws IOException {
         gen.writeStartObject();
         gen.writeNumberField("serviceId",value.getService().getServiceId());
         gen.writeStringField("serviceName", value.getService().getServiceName());

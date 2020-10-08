@@ -34,7 +34,7 @@ public class StatisticServiceImpl implements StatisticService {
     }
 
     @Override
-    public List<StatisticDTO> getStatisticByStreetIds(Integer[] ids) {
+    public List<StatisticDTO> getStatisticByStreetWardIds(Integer[] ids) {
         Arrays.stream(ids).forEach(id -> streetService.checkExist(id));
         String idStr = "";
         for (int i = 0; i < ids.length; i++) {
@@ -44,7 +44,7 @@ public class StatisticServiceImpl implements StatisticService {
             }
         }
 
-        return repository.findByStreetId(idStr)
+        return repository.findByStreetWardId(idStr)
                 .stream()
                 .map(s -> modelMapper.map(s, StatisticDTO.class))
                 .collect(Collectors.toList());

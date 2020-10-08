@@ -49,7 +49,7 @@ public class TypeImageServiceImp implements TypeImageService {
 
     @Override
     public TypeImage findByIdAndHostelTypeId(Integer imageId, Integer typeId) {
-        return typeImageRepository.findByImageIdAndHostelType_TypeId(imageId, typeId);
+        return typeImageRepository.findByImageIdAndType_TypeId(imageId, typeId);
     }
 
     private boolean isNotFound(Integer id) {

@@ -1,6 +1,6 @@
 package org.avengers.capstone.hostelrenting.repository;
 
-import org.avengers.capstone.hostelrenting.model.ServiceDetail;
+import org.avengers.capstone.hostelrenting.model.GroupService;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -10,5 +10,5 @@ import org.springframework.stereotype.Repository;
  * @project youthhostelapp
  */
 @Repository
-public interface ServiceDetailRepository extends JpaRepository<ServiceDetail, Integer> {
+public interface ServiceDetailRepository extends JpaRepository<GroupService, Integer> {
 }

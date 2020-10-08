@@ -3,16 +3,17 @@ package org.avengers.capstone.hostelrenting.model;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.Collection;
 import java.util.Set;
 
-@Data
+@Getter
+@Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 
 @Entity
-@Table(name = "service_detail")
-public class ServiceDetail {
+@Table(name = "group_service")
+public class GroupService {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer serDetailId;
@@ -29,10 +30,10 @@ public class ServiceDetail {
     @Column(nullable = false, columnDefinition = "varchar(10) default 'phòng'")
     private String userUnit;
 
-    @Column(nullable = false, columnDefinition = "boolean default false")
+    @Column(nullable = false, columnDefinition = "bool default true")
     private boolean isRequired;
 
-    @Column(nullable = false, columnDefinition = "boolean default true")
+    @Column(nullable = false, columnDefinition = "bool default true")
     private boolean isActive;
 
     @Column(nullable = false)
@@ -44,7 +45,7 @@ public class ServiceDetail {
 
     @ManyToOne
     @JoinColumn(name = "group_id", nullable = false)
-    private HostelGroup hGroup;
+    private Group group;
 
     @ManyToMany(mappedBy = "serDetails", fetch = FetchType.LAZY)
     @EqualsAndHashCode.Exclude

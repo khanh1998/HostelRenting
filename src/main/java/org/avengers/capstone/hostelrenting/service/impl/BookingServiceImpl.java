@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
-import java.util.stream.Collectors;
 
 @Service
 public class BookingServiceImpl implements BookingService {
@@ -59,8 +58,6 @@ public class BookingServiceImpl implements BookingService {
         Optional<Booking> model = bookingRepository.findById(id);
         if (model.isEmpty())
             throw new EntityNotFoundException(Booking.class, "id", id.toString());
-        else if (model.get().isDeleted())
-            throw new EntityNotFoundException(Booking.class, "id", id.toString());
     }
 
     @Override
@@ -74,7 +71,7 @@ public class BookingServiceImpl implements BookingService {
     public Booking create(BookingDTOShort reqDTO) {
         Vendor exVendor = vendorService.findById(reqDTO.getVendorId());
         Renter exRenter = renterService.findById(reqDTO.getRenterId());
-        HostelType exType = hostelTypeService.findById(reqDTO.getTypeId());
+        Type exType = hostelTypeService.findById(reqDTO.getTypeId());
 
         Booking reqModel = modelMapper.map(reqDTO, Booking.class);
 
@@ -85,7 +82,7 @@ public class BookingServiceImpl implements BookingService {
             dealService.changeStatus(dealId, Deal.STATUS.DONE);
         }
 
-        reqModel.setHostelType(exType);
+        reqModel.setType(exType);
         reqModel.setRenter(exRenter);
         reqModel.setVendor(exVendor);
         reqModel.setStatus(Booking.STATUS.INCOMING);
@@ -117,17 +114,6 @@ public class BookingServiceImpl implements BookingService {
         return null;
     }
 
-    @Override
-    public void delete(Integer id) {
-        checkActive(id);
-        Booking exModel = bookingRepository.getOne(id);
-        if (exModel.isDeleted())
-            throw new EntityNotFoundException(Booking.class, "id", id.toString());
-        exModel.setDeleted(true);
-        setUpdatedTime(exModel);
-        bookingRepository.save(exModel);
-    }
-
     /**
      * Get list of bookings by given renter id
      *
@@ -138,10 +124,7 @@ public class BookingServiceImpl implements BookingService {
     public List<Booking> findByRenterId(Long renterId) {
         renterService.checkExist(renterId);
 
-        return renterService.findById(renterId).getBookings()
-                .stream()
-                .filter(booking -> !booking.isDeleted())
-                .collect(Collectors.toList());
+        return renterService.findById(renterId).getBookings();
     }
 
     /**
@@ -153,10 +136,7 @@ public class BookingServiceImpl implements BookingService {
     public List<Booking> findByVendorId(Long vendorId) {
         vendorService.checkExist(vendorId);
 
-        return vendorService.findById(vendorId).getBookings()
-                .stream()
-                .filter(booking -> !booking.isDeleted())
-                .collect(Collectors.toList());
+        return vendorService.findById(vendorId).getBookings();
     }
 
     @Override

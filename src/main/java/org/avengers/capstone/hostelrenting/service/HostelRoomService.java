@@ -1,14 +1,14 @@
 package org.avengers.capstone.hostelrenting.service;
 
-import org.avengers.capstone.hostelrenting.model.HostelRoom;
+import org.avengers.capstone.hostelrenting.model.Room;
 
 import java.util.List;
 
 public interface HostelRoomService {
-    HostelRoom findById(Integer id);
-    List<HostelRoom> findAll();
-    HostelRoom save(HostelRoom hostelRoom);
+    Room findById(Integer id);
+    List<Room> findAll();
+    Room save(Room room);
     void deleteById(Integer id);
 
-    HostelRoom findByIdAndHostelTypeId(Integer hostelRoomId, Integer hostelTypeId);
+    Room findByIdAndHostelTypeId(Integer hostelRoomId, Integer hostelTypeId);
 }
