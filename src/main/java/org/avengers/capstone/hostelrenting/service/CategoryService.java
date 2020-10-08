@@ -1,6 +1,7 @@
 package org.avengers.capstone.hostelrenting.service;
 
 import org.avengers.capstone.hostelrenting.dto.CategoryDTO;
+import org.avengers.capstone.hostelrenting.model.Category;
 
 import java.util.List;
 
@@ -18,4 +19,6 @@ public interface CategoryService {
      * @return list of DTOs
      */
     List<CategoryDTO> getAll();
+
+    Category findById(Integer id);
 }

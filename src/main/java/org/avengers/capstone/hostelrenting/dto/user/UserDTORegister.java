@@ -1,6 +1,8 @@
 package org.avengers.capstone.hostelrenting.dto.user;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.validation.constraints.NotEmpty;
 
@@ -9,7 +11,8 @@ import javax.validation.constraints.NotEmpty;
  * @created 29/09/2020 - 10:09
  * @project youthhostelapp
  */
-@Data
+@Getter
+@Setter
 public class UserDTORegister {
     @NotEmpty(message = "Username is mandatory")
     private String username;

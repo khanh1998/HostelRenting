@@ -1,14 +1,12 @@
 package org.avengers.capstone.hostelrenting.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
-@Data
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -28,7 +26,7 @@ public class Deal {
 
     @ManyToOne
     @JoinColumn(name = "type_id", nullable = false)
-    private HostelType hostelType;
+    private Type type;
 
     @ManyToOne
     @JoinColumn(name = "vendor_id", nullable = false)
@@ -48,6 +46,4 @@ public class Deal {
     @Column(name = "updated_at")
     private Long updatedAt;
 
-    @Column(columnDefinition = "boolean default false")
-    private boolean isDeleted;
 }

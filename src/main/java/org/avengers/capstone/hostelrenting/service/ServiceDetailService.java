@@ -1,6 +1,6 @@
 package org.avengers.capstone.hostelrenting.service;
 
-import org.avengers.capstone.hostelrenting.model.ServiceDetail;
+import org.avengers.capstone.hostelrenting.model.GroupService;
 
 /**
  * @author duattt on 9/26/20
@@ -8,5 +8,5 @@ import org.avengers.capstone.hostelrenting.model.ServiceDetail;
  * @project youthhostelapp
  */
 public interface ServiceDetailService {
-    ServiceDetail create(ServiceDetail serviceDetail);
+    GroupService create(GroupService groupService);
 }

@@ -27,8 +27,8 @@ public class StatisticController {
 
 
     @GetMapping("/statistic")
-    public ResponseEntity<?> getStatistic(@RequestParam Integer[] streetIds) {
-        List<StatisticDTO> resDTOs = statisticService.getStatisticByStreetIds(streetIds);
+    public ResponseEntity<?> getStatisticByStreetIds(@RequestParam Integer[] streetIds) {
+        List<StatisticDTO> resDTOs = statisticService.getStatisticByStreetWardIds(streetIds);
         ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTOs, "Get statistic successfully!");
 
         return ResponseEntity.ok(apiSuccess);

@@ -1,22 +1,21 @@
 package org.avengers.capstone.hostelrenting.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 
 @Entity
-@Table(name = "hg_schedule")
-public class HGSchedule {
+@Table(name = "group_schedule")
+public class GroupSchedule {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer hgroupScheduleId;
+    private Integer id;
 
     @ManyToOne
     @JoinColumn(name = "schedule_id", nullable = false)
@@ -24,7 +23,7 @@ public class HGSchedule {
 
     @ManyToOne
     @JoinColumn(name = "group_id", nullable = false)
-    private HostelGroup hGroup;
+    private Group group;
 
     @Column(nullable = false)
     @NotBlank(message = "Start time is mandatory")

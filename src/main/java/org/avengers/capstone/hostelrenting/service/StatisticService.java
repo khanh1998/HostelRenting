@@ -5,5 +5,5 @@ import org.avengers.capstone.hostelrenting.dto.StatisticDTO;
 import java.util.List;
 
 public interface StatisticService {
-    List<StatisticDTO> getStatisticByStreetIds(Integer[] ids);
+    List<StatisticDTO> getStatisticByStreetWardIds(Integer[] ids);
 }

@@ -1,25 +1,19 @@
 package org.avengers.capstone.hostelrenting.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.avengers.capstone.hostelrenting.dto.contract.ContractDTOFull;
+import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import java.util.List;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 
 @Entity
-@Table(name = "hostel_room")
-public class HostelRoom {
+@Table(name = "room_hostel")
+public class Room {
     @Id
     @Column(name = "room_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,7 +25,7 @@ public class HostelRoom {
 
     @ManyToOne
     @JoinColumn(name = "type_id", nullable = false)
-    private HostelType hostelType;
+    private Type type;
 
     @Column(name = "is_available", nullable = false, columnDefinition = "boolean default true")
     private boolean isAvailable;

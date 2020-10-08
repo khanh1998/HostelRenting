@@ -1,13 +1,13 @@
 package org.avengers.capstone.hostelrenting.dto;
 
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.avengers.capstone.hostelrenting.model.HostelType;
+import lombok.Setter;
 
 import java.io.Serializable;
-import java.util.List;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 public class CategoryDTO implements Serializable {
     private Integer categoryId;

@@ -11,5 +11,5 @@ import java.util.List;
 public interface StatisticRepository extends JpaRepository<Statistic, Integer> {
 
     @Query(value = "SELECT * FROM get_street_statistic(?1)", nativeQuery = true)
-    List<Statistic> findByStreetId(String ids);
+    List<Statistic> findByStreetWardId(String ids);
 }
