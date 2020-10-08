@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class ContractServiceImpl implements ContractService {
@@ -64,8 +63,6 @@ public class ContractServiceImpl implements ContractService {
         Optional<Contract> model = contractRepository.findById(id);
         if (model.isEmpty())
             throw new EntityNotFoundException(Contract.class, "id", id.toString());
-        else if (model.get().isDeleted())
-            throw new EntityNotFoundException(Contract.class, "id", id.toString());
     }
 
     @Override
@@ -79,7 +76,7 @@ public class ContractServiceImpl implements ContractService {
     public Contract create(ContractDTOShort reqDTO) {
         Vendor exVendor = vendorService.findById(reqDTO.getVendorId());
         Renter exRenter = renterService.findById(reqDTO.getVendorId());
-        HostelRoom exRoom = roomService.findById(reqDTO.getRoomId());
+        Room exRoom = roomService.findById(reqDTO.getRoomId());
 
         Contract reqModel = modelMapper.map(reqDTO, Contract.class);
 
@@ -96,9 +93,10 @@ public class ContractServiceImpl implements ContractService {
             bookingService.changeStatus(bookingId, Booking.STATUS.DONE);
         }
 
+        reqModel.setStatus(Contract.STATUS.WORKING);
         reqModel.setVendor(exVendor);
         reqModel.setRenter(exRenter);
-        reqModel.setHostelRoom(exRoom);
+        reqModel.setRoom(exRoom);
         reqModel.setCreatedAt(System.currentTimeMillis());
 
         return contractRepository.save(reqModel);
@@ -107,17 +105,6 @@ public class ContractServiceImpl implements ContractService {
     @Override
     public Contract update(ContractDTOShort reqDTO) {
         return null;
-    }
-
-    @Override
-    public void delete(Integer id) {
-        checkActive(id);
-        Contract exModel = contractRepository.getOne(id);
-        if (exModel.isDeleted())
-            throw new EntityNotFoundException(Contract.class, "id", id.toString());
-        exModel.setDeleted(true);
-        setUpdatedTime(exModel);
-        contractRepository.save(exModel);
     }
 
     /**
@@ -130,10 +117,7 @@ public class ContractServiceImpl implements ContractService {
     public List<Contract> findByRenterId(Long renterId) {
         renterService.checkExist(renterId);
 
-        return renterService.findById(renterId).getContracts()
-                .stream()
-                .filter(contract -> !contract.isDeleted())
-                .collect(Collectors.toList());
+        return renterService.findById(renterId).getContracts();
     }
 
     /**
@@ -146,10 +130,7 @@ public class ContractServiceImpl implements ContractService {
     public List<Contract> findByVendorId(Long vendorId) {
         vendorService.checkExist(vendorId);
 
-        return vendorService.findById(vendorId).getContracts()
-                .stream()
-                .filter(contract -> !contract.isDeleted())
-                .collect(Collectors.toList());
+        return vendorService.findById(vendorId).getContracts();
     }
 
     private void setUpdatedTime(Contract exModel){

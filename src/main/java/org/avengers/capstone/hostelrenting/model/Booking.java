@@ -1,13 +1,11 @@
 package org.avengers.capstone.hostelrenting.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 
@@ -22,7 +20,7 @@ public class Booking {
 
     @ManyToOne
     @JoinColumn(name = "type_id", nullable = false)
-    private HostelType hostelType;
+    private Type type;
 
     @ManyToOne
     @JoinColumn(name = "vendor_id", nullable = false)
@@ -45,13 +43,9 @@ public class Booking {
     @Column(nullable = false)
     private Long meetTime;
 
-
     @Column(name = "created_at", nullable = false, updatable = false)
     private Long createdAt;
 
     @Column(name = "updated_at")
     private Long updatedAt;
-
-    @Column(columnDefinition = "boolean default false")
-    private boolean isDeleted;
 }

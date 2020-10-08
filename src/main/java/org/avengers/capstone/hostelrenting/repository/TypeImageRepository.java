@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface TypeImageRepository extends JpaRepository<TypeImage, Integer> {
-    TypeImage findByImageIdAndHostelType_TypeId(Integer imageId, Integer typeId);
+    TypeImage findByImageIdAndType_TypeId(Integer imageId, Integer typeId);
 }

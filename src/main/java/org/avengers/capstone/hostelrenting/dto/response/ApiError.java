@@ -5,10 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.avengers.capstone.hostelrenting.handler.LowerCaseClassNameResolver;
 import org.hibernate.validator.internal.engine.path.PathImpl;
 import org.springframework.http.HttpStatus;
@@ -22,7 +19,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-@Data
+@Getter
+@Setter
 //@JsonTypeInfo(include = JsonTypeInfo.As.EXTERNAL_PROPERTY, use = JsonTypeInfo.Id.CUSTOM, property = "success", visible = true)
 @JsonTypeIdResolver(LowerCaseClassNameResolver.class)
 @JsonInclude(JsonInclude.Include.NON_NULL)

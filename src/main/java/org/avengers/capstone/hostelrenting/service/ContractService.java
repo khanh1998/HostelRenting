@@ -13,7 +13,6 @@ public interface ContractService {
     Contract findById(Integer id);
     Contract create(ContractDTOShort reqDTO);
     Contract update(ContractDTOShort reqDTO);
-    void delete(Integer id);
     List<Contract> findByRenterId(Long renterId);
     List<Contract> findByVendorId(Long vendorId);
 

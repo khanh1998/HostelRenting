@@ -1,11 +1,14 @@
 package org.avengers.capstone.hostelrenting.dto;
 
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.io.Serializable;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 public class StatisticDTO implements Serializable {
     private int id;

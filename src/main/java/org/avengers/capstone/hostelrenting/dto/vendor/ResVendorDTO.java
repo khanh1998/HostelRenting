@@ -2,11 +2,14 @@ package org.avengers.capstone.hostelrenting.dto.vendor;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.avengers.capstone.hostelrenting.dto.user.UserDTOFull;
 
 import java.io.Serializable;
 
-@Data
+@Getter
+@Setter
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ResVendorDTO extends UserDTOFull implements Serializable {
 

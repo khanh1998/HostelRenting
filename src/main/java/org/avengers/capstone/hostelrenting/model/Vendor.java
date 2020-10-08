@@ -5,7 +5,8 @@ import lombok.*;
 import javax.persistence.*;
 import java.util.List;
 
-@Data
+@Getter
+@Setter
 //@Builder
 @EqualsAndHashCode(callSuper = false)
 @Entity
@@ -16,7 +17,7 @@ public class Vendor extends User{
         contracts = null;
         deals = null;
         bookings = null;
-        hostelGroups = null;
+        groups = null;
     }
 
     @OneToMany(mappedBy = "vendor", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -29,5 +30,5 @@ public class Vendor extends User{
     private List<Booking> bookings;
 
     @OneToMany(mappedBy = "vendor", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<HostelGroup> hostelGroups;
+    private List<Group> groups;
 }

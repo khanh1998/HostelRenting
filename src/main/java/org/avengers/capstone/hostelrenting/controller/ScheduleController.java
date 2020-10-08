@@ -1,15 +1,12 @@
 package org.avengers.capstone.hostelrenting.controller;
 
-import com.fasterxml.jackson.annotation.JsonView;
-import io.swagger.models.Response;
 import org.avengers.capstone.hostelrenting.dto.HGScheduleDTO;
 import org.avengers.capstone.hostelrenting.dto.ScheduleDTO;
-import org.avengers.capstone.hostelrenting.dto.Views;
-import org.avengers.capstone.hostelrenting.dto.hostelgroup.HostelGroupDTOShort;
+import org.avengers.capstone.hostelrenting.dto.group.GroupDTOCreate;
 import org.avengers.capstone.hostelrenting.dto.response.ApiSuccess;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
-import org.avengers.capstone.hostelrenting.model.HGSchedule;
-import org.avengers.capstone.hostelrenting.model.HostelGroup;
+import org.avengers.capstone.hostelrenting.model.GroupSchedule;
+import org.avengers.capstone.hostelrenting.model.Group;
 import org.avengers.capstone.hostelrenting.model.Schedule;
 import org.avengers.capstone.hostelrenting.service.HostelGroupService;
 import org.avengers.capstone.hostelrenting.service.ScheduleService;
@@ -22,14 +19,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.*;
-import java.util.function.BinaryOperator;
-import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static org.avengers.capstone.hostelrenting.Constant.Message.*;
-import static org.avengers.capstone.hostelrenting.Constant.Pagination.DEFAULT_PAGE;
-import static org.avengers.capstone.hostelrenting.Constant.Pagination.DEFAULT_SIZE;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -73,13 +65,13 @@ public class ScheduleController {
 
     @GetMapping("/groups/{groupId}/schedules")
     public ResponseEntity<?> getScheduleByGroupId(@PathVariable Integer groupId) {
-        HostelGroup hgroupModel = hostelGroupService.findById(groupId);
-        Collection<HGSchedule> HGSchedules = hgroupModel.getHgSchedules();
-        Collection<ScheduleDTO> scheduleDTOs = HGSchedules.stream()
-                .map(hgSchedule -> {
-                    ScheduleDTO dto = modelMapper.map(hgSchedule.getSchedule(), ScheduleDTO.class);
-                    dto.setStartTime(hgSchedule.getStartTime());
-                    dto.setEndTime(hgSchedule.getEndTime());
+        Group hgroupModel = hostelGroupService.findById(groupId);
+        Collection<GroupSchedule> GroupSchedules = hgroupModel.getGroupSchedules();
+        Collection<ScheduleDTO> scheduleDTOs = GroupSchedules.stream()
+                .map(groupSchedule -> {
+                    ScheduleDTO dto = modelMapper.map(groupSchedule.getSchedule(), ScheduleDTO.class);
+                    dto.setStartTime(groupSchedule.getStartTime());
+                    dto.setEndTime(groupSchedule.getEndTime());
                     return dto;
                 })
                 .collect(Collectors.toList());
@@ -108,7 +100,7 @@ public class ScheduleController {
 
         HGScheduleDTO resDTO = new HGScheduleDTO();
         resDTO.setSchedules(scheduleDTOs);
-        resDTO.setHGroup(modelMapper.map(hgroupModel, HostelGroupDTOShort.class));
+        resDTO.setHGroup(modelMapper.map(hgroupModel, GroupDTOCreate.class));
 
         ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTO, "Your schedule has been retrieved successfully!");
 
