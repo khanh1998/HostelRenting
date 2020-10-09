@@ -1,15 +1,13 @@
 package org.avengers.capstone.hostelrenting.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.util.List;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 
@@ -25,5 +23,5 @@ public class Category {
     private String categoryName;
 
     @OneToMany(mappedBy = "category",cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<HostelType> hostelTypes;
+    private List<Type> types;
 }

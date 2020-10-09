@@ -10,7 +10,6 @@ public interface BookingService {
     Booking findById(Integer id);
     Booking create(BookingDTOShort reqDTO);
     Booking update(BookingDTOShort reqDTO);
-    void delete(Integer id);
     List<Booking> findByRenterId(Long renterId);
     List<Booking> findByVendorId(Long vendorId);
 

@@ -10,7 +10,6 @@ public interface DealService {
     Deal findById(Integer id);
     Deal create(DealDTOShort reqDTO);
     Deal update(DealDTOShort reqDTO);
-    void delete(Integer id);
     List<Deal> findByRenterId(Long renterId);
     List<Deal> findByVendorId(Long vendorId);
 

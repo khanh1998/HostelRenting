@@ -3,6 +3,8 @@ package org.avengers.capstone.hostelrenting.dto.user;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 import org.avengers.capstone.hostelrenting.dto.RoleDTO;
 import org.avengers.capstone.hostelrenting.dto.Views;
@@ -11,7 +13,8 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import java.io.Serializable;
 
-@Data
+@Getter
+@Setter
 
 public class UserDTOFull implements Serializable {
     private Long userId;

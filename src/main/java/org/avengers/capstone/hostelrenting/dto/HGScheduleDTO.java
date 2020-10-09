@@ -1,13 +1,15 @@
 
 package org.avengers.capstone.hostelrenting.dto;
 
-import lombok.Data;
-import org.avengers.capstone.hostelrenting.dto.hostelgroup.HostelGroupDTOShort;
+import lombok.Getter;
+import lombok.Setter;
+import org.avengers.capstone.hostelrenting.dto.group.GroupDTOCreate;
 
 import java.util.Collection;
 
-@Data
+@Getter
+@Setter
 public class HGScheduleDTO {
     private Collection<ScheduleDTO> schedules;
-    private HostelGroupDTOShort hGroup;;
+    private GroupDTOCreate hGroup;;
 }

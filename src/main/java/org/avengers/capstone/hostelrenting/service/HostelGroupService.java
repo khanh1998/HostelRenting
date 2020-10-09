@@ -1,11 +1,11 @@
 package org.avengers.capstone.hostelrenting.service;
 
-import org.avengers.capstone.hostelrenting.model.HostelGroup;
+import org.avengers.capstone.hostelrenting.model.Group;
 
 public interface HostelGroupService {
     void checkExist(Integer id);
-    HostelGroup findById(Integer id);
-    HostelGroup create(HostelGroup reqModel);
-    HostelGroup update(HostelGroup reqModel);
-    void delete(Integer id);
+    Group findById(Integer id);
+    Group create(Group reqModel);
+    Group update(Group reqModel);
+    void deleteById(Integer id);
 }

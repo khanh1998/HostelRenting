@@ -2,7 +2,9 @@ package org.avengers.capstone.hostelrenting.dto.ward;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.avengers.capstone.hostelrenting.dto.StreetDTO;
 import org.avengers.capstone.hostelrenting.dto.StreetWardDTO;
 import org.avengers.capstone.hostelrenting.model.Street;
@@ -13,7 +15,8 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 public class WardDTOFull extends WardDTOShort {
     @JsonProperty("streets")
