@@ -4,7 +4,7 @@
 # https://docs.microsoft.com/azure/devops/pipelines/languages/java
 
 trigger:
-- development
+- Prod-deployment
 
 variables:
 
@@ -12,10 +12,10 @@ variables:
   azureSubscription: '6fa5bc09-252c-4f98-b99e-eaf6bc7a2673'
   
   # Web app name
-  webAppName: 'youthhosteldev-api'
+  webAppName: 'youthhostelapi'
 
   # Environment name
-  environmentName: 'youthhosteldev-api'
+  environmentName: 'youthhostelapi'
   
   # Agent VM image name
   vmImageName: 'ubuntu-latest'
@@ -61,7 +61,7 @@ stages:
         deploy:
           steps:
           - task: AzureWebApp@1
-            displayName: 'Azure Web App Deploy: youthhostel-api'
+            displayName: 'Azure Web App Deploy: youthhostelapi'
             inputs:
               azureSubscription: $(azureSubscription)
               appType: webAppLinux
