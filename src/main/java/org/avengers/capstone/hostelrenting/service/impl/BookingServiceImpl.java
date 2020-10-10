@@ -3,7 +3,7 @@ package org.avengers.capstone.hostelrenting.service.impl;
 import org.avengers.capstone.hostelrenting.dto.booking.BookingDTOShort;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
 import org.avengers.capstone.hostelrenting.model.*;
-import org.avengers.capstone.hostelrenting.repository.BookingRepository;
+import org.avengers.capstone.hostelrenting.repository.*;
 import org.avengers.capstone.hostelrenting.service.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,11 +16,24 @@ import java.util.Random;
 @Service
 public class BookingServiceImpl implements BookingService {
 
+    @Autowired
     private BookingRepository bookingRepository;
-    private VendorService vendorService;
-    private RenterService renterService;
-    private HostelTypeService hostelTypeService;
+//    @Autowired
+//    private VendorService vendorService;
+//    @Autowired
+//    private RenterService renterService;
+    @Autowired
     private DealService dealService;
+//    @Autowired
+//    private HostelTypeService hostelTypeService;
+    @Autowired
+    private RenterRepository renterRepository;
+    @Autowired
+    private VendorRepository vendorRepository;
+    @Autowired
+    private DealRepository dealRepository;
+    @Autowired
+    private TypeRepository hostelTypeRepository;
     private ModelMapper modelMapper;
 
     @Autowired
@@ -28,58 +41,80 @@ public class BookingServiceImpl implements BookingService {
         this.modelMapper = modelMapper;
     }
 
-    @Autowired
-    public void setVendorService(VendorService vendorService) {
-        this.vendorService = vendorService;
-    }
-
-    @Autowired
-    public void setRenterService(RenterService renterService) {
-        this.renterService = renterService;
-    }
-
-    @Autowired
-    public void setHostelTypeService(HostelTypeService hostelTypeService) {
-        this.hostelTypeService = hostelTypeService;
-    }
-
-    @Autowired
-    public void setDealService(DealService dealService) {
-        this.dealService = dealService;
-    }
-
-    @Autowired
-    public void setBookingRepository(BookingRepository bookingRepository) {
-        this.bookingRepository = bookingRepository;
-    }
-
-    @Override
-    public void checkActive(Integer id) {
-        Optional<Booking> model = bookingRepository.findById(id);
-        if (model.isEmpty())
-            throw new EntityNotFoundException(Booking.class, "id", id.toString());
-    }
+//    @Autowired
+//    public void setVendorService(VendorService vendorService) {
+//        this.vendorService = vendorService;
+//    }
+//
+//    @Autowired
+//    public void setRenterService(RenterService renterService) {
+//        this.renterService = renterService;
+//    }
+//
+//    @Autowired
+//    public void setHostelTypeService(HostelTypeService hostelTypeService) {
+//        this.hostelTypeService = hostelTypeService;
+//    }
+//
+//    @Autowired
+//    public void setDealService(DealService dealService) {
+//        this.dealService = dealService;
+//    }
+//
+//    @Autowired
+//    public void setBookingRepository(BookingRepository bookingRepository) {
+//        this.bookingRepository = bookingRepository;
+//    }
+//
+//    @Override
+//    public void checkActive(Integer id) {
+//        Optional<Booking> model = bookingRepository.findById(id);
+//        if (model.isEmpty())
+//            throw new EntityNotFoundException(Booking.class, "id", id.toString());
+//    }
+//
+//    @Override
+//    public Booking findById(Integer id) {
+//        checkActive(id);
+//        return bookingRepository.getOne(id);
+//
+//    }
 
     @Override
     public Booking findById(Integer id) {
-        checkActive(id);
-        return bookingRepository.getOne(id);
-
+        try{
+            if (bookingRepository.existsById(id)){
+                return bookingRepository.findById(id).get();
+            }else{
+                throw new EntityNotFoundException(Booking.class, "id", id.toString());
+            }
+        }catch (Exception e){
+            throw new EntityNotFoundException(Booking.class, "id", id.toString());
+        }
     }
 
     @Override
     public Booking create(BookingDTOShort reqDTO) {
-        Vendor exVendor = vendorService.findById(reqDTO.getVendorId());
-        Renter exRenter = renterService.findById(reqDTO.getRenterId());
-        Type exType = hostelTypeService.findById(reqDTO.getTypeId());
+        Vendor exVendor = vendorRepository.findById(reqDTO.getVendorId()).get();
+        Renter exRenter = renterRepository.findById(reqDTO.getRenterId()).get();
+        Type exType = hostelTypeRepository.findById(reqDTO.getTypeId()).get();
 
         Booking reqModel = modelMapper.map(reqDTO, Booking.class);
 
         // Update deal status if exist (booking created means deal is done)
         Integer dealId = reqDTO.getDealId();
         if (dealId != null) {
-            dealService.checkActive(dealId);
-            dealService.changeStatus(dealId, Deal.STATUS.DONE);
+//            dealService.checkActive(dealId);
+//            dealService.changeStatus(dealId, Deal.STATUS.DONE);
+            try{
+                if (dealRepository.existsById(dealId)){
+                    dealService.changeStatus(dealId, Deal.STATUS.DONE);
+                }else{
+                    throw new EntityNotFoundException(Deal.class, "id", dealId.toString());
+                }
+            }catch (Exception e){
+                throw new EntityNotFoundException(Deal.class, "id", dealId.toString());
+            }
         }
 
         reqModel.setType(exType);
@@ -99,17 +134,22 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public Booking update(BookingDTOShort reqDTO) {
-        checkActive(reqDTO.getBookingId());
+//        checkActive(reqDTO.getBookingId());
 
-        // Update status
-        Booking exModel = bookingRepository.getOne(reqDTO.getBookingId());
-        if (!exModel.getStatus().equals(reqDTO.getStatus())) {
-            exModel.setStatus(reqDTO.getStatus());
-            setUpdatedTime(exModel);
-            return bookingRepository.save(exModel);
+        if (bookingRepository.existsById(reqDTO.getBookingId())){
+            // Update status
+            Booking exModel = bookingRepository.getOne(reqDTO.getBookingId());
+            if (!exModel.getStatus().equals(reqDTO.getStatus())) {
+                exModel.setStatus(reqDTO.getStatus());
+                setUpdatedTime(exModel);
+                return bookingRepository.save(exModel);
+            }
+            // Update meetTime
+            //TODO: Implement here
+        }else {
+            throw new EntityNotFoundException(Booking.class, "id", reqDTO.getBookingId().toString());
         }
-        // Update meetTime
-        //TODO: Implement here
+
 
         return null;
     }
@@ -122,9 +162,12 @@ public class BookingServiceImpl implements BookingService {
      */
     @Override
     public List<Booking> findByRenterId(Long renterId) {
-        renterService.checkExist(renterId);
-
-        return renterService.findById(renterId).getBookings();
+//        renterService.checkExist(renterId);
+        if (renterRepository.existsById(renterId)) {
+            return renterRepository.findById(renterId).get().getBookings();
+        }else{
+            throw new EntityNotFoundException(Booking.class, "id", renterId.toString());
+        }
     }
 
     /**
@@ -134,9 +177,12 @@ public class BookingServiceImpl implements BookingService {
      */
     @Override
     public List<Booking> findByVendorId(Long vendorId) {
-        vendorService.checkExist(vendorId);
-
-        return vendorService.findById(vendorId).getBookings();
+//        vendorService.checkExist(vendorId);
+        if(vendorRepository.existsById(vendorId)) {
+            return vendorRepository.findById(vendorId).get().getBookings();
+        }else{
+            throw new EntityNotFoundException(Vendor.class, "id", vendorId.toString());
+        }
     }
 
     @Override

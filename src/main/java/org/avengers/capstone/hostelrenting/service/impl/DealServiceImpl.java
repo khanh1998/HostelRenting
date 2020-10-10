@@ -7,6 +7,9 @@ import org.avengers.capstone.hostelrenting.model.Type;
 import org.avengers.capstone.hostelrenting.model.Renter;
 import org.avengers.capstone.hostelrenting.model.Vendor;
 import org.avengers.capstone.hostelrenting.repository.DealRepository;
+import org.avengers.capstone.hostelrenting.repository.RenterRepository;
+import org.avengers.capstone.hostelrenting.repository.TypeRepository;
+import org.avengers.capstone.hostelrenting.repository.VendorRepository;
 import org.avengers.capstone.hostelrenting.service.DealService;
 import org.avengers.capstone.hostelrenting.service.HostelTypeService;
 import org.avengers.capstone.hostelrenting.service.RenterService;
@@ -20,10 +23,17 @@ import java.util.Optional;
 
 @Service
 public class DealServiceImpl implements DealService {
+    @Autowired
     private DealRepository dealRepository;
-    private VendorService vendorService;
-    private RenterService renterService;
-    private HostelTypeService hostelTypeService;
+    @Autowired
+    private VendorRepository vendorRepository;
+//    private VendorService vendorService;
+//    private RenterService renterService;
+//    private HostelTypeService hostelTypeService;
+    @Autowired
+    private RenterRepository renterRepository;
+    @Autowired
+    private TypeRepository hostelTypeRepository;
     private ModelMapper modelMapper;
 
     @Autowired
@@ -31,25 +41,25 @@ public class DealServiceImpl implements DealService {
         this.modelMapper = modelMapper;
     }
 
-    @Autowired
-    public void setRenterService(RenterService renterService) {
-        this.renterService = renterService;
-    }
+//    @Autowired
+//    public void setRenterService(RenterService renterService) {
+//        this.renterService = renterService;
+//    }
+//
+//    @Autowired
+//    public void setHostelTypeService(HostelTypeService hostelTypeService) {
+//        this.hostelTypeService = hostelTypeService;
+//    }
 
-    @Autowired
-    public void setHostelTypeService(HostelTypeService hostelTypeService) {
-        this.hostelTypeService = hostelTypeService;
-    }
-
-    @Autowired
-    public void setVendorService(VendorService vendorService) {
-        this.vendorService = vendorService;
-    }
-
-    @Autowired
-    public void setDealRepository(DealRepository dealRepository) {
-        this.dealRepository = dealRepository;
-    }
+//    @Autowired
+//    public void setVendorService(VendorService vendorService) {
+//        this.vendorService = vendorService;
+//    }
+//
+//    @Autowired
+//    public void setDealRepository(DealRepository dealRepository) {
+//        this.dealRepository = dealRepository;
+//    }
 
     /**
      * Check that object with given id is active or not
@@ -86,9 +96,9 @@ public class DealServiceImpl implements DealService {
 
     @Override
     public Deal create(DealDTOShort reqDTO) {
-        Vendor existedVendor = vendorService.findById(reqDTO.getVendorId());
-        Renter existedRenter = renterService.findById(reqDTO.getRenterId());
-        Type existedType = hostelTypeService.findById(reqDTO.getTypeId());
+        Vendor existedVendor = vendorRepository.findById(reqDTO.getVendorId()).get();
+        Renter existedRenter = renterRepository.findById(reqDTO.getRenterId()).get();
+        Type existedType = hostelTypeRepository.findById(reqDTO.getTypeId()).get();
 
         Deal reqModel = modelMapper.map(reqDTO, Deal.class);
         reqModel.setVendor(existedVendor);
@@ -118,16 +128,23 @@ public class DealServiceImpl implements DealService {
 
     @Override
     public List<Deal> findByRenterId(Long renterId) {
-        renterService.checkExist(renterId);
-
-        return renterService.findById(renterId).getDeals();
+//        renterService.checkExist(renterId);
+        if (renterRepository.existsById(renterId)) {
+            return renterRepository.findById(renterId).get().getDeals();
+        }else{
+            throw new EntityNotFoundException(Renter.class, "id", renterId.toString());
+        }
     }
 
     @Override
     public List<Deal> findByVendorId(Long vendorId) {
-        vendorService.checkExist(vendorId);
+//        vendorService.checkExist(vendorId);
 
-        return vendorService.findById(vendorId).getDeals();
+        if (vendorRepository.existsById(vendorId)) {
+            return vendorRepository.findById(vendorId).get().getDeals();
+        }else{
+            throw new EntityNotFoundException(Vendor.class, "id", vendorId.toString());
+        }
     }
 
     private void setUpdatedTime(Deal exModel){

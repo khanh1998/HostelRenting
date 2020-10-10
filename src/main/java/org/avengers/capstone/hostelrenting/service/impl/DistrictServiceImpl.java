@@ -24,11 +24,16 @@ public class DistrictServiceImpl implements DistrictService {
 
     @Override
     public District findById(Integer id) {
-        if (isNotFound(id)) {
+//        if (isNotFound(id)) {
+//            throw new EntityNotFoundException(District.class, "id", id.toString());
+//        }
+//
+//        return districtRepository.getOne(id);
+        if (districtRepository.existsById(id)){
+            return districtRepository.getOne(id);
+        }else{
             throw new EntityNotFoundException(District.class, "id", id.toString());
         }
-
-        return districtRepository.getOne(id);
     }
 
     @Override

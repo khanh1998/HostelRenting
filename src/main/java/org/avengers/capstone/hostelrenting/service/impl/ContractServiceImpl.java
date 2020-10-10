@@ -3,7 +3,7 @@ package org.avengers.capstone.hostelrenting.service.impl;
 import org.avengers.capstone.hostelrenting.dto.contract.ContractDTOShort;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
 import org.avengers.capstone.hostelrenting.model.*;
-import org.avengers.capstone.hostelrenting.repository.ContractRepository;
+import org.avengers.capstone.hostelrenting.repository.*;
 import org.avengers.capstone.hostelrenting.service.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,48 +14,63 @@ import java.util.Optional;
 
 @Service
 public class ContractServiceImpl implements ContractService {
+    @Autowired
     private ContractRepository contractRepository;
-    private ModelMapper modelMapper;
-    private RenterService renterService;
-    private VendorService vendorService;
-    private HostelRoomService roomService;
+    @Autowired
+    private RenterRepository renterRepository;
+    @Autowired
+    private VendorRepository vendorRepository;
+    @Autowired
+    private RoomRepository roomRepository;
+    @Autowired
+    private DealRepository dealRepository;
+    @Autowired
     private DealService dealService;
+    @Autowired
     private BookingService bookingService;
-
     @Autowired
-    public void setDealService(DealService dealService) {
-        this.dealService = dealService;
-    }
-
-    @Autowired
-    public void setBookingService(BookingService bookingService) {
-        this.bookingService = bookingService;
-    }
-
-    @Autowired
-    public void setRoomService(HostelRoomService roomService) {
-        this.roomService = roomService;
-    }
-
-    @Autowired
-    public void setVendorService(VendorService vendorService) {
-        this.vendorService = vendorService;
-    }
-
-    @Autowired
-    public void setRenterService(RenterService renterService) {
-        this.renterService = renterService;
-    }
+    private BookingRepository bookingRepository;
+    private ModelMapper modelMapper;
+//    private RenterService renterService;
+//    private VendorService vendorService;
+//    private HostelRoomService roomService;
+//    private DealService dealService;
+//    private BookingService bookingService;
+//
+//    @Autowired
+//    public void setDealService(DealService dealService) {
+//        this.dealService = dealService;
+//    }
+//
+//    @Autowired
+//    public void setBookingService(BookingService bookingService) {
+//        this.bookingService = bookingService;
+//    }
+//
+//    @Autowired
+//    public void setRoomService(HostelRoomService roomService) {
+//        this.roomService = roomService;
+//    }
+//
+//    @Autowired
+//    public void setVendorService(VendorService vendorService) {
+//        this.vendorService = vendorService;
+//    }
+//
+//    @Autowired
+//    public void setRenterService(RenterService renterService) {
+//        this.renterService = renterService;
+//    }
 
     @Autowired
     public void setModelMapper(ModelMapper modelMapper) {
         this.modelMapper = modelMapper;
     }
-
-    @Autowired
-    public void setContractRepository(ContractRepository contractRepository) {
-        this.contractRepository = contractRepository;
-    }
+//
+//    @Autowired
+//    public void setContractRepository(ContractRepository contractRepository) {
+//        this.contractRepository = contractRepository;
+//    }
 
 
     @Override
@@ -74,9 +89,12 @@ public class ContractServiceImpl implements ContractService {
 
     @Override
     public Contract create(ContractDTOShort reqDTO) {
-        Vendor exVendor = vendorService.findById(reqDTO.getVendorId());
-        Renter exRenter = renterService.findById(reqDTO.getVendorId());
-        Room exRoom = roomService.findById(reqDTO.getRoomId());
+//        Vendor exVendor = vendorService.findById(reqDTO.getVendorId());
+//        Renter exRenter = renterService.findById(reqDTO.getVendorId());
+//        Room exRoom = roomService.findById(reqDTO.getRoomId());
+        Vendor exVendor = vendorRepository.findById(reqDTO.getVendorId()).get();
+        Renter exRenter = renterRepository.findById(reqDTO.getVendorId()).get();
+        Room exRoom = roomRepository.findById(reqDTO.getRoomId()).get();
 
         Contract reqModel = modelMapper.map(reqDTO, Contract.class);
 
@@ -85,12 +103,20 @@ public class ContractServiceImpl implements ContractService {
         Integer dealId = reqDTO.getDealId();
         Integer bookingId = reqDTO.getBookingId();
         if (dealId != null){
-            dealService.checkActive(dealId);
-            dealService.changeStatus(dealId, Deal.STATUS.DONE);
+//            dealService.checkActive(dealId);
+//            dealService.changeStatus(dealId, Deal.STATUS.DONE);
+            if (dealRepository.existsById(dealId)){
+                dealService.changeStatus(dealId, Deal.STATUS.DONE);
+            }
         }
         if (bookingId != null){
-            bookingService.checkActive(bookingId);
-            bookingService.changeStatus(bookingId, Booking.STATUS.DONE);
+//            bookingService.checkActive(bookingId);
+//            bookingService.changeStatus(bookingId, Booking.STATUS.DONE);
+            if (bookingRepository.existsById(bookingId)){
+                bookingService.changeStatus(bookingId, Booking.STATUS.DONE);
+            }else{
+                throw new EntityNotFoundException(Booking.class, "id", bookingId.toString());
+            }
         }
 
         reqModel.setStatus(Contract.STATUS.WORKING);
@@ -115,9 +141,14 @@ public class ContractServiceImpl implements ContractService {
      */
     @Override
     public List<Contract> findByRenterId(Long renterId) {
-        renterService.checkExist(renterId);
-
-        return renterService.findById(renterId).getContracts();
+//        renterService.checkExist(renterId);
+//
+//        return renterService.findById(renterId).getContracts();
+        if (renterRepository.existsById(renterId)){
+            return renterRepository.findById(renterId).get().getContracts();
+        }else{
+            throw new EntityNotFoundException(Renter.class, "id", renterId.toString());
+        }
     }
 
     /**
@@ -128,9 +159,14 @@ public class ContractServiceImpl implements ContractService {
      */
     @Override
     public List<Contract> findByVendorId(Long vendorId) {
-        vendorService.checkExist(vendorId);
-
-        return vendorService.findById(vendorId).getContracts();
+//        vendorService.checkExist(vendorId);
+//
+//        return vendorService.findById(vendorId).getContracts();
+        if (vendorRepository.existsById(vendorId)){
+            return vendorRepository.findById(vendorId).get().getContracts();
+        }else{
+            throw new EntityNotFoundException(Vendor.class, "id", vendorId.toString());
+        }
     }
 
     private void setUpdatedTime(Contract exModel){

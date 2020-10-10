@@ -14,20 +14,26 @@ import java.util.Optional;
 
 @Service
 public class HostelRoomServiceImpl implements HostelRoomService {
+    @Autowired
     private RoomRepository roomRepository;
 
-    @Autowired
-    public void setHostelRoomRepository(RoomRepository roomRepository) {
-        this.roomRepository = roomRepository;
-    }
+//    @Autowired
+//    public void setHostelRoomRepository(RoomRepository roomRepository) {
+//        this.roomRepository = roomRepository;
+//    }
 
     @Override
     public Room findById(Integer id) {
-        if (isNotFound(id)) {
+//        if (isNotFound(id)) {
+//            throw new EntityNotFoundException(Room.class, "id", id.toString());
+//        }
+//
+//        return roomRepository.getOne(id);
+        if (roomRepository.existsById(id)){
+            return roomRepository.getOne(id);
+        }else{
             throw new EntityNotFoundException(Room.class, "id", id.toString());
         }
-
-        return roomRepository.getOne(id);
     }
 
     @Override

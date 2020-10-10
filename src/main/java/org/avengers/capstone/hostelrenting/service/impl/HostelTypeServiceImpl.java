@@ -18,6 +18,7 @@ import java.util.stream.Stream;
 
 @Service
 public class HostelTypeServiceImpl implements HostelTypeService {
+    @Autowired
     private TypeRepository typeRepository;
     private HostelGroupService hostelGroupService;
 
@@ -26,10 +27,10 @@ public class HostelTypeServiceImpl implements HostelTypeService {
         this.hostelGroupService = hostelGroupService;
     }
 
-    @Autowired
-    public void setHostelTypeRepository(TypeRepository typeRepository) {
-        this.typeRepository = typeRepository;
-    }
+//    @Autowired
+//    public void setHostelTypeRepository(TypeRepository typeRepository) {
+//        this.typeRepository = typeRepository;
+//    }
 
     @Override
     public void checkExist(Integer id) {

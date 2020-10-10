@@ -10,4 +10,6 @@ import java.util.Optional;
 public interface VendorRepository extends JpaRepository<Vendor, Long> {
     Optional<Vendor> findByEmail(String email);
     Optional<Vendor> findByPhone(String phone);
+//    Vendor findByEmail(String email);
+//    Vendor findByPhone(String phone);
 }
