@@ -136,7 +136,6 @@ public class Group {
     @Column(name = "updated_at")
     private Long updatedAt;
 
-
     /**
      * Serialize StreetWard to Address model
      *

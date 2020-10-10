@@ -117,7 +117,7 @@ public class HostelTypeController {
             // create model
             Type resModel = hostelTypeService.create(reqModel);
             // log created type
-            if (resModel!= null){
+            if (resModel != null) {
                 logger.info("CREATED Type with id: " + reqModel.getTypeId());
             }
             // mapping to response
@@ -187,24 +187,25 @@ public class HostelTypeController {
      */
     @GetMapping("/types")
     public ResponseEntity<?> getTypes(@RequestParam(required = false) Integer typeId,
-                                            @RequestParam(required = false) Integer schoolId,
-                                            @RequestParam(required = false) Integer provinceId,
-                                            @RequestParam(required = false) Integer categoryId,
-                                            @RequestParam(required = false) Double latitude,
-                                            @RequestParam(required = false) Double longitude,
-                                            @RequestParam(required = false, defaultValue = "5.0") Double distance,
-                                            @RequestParam(required = false) Float minPrice,
-                                            @RequestParam(required = false) Float maxPrice,
-                                            @RequestParam(required = false) Float minSuperficiality,
-                                            @RequestParam(required = false) Float maxSuperficiality,
-                                            @RequestParam(required = false) Integer minCapacity,
-                                            @RequestParam(required = false) Integer maxCapacity,
-                                            @RequestParam(required = false) Integer[] facilityIds,
-                                            @RequestParam(required = false) Integer[] serviceIds,
-                                            @RequestParam(required = false, defaultValue = "score") String sortBy,
-                                            @RequestParam(required = false, defaultValue = "false") Boolean asc,
-                                            @RequestParam(required = false, defaultValue = DEFAULT_SIZE) Integer size,
-                                            @RequestParam(required = false, defaultValue = DEFAULT_PAGE) Integer page) throws EntityNotFoundException {
+                                      @RequestParam(required = false) Integer schoolId,
+                                      @RequestParam(required = false) Integer provinceId,
+                                      @RequestParam(required = false) Integer categoryId,
+                                      @RequestParam(required = false) Double latitude,
+                                      @RequestParam(required = false) Double longitude,
+                                      @RequestParam(required = false, defaultValue = "5.0") Double distance,
+                                      @RequestParam(required = false) Float minPrice,
+                                      @RequestParam(required = false) Float maxPrice,
+                                      @RequestParam(required = false) Float minSuperficiality,
+                                      @RequestParam(required = false) Float maxSuperficiality,
+                                      @RequestParam(required = false) Integer minCapacity,
+                                      @RequestParam(required = false) Integer maxCapacity,
+                                      @RequestParam(required = false) Integer[] facilityIds,
+                                      @RequestParam(required = false) Integer[] serviceIds,
+                                      @RequestParam(required = false) Integer[] regulationIds,
+                                      @RequestParam(required = false, defaultValue = "score") String sortBy,
+                                      @RequestParam(required = false, defaultValue = "false") Boolean asc,
+                                      @RequestParam(required = false, defaultValue = DEFAULT_SIZE) Integer size,
+                                      @RequestParam(required = false, defaultValue = DEFAULT_PAGE) Integer page) throws EntityNotFoundException {
         //log start
         logger.info("START - Get type(s)");
         if (typeId != null) {
@@ -267,10 +268,17 @@ public class HostelTypeController {
                                         .stream(serviceIds)
                                         .anyMatch(id -> id == serviceDetail.getServiceId()));
                     return true;
+                }).filter(hostelType -> {
+                    if (regulationIds != null && regulationIds.length > 0)
+                        return hostelType.getGroup().getGroupRegulations()
+                                .stream()
+                                .anyMatch(regulation -> Arrays
+                                        .stream(regulationIds)
+                                        .anyMatch(id -> id == regulation.getRegulation().getRegulationId()));
+                    return true;
                 })
                 .map(hostelType -> modelMapper.map(hostelType, TypeDTOResponse.class))
                 .collect(Collectors.toSet());
-
 
 
         Set<GroupDTOResponse> groupDTOs = typeDTOs.stream()

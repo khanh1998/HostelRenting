@@ -2,10 +2,12 @@ package org.avengers.capstone.hostelrenting.controller;
 
 import org.avengers.capstone.hostelrenting.dto.group.GroupDTOResponse;
 import org.avengers.capstone.hostelrenting.dto.group.GroupDTOCreate;
+import org.avengers.capstone.hostelrenting.dto.group.GroupDTOUpdate;
 import org.avengers.capstone.hostelrenting.dto.response.ApiSuccess;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
 import org.avengers.capstone.hostelrenting.model.*;
 import org.avengers.capstone.hostelrenting.service.*;
+import org.modelmapper.Condition;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -75,7 +77,7 @@ public class HostelGroupController {
      * @throws EntityNotFoundException when some object not found
      */
     @PostMapping("/groups")
-    public ResponseEntity<?> createHostelGroup(@Valid @RequestBody List<GroupDTOCreate> reqDTOs) throws EntityNotFoundException {
+    public ResponseEntity<?> createGroup(@Valid @RequestBody List<GroupDTOCreate> reqDTOs) throws EntityNotFoundException {
         logger.info("START - creating group(s)");
         // get necessary for model: vendor, address, services
         List<GroupDTOResponse> resDTOs = new ArrayList<>();
@@ -184,6 +186,40 @@ public class HostelGroupController {
 
         logger.info("SUCCESSFUL - Get group by vendorId");
         ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTOs, "Your hostel group has been retrieved successfully!");
+
+        return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
+    }
+
+    @PutMapping("/groups/{groupId}")
+    public ResponseEntity<?> updateGroup(@Valid @RequestBody GroupDTOUpdate reqDTO,
+                                         @PathVariable Integer groupId) {
+        //log start update
+        logger.info("START - updating group");
+        Group existedModel = hostelGroupService.findById(groupId);
+
+//        if (reqDTO.getGroupName() != null)
+//            existedModel.setGroupName(reqDTO.getGroupName());
+//        if (reqDTO.getCurfewTime() != null)
+//            existedModel.setCurfewTime(reqDTO.getCurfewTime());
+//        if (reqDTO.getOwnerJoin() != null)
+//            existedModel.setOwnerJoin(reqDTO.getOwnerJoin());
+//        if (reqDTO.getImgUrl() != null)
+//            existedModel.setImgUrl(reqDTO.getImgUrl());
+//        if (reqDTO.getManagerName() != null)
+//            existedModel.setManagerName(reqDTO.getManagerName());
+//        if (reqDTO.getManagerPhone() != null)
+//            existedModel.setManagerPhone(reqDTO.getManagerPhone());
+//        if (reqDTO.getDownPayment() != null)
+//            existedModel.setDownPayment(reqDTO.getDownPayment());
+
+        modelMapper.map(reqDTO, existedModel);
+
+        Group resModel = hostelGroupService.update(existedModel);
+        GroupDTOResponse resDTO = modelMapper.map(resModel, GroupDTOResponse.class);
+
+        //log end update
+        logger.info("SUCCESSFUL - updating group");
+        ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTO, "Your hostel group has been retrieved successfully!");
 
         return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
     }
