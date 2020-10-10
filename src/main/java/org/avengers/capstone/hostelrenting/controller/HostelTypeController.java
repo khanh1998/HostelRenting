@@ -3,9 +3,11 @@ package org.avengers.capstone.hostelrenting.controller;
 import org.avengers.capstone.hostelrenting.dto.combination.TypeAndGroupDTO;
 import org.avengers.capstone.hostelrenting.dto.combination.TypesAndGroupsDTO;
 import org.avengers.capstone.hostelrenting.dto.group.GroupDTOResponse;
+import org.avengers.capstone.hostelrenting.dto.group.GroupDTOUpdate;
 import org.avengers.capstone.hostelrenting.dto.type.TypeDTOCreate;
 import org.avengers.capstone.hostelrenting.dto.type.TypeDTOResponse;
 import org.avengers.capstone.hostelrenting.dto.response.ApiSuccess;
+import org.avengers.capstone.hostelrenting.dto.type.TypeDTOUpdate;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
 import org.avengers.capstone.hostelrenting.model.*;
 import org.avengers.capstone.hostelrenting.service.*;
@@ -292,6 +294,25 @@ public class HostelTypeController {
         //log success
         logger.info("SUCCESSFULLY - Get type(s) ");
         ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTO, "Hostel type(s) has been retrieved successfully!");
+
+        return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
+    }
+
+    @PutMapping("types/{typeId}")
+    public ResponseEntity<?> updateGroup(@Valid @RequestBody TypeDTOUpdate reqDTO,
+                                         @PathVariable Integer typeId) {
+        // log start update
+        logger.info("START - updating type");
+        Type existedModel = hostelTypeService.findById(typeId);
+        modelMapper.map(reqDTO, existedModel);
+
+        Type resModel = hostelTypeService.update(existedModel);
+        TypeDTOResponse resDTO = modelMapper.map(resModel, TypeDTOResponse.class);
+
+        // log end update
+        logger.info("SUCCESSFUL - updating type");
+
+        ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTO, "Your Hostel Type has been updated successfully");
 
         return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
     }

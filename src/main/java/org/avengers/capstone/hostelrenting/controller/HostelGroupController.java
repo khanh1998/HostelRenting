@@ -197,21 +197,6 @@ public class HostelGroupController {
         logger.info("START - updating group");
         Group existedModel = hostelGroupService.findById(groupId);
 
-//        if (reqDTO.getGroupName() != null)
-//            existedModel.setGroupName(reqDTO.getGroupName());
-//        if (reqDTO.getCurfewTime() != null)
-//            existedModel.setCurfewTime(reqDTO.getCurfewTime());
-//        if (reqDTO.getOwnerJoin() != null)
-//            existedModel.setOwnerJoin(reqDTO.getOwnerJoin());
-//        if (reqDTO.getImgUrl() != null)
-//            existedModel.setImgUrl(reqDTO.getImgUrl());
-//        if (reqDTO.getManagerName() != null)
-//            existedModel.setManagerName(reqDTO.getManagerName());
-//        if (reqDTO.getManagerPhone() != null)
-//            existedModel.setManagerPhone(reqDTO.getManagerPhone());
-//        if (reqDTO.getDownPayment() != null)
-//            existedModel.setDownPayment(reqDTO.getDownPayment());
-
         modelMapper.map(reqDTO, existedModel);
 
         Group resModel = hostelGroupService.update(existedModel);
@@ -219,6 +204,7 @@ public class HostelGroupController {
 
         //log end update
         logger.info("SUCCESSFUL - updating group");
+
         ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTO, "Your hostel group has been retrieved successfully!");
 
         return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
