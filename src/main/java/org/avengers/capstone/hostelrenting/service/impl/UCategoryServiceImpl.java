@@ -15,13 +15,14 @@ import java.util.stream.Collectors;
 
 @Service
 public class UCategoryServiceImpl implements UCategoryService {
+    @Autowired
     private UCategoryRepository uCategoryRepository;
     private ModelMapper modelMapper;
 
-    @Autowired
-    public void setRepo(UCategoryRepository uCategoryRepository) {
-        this.uCategoryRepository = uCategoryRepository;
-    }
+//    @Autowired
+//    public void setRepo(UCategoryRepository uCategoryRepository) {
+//        this.uCategoryRepository = uCategoryRepository;
+//    }
 
     @Autowired
     public void setModelMapper(ModelMapper modelMapper) {

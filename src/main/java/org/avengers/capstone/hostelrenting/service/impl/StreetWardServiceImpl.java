@@ -17,25 +17,32 @@ import java.util.Optional;
  */
 @Service
 public class StreetWardServiceImpl implements StreetWardService {
+    @Autowired
     StreetWardRepository streetWardRepository;
 
-    @Autowired
-    public void setStreetWardRepository(StreetWardRepository streetWardRepository) {
-        this.streetWardRepository = streetWardRepository;
-    }
+//    @Autowired
+//    public void setStreetWardRepository(StreetWardRepository streetWardRepository) {
+//        this.streetWardRepository = streetWardRepository;
+//    }
 
 
     @Override
     public void checkExist(Integer id) {
         Optional<StreetWard> model = streetWardRepository.findById(id);
         if (model.isEmpty())
-            throw new EntityNotFoundException(Street.class, "id", id.toString());
+//            throw new EntityNotFoundException(Street.class, "id", id.toString());
+            throw new EntityNotFoundException(StreetWard.class, "id", id.toString());
     }
 
     @Override
     public StreetWard findById(Integer id) {
-        checkExist(id);
-        return streetWardRepository.getOne(id);
+//        checkExist(id);
+//        return streetWardRepository.getOne(id);
+        if (streetWardRepository.existsById(id))
+            return streetWardRepository.getOne(id);
+        else
+            throw new EntityNotFoundException(StreetWard.class, "id", id.toString());
+
     }
 
     @Override

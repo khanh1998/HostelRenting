@@ -13,6 +13,7 @@ import java.util.Optional;
 @Service
 public class WardServiceImpl implements WardService {
 
+    @Autowired
     private WardRepository wardRepository;
     private ModelMapper modelMapper;
 
@@ -21,10 +22,10 @@ public class WardServiceImpl implements WardService {
         this.modelMapper = modelMapper;
     }
 
-    @Autowired
-    public void setWardRepository(WardRepository wardRepository) {
-        this.wardRepository = wardRepository;
-    }
+//    @Autowired
+//    public void setWardRepository(WardRepository wardRepository) {
+//        this.wardRepository = wardRepository;
+//    }
 
     @Override
     public void checkExist(Integer id) {
@@ -35,7 +36,11 @@ public class WardServiceImpl implements WardService {
 
     @Override
     public Ward findById(Integer id) {
-        checkExist(id);
-        return wardRepository.getOne(id);
+//        checkExist(id);
+//        return wardRepository.getOne(id);
+        if (wardRepository.existsById(id))
+            return wardRepository.getOne(id);
+        else
+            throw new EntityNotFoundException(Ward.class, "id", id.toString());
     }
 }

@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class FacilityServiceImpl implements FacilityService {
+    @Autowired
     private FacilityRepository facilityRepository;
     private ModelMapper modelMapper;
 
@@ -23,10 +24,10 @@ public class FacilityServiceImpl implements FacilityService {
         this.modelMapper = modelMapper;
     }
 
-    @Autowired
-    public void setFacilityRepository(FacilityRepository facilityRepository) {
-        this.facilityRepository = facilityRepository;
-    }
+//    @Autowired
+//    public void setFacilityRepository(FacilityRepository facilityRepository) {
+//        this.facilityRepository = facilityRepository;
+//    }
 
     /**
      * Check that given id is existed or not
@@ -61,8 +62,13 @@ public class FacilityServiceImpl implements FacilityService {
      */
     @Override
     public Facility findById(Integer id) {
-        checkNotFound(id);
-
-        return facilityRepository.getOne(id);
+//        checkNotFound(id);
+//
+//        return facilityRepository.getOne(id);
+        if (facilityRepository.existsById(id)){
+            return facilityRepository.getOne(id);
+        }else{
+            throw new EntityNotFoundException(Facility.class, "id", id.toString());
+        }
     }
 }

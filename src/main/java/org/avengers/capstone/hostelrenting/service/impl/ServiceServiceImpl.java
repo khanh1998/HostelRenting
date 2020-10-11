@@ -2,6 +2,7 @@ package org.avengers.capstone.hostelrenting.service.impl;
 
 import org.avengers.capstone.hostelrenting.dto.ServiceDTO;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
+import org.avengers.capstone.hostelrenting.model.School;
 import org.avengers.capstone.hostelrenting.model.Service;
 import org.avengers.capstone.hostelrenting.repository.ServiceRepository;
 import org.avengers.capstone.hostelrenting.service.ServiceService;
@@ -14,6 +15,7 @@ import java.util.stream.Collectors;
 
 @org.springframework.stereotype.Service
 public class ServiceServiceImpl implements ServiceService {
+    @Autowired
     private ServiceRepository serviceRepository;
     private ModelMapper modelMapper;
 
@@ -23,10 +25,10 @@ public class ServiceServiceImpl implements ServiceService {
     }
 
 
-    @Autowired
-    public void setServiceRepository(ServiceRepository serviceRepository) {
-        this.serviceRepository = serviceRepository;
-    }
+//    @Autowired
+//    public void setServiceRepository(ServiceRepository serviceRepository) {
+//        this.serviceRepository = serviceRepository;
+//    }
 
     /**
      * Check that given id is existed or not
@@ -61,8 +63,12 @@ public class ServiceServiceImpl implements ServiceService {
      */
     @Override
     public Service findById(Integer id) {
-        checkNotFound(id);
-
-        return serviceRepository.getOne(id);
+//        checkNotFound(id);
+//
+//        return serviceRepository.getOne(id);
+        if (serviceRepository.existsById(id))
+            return serviceRepository.getOne(id);
+        else
+            throw new EntityNotFoundException(Service.class, "id", id.toString());
     }
 }

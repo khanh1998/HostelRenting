@@ -16,7 +16,9 @@ import java.util.Optional;
 
 @Service
 public class CustomUserService implements UserDetailsService {
+//    @Autowired
     private VendorRepository vendorRepository;
+//    @Autowired
     private RenterRepository renterRepository;
 
     @Autowired
@@ -45,12 +47,23 @@ public class CustomUserService implements UserDetailsService {
     }
 
     public org.avengers.capstone.hostelrenting.model.User findByPhone(String phone){
-        Optional<Vendor> existedVendor = vendorRepository.findByPhone(phone);
+//        Optional<Vendor> existedVendor = vendorRepository.findByPhone(phone);
+//        Optional<Renter> existedRenter = renterRepository.findByPhone(phone);
+//        if (existedRenter.isPresent())
+//            return existedRenter.get();
+//        else if (existedVendor.isPresent())
+//            return existedVendor.get();
+//        return null;
         Optional<Renter> existedRenter = renterRepository.findByPhone(phone);
         if (existedRenter.isPresent())
             return existedRenter.get();
-        else if (existedVendor.isPresent())
-            return existedVendor.get();
+        else{
+            // Chừng nào renter không có thì mới query đến vendor. Hạn chế đc 1 lần query
+            Optional<Vendor> existedVendor = vendorRepository.findByPhone(phone);
+            if (existedVendor.isPresent()){
+                return existedVendor.get();
+            }
+        }
         return null;
     }
 }

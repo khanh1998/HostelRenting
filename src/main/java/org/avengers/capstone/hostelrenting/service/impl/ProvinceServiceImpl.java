@@ -14,6 +14,7 @@ import java.util.Optional;
 
 @Service
 public class ProvinceServiceImpl implements ProvinceService {
+    @Autowired
     private ProvinceRepository provinceRepository;
     private ModelMapper modelMapper;
 
@@ -22,10 +23,10 @@ public class ProvinceServiceImpl implements ProvinceService {
         this.modelMapper = modelMapper;
     }
 
-    @Autowired
-    public void setProvinceRepository(ProvinceRepository provinceRepository) {
-        this.provinceRepository = provinceRepository;
-    }
+//    @Autowired
+//    public void setProvinceRepository(ProvinceRepository provinceRepository) {
+//        this.provinceRepository = provinceRepository;
+//    }
 
     /**
      * Check that given id is existed or not
@@ -71,8 +72,13 @@ public class ProvinceServiceImpl implements ProvinceService {
      */
     @Override
     public Province findById(Integer id) {
-        checkNotFound(id);
-
-        return provinceRepository.getOne(id);
+//        checkNotFound(id);
+//
+//        return provinceRepository.getOne(id);
+        if (provinceRepository.existsById(id)){
+            return provinceRepository.getOne(id);
+        }else{
+            throw new EntityNotFoundException(Province.class, "id", id.toString());
+        }
     }
 }

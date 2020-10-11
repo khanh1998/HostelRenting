@@ -17,6 +17,7 @@ import java.util.Optional;
 
 @Service
 public class RenterServiceIml implements RenterService {
+    @Autowired
     private RenterRepository renterRepository;
     private ModelMapper modelMapper;
 
@@ -25,10 +26,10 @@ public class RenterServiceIml implements RenterService {
         this.modelMapper = modelMapper;
     }
 
-    @Autowired
-    public void setRenterRepository(RenterRepository renterRepository) {
-        this.renterRepository = renterRepository;
-    }
+//    @Autowired
+//    public void setRenterRepository(RenterRepository renterRepository) {
+//        this.renterRepository = renterRepository;
+//    }
 
     @Override
     public void checkExist(Long id) {
@@ -55,9 +56,13 @@ public class RenterServiceIml implements RenterService {
 
     @Override
     public Renter findById(Long id) {
-        checkExist(id);
-        return renterRepository.getOne(id);
-
+//        checkExist(id);
+//        return renterRepository.getOne(id);
+        if (renterRepository.existsById(id)){
+            return renterRepository.getOne(id);
+        }else {
+            throw new EntityNotFoundException(Renter.class, "id", id.toString());
+        }
     }
 
     @Override

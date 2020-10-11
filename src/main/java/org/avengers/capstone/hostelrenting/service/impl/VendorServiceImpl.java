@@ -18,6 +18,7 @@ import java.util.Optional;
 @Service
 public class VendorServiceImpl implements VendorService {
 
+    @Autowired
     private VendorRepository vendorRepository;
     private ModelMapper modelMapper;
 
@@ -26,10 +27,10 @@ public class VendorServiceImpl implements VendorService {
         this.modelMapper = modelMapper;
     }
 
-    @Autowired
-    public void setVendorRepository(VendorRepository vendorRepository) {
-        this.vendorRepository = vendorRepository;
-    }
+//    @Autowired
+//    public void setVendorRepository(VendorRepository vendorRepository) {
+//        this.vendorRepository = vendorRepository;
+//    }
 
     @Override
     public void checkExist(Long id) {
@@ -56,9 +57,12 @@ public class VendorServiceImpl implements VendorService {
 
     @Override
     public Vendor findById(Long id) {
-        checkExist(id);
-        return vendorRepository.getOne(id);
-
+//        checkExist(id);
+//        return vendorRepository.getOne(id);
+        if (vendorRepository.existsById(id))
+            return vendorRepository.getOne(id);
+        else
+            throw new EntityNotFoundException(Vendor.class, "id", id.toString());
     }
 
     @Override

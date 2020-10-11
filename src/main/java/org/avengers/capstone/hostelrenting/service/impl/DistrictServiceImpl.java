@@ -11,16 +11,16 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class DistrictServiceImpl implements DistrictService {
+    @Autowired
     private DistrictRepository districtRepository;
 
-    @Autowired
-    public void setDistrictRepository(DistrictRepository districtRepository) {
-        this.districtRepository = districtRepository;
-    }
+//    @Autowired
+//    public void setDistrictRepository(DistrictRepository districtRepository) {
+//        this.districtRepository = districtRepository;
+//    }
 
     @Override
     public District findById(Integer id) {
@@ -63,7 +63,7 @@ public class DistrictServiceImpl implements DistrictService {
     @Override
     public District findByIdAndProvinceId(Integer districtId, Integer provinceId) {
         Optional<District> district = districtRepository.findByDistrictIdAndProvince_ProvinceId(districtId, provinceId);
-        if (district.isEmpty()){
+        if (district.isEmpty() || district == null){
             throw new EntityNotFoundException(District.class, "province_id", provinceId.toString(), "district_id", districtId.toString());
         }
         return district.get();

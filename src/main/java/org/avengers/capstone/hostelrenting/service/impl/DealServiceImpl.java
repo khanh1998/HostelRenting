@@ -2,10 +2,7 @@ package org.avengers.capstone.hostelrenting.service.impl;
 
 import org.avengers.capstone.hostelrenting.dto.deal.DealDTOShort;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
-import org.avengers.capstone.hostelrenting.model.Deal;
-import org.avengers.capstone.hostelrenting.model.Type;
-import org.avengers.capstone.hostelrenting.model.Renter;
-import org.avengers.capstone.hostelrenting.model.Vendor;
+import org.avengers.capstone.hostelrenting.model.*;
 import org.avengers.capstone.hostelrenting.repository.DealRepository;
 import org.avengers.capstone.hostelrenting.repository.RenterRepository;
 import org.avengers.capstone.hostelrenting.repository.TypeRepository;
@@ -112,17 +109,28 @@ public class DealServiceImpl implements DealService {
 
     @Override
     public Deal update(DealDTOShort reqDTO) {
-        checkActive(reqDTO.getDealId());
+//        checkActive(reqDTO.getDealId());
 
 
-        //Update status
-        Deal exModel = dealRepository.getOne(reqDTO.getDealId());
-        if (!exModel.getStatus().equals(reqDTO.getStatus())) {
-            exModel.setStatus(reqDTO.getStatus());
-            setUpdatedTime(exModel);
-            return dealRepository.save(exModel);
+//        //Update status
+//        Deal exModel = dealRepository.getOne(reqDTO.getDealId());
+//        if (!exModel.getStatus().equals(reqDTO.getStatus())) {
+//            exModel.setStatus(reqDTO.getStatus());
+//            setUpdatedTime(exModel);
+//            return dealRepository.save(exModel);
+//        }
+
+        if (dealRepository.existsById(reqDTO.getDealId())){
+            //Update status
+            Deal exModel = dealRepository.getOne(reqDTO.getDealId());
+            if (!exModel.getStatus().equals(reqDTO.getStatus())) {
+                exModel.setStatus(reqDTO.getStatus());
+                setUpdatedTime(exModel);
+                return dealRepository.save(exModel);
+            }
+        }else{
+            throw new EntityNotFoundException(Deal.class, "id", Integer.valueOf(reqDTO.getDealId()).toString());
         }
-
         return null;
     }
 

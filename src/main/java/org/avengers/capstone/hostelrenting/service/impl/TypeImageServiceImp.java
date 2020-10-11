@@ -14,19 +14,24 @@ import java.util.Optional;
 
 @Service
 public class TypeImageServiceImp implements TypeImageService {
+    @Autowired
     private TypeImageRepository typeImageRepository;
 
-    @Autowired
-    public void setTypeImageRepository(TypeImageRepository typeImageRepository) {
-        this.typeImageRepository = typeImageRepository;
-    }
+//    @Autowired
+//    public void setTypeImageRepository(TypeImageRepository typeImageRepository) {
+//        this.typeImageRepository = typeImageRepository;
+//    }
 
     @Override
     public TypeImage findById(Integer id) {
-        if (isNotFound(id))
-            throw new EntityNotFoundException(Province.class, "id", id.toString());
-
-        return typeImageRepository.getOne(id);
+//        if (isNotFound(id))
+//            throw new EntityNotFoundException(Province.class, "id", id.toString());
+//
+//        return typeImageRepository.getOne(id);
+        if(typeImageRepository.existsById(id))
+            return typeImageRepository.getOne(id);
+        else
+            throw new EntityNotFoundException(TypeImage.class, "id", id.toString());
     }
 
     @Override

@@ -83,11 +83,7 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public Booking findById(Integer id) {
         try{
-            if (bookingRepository.existsById(id)){
-                return bookingRepository.findById(id).get();
-            }else{
-                throw new EntityNotFoundException(Booking.class, "id", id.toString());
-            }
+            return bookingRepository.findById(id).get();
         }catch (Exception e){
             throw new EntityNotFoundException(Booking.class, "id", id.toString());
         }
@@ -95,6 +91,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public Booking create(BookingDTOShort reqDTO) {
+
         Vendor exVendor = vendorRepository.findById(reqDTO.getVendorId()).get();
         Renter exRenter = renterRepository.findById(reqDTO.getRenterId()).get();
         Type exType = hostelTypeRepository.findById(reqDTO.getTypeId()).get();
@@ -106,13 +103,9 @@ public class BookingServiceImpl implements BookingService {
         if (dealId != null) {
 //            dealService.checkActive(dealId);
 //            dealService.changeStatus(dealId, Deal.STATUS.DONE);
-            try{
-                if (dealRepository.existsById(dealId)){
-                    dealService.changeStatus(dealId, Deal.STATUS.DONE);
-                }else{
-                    throw new EntityNotFoundException(Deal.class, "id", dealId.toString());
-                }
-            }catch (Exception e){
+            if (dealRepository.existsById(dealId)){
+                dealService.changeStatus(dealId, Deal.STATUS.DONE);
+            }else{
                 throw new EntityNotFoundException(Deal.class, "id", dealId.toString());
             }
         }
@@ -150,7 +143,6 @@ public class BookingServiceImpl implements BookingService {
             throw new EntityNotFoundException(Booking.class, "id", reqDTO.getBookingId().toString());
         }
 
-
         return null;
     }
 
@@ -166,7 +158,7 @@ public class BookingServiceImpl implements BookingService {
         if (renterRepository.existsById(renterId)) {
             return renterRepository.findById(renterId).get().getBookings();
         }else{
-            throw new EntityNotFoundException(Booking.class, "id", renterId.toString());
+            throw new EntityNotFoundException(Renter.class, "id", renterId.toString());
         }
     }
 

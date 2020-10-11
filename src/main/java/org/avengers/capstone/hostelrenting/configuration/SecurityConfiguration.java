@@ -2,6 +2,8 @@ package org.avengers.capstone.hostelrenting.configuration;
 
 import org.avengers.capstone.hostelrenting.jwt.JwtAuthenticationEntryPoint;
 import org.avengers.capstone.hostelrenting.jwt.FirebaseFilter;
+import org.avengers.capstone.hostelrenting.repository.RenterRepository;
+import org.avengers.capstone.hostelrenting.repository.VendorRepository;
 import org.avengers.capstone.hostelrenting.service.impl.CustomUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -25,6 +27,10 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     private CustomUserService jwtUserDetailsService;
     private FirebaseFilter firebaseFilter;
 
+    public SecurityConfiguration(CustomUserService customUserService){
+        this.jwtUserDetailsService = customUserService;
+    }
+
     @Autowired
     public void setJwtAuthenticationEntryPoint(JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint) {
         this.jwtAuthenticationEntryPoint = jwtAuthenticationEntryPoint;
@@ -45,7 +51,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         // configure AuthenticationManager so that it knows from where to load
         // user for matching credentials
         // Use BCryptPasswordEncoder
-        auth.userDetailsService(jwtUserDetailsService).passwordEncoder(passwordEncoder());
+        auth.userDetailsService(jwtUserDetailsService).passwordEncoder(new BCryptPasswordEncoder());
     }
 
     @Bean

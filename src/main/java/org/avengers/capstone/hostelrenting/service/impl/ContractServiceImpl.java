@@ -107,6 +107,8 @@ public class ContractServiceImpl implements ContractService {
 //            dealService.changeStatus(dealId, Deal.STATUS.DONE);
             if (dealRepository.existsById(dealId)){
                 dealService.changeStatus(dealId, Deal.STATUS.DONE);
+            }else{
+                throw new EntityNotFoundException(Deal.class, "id", dealId.toString());
             }
         }
         if (bookingId != null){

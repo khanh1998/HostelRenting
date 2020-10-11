@@ -3,6 +3,7 @@ package org.avengers.capstone.hostelrenting.service.impl;
 import org.avengers.capstone.hostelrenting.dto.CategoryDTO;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
 import org.avengers.capstone.hostelrenting.model.Category;
+import org.avengers.capstone.hostelrenting.model.Vendor;
 import org.avengers.capstone.hostelrenting.repository.CategoryRepository;
 import org.avengers.capstone.hostelrenting.service.CategoryService;
 import org.modelmapper.ModelMapper;
@@ -15,13 +16,14 @@ import java.util.stream.Collectors;
 
 @Service
 public class CategoryServiceImpl implements CategoryService {
+    @Autowired
     private CategoryRepository categoryRepository;
     private ModelMapper modelMapper;
 
-    @Autowired
-    public void setCategoryRepository(CategoryRepository categoryRepository) {
-        this.categoryRepository = categoryRepository;
-    }
+//    @Autowired
+//    public void setCategoryRepository(CategoryRepository categoryRepository) {
+//        this.categoryRepository = categoryRepository;
+//    }
 
     @Autowired
     public void setModelMapper(ModelMapper modelMapper) {
@@ -55,7 +57,12 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public Category findById(Integer id) {
-        checkExist(id);
-        return categoryRepository.getOne(id);
+//        checkExist(id);
+//        return categoryRepository.getOne(id);
+        if (categoryRepository.existsById(id)){
+            return categoryRepository.getOne(id);
+        }else{
+            throw new EntityNotFoundException(Category.class, "id", id.toString());
+        }
     }
 }

@@ -14,12 +14,13 @@ import java.util.stream.Collectors;
 
 @Service
 public class UtilityServiceImpl implements UtilityService {
+    @Autowired
     private UtilityRepository utilityRepository;
 
-    @Autowired
-    public void setUtilityRepository(UtilityRepository utilityRepository) {
-        this.utilityRepository = utilityRepository;
-    }
+//    @Autowired
+//    public void setUtilityRepository(UtilityRepository utilityRepository) {
+//        this.utilityRepository = utilityRepository;
+//    }
 
     @Override
     public Set<UCategory> getNearbyUtilities(Double latitude, Double longitude, Double distance) {

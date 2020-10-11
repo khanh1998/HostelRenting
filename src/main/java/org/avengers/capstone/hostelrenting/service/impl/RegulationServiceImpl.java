@@ -19,19 +19,21 @@ import java.util.Optional;
 @Service
 public class RegulationServiceImpl implements RegulationService {
 
+    @Autowired
     private RegulationRepository regulationRepository;
 
-    @Autowired
-    public void setRegulationRepository(RegulationRepository regulationRepository) {
-        this.regulationRepository = regulationRepository;
-    }
+//    @Autowired
+//    public void setRegulationRepository(RegulationRepository regulationRepository) {
+//        this.regulationRepository = regulationRepository;
+//    }
 
     @Override
     public Regulation findById(Integer id) {
-        if (isNotFound(id)) {
-            throw new EntityNotFoundException(Schedule.class, "id", id.toString());
+        if (regulationRepository.existsById(id)) {
+            return regulationRepository.getOne(id);
+        }else{
+            throw new EntityNotFoundException(Regulation.class, "id", id.toString());
         }
-        return regulationRepository.getOne(id);
     }
 
     private boolean isNotFound(Integer id) {

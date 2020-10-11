@@ -13,13 +13,14 @@ import java.util.Optional;
 
 @Service
 public class StreetServiceImpl implements StreetService {
+    @Autowired
     private StreetRepository streetRepository;
     private ModelMapper modelMapper;
 
-    @Autowired
-    public void setRepository(StreetRepository streetRepository) {
-        this.streetRepository = streetRepository;
-    }
+//    @Autowired
+//    public void setRepository(StreetRepository streetRepository) {
+//        this.streetRepository = streetRepository;
+//    }
 
     @Autowired
     public void setModelMapper(ModelMapper modelMapper) {
@@ -35,8 +36,12 @@ public class StreetServiceImpl implements StreetService {
 
     @Override
     public Street findById(Integer id) {
-        checkExist(id);
-        return streetRepository.getOne(id);
+//        checkExist(id);
+//        return streetRepository.getOne(id);
+        if (streetRepository.existsById(id))
+            return streetRepository.getOne(id);
+        else
+            throw new EntityNotFoundException(Street.class, "id", id.toString());
     }
 
 }

@@ -15,12 +15,13 @@ import java.util.Optional;
 @Service
 public class TypeStatusServiceImpl implements TypeStatusService {
 
+    @Autowired
     private TypeStatusRepository typeStatusRepository;
 
-    @Autowired
-    public void setTypeStatusRepository(TypeStatusRepository typeStatusRepository) {
-        this.typeStatusRepository = typeStatusRepository;
-    }
+//    @Autowired
+//    public void setTypeStatusRepository(TypeStatusRepository typeStatusRepository) {
+//        this.typeStatusRepository = typeStatusRepository;
+//    }
 
     @Override
     public TypeStatus save(TypeStatus typeStatus) {
@@ -32,10 +33,14 @@ public class TypeStatusServiceImpl implements TypeStatusService {
 
     @Override
     public TypeStatus findById(Integer id) {
-        if(isNotFound(id))
+//        if(isNotFound(id))
+//            throw new EntityNotFoundException(TypeStatus.class, "id", id.toString());
+//
+//        return typeStatusRepository.getOne(id);
+        if (typeStatusRepository.existsById(id))
+            return typeStatusRepository.getOne(id);
+        else
             throw new EntityNotFoundException(TypeStatus.class, "id", id.toString());
-
-        return typeStatusRepository.getOne(id);
     }
 
     @Override

@@ -16,12 +16,13 @@ import java.util.Optional;
 
 @Service
 public class ScheduleServiceImpl implements ScheduleService {
+    @Autowired
     private ScheduleRepository scheduleRepository;
 
-    @Autowired
-    public void setScheduleRepository(ScheduleRepository scheduleRepository) {
-        this.scheduleRepository = scheduleRepository;
-    }
+//    @Autowired
+//    public void setScheduleRepository(ScheduleRepository scheduleRepository) {
+//        this.scheduleRepository = scheduleRepository;
+//    }
 
     @Override
     public Schedule save(Schedule schedule) {
@@ -33,10 +34,15 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     @Override
     public Schedule findById(Integer id) {
-        if (isNotFound(id)) {
+//        if (isNotFound(id)) {
+//            throw new EntityNotFoundException(Schedule.class, "id", id.toString());
+//        }
+//        return scheduleRepository.getOne(id);
+        if (scheduleRepository.existsById(id)){
+            return scheduleRepository.getOne(id);
+        }else{
             throw new EntityNotFoundException(Schedule.class, "id", id.toString());
         }
-        return scheduleRepository.getOne(id);
     }
 
     @Override

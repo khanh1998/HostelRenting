@@ -2,6 +2,7 @@ package org.avengers.capstone.hostelrenting.service.impl;
 
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
 import org.avengers.capstone.hostelrenting.model.Type;
+import org.avengers.capstone.hostelrenting.repository.GroupRepository;
 import org.avengers.capstone.hostelrenting.repository.TypeRepository;
 import org.avengers.capstone.hostelrenting.service.HostelGroupService;
 import org.avengers.capstone.hostelrenting.service.HostelTypeService;
@@ -20,12 +21,14 @@ import java.util.stream.Stream;
 public class HostelTypeServiceImpl implements HostelTypeService {
     @Autowired
     private TypeRepository typeRepository;
-    private HostelGroupService hostelGroupService;
-
     @Autowired
-    public void setHostelGroupService(HostelGroupService hostelGroupService) {
-        this.hostelGroupService = hostelGroupService;
-    }
+    private GroupRepository groupRepository;
+//    private HostelGroupService hostelGroupService;
+
+//    @Autowired
+//    public void setHostelGroupService(HostelGroupService hostelGroupService) {
+//        this.hostelGroupService = hostelGroupService;
+//    }
 
 //    @Autowired
 //    public void setHostelTypeRepository(TypeRepository typeRepository) {
@@ -41,9 +44,14 @@ public class HostelTypeServiceImpl implements HostelTypeService {
 
     @Override
     public Type findById(Integer id) {
-        checkExist(id);
-
-        return typeRepository.getOne(id);
+//        checkExist(id);
+//
+//        return typeRepository.getOne(id);
+        if (typeRepository.existsById(id)) {
+            return typeRepository.getOne(id);
+        }else {
+            throw new EntityNotFoundException(Type.class, "id", id.toString());
+        }
     }
 
     @Override
@@ -76,9 +84,14 @@ public class HostelTypeServiceImpl implements HostelTypeService {
      */
     @Override
     public List<Type> findByHostelGroupId(Integer hostelGroupId) {
-        hostelGroupService.checkExist(hostelGroupId);
-        List<Type> types = typeRepository.findByGroup_GroupId((hostelGroupId));
-        return types;
+//        hostelGroupService.checkExist(hostelGroupId);
+//        List<Type> types = typeRepository.findByGroup_GroupId((hostelGroupId));
+//        return types;
+        if (groupRepository.existsById(hostelGroupId)){
+            return typeRepository.findByGroup_GroupId(hostelGroupId);
+        }else{
+            return null;
+        }
     }
 
     /**

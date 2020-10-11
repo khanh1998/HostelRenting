@@ -6,7 +6,7 @@ import org.avengers.capstone.hostelrenting.model.Renter;
 import java.util.List;
 
 public interface RenterService {
-//    void checkExist(Long id);
+    void checkExist(Long id);
     Renter update(ResRenterDTO reqDTO);
 
     Renter findById(Long id);

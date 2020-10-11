@@ -13,12 +13,13 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class ServiceDetailServiceImpl implements ServiceDetailService {
+    @Autowired
     private ServiceDetailRepository serviceDetailRepository;
 
-    @Autowired
-    public void setServiceDetailRepository(ServiceDetailRepository serviceDetailRepository) {
-        this.serviceDetailRepository = serviceDetailRepository;
-    }
+//    @Autowired
+//    public void setServiceDetailRepository(ServiceDetailRepository serviceDetailRepository) {
+//        this.serviceDetailRepository = serviceDetailRepository;
+//    }
 
     @Override
     public GroupService create(GroupService groupService) {
