@@ -1,0 +1,2 @@
+2020-10-11 18:32:48.957 INFO   org.springframework.boot.StartupInfoLogger.logStarting 55  - Starting HostelrentingApplication on ThanhDCSE63414 with PID 13564 (C:\Users\ThanhDCSE63414\Downloads\HostelRenting\target\classes started by ThanhDCSE63414 in C:\Users\ThanhDCSE63414\Downloads\HostelRenting)
+2020-10-11 18:32:48.977 INFO   org.springframework.boot.SpringApplication.logStartupProfileInfo 655  - The following profiles are active: prod
