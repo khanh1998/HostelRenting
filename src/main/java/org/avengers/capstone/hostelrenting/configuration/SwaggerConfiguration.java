@@ -14,7 +14,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 @Configuration
 @EnableSwagger2
-public class MyConfiguration {
+public class SwaggerConfiguration {
     @Bean
     public ModelMapper modelMapper() {
         ModelMapper mapper = new ModelMapper();

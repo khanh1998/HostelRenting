@@ -3,10 +3,9 @@ package org.avengers.capstone.hostelrenting.controller;
 import org.avengers.capstone.hostelrenting.dto.combination.TypeAndGroupDTO;
 import org.avengers.capstone.hostelrenting.dto.combination.TypesAndGroupsDTO;
 import org.avengers.capstone.hostelrenting.dto.group.GroupDTOResponse;
-import org.avengers.capstone.hostelrenting.dto.group.GroupDTOUpdate;
+import org.avengers.capstone.hostelrenting.dto.response.ApiSuccess;
 import org.avengers.capstone.hostelrenting.dto.type.TypeDTOCreate;
 import org.avengers.capstone.hostelrenting.dto.type.TypeDTOResponse;
-import org.avengers.capstone.hostelrenting.dto.response.ApiSuccess;
 import org.avengers.capstone.hostelrenting.dto.type.TypeDTOUpdate;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
 import org.avengers.capstone.hostelrenting.model.*;
@@ -213,7 +212,8 @@ public class HostelTypeController {
         if (typeId != null) {
             String message = "Hostel type {id=" + typeId + "} has been retrieved successfully!";
             // handle hostel type and corresponding hostel group
-            TypeDTOResponse typeDTOResponse = modelMapper.map(hostelTypeService.findById(typeId), TypeDTOResponse.class);
+            Type model = hostelTypeService.findById(typeId);
+            TypeDTOResponse typeDTOResponse = modelMapper.map(model, TypeDTOResponse.class);
             GroupDTOResponse resGroupDTO = modelMapper.map(hostelGroupService.findById(typeDTOResponse.getGroupId()), GroupDTOResponse.class);
             TypeAndGroupDTO resDTO = TypeAndGroupDTO.builder().groupDTOFull(resGroupDTO).type(typeDTOResponse).build();
             // log when typeId != null
@@ -279,7 +279,8 @@ public class HostelTypeController {
                                         .anyMatch(id -> id == regulation.getRegulation().getRegulationId()));
                     return true;
                 })
-                .map(hostelType -> modelMapper.map(hostelType, TypeDTOResponse.class))
+                .map(hostelType ->modelMapper.map(hostelType, TypeDTOResponse.class)
+                )
                 .collect(Collectors.toSet());
 
 
@@ -316,4 +317,5 @@ public class HostelTypeController {
 
         return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
     }
+
 }

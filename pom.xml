@@ -119,6 +119,14 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-log4j2</artifactId>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/com.microsoft.azure/azure-storage -->
+        <dependency>
+            <groupId>com.microsoft.azure</groupId>
+            <artifactId>azure-storage</artifactId>
+            <version>8.6.5</version>
+        </dependency>
+
+
     </dependencies>
 
     <build>

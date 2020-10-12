@@ -172,7 +172,7 @@ public class HostelGroupController {
      * @throws EntityNotFoundException when object is not found
      */
     @GetMapping("/vendors/{vendorId}/groups")
-    public ResponseEntity<?> getGroupsByVendorId(@PathVariable Long vendorId) throws EntityNotFoundException {
+    public ResponseEntity<?> getGroupsByVendorId(@PathVariable Long vendorId) {
         //log start
         logger.info("START - Get group by vendor with id: " + vendorId);
         Vendor existedModel = vendorService.findById(vendorId);
@@ -190,6 +190,12 @@ public class HostelGroupController {
         return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
     }
 
+    /**
+     * Update group information
+     * @param reqDTO request dto
+     * @param groupId group id to update
+     * @return
+     */
     @PutMapping("/groups/{groupId}")
     public ResponseEntity<?> updateGroup(@Valid @RequestBody GroupDTOUpdate reqDTO,
                                          @PathVariable Integer groupId) {
@@ -198,7 +204,6 @@ public class HostelGroupController {
         Group existedModel = hostelGroupService.findById(groupId);
 
         modelMapper.map(reqDTO, existedModel);
-
         Group resModel = hostelGroupService.update(existedModel);
         GroupDTOResponse resDTO = modelMapper.map(resModel, GroupDTOResponse.class);
 
@@ -209,4 +214,5 @@ public class HostelGroupController {
 
         return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
     }
+
 }
