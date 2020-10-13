@@ -50,4 +50,6 @@ public class GroupDTOCreate implements Serializable {
     private List<GroupServiceDTOCreate> services;
 
     private List<GroupRegulationDTOCreate> regulations;
+
+// test push code
 }
