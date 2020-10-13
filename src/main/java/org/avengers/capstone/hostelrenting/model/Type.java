@@ -1,6 +1,7 @@
 package org.avengers.capstone.hostelrenting.model;
 
 import lombok.*;
+import org.springframework.beans.factory.annotation.Value;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -8,14 +9,15 @@ import java.util.Collection;
 
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 @EqualsAndHashCode
 
 @Entity
 @Table(name = "type_hostel")
 public class Type {
+
     @Id
     @Column(name = "type_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
