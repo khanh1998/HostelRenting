@@ -1,14 +1,15 @@
 package org.avengers.capstone.hostelrenting.controller;
 
-import org.avengers.capstone.hostelrenting.dto.group.GroupDTOResponse;
 import org.avengers.capstone.hostelrenting.dto.booking.BookingDTOFull;
 import org.avengers.capstone.hostelrenting.dto.booking.BookingDTOShort;
 import org.avengers.capstone.hostelrenting.dto.deal.DealDTOShort;
+import org.avengers.capstone.hostelrenting.dto.group.GroupDTOResponse;
 import org.avengers.capstone.hostelrenting.dto.response.ApiSuccess;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
 import org.avengers.capstone.hostelrenting.model.Booking;
 import org.avengers.capstone.hostelrenting.model.Deal;
 import org.avengers.capstone.hostelrenting.model.Group;
+import org.avengers.capstone.hostelrenting.repository.BookingRepository;
 import org.avengers.capstone.hostelrenting.service.BookingService;
 import org.avengers.capstone.hostelrenting.service.DealService;
 import org.avengers.capstone.hostelrenting.service.HostelGroupService;
@@ -30,6 +31,8 @@ public class BookingController {
     private HostelGroupService hostelGroupService;
     private DealService dealService;
     private ModelMapper modelMapper;
+    @Autowired
+    private BookingRepository bookingRepository;
 
     @Autowired
     public void setDealService(DealService dealService) {

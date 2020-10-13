@@ -14,6 +14,7 @@ import java.util.Optional;
 @Service
 public class HostelGroupServiceImpl implements HostelGroupService {
 
+//    @Autowired
     private GroupRepository groupRepository;
 //    private static final Logger logger = LoggerFactory.getLogger(HostelGroupServiceImpl.class);
 
@@ -35,19 +36,12 @@ public class HostelGroupServiceImpl implements HostelGroupService {
 //        checkExist(id);
 //
 //        return groupRepository.getOne(id);
-//        if (groupRepository.existsById(id)){
-//            return groupRepository.getOne(id);
-//        }else {
-//            throw new EntityNotFoundException(Group.class, "id", id.toString());
-//        }
-        try {
-            System.out.println(groupRepository.existsById(id));
-            System.out.println(groupRepository.getOne(id).getGroupId());
-        }catch (Exception e){
-            e.printStackTrace();
+        if (groupRepository.existsById(id)){
+            System.out.println(groupRepository.getOne(id).toString());
+            return groupRepository.getOne(id);
+        }else {
+            throw new EntityNotFoundException(Group.class, "id", id.toString());
         }
-
-        return groupRepository.getOne(id);
     }
 
     @Override

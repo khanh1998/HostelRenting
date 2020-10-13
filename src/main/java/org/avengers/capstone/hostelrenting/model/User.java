@@ -42,4 +42,20 @@ public class User {
 
     @Column(columnDefinition = "boolean default false")
     private boolean isCensored;
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "userId=" + userId +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", email='" + email + '\'' +
+                ", phone='" + phone + '\'' +
+                ", avatar='" + avatar + '\'' +
+                ", firebaseToken='" + firebaseToken + '\'' +
+                ", role=" + role +
+                ", isBlocked=" + isBlocked +
+                ", isCensored=" + isCensored +
+                '}';
+    }
 }

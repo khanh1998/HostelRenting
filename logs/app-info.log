@@ -1,82 +1,62 @@
-2020-10-11 18:32:48.957 INFO   org.springframework.boot.StartupInfoLogger.logStarting 55  - Starting HostelrentingApplication on ThanhDCSE63414 with PID 13564 (C:\Users\ThanhDCSE63414\Downloads\HostelRenting\target\classes started by ThanhDCSE63414 in C:\Users\ThanhDCSE63414\Downloads\HostelRenting)
-2020-10-11 18:32:48.977 INFO   org.springframework.boot.SpringApplication.logStartupProfileInfo 655  - The following profiles are active: prod
-2020-10-11 18:41:53.397 INFO   org.springframework.boot.StartupInfoLogger.logStarting 55  - Starting HostelrentingApplication on ThanhDCSE63414 with PID 18112 (C:\Users\ThanhDCSE63414\Downloads\HostelRenting\target\classes started by ThanhDCSE63414 in C:\Users\ThanhDCSE63414\Downloads\HostelRenting)
-2020-10-11 18:41:53.411 INFO   org.springframework.boot.SpringApplication.logStartupProfileInfo 655  - The following profiles are active: prod
-2020-10-11 18:42:14.184 INFO   org.springframework.boot.StartupInfoLogger.logStarted 61  - Started HostelrentingApplication in 21.316 seconds (JVM running for 23.501)
-2020-10-11 18:44:05.509 INFO   org.springframework.boot.StartupInfoLogger.logStarting 55  - Starting HostelrentingApplication on ThanhDCSE63414 with PID 11184 (C:\Users\ThanhDCSE63414\Downloads\HostelRenting\target\classes started by ThanhDCSE63414 in C:\Users\ThanhDCSE63414\Downloads\HostelRenting)
-2020-10-11 18:44:05.529 INFO   org.springframework.boot.SpringApplication.logStartupProfileInfo 655  - The following profiles are active: prod
-2020-10-11 18:46:30.783 INFO   org.springframework.boot.StartupInfoLogger.logStarting 55  - Starting HostelrentingApplication on ThanhDCSE63414 with PID 14868 (C:\Users\ThanhDCSE63414\Downloads\HostelRenting\target\classes started by ThanhDCSE63414 in C:\Users\ThanhDCSE63414\Downloads\HostelRenting)
-2020-10-11 18:46:30.793 INFO   org.springframework.boot.SpringApplication.logStartupProfileInfo 655  - The following profiles are active: prod
-2020-10-11 18:47:27.087 INFO   org.springframework.boot.StartupInfoLogger.logStarting 55  - Starting HostelrentingApplication on ThanhDCSE63414 with PID 5520 (C:\Users\ThanhDCSE63414\Downloads\HostelRenting\target\classes started by ThanhDCSE63414 in C:\Users\ThanhDCSE63414\Downloads\HostelRenting)
-2020-10-11 18:47:27.097 INFO   org.springframework.boot.SpringApplication.logStartupProfileInfo 655  - The following profiles are active: prod
-2020-10-11 18:47:48.512 INFO   org.springframework.boot.StartupInfoLogger.logStarted 61  - Started HostelrentingApplication in 21.949 seconds (JVM running for 24.678)
-2020-10-11 18:48:32.778 INFO   org.springframework.boot.StartupInfoLogger.logStarting 55  - Starting HostelrentingApplication on ThanhDCSE63414 with PID 12936 (C:\Users\ThanhDCSE63414\Downloads\HostelRenting\target\classes started by ThanhDCSE63414 in C:\Users\ThanhDCSE63414\Downloads\HostelRenting)
-2020-10-11 18:48:32.799 INFO   org.springframework.boot.SpringApplication.logStartupProfileInfo 655  - The following profiles are active: prod
-2020-10-11 18:51:29.317 INFO   org.springframework.boot.StartupInfoLogger.logStarting 55  - Starting HostelrentingApplication on ThanhDCSE63414 with PID 18980 (C:\Users\ThanhDCSE63414\Downloads\HostelRenting\target\classes started by ThanhDCSE63414 in C:\Users\ThanhDCSE63414\Downloads\HostelRenting)
-2020-10-11 18:51:29.329 INFO   org.springframework.boot.SpringApplication.logStartupProfileInfo 655  - The following profiles are active: prod
-2020-10-11 18:51:50.268 INFO   org.springframework.boot.StartupInfoLogger.logStarted 61  - Started HostelrentingApplication in 21.532 seconds (JVM running for 23.715)
-2020-10-11 18:54:05.410 INFO   org.avengers.capstone.hostelrenting.controller.HostelGroupController.getGroupById 152  - START - Get group with id: 1
-2020-10-11 18:54:13.972 INFO   org.avengers.capstone.hostelrenting.controller.HostelGroupController.getGroupById 152  - START - Get group with id: 10
-2020-10-11 18:54:19.426 INFO   org.avengers.capstone.hostelrenting.controller.HostelGroupController.getGroupById 152  - START - Get group with id: 5
-2020-10-11 19:03:48.920 INFO   org.springframework.boot.StartupInfoLogger.logStarting 55  - Starting HostelrentingApplication on ThanhDCSE63414 with PID 16516 (C:\Users\ThanhDCSE63414\Downloads\HostelRenting\target\classes started by ThanhDCSE63414 in C:\Users\ThanhDCSE63414\Downloads\HostelRenting)
-2020-10-11 19:03:48.931 INFO   org.springframework.boot.SpringApplication.logStartupProfileInfo 655  - The following profiles are active: prod
-2020-10-11 19:04:10.289 INFO   org.springframework.boot.StartupInfoLogger.logStarted 61  - Started HostelrentingApplication in 21.875 seconds (JVM running for 24.758)
-2020-10-11 19:13:09.766 INFO   org.avengers.capstone.hostelrenting.controller.HostelGroupController.getGroupById 153  - START - Get group with id: 1
-2020-10-11 19:14:03.385 INFO   org.avengers.capstone.hostelrenting.controller.HostelGroupController.getGroupsByVendorId 176  - START - Get group by vendor with id: 1
-2020-10-11 19:14:03.874 INFO   org.avengers.capstone.hostelrenting.controller.HostelGroupController.getGroupsByVendorId 186  - SUCCESSFUL - Get group by vendorId
-2020-10-11 19:14:40.873 INFO   org.springframework.boot.StartupInfoLogger.logStarting 55  - Starting HostelrentingApplication on ThanhDCSE63414 with PID 2436 (C:\Users\ThanhDCSE63414\Downloads\HostelRenting\target\classes started by ThanhDCSE63414 in C:\Users\ThanhDCSE63414\Downloads\HostelRenting)
-2020-10-11 19:14:40.885 INFO   org.springframework.boot.SpringApplication.logStartupProfileInfo 655  - The following profiles are active: prod
-2020-10-11 19:15:30.448 INFO   org.springframework.boot.StartupInfoLogger.logStarting 55  - Starting HostelrentingApplication on ThanhDCSE63414 with PID 2396 (C:\Users\ThanhDCSE63414\Downloads\HostelRenting\target\classes started by ThanhDCSE63414 in C:\Users\ThanhDCSE63414\Downloads\HostelRenting)
-2020-10-11 19:15:30.459 INFO   org.springframework.boot.SpringApplication.logStartupProfileInfo 655  - The following profiles are active: prod
-2020-10-11 19:18:22.814 INFO   org.springframework.boot.StartupInfoLogger.logStarting 55  - Starting HostelrentingApplication on ThanhDCSE63414 with PID 8480 (C:\Users\ThanhDCSE63414\Downloads\HostelRenting\target\classes started by ThanhDCSE63414 in C:\Users\ThanhDCSE63414\Downloads\HostelRenting)
-2020-10-11 19:18:22.826 INFO   org.springframework.boot.SpringApplication.logStartupProfileInfo 655  - The following profiles are active: prod
-2020-10-11 19:18:43.355 INFO   org.springframework.boot.StartupInfoLogger.logStarted 61  - Started HostelrentingApplication in 21.031 seconds (JVM running for 23.615)
-2020-10-11 19:19:02.567 INFO   org.avengers.capstone.hostelrenting.controller.HostelGroupController.getGroupById 153  - START - Get group with id: 1
-2020-10-11 19:19:46.149 INFO   org.springframework.boot.StartupInfoLogger.logStarting 55  - Starting HostelrentingApplication on ThanhDCSE63414 with PID 11592 (C:\Users\ThanhDCSE63414\Downloads\HostelRenting\target\classes started by ThanhDCSE63414 in C:\Users\ThanhDCSE63414\Downloads\HostelRenting)
-2020-10-11 19:19:46.159 INFO   org.springframework.boot.SpringApplication.logStartupProfileInfo 655  - The following profiles are active: prod
-2020-10-11 19:31:25.484 INFO   org.springframework.boot.StartupInfoLogger.logStarting 55  - Starting HostelrentingApplication on ThanhDCSE63414 with PID 14796 (C:\Users\ThanhDCSE63414\Downloads\HostelRenting\target\classes started by ThanhDCSE63414 in C:\Users\ThanhDCSE63414\Downloads\HostelRenting)
-2020-10-11 19:31:25.505 INFO   org.springframework.boot.SpringApplication.logStartupProfileInfo 655  - The following profiles are active: prod
-2020-10-11 19:31:48.350 INFO   org.springframework.boot.StartupInfoLogger.logStarted 61  - Started HostelrentingApplication in 23.571 seconds (JVM running for 25.996)
-2020-10-11 19:31:56.851 INFO   org.avengers.capstone.hostelrenting.controller.HostelGroupController.getGroupById 153  - START - Get group with id: 1
-2020-10-11 19:32:50.856 INFO   org.springframework.boot.StartupInfoLogger.logStarting 55  - Starting HostelrentingApplication on ThanhDCSE63414 with PID 18708 (C:\Users\ThanhDCSE63414\Downloads\HostelRenting\target\classes started by ThanhDCSE63414 in C:\Users\ThanhDCSE63414\Downloads\HostelRenting)
-2020-10-11 19:32:50.868 INFO   org.springframework.boot.SpringApplication.logStartupProfileInfo 655  - The following profiles are active: prod
-2020-10-11 19:33:11.820 INFO   org.springframework.boot.StartupInfoLogger.logStarted 61  - Started HostelrentingApplication in 21.519 seconds (JVM running for 23.887)
-2020-10-11 19:33:44.042 INFO   org.avengers.capstone.hostelrenting.controller.HostelGroupController.getGroupById 153  - START - Get group with id: 1
-2020-10-11 20:45:46.806 INFO   org.springframework.boot.StartupInfoLogger.logStarting 55  - Starting HostelrentingApplication on ThanhDCSE63414 with PID 6880 (C:\Users\ThanhDCSE63414\Downloads\HostelRenting\target\classes started by ThanhDCSE63414 in C:\Users\ThanhDCSE63414\Downloads\HostelRenting)
-2020-10-11 20:45:46.822 INFO   org.springframework.boot.SpringApplication.logStartupProfileInfo 655  - The following profiles are active: prod
-2020-10-11 20:46:19.841 INFO   org.springframework.boot.StartupInfoLogger.logStarted 61  - Started HostelrentingApplication in 33.884 seconds (JVM running for 37.896)
-2020-10-11 20:51:28.975 INFO   org.springframework.boot.StartupInfoLogger.logStarting 55  - Starting HostelrentingApplication on ThanhDCSE63414 with PID 22068 (C:\Users\ThanhDCSE63414\Downloads\HostelRenting\target\classes started by ThanhDCSE63414 in C:\Users\ThanhDCSE63414\Downloads\HostelRenting)
-2020-10-11 20:51:28.990 INFO   org.springframework.boot.SpringApplication.logStartupProfileInfo 655  - The following profiles are active: prod
-2020-10-11 20:51:53.033 INFO   org.springframework.boot.StartupInfoLogger.logStarted 61  - Started HostelrentingApplication in 24.56 seconds (JVM running for 28.077)
-2020-10-11 20:52:52.550 INFO   org.avengers.capstone.hostelrenting.controller.HostelGroupController.getGroupById 153  - START - Get group with id: 1
-2020-10-11 20:56:07.027 INFO   org.springframework.boot.StartupInfoLogger.logStarting 55  - Starting HostelrentingApplication on ThanhDCSE63414 with PID 16048 (C:\Users\ThanhDCSE63414\Downloads\HostelRenting\target\classes started by ThanhDCSE63414 in C:\Users\ThanhDCSE63414\Downloads\HostelRenting)
-2020-10-11 20:56:07.044 INFO   org.springframework.boot.SpringApplication.logStartupProfileInfo 655  - The following profiles are active: prod
-2020-10-11 20:56:32.552 INFO   org.springframework.boot.StartupInfoLogger.logStarted 61  - Started HostelrentingApplication in 26.201 seconds (JVM running for 30.759)
-2020-10-11 20:57:24.402 INFO   org.avengers.capstone.hostelrenting.controller.HostelGroupController.getGroupById 152  - START - Get group with id: 1
-2020-10-11 20:58:24.034 INFO   org.springframework.boot.StartupInfoLogger.logStarting 55  - Starting HostelrentingApplication on ThanhDCSE63414 with PID 13980 (C:\Users\ThanhDCSE63414\Downloads\HostelRenting\target\classes started by ThanhDCSE63414 in C:\Users\ThanhDCSE63414\Downloads\HostelRenting)
-2020-10-11 20:58:24.058 INFO   org.springframework.boot.SpringApplication.logStartupProfileInfo 655  - The following profiles are active: prod
-2020-10-11 20:58:47.946 INFO   org.springframework.boot.StartupInfoLogger.logStarted 61  - Started HostelrentingApplication in 24.517 seconds (JVM running for 27.69)
-2020-10-11 20:58:59.720 INFO   org.avengers.capstone.hostelrenting.controller.HostelGroupController.getGroupById 152  - START - Get group with id: 1
-2020-10-11 21:00:08.792 INFO   org.springframework.boot.StartupInfoLogger.logStarting 55  - Starting HostelrentingApplication on ThanhDCSE63414 with PID 10824 (C:\Users\ThanhDCSE63414\Downloads\HostelRenting\target\classes started by ThanhDCSE63414 in C:\Users\ThanhDCSE63414\Downloads\HostelRenting)
-2020-10-11 21:00:08.805 INFO   org.springframework.boot.SpringApplication.logStartupProfileInfo 655  - The following profiles are active: prod
-2020-10-11 21:00:30.824 INFO   org.springframework.boot.StartupInfoLogger.logStarted 61  - Started HostelrentingApplication in 22.5 seconds (JVM running for 25.391)
-2020-10-11 21:00:43.786 INFO   org.avengers.capstone.hostelrenting.controller.HostelGroupController.getGroupById 152  - START - Get group with id: 1
-2020-10-11 21:01:21.143 INFO   org.springframework.boot.StartupInfoLogger.logStarting 55  - Starting HostelrentingApplication on ThanhDCSE63414 with PID 1892 (C:\Users\ThanhDCSE63414\Downloads\HostelRenting\target\classes started by ThanhDCSE63414 in C:\Users\ThanhDCSE63414\Downloads\HostelRenting)
-2020-10-11 21:01:21.156 INFO   org.springframework.boot.SpringApplication.logStartupProfileInfo 655  - The following profiles are active: prod
-2020-10-11 21:01:42.789 INFO   org.springframework.boot.StartupInfoLogger.logStarted 61  - Started HostelrentingApplication in 22.125 seconds (JVM running for 25.085)
-2020-10-11 21:01:52.346 INFO   org.avengers.capstone.hostelrenting.controller.HostelGroupController.getGroupById 152  - START - Get group with id: 1
-2020-10-11 21:03:42.048 INFO   org.springframework.boot.StartupInfoLogger.logStarting 55  - Starting HostelrentingApplication on ThanhDCSE63414 with PID 20212 (C:\Users\ThanhDCSE63414\Downloads\HostelRenting\target\classes started by ThanhDCSE63414 in C:\Users\ThanhDCSE63414\Downloads\HostelRenting)
-2020-10-11 21:03:42.066 INFO   org.springframework.boot.SpringApplication.logStartupProfileInfo 655  - The following profiles are active: prod
-2020-10-11 21:04:04.571 INFO   org.springframework.boot.StartupInfoLogger.logStarted 61  - Started HostelrentingApplication in 23.042 seconds (JVM running for 26.616)
-2020-10-11 21:04:11.663 INFO   org.avengers.capstone.hostelrenting.controller.HostelGroupController.getGroupById 152  - START - Get group with id: 1
-2020-10-11 21:08:47.709 INFO   org.springframework.boot.StartupInfoLogger.logStarting 55  - Starting HostelrentingApplication on ThanhDCSE63414 with PID 17860 (C:\Users\ThanhDCSE63414\Downloads\HostelRenting\target\classes started by ThanhDCSE63414 in C:\Users\ThanhDCSE63414\Downloads\HostelRenting)
-2020-10-11 21:08:47.727 INFO   org.springframework.boot.SpringApplication.logStartupProfileInfo 655  - The following profiles are active: prod
-2020-10-11 21:09:11.564 INFO   org.springframework.boot.StartupInfoLogger.logStarted 61  - Started HostelrentingApplication in 24.47 seconds (JVM running for 27.812)
-2020-10-11 21:09:21.907 INFO   org.avengers.capstone.hostelrenting.controller.HostelGroupController.getGroupById 152  - START - Get group with id: 1
-2020-10-11 21:11:48.731 INFO   org.springframework.boot.StartupInfoLogger.logStarting 55  - Starting HostelrentingApplication on ThanhDCSE63414 with PID 21752 (C:\Users\ThanhDCSE63414\Downloads\HostelRenting\target\classes started by ThanhDCSE63414 in C:\Users\ThanhDCSE63414\Downloads\HostelRenting)
-2020-10-11 21:11:48.751 INFO   org.springframework.boot.SpringApplication.logStartupProfileInfo 655  - The following profiles are active: prod
-2020-10-11 21:12:24.820 INFO   org.springframework.boot.StartupInfoLogger.logStarted 61  - Started HostelrentingApplication in 36.878 seconds (JVM running for 40.211)
-2020-10-11 21:12:33.728 INFO   org.avengers.capstone.hostelrenting.controller.HostelGroupController.getGroupById 152  - START - Get group with id: 1
-2020-10-11 21:28:21.372 INFO   org.springframework.boot.StartupInfoLogger.logStarting 55  - Starting HostelrentingApplication on ThanhDCSE63414 with PID 20124 (C:\Users\ThanhDCSE63414\Downloads\HostelRenting\target\classes started by ThanhDCSE63414 in C:\Users\ThanhDCSE63414\Downloads\HostelRenting)
-2020-10-11 21:28:21.398 INFO   org.springframework.boot.SpringApplication.logStartupProfileInfo 655  - The following profiles are active: prod
-2020-10-11 21:28:43.510 INFO   org.springframework.boot.StartupInfoLogger.logStarted 61  - Started HostelrentingApplication in 22.826 seconds (JVM running for 26.58)
+2020-10-13 09:34:48.452 INFO   org.springframework.boot.StartupInfoLogger.logStarting 55  - Starting HostelrentingApplication on ThanhDCSE63414 with PID 1136 (C:\Users\ThanhDCSE63414\Downloads\HostelRenting\target\classes started by ThanhDCSE63414 in C:\Users\ThanhDCSE63414\Downloads\HostelRenting)
+2020-10-13 09:34:48.480 INFO   org.springframework.boot.SpringApplication.logStartupProfileInfo 655  - The following profiles are active: prod
+2020-10-13 09:35:12.017 INFO   org.springframework.boot.StartupInfoLogger.logStarted 61  - Started HostelrentingApplication in 24.174 seconds (JVM running for 29.581)
+2020-10-13 09:40:59.418 INFO   org.springframework.boot.StartupInfoLogger.logStarting 55  - Starting HostelrentingApplication on ThanhDCSE63414 with PID 11628 (C:\Users\ThanhDCSE63414\Downloads\HostelRenting\target\classes started by ThanhDCSE63414 in C:\Users\ThanhDCSE63414\Downloads\HostelRenting)
+2020-10-13 09:40:59.438 INFO   org.springframework.boot.SpringApplication.logStartupProfileInfo 655  - The following profiles are active: prod
+2020-10-13 09:41:26.272 INFO   org.springframework.boot.StartupInfoLogger.logStarted 61  - Started HostelrentingApplication in 27.543 seconds (JVM running for 32.398)
+2020-10-13 09:44:29.165 INFO   org.springframework.boot.StartupInfoLogger.logStarting 55  - Starting HostelrentingApplication on ThanhDCSE63414 with PID 16604 (C:\Users\ThanhDCSE63414\Downloads\HostelRenting\target\classes started by ThanhDCSE63414 in C:\Users\ThanhDCSE63414\Downloads\HostelRenting)
+2020-10-13 09:44:29.183 INFO   org.springframework.boot.SpringApplication.logStartupProfileInfo 655  - The following profiles are active: prod
+2020-10-13 09:44:52.336 INFO   org.springframework.boot.StartupInfoLogger.logStarted 61  - Started HostelrentingApplication in 23.883 seconds (JVM running for 29.507)
+2020-10-13 09:47:22.427 INFO   org.springframework.boot.StartupInfoLogger.logStarting 55  - Starting HostelrentingApplication on ThanhDCSE63414 with PID 21932 (C:\Users\ThanhDCSE63414\Downloads\HostelRenting\target\classes started by ThanhDCSE63414 in C:\Users\ThanhDCSE63414\Downloads\HostelRenting)
+2020-10-13 09:47:22.449 INFO   org.springframework.boot.SpringApplication.logStartupProfileInfo 655  - The following profiles are active: prod
+2020-10-13 09:47:46.670 INFO   org.springframework.boot.StartupInfoLogger.logStarted 61  - Started HostelrentingApplication in 25.045 seconds (JVM running for 28.515)
+2020-10-13 09:55:13.021 INFO   org.springframework.boot.StartupInfoLogger.logStarting 55  - Starting HostelrentingApplication on ThanhDCSE63414 with PID 20576 (C:\Users\ThanhDCSE63414\Downloads\HostelRenting\target\classes started by ThanhDCSE63414 in C:\Users\ThanhDCSE63414\Downloads\HostelRenting)
+2020-10-13 09:55:13.038 INFO   org.springframework.boot.SpringApplication.logStartupProfileInfo 655  - The following profiles are active: prod
+2020-10-13 09:55:42.289 INFO   org.springframework.boot.StartupInfoLogger.logStarted 61  - Started HostelrentingApplication in 29.924 seconds (JVM running for 34.147)
+2020-10-13 09:58:28.933 INFO   org.springframework.boot.StartupInfoLogger.logStarting 55  - Starting HostelrentingApplication on ThanhDCSE63414 with PID 1348 (C:\Users\ThanhDCSE63414\Downloads\HostelRenting\target\classes started by ThanhDCSE63414 in C:\Users\ThanhDCSE63414\Downloads\HostelRenting)
+2020-10-13 09:58:28.949 INFO   org.springframework.boot.SpringApplication.logStartupProfileInfo 655  - The following profiles are active: prod
+2020-10-13 09:58:51.659 INFO   org.springframework.boot.StartupInfoLogger.logStarted 61  - Started HostelrentingApplication in 23.236 seconds (JVM running for 27.281)
+2020-10-13 10:00:52.367 INFO   org.springframework.boot.StartupInfoLogger.logStarting 55  - Starting HostelrentingApplication on ThanhDCSE63414 with PID 17672 (C:\Users\ThanhDCSE63414\Downloads\HostelRenting\target\classes started by ThanhDCSE63414 in C:\Users\ThanhDCSE63414\Downloads\HostelRenting)
+2020-10-13 10:00:52.382 INFO   org.springframework.boot.SpringApplication.logStartupProfileInfo 655  - The following profiles are active: prod
+2020-10-13 10:01:17.058 INFO   org.springframework.boot.StartupInfoLogger.logStarted 61  - Started HostelrentingApplication in 25.281 seconds (JVM running for 29.043)
+2020-10-13 10:02:51.848 INFO   org.springframework.boot.StartupInfoLogger.logStarting 55  - Starting HostelrentingApplication on ThanhDCSE63414 with PID 21708 (C:\Users\ThanhDCSE63414\Downloads\HostelRenting\target\classes started by ThanhDCSE63414 in C:\Users\ThanhDCSE63414\Downloads\HostelRenting)
+2020-10-13 10:02:51.874 INFO   org.springframework.boot.SpringApplication.logStartupProfileInfo 655  - The following profiles are active: prod
+2020-10-13 10:03:22.709 INFO   org.springframework.boot.StartupInfoLogger.logStarted 61  - Started HostelrentingApplication in 31.405 seconds (JVM running for 34.91)
+2020-10-13 10:07:38.127 INFO   org.springframework.boot.StartupInfoLogger.logStarting 55  - Starting HostelrentingApplication on ThanhDCSE63414 with PID 3840 (C:\Users\ThanhDCSE63414\Downloads\HostelRenting\target\classes started by ThanhDCSE63414 in C:\Users\ThanhDCSE63414\Downloads\HostelRenting)
+2020-10-13 10:07:38.144 INFO   org.springframework.boot.SpringApplication.logStartupProfileInfo 655  - The following profiles are active: prod
+2020-10-13 10:07:59.541 INFO   org.springframework.boot.StartupInfoLogger.logStarted 61  - Started HostelrentingApplication in 22.053 seconds (JVM running for 25.565)
+2020-10-13 10:28:08.056 INFO   org.springframework.boot.StartupInfoLogger.logStarting 55  - Starting HostelrentingApplication on ThanhDCSE63414 with PID 8904 (C:\Users\ThanhDCSE63414\Downloads\HostelRenting\target\classes started by ThanhDCSE63414 in C:\Users\ThanhDCSE63414\Downloads\HostelRenting)
+2020-10-13 10:28:08.077 INFO   org.springframework.boot.SpringApplication.logStartupProfileInfo 655  - The following profiles are active: prod
+2020-10-13 10:28:33.767 INFO   org.springframework.boot.StartupInfoLogger.logStarted 61  - Started HostelrentingApplication in 26.443 seconds (JVM running for 32.645)
+2020-10-13 10:30:57.542 INFO   org.springframework.boot.StartupInfoLogger.logStarting 55  - Starting HostelrentingApplication on ThanhDCSE63414 with PID 4996 (C:\Users\ThanhDCSE63414\Downloads\HostelRenting\target\classes started by ThanhDCSE63414 in C:\Users\ThanhDCSE63414\Downloads\HostelRenting)
+2020-10-13 10:30:57.556 INFO   org.springframework.boot.SpringApplication.logStartupProfileInfo 655  - The following profiles are active: prod
+2020-10-13 10:32:15.978 INFO   org.springframework.boot.StartupInfoLogger.logStarting 55  - Starting HostelrentingApplication on ThanhDCSE63414 with PID 20352 (C:\Users\ThanhDCSE63414\Downloads\HostelRenting\target\classes started by ThanhDCSE63414 in C:\Users\ThanhDCSE63414\Downloads\HostelRenting)
+2020-10-13 10:32:15.995 INFO   org.springframework.boot.SpringApplication.logStartupProfileInfo 655  - The following profiles are active: prod
+2020-10-13 10:33:49.172 INFO   org.springframework.boot.StartupInfoLogger.logStarting 55  - Starting HostelrentingApplication on ThanhDCSE63414 with PID 13868 (C:\Users\ThanhDCSE63414\Downloads\HostelRenting\target\classes started by ThanhDCSE63414 in C:\Users\ThanhDCSE63414\Downloads\HostelRenting)
+2020-10-13 10:33:49.198 INFO   org.springframework.boot.SpringApplication.logStartupProfileInfo 655  - The following profiles are active: prod
+2020-10-13 10:34:13.590 INFO   org.springframework.boot.StartupInfoLogger.logStarted 61  - Started HostelrentingApplication in 25.248 seconds (JVM running for 29.187)
+2020-10-13 10:37:57.396 INFO   org.springframework.boot.StartupInfoLogger.logStarting 55  - Starting HostelrentingApplication on ThanhDCSE63414 with PID 6840 (C:\Users\ThanhDCSE63414\Downloads\HostelRenting\target\classes started by ThanhDCSE63414 in C:\Users\ThanhDCSE63414\Downloads\HostelRenting)
+2020-10-13 10:37:57.414 INFO   org.springframework.boot.SpringApplication.logStartupProfileInfo 655  - The following profiles are active: prod
+2020-10-13 10:39:08.323 INFO   org.springframework.boot.StartupInfoLogger.logStarting 55  - Starting HostelrentingApplication on ThanhDCSE63414 with PID 5200 (C:\Users\ThanhDCSE63414\Downloads\HostelRenting\target\classes started by ThanhDCSE63414 in C:\Users\ThanhDCSE63414\Downloads\HostelRenting)
+2020-10-13 10:39:08.345 INFO   org.springframework.boot.SpringApplication.logStartupProfileInfo 655  - The following profiles are active: prod
+2020-10-13 10:39:35.040 INFO   org.springframework.boot.StartupInfoLogger.logStarting 55  - Starting HostelrentingApplication on ThanhDCSE63414 with PID 2852 (C:\Users\ThanhDCSE63414\Downloads\HostelRenting\target\classes started by ThanhDCSE63414 in C:\Users\ThanhDCSE63414\Downloads\HostelRenting)
+2020-10-13 10:39:35.067 INFO   org.springframework.boot.SpringApplication.logStartupProfileInfo 655  - The following profiles are active: prod
+2020-10-13 10:40:08.874 INFO   org.springframework.boot.StartupInfoLogger.logStarted 61  - Started HostelrentingApplication in 34.406 seconds (JVM running for 37.542)
+2020-10-13 10:41:43.468 INFO   org.springframework.boot.StartupInfoLogger.logStarting 55  - Starting HostelrentingApplication on ThanhDCSE63414 with PID 16084 (C:\Users\ThanhDCSE63414\Downloads\HostelRenting\target\classes started by ThanhDCSE63414 in C:\Users\ThanhDCSE63414\Downloads\HostelRenting)
+2020-10-13 10:41:43.483 INFO   org.springframework.boot.SpringApplication.logStartupProfileInfo 655  - The following profiles are active: prod
+2020-10-13 10:42:06.333 INFO   org.springframework.boot.StartupInfoLogger.logStarted 61  - Started HostelrentingApplication in 23.38 seconds (JVM running for 26.725)
+2020-10-13 10:49:56.942 INFO   org.springframework.boot.StartupInfoLogger.logStarting 55  - Starting HostelrentingApplication on ThanhDCSE63414 with PID 14476 (C:\Users\ThanhDCSE63414\Downloads\HostelRenting\target\classes started by ThanhDCSE63414 in C:\Users\ThanhDCSE63414\Downloads\HostelRenting)
+2020-10-13 10:49:56.953 INFO   org.springframework.boot.SpringApplication.logStartupProfileInfo 655  - The following profiles are active: prod
+2020-10-13 10:50:22.366 INFO   org.springframework.boot.StartupInfoLogger.logStarted 61  - Started HostelrentingApplication in 26.01 seconds (JVM running for 29.033)
+2020-10-13 11:01:03.215 INFO   org.springframework.boot.StartupInfoLogger.logStarting 55  - Starting HostelrentingApplication on ThanhDCSE63414 with PID 10384 (C:\Users\ThanhDCSE63414\Downloads\HostelRenting\target\classes started by ThanhDCSE63414 in C:\Users\ThanhDCSE63414\Downloads\HostelRenting)
+2020-10-13 11:01:03.227 INFO   org.springframework.boot.SpringApplication.logStartupProfileInfo 655  - The following profiles are active: prod
+2020-10-13 11:01:26.246 INFO   org.springframework.boot.StartupInfoLogger.logStarted 61  - Started HostelrentingApplication in 23.646 seconds (JVM running for 26.882)
+2020-10-13 11:06:41.049 INFO   org.springframework.boot.StartupInfoLogger.logStarting 55  - Starting HostelrentingApplication on ThanhDCSE63414 with PID 7480 (C:\Users\ThanhDCSE63414\Downloads\HostelRenting\target\classes started by ThanhDCSE63414 in C:\Users\ThanhDCSE63414\Downloads\HostelRenting)
+2020-10-13 11:06:41.098 INFO   org.springframework.boot.SpringApplication.logStartupProfileInfo 655  - The following profiles are active: prod
+2020-10-13 11:07:11.400 INFO   org.springframework.boot.StartupInfoLogger.logStarted 61  - Started HostelrentingApplication in 31.202 seconds (JVM running for 34.171)
+2020-10-13 11:10:41.296 INFO   org.springframework.boot.StartupInfoLogger.logStarting 55  - Starting HostelrentingApplication on ThanhDCSE63414 with PID 11488 (C:\Users\ThanhDCSE63414\Downloads\HostelRenting\target\classes started by ThanhDCSE63414 in C:\Users\ThanhDCSE63414\Downloads\HostelRenting)
+2020-10-13 11:10:41.327 INFO   org.springframework.boot.SpringApplication.logStartupProfileInfo 655  - The following profiles are active: prod
+2020-10-13 11:11:12.563 INFO   org.springframework.boot.StartupInfoLogger.logStarted 61  - Started HostelrentingApplication in 32.32 seconds (JVM running for 35.851)
+2020-10-13 11:12:15.988 INFO   org.springframework.boot.StartupInfoLogger.logStarting 55  - Starting HostelrentingApplication on ThanhDCSE63414 with PID 2796 (C:\Users\ThanhDCSE63414\Downloads\HostelRenting\target\classes started by ThanhDCSE63414 in C:\Users\ThanhDCSE63414\Downloads\HostelRenting)
+2020-10-13 11:12:16.008 INFO   org.springframework.boot.SpringApplication.logStartupProfileInfo 655  - The following profiles are active: prod
+2020-10-13 11:12:47.700 INFO   org.springframework.boot.StartupInfoLogger.logStarted 61  - Started HostelrentingApplication in 32.927 seconds (JVM running for 37.476)

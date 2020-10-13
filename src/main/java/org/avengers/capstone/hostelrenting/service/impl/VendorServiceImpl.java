@@ -59,8 +59,8 @@ public class VendorServiceImpl implements VendorService {
     public Vendor findById(Long id) {
 //        checkExist(id);
 //        return vendorRepository.getOne(id);
-        if (vendorRepository.existsById(id))
-            return vendorRepository.getOne(id);
+        if (vendorRepository.existsById(id)){
+            return vendorRepository.getOne(id);}
         else
             throw new EntityNotFoundException(Vendor.class, "id", id.toString());
     }

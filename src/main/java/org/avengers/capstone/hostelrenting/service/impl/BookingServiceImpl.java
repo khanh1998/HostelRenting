@@ -16,7 +16,7 @@ import java.util.Random;
 @Service
 public class BookingServiceImpl implements BookingService {
 
-    @Autowired
+//    @Autowired
     private BookingRepository bookingRepository;
 //    @Autowired
 //    private VendorService vendorService;
@@ -61,10 +61,10 @@ public class BookingServiceImpl implements BookingService {
 //        this.dealService = dealService;
 //    }
 //
-//    @Autowired
-//    public void setBookingRepository(BookingRepository bookingRepository) {
-//        this.bookingRepository = bookingRepository;
-//    }
+    @Autowired
+    public void setBookingRepository(BookingRepository bookingRepository) {
+        this.bookingRepository = bookingRepository;
+    }
 //
 //    @Override
 //    public void checkActive(Integer id) {
@@ -82,11 +82,17 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public Booking findById(Integer id) {
+//        if (bookingRepository.existsById(id))
+//            return bookingRepository.findById(id).get();
+//        else
+//            throw new EntityNotFoundException(Booking.class, "id", id.toString());
         try{
             return bookingRepository.findById(id).get();
         }catch (Exception e){
-            throw new EntityNotFoundException(Booking.class, "id", id.toString());
+//            throw new EntityNotFoundException(Booking.class, "id", id.toString());
+            e.printStackTrace();
         }
+        return null;
     }
 
     @Override
