@@ -33,4 +33,8 @@ public class Utilities {
     private static Double toRad(Double value) {
         return value * Math.PI / 180;
     }
+
+    public static float roundFloatNumber(Float number){
+        return (float) (Math.round(number * 100.0)/100.0);
+    }
 }
