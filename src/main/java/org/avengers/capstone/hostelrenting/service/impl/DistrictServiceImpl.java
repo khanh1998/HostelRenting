@@ -23,10 +23,15 @@ public class DistrictServiceImpl implements DistrictService {
     }
 
     @Override
-    public District findById(Integer id) {
-        if (isNotFound(id)) {
+    public void checkExist(Integer id) {
+        Optional<District> model = districtRepository.findById(id);
+        if (model.isEmpty())
             throw new EntityNotFoundException(District.class, "id", id.toString());
-        }
+    }
+
+    @Override
+    public District findById(Integer id) {
+        checkExist(id);
 
         return districtRepository.getOne(id);
     }
@@ -47,26 +52,12 @@ public class DistrictServiceImpl implements DistrictService {
     }
 
     @Override
-    public void deleteById(Integer id) {
-        if (isNotFound(id)) {
-            throw new EntityNotFoundException(District.class, "id", id.toString());
-        }
-
-        districtRepository.deleteById(id);
-    }
-
-    @Override
     public District findByIdAndProvinceId(Integer districtId, Integer provinceId) {
         Optional<District> district = districtRepository.findByDistrictIdAndProvince_ProvinceId(districtId, provinceId);
         if (district.isEmpty()){
             throw new EntityNotFoundException(District.class, "province_id", provinceId.toString(), "district_id", districtId.toString());
         }
         return district.get();
-    }
-
-    private boolean isNotFound(Integer id) {
-        Optional<District> district = districtRepository.findById(id);
-        return district.isEmpty();
     }
 
 }

@@ -44,7 +44,7 @@ public class Type {
 
     // unit: month
     @Column(nullable = false)
-    private float deposit;
+    private int deposit;
 
     @Transient
     private int schoolmate;
