@@ -4,6 +4,7 @@ import org.avengers.capstone.hostelrenting.dto.combination.TypeAndGroupDTO;
 import org.avengers.capstone.hostelrenting.dto.combination.TypesAndGroupsDTO;
 import org.avengers.capstone.hostelrenting.dto.group.GroupDTOResponse;
 import org.avengers.capstone.hostelrenting.dto.response.ApiSuccess;
+import org.avengers.capstone.hostelrenting.dto.type.NumberBookingOnNumberAvailableRoomDTO;
 import org.avengers.capstone.hostelrenting.dto.type.TypeDTOCreate;
 import org.avengers.capstone.hostelrenting.dto.type.TypeDTOResponse;
 import org.avengers.capstone.hostelrenting.dto.type.TypeDTOUpdate;
@@ -318,4 +319,14 @@ public class HostelTypeController {
         return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
     }
 
+    @GetMapping("types/{typeId}/count")
+    public ResponseEntity<?> countNumberBookingOnNumberAvailableRoom(@PathVariable Integer typeId){
+        logger.info("START - get Type by type id: " + typeId);
+        String message = "Count number booking with incoming status on number available room successfully!";
+        NumberBookingOnNumberAvailableRoomDTO numberBookingOnNumberAvailableRoomDTO = hostelTypeService.countNumberBookingOnNumberAvailableRoomDTO(typeId);
+        ApiSuccess<?> apiSuccess = new ApiSuccess<>(numberBookingOnNumberAvailableRoomDTO, message);
+        logger.info("SUCCESSFULLY - CountNumberBookingOnNumberAvailableRoom by typeId !");
+
+        return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
+    }
 }

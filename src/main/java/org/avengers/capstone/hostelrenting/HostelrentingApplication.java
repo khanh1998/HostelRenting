@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 
 @EnableJpaAuditing
-@SpringBootApplication(exclude = { SecurityAutoConfiguration.class }, scanBasePackages = {"org.avengers.capstone.hostelrenting"}) //to temporary disable spring boot security
+@SpringBootApplication(exclude = { SecurityAutoConfiguration.class }) //to temporary disable spring boot security
 public class HostelrentingApplication {
 
     public static void main(String[] args) {

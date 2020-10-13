@@ -1,5 +1,6 @@
 package org.avengers.capstone.hostelrenting.service;
 
+import org.avengers.capstone.hostelrenting.dto.type.NumberBookingOnNumberAvailableRoomDTO;
 import org.avengers.capstone.hostelrenting.model.Type;
 
 import java.util.Collection;
@@ -13,6 +14,7 @@ public interface HostelTypeService {
     Type update(Type reqModel);
     void deleteById(Integer id);
     List<Type> findByHostelGroupId(Integer hostelGroupId);
+    NumberBookingOnNumberAvailableRoomDTO countNumberBookingOnNumberAvailableRoomDTO(Integer id);
 
     /**
      * Get hostel types based on input factors

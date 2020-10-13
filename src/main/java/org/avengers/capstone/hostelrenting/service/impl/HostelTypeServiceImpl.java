@@ -1,6 +1,10 @@
 package org.avengers.capstone.hostelrenting.service.impl;
 
+import org.avengers.capstone.hostelrenting.dto.type.NumberBookingOnNumberAvailableRoomDTO;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
+import org.avengers.capstone.hostelrenting.model.Booking;
+import org.avengers.capstone.hostelrenting.model.Group;
+import org.avengers.capstone.hostelrenting.model.Room;
 import org.avengers.capstone.hostelrenting.model.Type;
 import org.avengers.capstone.hostelrenting.repository.GroupRepository;
 import org.avengers.capstone.hostelrenting.repository.TypeRepository;
@@ -90,7 +94,44 @@ public class HostelTypeServiceImpl implements HostelTypeService {
         if (groupRepository.existsById(hostelGroupId)){
             return typeRepository.findByGroup_GroupId(hostelGroupId);
         }else{
-            return null;
+            throw new EntityNotFoundException(Group.class, "id", hostelGroupId.toString());
+        }
+    }
+
+    int countNumberBookingWithIncomingStatus(List<Booking> bookings, String status){
+        int count  = 0;
+        for (Booking booking : bookings){
+            if (booking.getStatus().equals(status))
+                count ++;
+        }
+        return count;
+    }
+
+    int countAvailableRoom(ArrayList<Room> rooms, boolean status){
+        int count = 0;
+        for (Room room : rooms)
+            if (room.isAvailable() == status)
+                count++;
+        return count;
+    }
+
+    @Override
+    public NumberBookingOnNumberAvailableRoomDTO countNumberBookingOnNumberAvailableRoomDTO(Integer typeId) {
+        if (typeRepository.existsById(typeId)){
+            Type type = typeRepository.getOne(typeId);
+            int numberBookingWithIncomingStatus = countNumberBookingWithIncomingStatus(
+                    new ArrayList<Booking>(type.getBookings()), Booking.STATUS.INCOMING.toString());
+
+            int numberAvailableRoom = countAvailableRoom(
+                    new ArrayList<Room>(type.getRooms()), true);
+
+            NumberBookingOnNumberAvailableRoomDTO numberBookingOnNumberAvailableRoomDTO = new NumberBookingOnNumberAvailableRoomDTO(
+                    numberBookingWithIncomingStatus, numberAvailableRoom
+            );
+
+            return numberBookingOnNumberAvailableRoomDTO;
+        }else{
+            throw new EntityNotFoundException(Type.class, "id", typeId.toString());
         }
     }
 
