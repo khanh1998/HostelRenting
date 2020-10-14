@@ -148,7 +148,7 @@ public class HostelTypeServiceImpl implements HostelTypeService {
             Long currentBooking = type.getBookings().stream().filter(booking -> booking.getStatus()== Booking.STATUS.INCOMING).count();
             type.setCurrentBooking(currentBooking.intValue());
             return type;
-        }).collect(Collectors.toList());
+        }).filter(type -> type.getAvailableRoom()>0).collect(Collectors.toList());
     }
 
     /**
