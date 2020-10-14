@@ -213,6 +213,7 @@ public class HostelTypeController {
             String message = "Hostel type {id=" + typeId + "} has been retrieved successfully!";
             // handle hostel type and corresponding hostel group
             Type model = hostelTypeService.findById(typeId);
+            model = hostelTypeService.countAvailableRoomAndCurrentBooking(model);
             TypeDTOResponse typeDTOResponse = modelMapper.map(model, TypeDTOResponse.class);
             GroupDTOResponse resGroupDTO = modelMapper.map(hostelGroupService.findById(typeDTOResponse.getGroupId()), GroupDTOResponse.class);
             TypeAndGroupDTO resDTO = TypeAndGroupDTO.builder().groupDTOFull(resGroupDTO).type(typeDTOResponse).build();

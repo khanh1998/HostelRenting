@@ -131,24 +131,23 @@ public class HostelTypeServiceImpl implements HostelTypeService {
         }
 
         // new collection to retainAll (unmodifiable collection cannot be removed)
-        Collection temp = new ArrayList(locTypes);
+        Collection<Type> temp = new ArrayList(locTypes);
         if (!compatriotTypes.isEmpty() || !schoolMateTypes.isEmpty()) {
             temp.retainAll(Stream.concat(compatriotTypes.stream(), schoolMateTypes.stream()).collect(Collectors.toList()));
         }
         logger.info("START - Get availableRoom and currentBooking");
-        temp = countAvailableRoomAndCurrentBooking(temp);
+        temp = temp.stream().map(this::countAvailableRoomAndCurrentBooking).filter(type -> type.getAvailableRoom()>0).collect(Collectors.toList());
         logger.info("END - Get availableRoom and currentBooking");
         return temp;
     }
 
-    private Collection<Type> countAvailableRoomAndCurrentBooking(Collection<Type> types){
-        return types.stream().map(type -> {
-            Long availableRoom = type.getRooms().stream().filter(room -> room.isAvailable()).count();
-            type.setAvailableRoom(availableRoom.intValue());
-            Long currentBooking = type.getBookings().stream().filter(booking -> booking.getStatus()== Booking.STATUS.INCOMING).count();
-            type.setCurrentBooking(currentBooking.intValue());
-            return type;
-        }).filter(type -> type.getAvailableRoom()>0).collect(Collectors.toList());
+    @Override
+    public Type countAvailableRoomAndCurrentBooking(Type type){
+        Long availableRoom = type.getRooms().stream().filter(room -> room.isAvailable()).count();
+        type.setAvailableRoom(availableRoom.intValue());
+        Long currentBooking = type.getBookings().stream().filter(booking -> booking.getStatus()== Booking.STATUS.INCOMING).count();
+        type.setCurrentBooking(currentBooking.intValue());
+        return type;
     }
 
     /**

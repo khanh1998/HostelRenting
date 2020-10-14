@@ -14,6 +14,8 @@ public interface HostelTypeService {
     void deleteById(Integer id);
     List<Type> findByHostelGroupId(Integer hostelGroupId);
 
+    Type countAvailableRoomAndCurrentBooking(Type type);
+
     /**
      * Get hostel types based on input factors
      * In case all factor are present, descending priority factors are: long, lat, distance; school; hometown
