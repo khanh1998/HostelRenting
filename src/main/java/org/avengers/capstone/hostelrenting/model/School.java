@@ -21,10 +21,10 @@ public class School {
     private String schoolName;
 
     @Column(nullable = false)
-    private String longitude;
+    private Double longitude;
 
     @Column(nullable = false)
-    private String latitude;
+    private Double latitude;
 
     @OneToMany(mappedBy = "school", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Renter> renters;

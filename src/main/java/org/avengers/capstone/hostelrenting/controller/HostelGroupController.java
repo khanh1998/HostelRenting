@@ -22,6 +22,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static org.avengers.capstone.hostelrenting.Constant.Pagination.DEFAULT_PAGE;
+import static org.avengers.capstone.hostelrenting.Constant.Pagination.DEFAULT_SIZE;
+
 @RestController
 @RequestMapping("/api/v1")
 public class HostelGroupController {
@@ -172,16 +175,13 @@ public class HostelGroupController {
      * @throws EntityNotFoundException when object is not found
      */
     @GetMapping("/vendors/{vendorId}/groups")
-    public ResponseEntity<?> getGroupsByVendorId(@PathVariable Long vendorId) {
+    public ResponseEntity<?> getGroupsByVendorId(@PathVariable Long vendorId,
+                                                 @RequestParam(required = false, defaultValue = DEFAULT_SIZE) Integer size,
+                                                 @RequestParam(required = false, defaultValue = DEFAULT_PAGE) Integer page) {
         //log start
         logger.info("START - Get group by vendor with id: " + vendorId);
-        Vendor existedModel = vendorService.findById(vendorId);
-        List<GroupDTOResponse> resDTOs = existedModel.getGroups()
-                .stream()
-                .map(hostelGroup -> {
-                    logger.info("RETRIEVED - groupId: " + hostelGroup.getGroupId());
-                    return modelMapper.map(hostelGroup, GroupDTOResponse.class);
-                })
+        List<GroupDTOResponse> resDTOs = hostelGroupService.getByVendorId(vendorId, size, page-1)
+                .stream().map(group -> modelMapper.map(group, GroupDTOResponse.class))
                 .collect(Collectors.toList());
 
         logger.info("SUCCESSFUL - Get group by vendorId");
