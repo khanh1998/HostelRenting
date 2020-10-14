@@ -52,6 +52,12 @@ public class Type {
     @Transient
     private int compatriot;
 
+    @Transient
+    private int availableRoom;
+
+    @Transient
+    private int currentBooking;
+
     @Column(columnDefinition = "boolean default false")
     private boolean isDeleted;
 
@@ -72,6 +78,12 @@ public class Type {
 
     @OneToMany(mappedBy = "type", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Collection<TypeImage> typeImages;
+
+    @OneToMany(mappedBy = "type", fetch = FetchType.LAZY)
+    private Collection<Booking> bookings;
+
+    @OneToMany(mappedBy = "type", fetch = FetchType.LAZY)
+    private Collection<Deal> deals;
 
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @EqualsAndHashCode.Exclude

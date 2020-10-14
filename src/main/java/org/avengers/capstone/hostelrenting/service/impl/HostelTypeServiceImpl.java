@@ -1,10 +1,14 @@
 package org.avengers.capstone.hostelrenting.service.impl;
 
+import org.avengers.capstone.hostelrenting.controller.HostelGroupController;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
+import org.avengers.capstone.hostelrenting.model.Booking;
 import org.avengers.capstone.hostelrenting.model.Type;
 import org.avengers.capstone.hostelrenting.repository.TypeRepository;
 import org.avengers.capstone.hostelrenting.service.HostelGroupService;
 import org.avengers.capstone.hostelrenting.service.HostelTypeService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -20,6 +24,7 @@ import java.util.stream.Stream;
 public class HostelTypeServiceImpl implements HostelTypeService {
     private TypeRepository typeRepository;
     private HostelGroupService hostelGroupService;
+    private static final Logger logger = LoggerFactory.getLogger(HostelTypeServiceImpl.class);
 
     @Autowired
     public void setHostelGroupService(HostelGroupService hostelGroupService) {
@@ -95,7 +100,6 @@ public class HostelTypeServiceImpl implements HostelTypeService {
      */
     @Override
     public Collection<Type> searchWithMainFactors(Double latitude, Double longitude, Double distance, Integer schoolId, Integer provinceId, String sortBy, Boolean asc, int size, int page) {
-
         Sort sort = Sort.by(asc == true ? Sort.Direction.ASC : Sort.Direction.DESC, sortBy);
         Pageable pageable = PageRequest.of(page - 1, size, sort);
         Collection<Type> locTypes = new ArrayList<>();
@@ -103,18 +107,27 @@ public class HostelTypeServiceImpl implements HostelTypeService {
         Collection<Type> compatriotTypes = new ArrayList<>();
         if (latitude != null && longitude != null) {
             // if long&lat != null ==> get surroundings
+            logger.info("START - Get surrounding based on lng, lat and distance");
             locTypes = typeRepository.getSurroundings(latitude, longitude, distance, pageable);
+            logger.info("END - Get surrounding");
         } else {
             //default get ...
+            //TODO: implement get default
+            logger.info("START - Get default ");
             locTypes = typeRepository.findAll(pageable).toList();
+            logger.info("END - Get default");
         }
 
         if (schoolId != null) {
+            logger.info("START - Get schoolmate");
             schoolMateTypes = convertMapToList(typeRepository.getBySchoolMates(schoolId), 1);
+            logger.info("END - Get types with schoolmate");
         }
 
         if (provinceId != null) {
+            logger.info("START - Get compatriot");
             compatriotTypes = convertMapToList(typeRepository.getByCompatriot(provinceId), 2);
+            logger.info("END - Get compatriot");
         }
 
         // new collection to retainAll (unmodifiable collection cannot be removed)
@@ -122,16 +135,28 @@ public class HostelTypeServiceImpl implements HostelTypeService {
         if (!compatriotTypes.isEmpty() || !schoolMateTypes.isEmpty()) {
             temp.retainAll(Stream.concat(compatriotTypes.stream(), schoolMateTypes.stream()).collect(Collectors.toList()));
         }
-
+        logger.info("START - Get availableRoom and currentBooking");
+        temp = countAvailableRoomAndCurrentBooking(temp);
+        logger.info("END - Get availableRoom and currentBooking");
         return temp;
+    }
+
+    private Collection<Type> countAvailableRoomAndCurrentBooking(Collection<Type> types){
+        return types.stream().map(type -> {
+            Long availableRoom = type.getRooms().stream().filter(room -> room.isAvailable()).count();
+            type.setAvailableRoom(availableRoom.intValue());
+            Long currentBooking = type.getBookings().stream().filter(booking -> booking.getStatus()== Booking.STATUS.INCOMING).count();
+            type.setCurrentBooking(currentBooking.intValue());
+            return type;
+        }).collect(Collectors.toList());
     }
 
     /**
      * @param inputList
-     * @param code      == 1 is schoolmate, otherwise is compatriot
-     * @return
+     * @param code == 1 is schoolmate, otherwise is compatriot
+     * @return list of types has been converted from map to list
      */
-    public List<Type> convertMapToList(List<Object[]> inputList, int code) {
+    private List<Type> convertMapToList(List<Object[]> inputList, int code) {
         if (inputList.isEmpty())
             return null;
         Map<Integer, Integer> inputMap = new HashMap<>();

@@ -27,10 +27,16 @@ public class TypeDTOResponse implements Serializable {
     private int capacity;
     private int view;
     private float deposit;
+
+    /* Transient fields */
     // the same school
     private int schoolMate;
     // the same hometown
     private int compatriot;
+    private int availableRoom;
+    private int currentBooking;
+    /* End of transient fields */
+
     private boolean isDeleted;
 
     private Collection<FacilityDTO> facilities;
