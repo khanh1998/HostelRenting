@@ -14,6 +14,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -29,6 +30,12 @@ public class RenterController {
     private RoleService roleService;
     private SchoolService schoolService;
     private ProvinceService provinceService;
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    public void setPasswordEncoder(PasswordEncoder passwordEncoder) {
+        this.passwordEncoder = passwordEncoder;
+    }
 
     @Autowired
     public void setSchoolService(SchoolService schoolService) {
@@ -60,6 +67,7 @@ public class RenterController {
     public ResponseEntity<?> create(@Valid @RequestBody ReqRenterDTO reqDTO) {
         Renter reqModel = modelMapper.map(reqDTO, Renter.class);
         // set critical data for model: role, school, province
+        reqModel.setPassword(passwordEncoder.encode(reqDTO.getPassword()));
         reqModel.setRole(roleService.findById(2));
         reqModel.setSchool(schoolService.findById(reqDTO.getSchoolId()));
         reqModel.setProvince(provinceService.findById(reqDTO.getProvinceId()));
