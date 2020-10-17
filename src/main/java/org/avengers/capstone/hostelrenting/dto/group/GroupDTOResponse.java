@@ -3,10 +3,12 @@ package org.avengers.capstone.hostelrenting.dto.group;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
+import org.avengers.capstone.hostelrenting.model.GroupSchedule;
 import org.avengers.capstone.hostelrenting.model.serialized.AddressFull;
 import org.avengers.capstone.hostelrenting.model.serialized.ServiceFull;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.function.BinaryOperator;
@@ -48,7 +50,30 @@ public class GroupDTOResponse implements Serializable {
     @JsonProperty("regulations")
     private Collection<GroupRegulationDTOResponse> groupRegulations;
 
+    @JsonProperty("schedules")
+    private Collection<GroupScheduleDTOResponse> groupSchedules;
+
     public Collection<GroupRegulationDTOResponse> getGroupRegulations() {
         return groupRegulations.stream().filter(GroupRegulationDTOResponse::isActive).collect(Collectors.toList());
+    }
+
+    public Collection<GroupScheduleDTOResponse> getGroupSchedules() {
+        return groupSchedules.stream()
+                .collect(Collectors.groupingBy(GroupScheduleDTOResponse::getScheduleId))
+                .values().stream()
+                .map(scheduleDTO -> GroupScheduleDTOResponse
+                        .builder().scheduleId(scheduleDTO.get(0).getScheduleId())
+                        .schedule(scheduleDTO.get(0).getSchedule())
+                        .startTime(scheduleDTO.get(0).getStartTime())
+                        .endTime(scheduleDTO.get(0).getEndTime())
+                        .timeRange(scheduleDTO
+                                .stream()
+                                .map(dto ->{
+                                    ArrayList<String> timeRange = new ArrayList<>();
+                                    timeRange.add(dto.getStartTime() + " - " + dto.getEndTime());
+                                    return timeRange;
+                                })
+                                .flatMap(Collection::stream)
+                                .collect(Collectors.toList())).build()).collect(Collectors.toList());
     }
 }
