@@ -1,5 +1,6 @@
 package org.avengers.capstone.hostelrenting.controller;
 
+import org.avengers.capstone.hostelrenting.dto.contract.ContractDTOUpdate;
 import org.avengers.capstone.hostelrenting.dto.group.GroupDTOResponse;
 import org.avengers.capstone.hostelrenting.dto.booking.BookingDTOShort;
 import org.avengers.capstone.hostelrenting.dto.deal.DealDTOShort;
@@ -91,8 +92,6 @@ public class ContractController {
         Vendor exVendor = vendorService.findById(reqDTO.getVendorId());
         Renter exRenter = renterService.findById(reqDTO.getVendorId());
         Room exRoom = roomService.findById(reqDTO.getRoomId());
-
-
         Contract reqModel = modelMapper.map(reqDTO, Contract.class);
         reqModel = reqModel.toBuilder().vendor(exVendor).renter(exRenter).room(exRoom).build();
 
@@ -103,10 +102,23 @@ public class ContractController {
         // get deal, booking, group and type
         getFullAttributesForDTO(resDTO);
 
-        ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTO, "Your contract has been created successfully!");
+        ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTO, String.format("Your contract has been created with status: %s", resModel.getStatus()));
         logger.info("END - creating contract");
 
         return ResponseEntity.status(HttpStatus.CREATED).body(apiSuccess);
+    }
+
+    @PutMapping("/contracts/{contractId}")
+    public ResponseEntity<?> confirmContract(@PathVariable Integer contractId,
+                                            @RequestBody @Valid ContractDTOUpdate reqDTO){
+        Contract exModel = contractService.findById(contractId);
+        Contract resModel = contractService.confirm(exModel, reqDTO);
+        ContractDTOResponse resDTO = modelMapper.map(resModel, ContractDTOResponse.class);
+
+        getFullAttributesForDTO(resDTO);
+        ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTO, String.format("Your contract has been updated with status: %s", resModel.getStatus()));
+
+        return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
     }
 
     @GetMapping("/renters/{renterId}/contracts")
@@ -122,7 +134,7 @@ public class ContractController {
             resMsg = "There is no contract";
 
         // get deal, booking, group and type
-        resDTOs.forEach(contractDTOResponse -> getFullAttributesForDTO(contractDTOResponse));
+        resDTOs.forEach(this::getFullAttributesForDTO);
 
         // Response entity
         ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTOs, resMsg);
@@ -143,7 +155,7 @@ public class ContractController {
             resMsg = "There is no contract";
 
         // get deal, booking, group and type
-        resDTOs.forEach(contractDTOResponse -> getFullAttributesForDTO(contractDTOResponse));
+        resDTOs.forEach(this::getFullAttributesForDTO);
 
         // Response entity
         ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTOs, resMsg);

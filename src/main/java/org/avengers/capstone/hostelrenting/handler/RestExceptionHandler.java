@@ -2,6 +2,7 @@ package org.avengers.capstone.hostelrenting.handler;
 
 import org.avengers.capstone.hostelrenting.dto.response.ApiError;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
+import org.avengers.capstone.hostelrenting.exception.GenericException;
 import org.avengers.capstone.hostelrenting.exception.PreCreationException;
 import org.springframework.core.NestedExceptionUtils;
 import org.springframework.core.Ordered;
@@ -257,6 +258,15 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<?> handlePreCreationException(PreCreationException ex) {
         ApiError apiError = new ApiError(BAD_REQUEST);
         apiError.setMessage(ex.getMessage());
+        logger.error(ex);
+        return buildResponseEntity(apiError);
+    }
+
+    @ExceptionHandler(GenericException.class)
+    public ResponseEntity<?> handleGenericException(GenericException ex) {
+        ApiError apiError = new ApiError(BAD_REQUEST);
+        apiError.setMessage(ex.getMessage());
+        apiError.setDebugMessage(ex.getLocalizedMessage());
         logger.error(ex);
         return buildResponseEntity(apiError);
     }

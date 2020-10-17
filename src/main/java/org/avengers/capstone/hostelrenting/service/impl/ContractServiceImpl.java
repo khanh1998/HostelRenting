@@ -1,7 +1,9 @@
 package org.avengers.capstone.hostelrenting.service.impl;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.avengers.capstone.hostelrenting.dto.contract.ContractDTOUpdate;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
+import org.avengers.capstone.hostelrenting.exception.GenericException;
 import org.avengers.capstone.hostelrenting.exception.PreCreationException;
 import org.avengers.capstone.hostelrenting.model.Contract;
 import org.avengers.capstone.hostelrenting.model.GroupService;
@@ -81,7 +83,7 @@ public class ContractServiceImpl implements ContractService {
     }
 
     @Override
-    public void checkActive(Integer id) {
+    public void checkExist(Integer id) {
         Optional<Contract> model = contractRepository.findById(id);
         if (model.isEmpty())
             throw new EntityNotFoundException(Contract.class, "id", id.toString());
@@ -89,13 +91,23 @@ public class ContractServiceImpl implements ContractService {
 
     @Override
     public Contract findById(Integer id) {
-        checkActive(id);
+        checkExist(id);
 
         return contractRepository.getOne(id);
     }
 
     @Override
     public Contract create(Contract reqModel) throws PreCreationException {
+        Contract tempContract = contractRepository.findByVendor_UserIdAndRenter_UserIdAndRoom_RoomId(
+                reqModel.getVendor().getUserId(),
+                reqModel.getRenter().getUserId(),
+                reqModel.getRoom().getRoomId());
+        if ( tempContract != null)
+            throw new GenericException(Contract.class, "Contract was existed with ",
+                    "contractId", String.valueOf(tempContract.getContractId()),
+                    "renterId", String.valueOf(tempContract.getRenter().getUserId()),
+                    "vendorId", String.valueOf(tempContract.getVendor().getUserId()));
+
         int groupId = reqModel.getRoom().getType().getGroup().getGroupId();
         Collection<Integer> reqServiceIds = reqModel.getGroupServices().stream().map(GroupService::getGroupServiceId).collect(Collectors.toList());
         Collection<GroupService> availableServices = groupServiceRepository.findByGroup_GroupIdAndIsActiveIsTrue(groupId);
@@ -112,8 +124,15 @@ public class ContractServiceImpl implements ContractService {
     }
 
     @Override
-    public Contract update(Contract reqModel) {
-        return null;
+    public Contract confirm(Contract exModel, ContractDTOUpdate reqDTO) {
+        if (exModel.getStatus() == Contract.STATUS.ACTIVATED) {
+            throw new GenericException(Contract.class, "cannot be updated", "contractId", String.valueOf(exModel.getContractId()), "status", exModel.getStatus().toString());
+        }
+        if (exModel.getQrCode().equals(reqDTO.getQrCode())) {
+            modelMapper.map(reqDTO, exModel);
+            return contractRepository.save(exModel);
+        }
+        throw new GenericException(Contract.class, "qrCode not matched", "contractId", String.valueOf(exModel.getContractId()), "qrCode", exModel.getQrCode().toString());
     }
 
     /**

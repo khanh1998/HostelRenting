@@ -38,6 +38,15 @@ public class Contract {
     @JoinColumn(name = "room_id", nullable = false)
     private Room room;
 
+//    @Transient
+//    private Type type;
+//    @Transient
+//    private Group group;
+//    @Transient
+//    private Deal deal;
+//    @Transient
+//    private Booking booking;
+
     /**
      * vendor object
      */
