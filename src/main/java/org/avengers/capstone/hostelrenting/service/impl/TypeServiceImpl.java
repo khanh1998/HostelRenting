@@ -2,6 +2,7 @@ package org.avengers.capstone.hostelrenting.service.impl;
 
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
 import org.avengers.capstone.hostelrenting.model.Booking;
+import org.avengers.capstone.hostelrenting.model.Room;
 import org.avengers.capstone.hostelrenting.model.Type;
 import org.avengers.capstone.hostelrenting.repository.TypeRepository;
 import org.avengers.capstone.hostelrenting.service.GroupService;
@@ -101,19 +102,19 @@ public class TypeServiceImpl implements TypeService {
     public Collection<Type> searchWithMainFactors(Double latitude, Double longitude, Double distance, Integer schoolId, Integer provinceId, String sortBy, Boolean asc, int size, int page) {
         Sort sort = Sort.by(asc == true ? Sort.Direction.ASC : Sort.Direction.DESC, sortBy);
         Pageable pageable = PageRequest.of(page - 1, size, sort);
-        Collection<Type> locTypes = new ArrayList<>();
+        Collection<Type> locTypes;
         Collection<Type> schoolMateTypes = new ArrayList<>();
         Collection<Type> compatriotTypes = new ArrayList<>();
         if (latitude != null && longitude != null) {
             // if long&lat != null ==> get surroundings
             logger.info("START - Get surrounding based on lng, lat and distance");
-            locTypes = typeRepository.getSurroundings(latitude, longitude, distance, pageable);
+            locTypes = typeRepository.getSurroundings(latitude, longitude, distance);
             logger.info("END - Get surrounding");
         } else {
             //default get ...
             //TODO: implement get default
             logger.info("START - Get default ");
-            locTypes = typeRepository.findAll(pageable).toList();
+            locTypes = typeRepository.findAll();
             logger.info("END - Get default");
         }
 
@@ -130,7 +131,7 @@ public class TypeServiceImpl implements TypeService {
         }
 
         // new collection to retainAll (unmodifiable collection cannot be removed)
-        Collection<Type> temp = new ArrayList(locTypes);
+        List<Type> temp = new ArrayList<>(locTypes);
         if (!compatriotTypes.isEmpty() || !schoolMateTypes.isEmpty()) {
             temp.retainAll(Stream.concat(compatriotTypes.stream(), schoolMateTypes.stream()).collect(Collectors.toList()));
         }
@@ -142,10 +143,10 @@ public class TypeServiceImpl implements TypeService {
 
     @Override
     public Type countAvailableRoomAndCurrentBooking(Type type){
-        Long availableRoom = type.getRooms().stream().filter(room -> room.isAvailable()).count();
-        type.setAvailableRoom(availableRoom.intValue());
-        Long currentBooking = type.getBookings().stream().filter(booking -> booking.getStatus()== Booking.STATUS.INCOMING).count();
-        type.setCurrentBooking(currentBooking.intValue());
+        long availableRoom = type.getRooms().stream().filter(Room::isAvailable).count();
+        type.setAvailableRoom((int) availableRoom);
+        long currentBooking = type.getBookings().stream().filter(booking -> booking.getStatus()== Booking.STATUS.INCOMING).count();
+        type.setCurrentBooking((int) currentBooking);
         return type;
     }
 

@@ -281,28 +281,40 @@ public class HostelTypeController {
                                         .anyMatch(id -> id == regulation.getRegulation().getRegulationId()));
                     return true;
                 })
-                .map(hostelType ->modelMapper.map(hostelType, TypeDTOResponse.class)
+                .map(hostelType -> modelMapper.map(hostelType, TypeDTOResponse.class)
                 )
                 .collect(Collectors.toSet());
 
 
         Set<GroupDTOResponse> groupDTOs = typeDTOs.stream()
+                .map(typeDTO -> modelMapper
+                        .map(groupService.findById(typeDTO.getGroupId()), GroupDTOResponse.class))
+                .collect(Collectors.toSet());
+
+        int totalType = typeDTOs.size();
+        int totalGroup = groupDTOs.size();
+
+        Set<TypeDTOResponse> resTypes = typeDTOs
+                .stream()
+                .skip(size * (page - 1))
+                .limit(size)
+                .collect(Collectors.toSet());
+        Set<GroupDTOResponse> resGroups = resTypes.stream()
                 .map(typeDTO -> modelMapper.map(groupService.findById(typeDTO.getGroupId()), GroupDTOResponse.class))
                 .collect(Collectors.toSet());
-//        groupDTOs.forEach(GroupDTOResponse::getServiceForDisplay);
 
         // DTO contains list of Types and groups follow that type
         TypesAndGroupsDTO resDTO = TypesAndGroupsDTO
                 .builder()
-                .types(typeDTOs)
-                .groups(groupDTOs)
-                .totalType(typeDTOs.size())
-                .totalGroup(groupDTOs.size())
+                .types(resTypes)
+                .groups(resGroups)
+                .totalType(totalType)
+                .totalGroup(totalGroup)
                 .build();
 
         //log success
         logger.info("SUCCESSFULLY - Get type(s) ");
-        ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTO, "Hostel type(s) has been retrieved successfully!");
+        ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTO, "Hostel type(s) has been retrieved successfully!", size, page);
 
         return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
     }
