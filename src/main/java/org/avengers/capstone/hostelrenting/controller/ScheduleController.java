@@ -8,7 +8,7 @@ import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
 import org.avengers.capstone.hostelrenting.model.GroupSchedule;
 import org.avengers.capstone.hostelrenting.model.Group;
 import org.avengers.capstone.hostelrenting.model.Schedule;
-import org.avengers.capstone.hostelrenting.service.HostelGroupService;
+import org.avengers.capstone.hostelrenting.service.GroupService;
 import org.avengers.capstone.hostelrenting.service.ScheduleService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,12 +27,12 @@ import static org.avengers.capstone.hostelrenting.Constant.Message.*;
 @RequestMapping("/api/v1")
 public class ScheduleController {
     private ScheduleService scheduleService;
-    private HostelGroupService hostelGroupService;
+    private GroupService groupService;
     private ModelMapper modelMapper;
 
     @Autowired
-    public void setHostelGroupService(HostelGroupService hostelGroupService) {
-        this.hostelGroupService = hostelGroupService;
+    public void setHostelGroupService(GroupService groupService) {
+        this.groupService = groupService;
     }
 
     @Autowired
@@ -65,7 +65,7 @@ public class ScheduleController {
 
     @GetMapping("/groups/{groupId}/schedules")
     public ResponseEntity<?> getScheduleByGroupId(@PathVariable Integer groupId) {
-        Group hgroupModel = hostelGroupService.findById(groupId);
+        Group hgroupModel = groupService.findById(groupId);
         Collection<GroupSchedule> GroupSchedules = hgroupModel.getGroupSchedules();
         Collection<ScheduleDTO> scheduleDTOs = GroupSchedules.stream()
                 .map(groupSchedule -> {

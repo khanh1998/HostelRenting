@@ -11,7 +11,7 @@ import org.avengers.capstone.hostelrenting.model.Deal;
 import org.avengers.capstone.hostelrenting.model.Group;
 import org.avengers.capstone.hostelrenting.service.BookingService;
 import org.avengers.capstone.hostelrenting.service.DealService;
-import org.avengers.capstone.hostelrenting.service.HostelGroupService;
+import org.avengers.capstone.hostelrenting.service.GroupService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 public class BookingController {
 
     private BookingService bookingService;
-    private HostelGroupService hostelGroupService;
+    private GroupService groupService;
     private DealService dealService;
     private ModelMapper modelMapper;
 
@@ -42,8 +42,8 @@ public class BookingController {
     }
 
     @Autowired
-    public void setHostelGroupService(HostelGroupService hostelGroupService) {
-        this.hostelGroupService = hostelGroupService;
+    public void setHostelGroupService(GroupService groupService) {
+        this.groupService = groupService;
     }
 
     @Autowired
@@ -158,13 +158,13 @@ public class BookingController {
      */
     private void getGroupForDTOs(List<BookingDTOFull> resDTOs) {
         resDTOs.forEach(resDTO -> {
-            Group existedGroup = hostelGroupService.findById(resDTO.getType().getGroupId());
+            Group existedGroup = groupService.findById(resDTO.getType().getGroupId());
             resDTO.setGroup(modelMapper.map(existedGroup, GroupDTOResponse.class));
         });
     }
 
     private void getGroupForDTO(BookingDTOFull resDTO) {
-        Group existedGroup = hostelGroupService.findById(resDTO.getType().getGroupId());
+        Group existedGroup = groupService.findById(resDTO.getType().getGroupId());
         resDTO.setGroup(modelMapper.map(existedGroup, GroupDTOResponse.class));
     }
 

@@ -1,28 +1,25 @@
 package org.avengers.capstone.hostelrenting.service.impl;
 
-import org.avengers.capstone.hostelrenting.dto.group.GroupDTOResponse;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
 import org.avengers.capstone.hostelrenting.model.Group;
 import org.avengers.capstone.hostelrenting.model.Vendor;
 import org.avengers.capstone.hostelrenting.repository.GroupRepository;
-import org.avengers.capstone.hostelrenting.service.HostelGroupService;
+import org.avengers.capstone.hostelrenting.service.GroupService;
 import org.avengers.capstone.hostelrenting.service.VendorService;
-import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.ui.ModelMap;
 
 import java.util.Collection;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-public class HostelGroupServiceImpl implements HostelGroupService {
+public class GroupServiceImpl implements GroupService {
     private GroupRepository groupRepository;
     private VendorService vendorService;
-    private static final Logger logger = LoggerFactory.getLogger(HostelGroupServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(GroupServiceImpl.class);
 
     @Autowired
     public void setVendorService(VendorService vendorService) {

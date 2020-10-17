@@ -43,8 +43,12 @@ public class GroupDTOResponse implements Serializable {
     private float downPayment;
 
     @JsonProperty("services")
-    private Collection<ServiceFull> groupServices;
+    private Collection<GroupServiceDTOResponse> groupServices;
 
     @JsonProperty("regulations")
     private Collection<GroupRegulationDTOResponse> groupRegulations;
+
+    public Collection<GroupRegulationDTOResponse> getGroupRegulations() {
+        return groupRegulations.stream().filter(GroupRegulationDTOResponse::isActive).collect(Collectors.toList());
+    }
 }

@@ -7,7 +7,6 @@ import lombok.*;
 import org.avengers.capstone.hostelrenting.model.serialized.AddressFull;
 import org.avengers.capstone.hostelrenting.model.serialized.ServiceFull;
 import org.avengers.capstone.hostelrenting.util.AddressSerializer;
-import org.avengers.capstone.hostelrenting.util.ServiceSerializer;
 
 import javax.persistence.*;
 import java.util.Collection;
@@ -154,33 +153,5 @@ public class Group {
             e.printStackTrace();
         }
         return null;
-    }
-
-    /**
-     * Get service Details
-     *
-     * @return list of {@link ServiceFull} object
-     */
-    public Collection<ServiceFull> getGroupServices() {
-        ObjectMapper mapper = new ObjectMapper();
-        SimpleModule module = new SimpleModule();
-
-        module.addSerializer(GroupService.class, new ServiceSerializer());
-        mapper.registerModule(module);
-
-        return groupServices
-                .stream()
-                .filter(GroupService::isActive)
-                .map(service -> {
-                    String serialized;
-                    try {
-                        serialized = mapper.writeValueAsString(service);
-                        return mapper.readValue(serialized, ServiceFull.class);
-                    } catch (JsonProcessingException e) {
-                        e.printStackTrace();
-                    }
-                    return null;
-                }).collect(Collectors.toList());
-
     }
 }

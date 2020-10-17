@@ -13,11 +13,9 @@ import java.io.Serializable;
 @Getter
 @Setter
 public class GroupServiceDTOCreate implements Serializable {
-    private Integer serDetailId;
+    private Integer groupServiceId;
     private Integer serviceId;
     private Float price;
-    private String priceUnit;
-    private String timeUnit;
     private String userUnit;
     private Boolean isRequired;
     private Boolean isActive;

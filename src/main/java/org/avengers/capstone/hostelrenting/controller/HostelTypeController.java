@@ -10,6 +10,7 @@ import org.avengers.capstone.hostelrenting.dto.type.TypeDTOUpdate;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
 import org.avengers.capstone.hostelrenting.model.*;
 import org.avengers.capstone.hostelrenting.service.*;
+import org.avengers.capstone.hostelrenting.service.GroupService;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,8 +34,8 @@ public class HostelTypeController {
 
     private static final Logger logger = LoggerFactory.getLogger(HostelTypeController.class);
 
-    private HostelTypeService hostelTypeService;
-    private HostelGroupService hostelGroupService;
+    private TypeService typeService;
+    private GroupService groupService;
     private CategoryService categoryService;
     private TypeStatusService typeStatusService;
     private FacilityService facilityService;
@@ -56,13 +57,13 @@ public class HostelTypeController {
     }
 
     @Autowired
-    public void setHostelGroupService(HostelGroupService hostelGroupService) {
-        this.hostelGroupService = hostelGroupService;
+    public void setHostelGroupService(GroupService groupService) {
+        this.groupService = groupService;
     }
 
     @Autowired
-    public void setHostelTypeService(HostelTypeService hostelTypeService) {
-        this.hostelTypeService = hostelTypeService;
+    public void setHostelTypeService(TypeService typeService) {
+        this.typeService = typeService;
     }
 
     @Autowired
@@ -89,7 +90,7 @@ public class HostelTypeController {
         reqDTOs.forEach(reqDTO -> {
             Type reqModel = modelMapper.map(reqDTO, Type.class);
             // set hostel group
-            Group group = hostelGroupService.findById(groupId);
+            Group group = groupService.findById(groupId);
             // set category
             Category category = categoryService.findById(reqDTO.getCategoryId());
             // set status of type
@@ -116,7 +117,7 @@ public class HostelTypeController {
             reqModel.setFacilities(facilities);
             reqModel.setTypeImages(images);
             // create model
-            Type resModel = hostelTypeService.create(reqModel);
+            Type resModel = typeService.create(reqModel);
             // log created type
             if (resModel != null) {
                 logger.info("CREATED Type with id: " + reqModel.getTypeId());
@@ -144,7 +145,7 @@ public class HostelTypeController {
     public ResponseEntity<?> getTypeByGroupId(@PathVariable Integer groupId) throws EntityNotFoundException {
         logger.info("START - get Types by group id: " + groupId);
         String message = "Hostel types has been retrieved successfully!";
-        List<TypeDTOResponse> resDTOs = hostelTypeService.findByHostelGroupId(groupId).stream()
+        List<TypeDTOResponse> resDTOs = typeService.findByHostelGroupId(groupId).stream()
                 .map(hostelType -> {
                     logger.info("RETRIEVED Type with id: " + hostelType.getTypeId());
                     return modelMapper.map(hostelType, TypeDTOResponse.class);
@@ -212,11 +213,11 @@ public class HostelTypeController {
         if (typeId != null) {
             String message = "Hostel type {id=" + typeId + "} has been retrieved successfully!";
             // handle hostel type and corresponding hostel group
-            Type model = hostelTypeService.findById(typeId);
-            model = hostelTypeService.countAvailableRoomAndCurrentBooking(model);
+            Type model = typeService.findById(typeId);
+            model = typeService.countAvailableRoomAndCurrentBooking(model);
             TypeDTOResponse typeDTOResponse = modelMapper.map(model, TypeDTOResponse.class);
-            GroupDTOResponse resGroupDTO = modelMapper.map(hostelGroupService.findById(typeDTOResponse.getGroupId()), GroupDTOResponse.class);
-            TypeAndGroupDTO resDTO = TypeAndGroupDTO.builder().groupDTOFull(resGroupDTO).type(typeDTOResponse).build();
+            GroupDTOResponse resGroupDTO = modelMapper.map(groupService.findById(typeDTOResponse.getGroupId()), GroupDTOResponse.class);
+            TypeAndGroupDTO resDTO = TypeAndGroupDTO.builder().group(resGroupDTO).type(typeDTOResponse).build();
             // log when typeId != null
             logger.info(message);
 
@@ -225,7 +226,7 @@ public class HostelTypeController {
             return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
         }
 
-        Set<TypeDTOResponse> typeDTOs = hostelTypeService.searchWithMainFactors(latitude, longitude, distance, schoolId, provinceId, sortBy, asc, size, page).stream()
+        Set<TypeDTOResponse> typeDTOs = typeService.searchWithMainFactors(latitude, longitude, distance, schoolId, provinceId, sortBy, asc, size, page).stream()
                 .filter(hostelType -> {
                     if (categoryId != null)
                         return hostelType.getCategory().getCategoryId() == categoryId;
@@ -269,7 +270,7 @@ public class HostelTypeController {
                                 .stream()
                                 .anyMatch(serviceDetail -> Arrays
                                         .stream(serviceIds)
-                                        .anyMatch(id -> id == serviceDetail.getServiceId()));
+                                        .anyMatch(id -> id == serviceDetail.getGroupServiceId()));
                     return true;
                 }).filter(hostelType -> {
                     if (regulationIds != null && regulationIds.length > 0)
@@ -286,7 +287,7 @@ public class HostelTypeController {
 
 
         Set<GroupDTOResponse> groupDTOs = typeDTOs.stream()
-                .map(typeDTO -> modelMapper.map(hostelGroupService.findById(typeDTO.getGroupId()), GroupDTOResponse.class))
+                .map(typeDTO -> modelMapper.map(groupService.findById(typeDTO.getGroupId()), GroupDTOResponse.class))
                 .collect(Collectors.toSet());
 //        groupDTOs.forEach(GroupDTOResponse::getServiceForDisplay);
 
@@ -305,10 +306,10 @@ public class HostelTypeController {
                                          @PathVariable Integer typeId) {
         // log start update
         logger.info("START - updating type");
-        Type existedModel = hostelTypeService.findById(typeId);
+        Type existedModel = typeService.findById(typeId);
         modelMapper.map(reqDTO, existedModel);
 
-        Type resModel = hostelTypeService.update(existedModel);
+        Type resModel = typeService.update(existedModel);
         TypeDTOResponse resDTO = modelMapper.map(resModel, TypeDTOResponse.class);
 
         // log end update

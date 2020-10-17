@@ -1,12 +1,11 @@
 package org.avengers.capstone.hostelrenting.service.impl;
 
-import org.avengers.capstone.hostelrenting.controller.HostelGroupController;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
 import org.avengers.capstone.hostelrenting.model.Booking;
 import org.avengers.capstone.hostelrenting.model.Type;
 import org.avengers.capstone.hostelrenting.repository.TypeRepository;
-import org.avengers.capstone.hostelrenting.service.HostelGroupService;
-import org.avengers.capstone.hostelrenting.service.HostelTypeService;
+import org.avengers.capstone.hostelrenting.service.GroupService;
+import org.avengers.capstone.hostelrenting.service.TypeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,14 +20,14 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Service
-public class HostelTypeServiceImpl implements HostelTypeService {
+public class TypeServiceImpl implements TypeService {
     private TypeRepository typeRepository;
-    private HostelGroupService hostelGroupService;
-    private static final Logger logger = LoggerFactory.getLogger(HostelTypeServiceImpl.class);
+    private GroupService groupService;
+    private static final Logger logger = LoggerFactory.getLogger(TypeServiceImpl.class);
 
     @Autowired
-    public void setHostelGroupService(HostelGroupService hostelGroupService) {
-        this.hostelGroupService = hostelGroupService;
+    public void setHostelGroupService(GroupService groupService) {
+        this.groupService = groupService;
     }
 
     @Autowired
@@ -80,7 +79,7 @@ public class HostelTypeServiceImpl implements HostelTypeService {
      */
     @Override
     public List<Type> findByHostelGroupId(Integer hostelGroupId) {
-        hostelGroupService.checkExist(hostelGroupId);
+        groupService.checkExist(hostelGroupId);
         List<Type> types = typeRepository.findByGroup_GroupId((hostelGroupId));
         return types;
     }

@@ -5,7 +5,7 @@ import org.avengers.capstone.hostelrenting.model.Type;
 import java.util.Collection;
 import java.util.List;
 
-public interface HostelTypeService {
+public interface TypeService {
 
     void checkExist(Integer id);
     Type findById(Integer id);

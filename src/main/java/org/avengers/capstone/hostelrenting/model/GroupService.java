@@ -16,15 +16,15 @@ import java.util.Set;
 public class GroupService {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer serDetailId;
+    private Integer groupServiceId;
 
     @Column(nullable = false)
     private Float price;
 
-    @Column(nullable = false, columnDefinition = "varchar(10) default 'nghìn'")
+    @Transient
     private String priceUnit;
 
-    @Column(nullable = false, columnDefinition = "varchar(10) default 'tháng'")
+    @Transient
     private String timeUnit;
 
     @Column(nullable = false, columnDefinition = "varchar(10) default 'phòng'")
@@ -47,8 +47,16 @@ public class GroupService {
     @JoinColumn(name = "group_id", nullable = false)
     private Group group;
 
-    @ManyToMany(mappedBy = "serDetails", fetch = FetchType.LAZY)
-    @EqualsAndHashCode.Exclude
-    @ToString.Exclude
+    @ManyToMany(mappedBy = "groupServices", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<Contract> contracts;
+
+    public String getPriceUnit() {
+        //TODO: get from properties file
+        return "nghìn";
+    }
+
+    public String getTimeUnit() {
+        //TODO: get from properties file
+        return "tháng";
+    }
 }

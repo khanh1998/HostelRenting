@@ -4,7 +4,7 @@ import org.avengers.capstone.hostelrenting.model.Group;
 
 import java.util.Collection;
 
-public interface HostelGroupService {
+public interface GroupService {
     void checkExist(Integer id);
     Group findById(Integer id);
     Group create(Group reqModel);

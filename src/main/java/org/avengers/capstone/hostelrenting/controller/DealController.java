@@ -8,7 +8,7 @@ import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
 import org.avengers.capstone.hostelrenting.model.Deal;
 import org.avengers.capstone.hostelrenting.model.Group;
 import org.avengers.capstone.hostelrenting.service.DealService;
-import org.avengers.capstone.hostelrenting.service.HostelGroupService;
+import org.avengers.capstone.hostelrenting.service.GroupService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,12 +24,12 @@ import java.util.stream.Collectors;
 public class DealController {
 
     private ModelMapper modelMapper;
-    private HostelGroupService hostelGroupService;
+    private GroupService groupService;
     private DealService dealService;
 
     @Autowired
-    public void setHostelGroupService(HostelGroupService hostelGroupService) {
-        this.hostelGroupService = hostelGroupService;
+    public void setHostelGroupService(GroupService groupService) {
+        this.groupService = groupService;
     }
 
     @Autowired
@@ -121,7 +121,7 @@ public class DealController {
      */
     private List<DealDTOFull> getGroupForDeal(List<DealDTOFull> deals) {
         deals.forEach(deal -> {
-            Group existedGroup = hostelGroupService.findById(deal.getType().getGroupId());
+            Group existedGroup = groupService.findById(deal.getType().getGroupId());
             deal.setGroup(modelMapper.map(existedGroup, GroupDTOResponse.class));
         });
         return deals;

@@ -19,7 +19,7 @@ public class BookingServiceImpl implements BookingService {
     private BookingRepository bookingRepository;
     private VendorService vendorService;
     private RenterService renterService;
-    private HostelTypeService hostelTypeService;
+    private TypeService typeService;
     private DealService dealService;
     private ModelMapper modelMapper;
 
@@ -39,8 +39,8 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Autowired
-    public void setHostelTypeService(HostelTypeService hostelTypeService) {
-        this.hostelTypeService = hostelTypeService;
+    public void setHostelTypeService(TypeService typeService) {
+        this.typeService = typeService;
     }
 
     @Autowired
@@ -71,7 +71,7 @@ public class BookingServiceImpl implements BookingService {
     public Booking create(BookingDTOShort reqDTO) {
         Vendor exVendor = vendorService.findById(reqDTO.getVendorId());
         Renter exRenter = renterService.findById(reqDTO.getRenterId());
-        Type exType = hostelTypeService.findById(reqDTO.getTypeId());
+        Type exType = typeService.findById(reqDTO.getTypeId());
 
         Booking reqModel = modelMapper.map(reqDTO, Booking.class);
 

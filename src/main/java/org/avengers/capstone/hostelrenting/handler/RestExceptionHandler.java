@@ -2,6 +2,7 @@ package org.avengers.capstone.hostelrenting.handler;
 
 import org.avengers.capstone.hostelrenting.dto.response.ApiError;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
+import org.avengers.capstone.hostelrenting.exception.PreCreationException;
 import org.springframework.core.NestedExceptionUtils;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
@@ -46,6 +47,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
             MissingServletRequestParameterException ex, HttpHeaders headers,
             HttpStatus status, WebRequest request) {
         String error = ex.getParameterName() + " parameter is missing";
+        logger.error(ex);
         return buildResponseEntity(new ApiError(BAD_REQUEST, error, ex));
     }
 
@@ -69,6 +71,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         builder.append(ex.getContentType());
         builder.append(" media type is not supported. Supported media types are ");
         ex.getSupportedMediaTypes().forEach(t -> builder.append(t).append(", "));
+        logger.error(ex);
         return buildResponseEntity(new ApiError(HttpStatus.UNSUPPORTED_MEDIA_TYPE, builder.substring(0, builder.length() - 2), ex));
     }
 
@@ -91,6 +94,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         apiError.setMessage("Validation error");
         apiError.addValidationErrors(ex.getBindingResult().getFieldErrors());
         apiError.addValidationError(ex.getBindingResult().getGlobalErrors());
+        logger.error(ex);
         return buildResponseEntity(apiError);
     }
 
@@ -107,6 +111,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
         ServletWebRequest servletWebRequest = (ServletWebRequest) request;
         String error = "Malformed JSON request";
+        logger.error(ex);
         return buildResponseEntity(new ApiError(HttpStatus.BAD_REQUEST, error, ex));
     }
 
@@ -122,6 +127,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     @Override
     public ResponseEntity<Object> handleHttpMessageNotWritable(HttpMessageNotWritableException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
         String error = "Error writing JSON output";
+        logger.error(ex);
         return buildResponseEntity(new ApiError(HttpStatus.INTERNAL_SERVER_ERROR, error, ex));
     }
 
@@ -131,6 +137,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         ApiError apiError = new ApiError(BAD_REQUEST);
         apiError.setMessage(String.format("Could not find the %s method for URL %s", ex.getHttpMethod(), ex.getRequestURL()));
         apiError.setDebugMessage(ex.getMessage());
+        logger.error(ex);
         return buildResponseEntity(apiError);
     }
 
@@ -146,6 +153,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         ApiError apiError = new ApiError(BAD_REQUEST);
         apiError.setMessage("Validation error");
         apiError.addValidationErrors(ex.getConstraintViolations());
+        logger.error(ex);
         return buildResponseEntity(apiError);
     }
 
@@ -160,6 +168,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
             EntityNotFoundException ex) {
         ApiError apiError = new ApiError(NOT_FOUND);
         apiError.setMessage(ex.getMessage());
+        logger.error(ex);
         return buildResponseEntity(apiError);
     }
 
@@ -168,6 +177,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
      */
     @ExceptionHandler(javax.persistence.EntityNotFoundException.class)
     protected ResponseEntity<Object> handleEntityNotFound(javax.persistence.EntityNotFoundException ex) {
+        logger.error(ex);
         return buildResponseEntity(new ApiError(NOT_FOUND, ex));
     }
 
@@ -181,6 +191,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<?> handleDataIntegrityViolation(DataIntegrityViolationException ex) {
         Throwable throwable = NestedExceptionUtils.getMostSpecificCause(ex);
         ApiError apiError = new ApiError(CONFLICT, "Database error", throwable);
+        logger.error(ex);
         return buildResponseEntity(apiError);
     }
 
@@ -195,6 +206,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         ApiError apiError = new ApiError(BAD_REQUEST);
         apiError.setMessage(String.format("The parameter '%s' of value '%s' could not be converted to type '%s'", ex.getName(), ex.getValue(), ex.getRequiredType().getSimpleName()));
         apiError.setDebugMessage(ex.getMessage());
+        logger.error(ex);
         return buildResponseEntity(apiError);
     }
 
@@ -203,6 +215,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         ApiError apiError = new ApiError(FORBIDDEN);
         apiError.setMessage(ex.getMessage());
         apiError.setDebugMessage(ex.getMessage());
+        logger.error(ex);
         return buildResponseEntity(apiError);
     }
 
@@ -218,6 +231,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         ApiError apiError = new ApiError(UNAUTHORIZED);
         apiError.setMessage(ex.getMessage());
         apiError.setDebugMessage(ex.getLocalizedMessage());
+        logger.error(ex);
         return buildResponseEntity(apiError);
     }
 
@@ -226,6 +240,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         ApiError apiError = new ApiError(BAD_REQUEST);
         apiError.setMessage(ex.getMessage());
         apiError.setDebugMessage(ex.getLocalizedMessage());
+        logger.error(ex);
         return buildResponseEntity(apiError);
     }
 
@@ -234,6 +249,15 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         ApiError apiError = new ApiError(BAD_REQUEST);
         apiError.setMessage(ex.getMessage());
         apiError.setDebugMessage(ex.getLocalizedMessage());
+        logger.error(ex);
+        return buildResponseEntity(apiError);
+    }
+
+    @ExceptionHandler(PreCreationException.class)
+    public ResponseEntity<?> handlePreCreationException(PreCreationException ex) {
+        ApiError apiError = new ApiError(BAD_REQUEST);
+        apiError.setMessage(ex.getMessage());
+        logger.error(ex);
         return buildResponseEntity(apiError);
     }
 

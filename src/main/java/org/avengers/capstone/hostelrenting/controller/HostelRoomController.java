@@ -6,8 +6,8 @@ import org.avengers.capstone.hostelrenting.dto.response.ApiSuccess;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
 import org.avengers.capstone.hostelrenting.model.Room;
 import org.avengers.capstone.hostelrenting.model.Type;
-import org.avengers.capstone.hostelrenting.service.HostelRoomService;
-import org.avengers.capstone.hostelrenting.service.HostelTypeService;
+import org.avengers.capstone.hostelrenting.service.RoomService;
+import org.avengers.capstone.hostelrenting.service.TypeService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
@@ -25,18 +25,18 @@ import static org.avengers.capstone.hostelrenting.Constant.Message.*;
 @RequestMapping("/api/v1")
 public class HostelRoomController {
 
-    private HostelRoomService hostelRoomService;
-    private HostelTypeService hostelTypeService;
+    private RoomService roomService;
+    private TypeService typeService;
     private ModelMapper modelMapper;
 
     @Autowired
-    public void setHostelRoomService(HostelRoomService hostelRoomService) {
-        this.hostelRoomService = hostelRoomService;
+    public void setHostelRoomService(RoomService roomService) {
+        this.roomService = roomService;
     }
 
     @Autowired
-    public void setHostelTypeService(HostelTypeService hostelTypeService) {
-        this.hostelTypeService = hostelTypeService;
+    public void setHostelTypeService(TypeService typeService) {
+        this.typeService = typeService;
     }
 
     @Autowired
@@ -46,7 +46,7 @@ public class HostelRoomController {
 
     @GetMapping("/types/{typeId}/rooms")
     public ResponseEntity<ApiSuccess> getRoomsByTypeId(@PathVariable Integer typeId) throws EntityNotFoundException {
-        Type existedType = hostelTypeService.findById(typeId);
+        Type existedType = typeService.findById(typeId);
         List<HostelRoomDTO> rooms = existedType.getRooms()
                 .stream()
                 .map(hostelRoom -> modelMapper.map(hostelRoom, HostelRoomDTO.class))
@@ -60,7 +60,7 @@ public class HostelRoomController {
     @GetMapping("/types/{typeId}/rooms/{roomId}")
     public ResponseEntity<ApiSuccess> getRoomByTypeId(@PathVariable Integer typeId,
                                                       @PathVariable Integer roomId) throws EntityNotFoundException {
-        Type existedType = hostelTypeService.findById(typeId);
+        Type existedType = typeService.findById(typeId);
         Room resModel = existedType.getRooms()
                 .stream()
                 .filter(r -> r.getRoomId() == roomId)
@@ -76,10 +76,10 @@ public class HostelRoomController {
     @PostMapping("types/{typeId}/rooms")
     public ResponseEntity<ApiSuccess> createDistrict(@PathVariable Integer typeId,
                                                      @Valid @RequestBody HostelRoomDTO rqRoom) throws DuplicateKeyException {
-        Type existedType = hostelTypeService.findById(typeId);
+        Type existedType = typeService.findById(typeId);
         Room model = modelMapper.map(rqRoom, Room.class);
         model.setType(existedType);
-        Room createdModel = hostelRoomService.save(model);
+        Room createdModel = roomService.save(model);
         HostelRoomDTO createdDTO = modelMapper.map(model, HostelRoomDTO.class);
 
         return ResponseEntity
@@ -92,13 +92,13 @@ public class HostelRoomController {
                                                      @PathVariable Integer roomId,
                                                      @Valid @RequestBody HostelRoomDTO rqRoom) throws EntityNotFoundException {
         // check that id exist or not
-        Type existedType = hostelTypeService.findById(typeId);
-        Room existedRoom = hostelRoomService.findById(roomId);
+        Type existedType = typeService.findById(typeId);
+        Room existedRoom = roomService.findById(roomId);
 
         rqRoom.setRoomId(existedRoom.getRoomId());
         Room rqModel = modelMapper.map(rqRoom, Room.class);
         rqModel.setType(existedType);
-        Room updatedModel = hostelRoomService.save(rqModel);
+        Room updatedModel = roomService.save(rqModel);
         HostelRoomDTO resDTO = modelMapper.map(updatedModel, HostelRoomDTO.class);
 
         return ResponseEntity

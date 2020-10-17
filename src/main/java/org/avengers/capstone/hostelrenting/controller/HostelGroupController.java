@@ -7,7 +7,7 @@ import org.avengers.capstone.hostelrenting.dto.response.ApiSuccess;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
 import org.avengers.capstone.hostelrenting.model.*;
 import org.avengers.capstone.hostelrenting.service.*;
-import org.modelmapper.Condition;
+import org.avengers.capstone.hostelrenting.service.GroupService;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,7 +30,7 @@ import static org.avengers.capstone.hostelrenting.Constant.Pagination.DEFAULT_SI
 public class HostelGroupController {
     private static final Logger logger = LoggerFactory.getLogger(HostelGroupController.class);
 
-    private HostelGroupService hostelGroupService;
+    private GroupService groupService;
 
     private StreetWardService streetWardService;
 
@@ -63,8 +63,8 @@ public class HostelGroupController {
     }
 
     @Autowired
-    public void setHostelGroupService(HostelGroupService hostelGroupService) {
-        this.hostelGroupService = hostelGroupService;
+    public void setHostelGroupService(GroupService groupService) {
+        this.groupService = groupService;
     }
 
     @Autowired
@@ -94,15 +94,13 @@ public class HostelGroupController {
             reqModel.setAddress(address);
             // set services object
             if (reqDTO.getServices() != null) {
-                Collection<GroupService> groupServices = reqDTO.getServices()
+                Collection<org.avengers.capstone.hostelrenting.model.GroupService> groupServices = reqDTO.getServices()
                         .stream()
                         .map(dto -> {
-                            GroupService groupService = GroupService.builder()
+                            org.avengers.capstone.hostelrenting.model.GroupService groupService = org.avengers.capstone.hostelrenting.model.GroupService.builder()
                                     .createdAt(System.currentTimeMillis())
                                     .group(reqModel)
-                                    .priceUnit(dto.getPriceUnit())
                                     .price(dto.getPrice())
-                                    .timeUnit(dto.getTimeUnit())
                                     .userUnit(dto.getUserUnit())
                                     .service(serviceService.findById(dto.getServiceId()))
                                     .isActive(true)
@@ -130,7 +128,7 @@ public class HostelGroupController {
                 reqModel.setGroupRegulations(regulations);
             }
 
-            Group resModel = hostelGroupService.create(reqModel);
+            Group resModel = groupService.create(reqModel);
 
             // log created group
             logger.info("CREATED Group with id: " + resModel.getGroupId());
@@ -155,7 +153,7 @@ public class HostelGroupController {
     @GetMapping("/groups/{groupId}")
     public ResponseEntity<?> getGroupById(@PathVariable Integer groupId) {
         logger.info("START - Get group with id: " + groupId);
-        Group resModel = hostelGroupService.findById(groupId);
+        Group resModel = groupService.findById(groupId);
         GroupDTOResponse resDTO = modelMapper.map(resModel, GroupDTOResponse.class);
         if (resModel != null) {
             logger.info("SUCCESSFUL - Get group by id");
@@ -180,7 +178,7 @@ public class HostelGroupController {
                                                  @RequestParam(required = false, defaultValue = DEFAULT_PAGE) Integer page) {
         //log start
         logger.info("START - Get group by vendor with id: " + vendorId);
-        List<GroupDTOResponse> resDTOs = hostelGroupService.getByVendorId(vendorId, size, page-1)
+        List<GroupDTOResponse> resDTOs = groupService.getByVendorId(vendorId, size, page-1)
                 .stream().map(group -> modelMapper.map(group, GroupDTOResponse.class))
                 .collect(Collectors.toList());
 
@@ -201,10 +199,10 @@ public class HostelGroupController {
                                          @PathVariable Integer groupId) {
         //log start update
         logger.info("START - updating group");
-        Group existedModel = hostelGroupService.findById(groupId);
+        Group existedModel = groupService.findById(groupId);
 
         modelMapper.map(reqDTO, existedModel);
-        Group resModel = hostelGroupService.update(existedModel);
+        Group resModel = groupService.update(existedModel);
         GroupDTOResponse resDTO = modelMapper.map(resModel, GroupDTOResponse.class);
 
         //log end update
