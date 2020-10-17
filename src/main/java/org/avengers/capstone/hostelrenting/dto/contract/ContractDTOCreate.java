@@ -52,5 +52,5 @@ public class ContractDTOCreate {
     private UUID qrCode;
 
     @NotNull(message = "List of agreement services is mandatory!")
-    private Collection<GroupServiceDTOCreate> groupServices;
+    private Collection<GroupServiceDTOForContract> groupServices;
 }
