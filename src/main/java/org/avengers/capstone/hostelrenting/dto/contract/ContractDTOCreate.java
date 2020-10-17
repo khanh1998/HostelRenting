@@ -1,5 +1,6 @@
 package org.avengers.capstone.hostelrenting.dto.contract;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
@@ -48,13 +49,16 @@ public class ContractDTOCreate {
     @Getter @Setter
     private String evidenceImgUrl;
 
+    @JsonIgnore
     @Getter
     private Long createdAt;
 
     @Getter
+    @JsonIgnore
     private Contract.STATUS status;
 
     @Getter
+    @JsonIgnore
     private UUID qrCode;
 
     @Getter @Setter
