@@ -292,7 +292,13 @@ public class HostelTypeController {
 //        groupDTOs.forEach(GroupDTOResponse::getServiceForDisplay);
 
         // DTO contains list of Types and groups follow that type
-        TypesAndGroupsDTO resDTO = new TypesAndGroupsDTO(typeDTOs, groupDTOs);
+        TypesAndGroupsDTO resDTO = TypesAndGroupsDTO
+                .builder()
+                .types(typeDTOs)
+                .groups(groupDTOs)
+                .totalType(typeDTOs.size())
+                .totalGroup(groupDTOs.size())
+                .build();
 
         //log success
         logger.info("SUCCESSFULLY - Get type(s) ");
