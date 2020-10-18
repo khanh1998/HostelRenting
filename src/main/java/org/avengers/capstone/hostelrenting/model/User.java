@@ -33,6 +33,16 @@ public class User {
 
     private String firebaseToken;
 
+    private Long yearOfBirth;
+
+    private String idIssuedLocation;
+
+    private Long idIssuedDate;
+
+    private String householdAddress;
+
+    private String currentAddress;
+
     @ManyToOne
     @JoinColumn(name = "role_id", nullable = false)
     private Role role;

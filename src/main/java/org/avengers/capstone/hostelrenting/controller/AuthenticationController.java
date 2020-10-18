@@ -2,7 +2,7 @@ package org.avengers.capstone.hostelrenting.controller;
 
 import org.avengers.capstone.hostelrenting.dto.renter.ResRenterDTO;
 import org.avengers.capstone.hostelrenting.dto.response.ApiSuccess;
-import org.avengers.capstone.hostelrenting.dto.user.UserDTOFull;
+import org.avengers.capstone.hostelrenting.dto.user.UserDTOResponse;
 import org.avengers.capstone.hostelrenting.dto.user.UserDTOLogin;
 import org.avengers.capstone.hostelrenting.dto.vendor.ResVendorDTO;
 import org.avengers.capstone.hostelrenting.model.Role;
@@ -58,7 +58,7 @@ public class AuthenticationController {
         final UserDetails userDetails = customUserService.loadUserByUsername(reqDTO.getPhone());
         final String token = firebaseService.generateJwtToken(userDetails);
         User resModel = customUserService.findByPhone(reqDTO.getPhone());
-        UserDTOFull resDTO;
+        UserDTOResponse resDTO;
         if (resModel.getRole().getCode().equals(Role.CODE.RENTER)){
             resDTO = modelMapper.map(resModel, ResRenterDTO.class);
         }else{

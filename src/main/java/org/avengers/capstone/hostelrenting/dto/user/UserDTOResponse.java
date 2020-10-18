@@ -16,7 +16,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 
-public class UserDTOFull implements Serializable {
+public class UserDTOResponse implements Serializable {
     private Long userId;
     @NotEmpty(message = "Username is mandatory")
     private String username;
@@ -29,6 +29,11 @@ public class UserDTOFull implements Serializable {
     private String phone;
     private String avatar;
     private String firebaseToken;
+    private Long yearOfBirth;
+    private String idIssuedLocation;
+    private Long idIssuedDate;
+    private String householdAddress;
+    private String currentAddress;
     private RoleDTO role;
     private String jwtToken;
 }
