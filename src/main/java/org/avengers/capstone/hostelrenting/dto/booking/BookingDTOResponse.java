@@ -9,9 +9,11 @@ import org.avengers.capstone.hostelrenting.dto.renter.ResRenterDTO;
 import org.avengers.capstone.hostelrenting.dto.vendor.ResVendorDTO;
 import org.avengers.capstone.hostelrenting.model.Booking;
 
+import java.io.Serializable;
+
 @Getter
 @Setter
-public class BookingDTOFull {
+public class BookingDTOResponse implements Serializable {
     private int bookingId;
     private ResRenterDTO renter;
     private ResVendorDTO vendor;

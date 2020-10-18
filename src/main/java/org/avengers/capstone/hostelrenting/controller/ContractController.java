@@ -1,8 +1,8 @@
 package org.avengers.capstone.hostelrenting.controller;
 
-import org.avengers.capstone.hostelrenting.dto.contract.ContractDTOUpdate;
+import org.avengers.capstone.hostelrenting.dto.contract.ContractDTOConfirm;
 import org.avengers.capstone.hostelrenting.dto.group.GroupDTOResponse;
-import org.avengers.capstone.hostelrenting.dto.booking.BookingDTOShort;
+import org.avengers.capstone.hostelrenting.dto.booking.BookingDTOCreate;
 import org.avengers.capstone.hostelrenting.dto.deal.DealDTOShort;
 import org.avengers.capstone.hostelrenting.dto.type.TypeDTOResponse;
 import org.avengers.capstone.hostelrenting.dto.contract.ContractDTOResponse;
@@ -110,7 +110,7 @@ public class ContractController {
 
     @PutMapping("/contracts/{contractId}")
     public ResponseEntity<?> confirmContract(@PathVariable Integer contractId,
-                                            @RequestBody @Valid ContractDTOUpdate reqDTO){
+                                            @RequestBody @Valid ContractDTOConfirm reqDTO){
         Contract exModel = contractService.findById(contractId);
         Contract resModel = contractService.confirm(exModel, reqDTO);
         ContractDTOResponse resDTO = modelMapper.map(resModel, ContractDTOResponse.class);
@@ -185,7 +185,7 @@ public class ContractController {
 
     private void getBookingForDTO(ContractDTOResponse resDTO) {
         Booking exBooking = bookingService.findById(resDTO.getBooking().getBookingId());
-        resDTO.setBooking(modelMapper.map(exBooking, BookingDTOShort.class));
+        resDTO.setBooking(modelMapper.map(exBooking, BookingDTOCreate.class));
     }
 
     private void getTypeAndGroupForDTO(ContractDTOResponse resDTO) {

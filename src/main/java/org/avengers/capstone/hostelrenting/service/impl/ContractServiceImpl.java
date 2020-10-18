@@ -1,14 +1,17 @@
 package org.avengers.capstone.hostelrenting.service.impl;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.avengers.capstone.hostelrenting.dto.contract.ContractDTOUpdate;
+import org.avengers.capstone.hostelrenting.dto.contract.ContractDTOConfirm;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
 import org.avengers.capstone.hostelrenting.exception.GenericException;
 import org.avengers.capstone.hostelrenting.exception.PreCreationException;
+import org.avengers.capstone.hostelrenting.model.Booking;
 import org.avengers.capstone.hostelrenting.model.Contract;
 import org.avengers.capstone.hostelrenting.model.GroupService;
+import org.avengers.capstone.hostelrenting.repository.BookingRepository;
 import org.avengers.capstone.hostelrenting.repository.ContractRepository;
 import org.avengers.capstone.hostelrenting.repository.GroupServiceRepository;
+import org.avengers.capstone.hostelrenting.repository.RoomRepository;
 import org.avengers.capstone.hostelrenting.service.*;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
@@ -29,6 +32,8 @@ public class ContractServiceImpl implements ContractService {
 
     private ContractRepository contractRepository;
     private GroupServiceRepository groupServiceRepository;
+    private RoomRepository roomRepository;
+    private BookingRepository bookingRepository;
     private ModelMapper modelMapper;
     private RenterService renterService;
     private VendorService vendorService;
@@ -36,6 +41,16 @@ public class ContractServiceImpl implements ContractService {
     private GroupServiceService groupServiceService;
     private DealService dealService;
     private BookingService bookingService;
+
+    @Autowired
+    public void setBookingRepository(BookingRepository bookingRepository) {
+        this.bookingRepository = bookingRepository;
+    }
+
+    @Autowired
+    public void setRoomRepository(RoomRepository roomRepository) {
+        this.roomRepository = roomRepository;
+    }
 
     @Autowired
     public void setGroupServiceRepository(GroupServiceRepository groupServiceRepository) {
@@ -98,15 +113,15 @@ public class ContractServiceImpl implements ContractService {
 
     @Override
     public Contract create(Contract reqModel) throws PreCreationException {
-        Contract tempContract = contractRepository.findByVendor_UserIdAndRenter_UserIdAndRoom_RoomId(
+        Optional<Contract> tempContract = contractRepository.findByVendor_UserIdAndRenter_UserIdAndRoom_RoomId(
                 reqModel.getVendor().getUserId(),
                 reqModel.getRenter().getUserId(),
                 reqModel.getRoom().getRoomId());
-        if ( tempContract != null)
-            throw new GenericException(Contract.class, "Contract was existed with ",
-                    "contractId", String.valueOf(tempContract.getContractId()),
-                    "renterId", String.valueOf(tempContract.getRenter().getUserId()),
-                    "vendorId", String.valueOf(tempContract.getVendor().getUserId()));
+        if ( tempContract.isPresent())
+            throw new GenericException(Contract.class, "Contract has already with ",
+                    "contractId", String.valueOf(reqModel.getContractId()),
+                    "renterId", String.valueOf(reqModel.getRenter().getUserId()),
+                    "vendorId", String.valueOf(reqModel.getVendor().getUserId()));
 
         int groupId = reqModel.getRoom().getType().getGroup().getGroupId();
         Collection<Integer> reqServiceIds = reqModel.getGroupServices().stream().map(GroupService::getGroupServiceId).collect(Collectors.toList());
@@ -119,12 +134,16 @@ public class ContractServiceImpl implements ContractService {
         reqModel.setGroupServices(validServices);
         /* Set room for contract model */
         reqModel.setRoom(roomService.updateStatus(reqModel.getRoom().getRoomId(), false));
+        Contract resModel = contractRepository.save(reqModel);
 
-        return contractRepository.save(reqModel);
+        // process business after create contract
+        processAfterCreate(resModel);
+
+        return resModel;
     }
 
     @Override
-    public Contract confirm(Contract exModel, ContractDTOUpdate reqDTO) {
+    public Contract confirm(Contract exModel, ContractDTOConfirm reqDTO) {
         if (exModel.getStatus() == Contract.STATUS.ACTIVATED) {
             throw new GenericException(Contract.class, "cannot be updated", "contractId", String.valueOf(exModel.getContractId()), "status", exModel.getStatus().toString());
         }
@@ -201,5 +220,13 @@ public class ContractServiceImpl implements ContractService {
 
         if (isViolated)
             throw new PreCreationException(errMsg);
+    }
+
+    private void processAfterCreate(Contract reqModel){
+        int remainRoom = roomRepository.countByType_TypeIdAndIsAvailableIsTrue(reqModel.getRoom().getType().getTypeId());
+        if (remainRoom == 0){
+            Collection<Booking> incomingBookings = bookingRepository.findByType_TypeIdAndStatusIs(reqModel.getRoom().getType().getTypeId(), Booking.STATUS.INCOMING);
+            bookingService.cancelBookings(incomingBookings.stream().map(Booking::getBookingId).collect(Collectors.toList()));
+        }
     }
 }

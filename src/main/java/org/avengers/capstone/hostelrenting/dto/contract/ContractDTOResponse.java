@@ -5,15 +5,13 @@ import lombok.Getter;
 import lombok.Setter;
 import org.avengers.capstone.hostelrenting.dto.group.GroupDTOResponse;
 import org.avengers.capstone.hostelrenting.dto.HostelRoomDTO;
-import org.avengers.capstone.hostelrenting.dto.booking.BookingDTOShort;
+import org.avengers.capstone.hostelrenting.dto.booking.BookingDTOCreate;
 import org.avengers.capstone.hostelrenting.dto.deal.DealDTOShort;
 import org.avengers.capstone.hostelrenting.dto.group.GroupServiceDTOResponse;
 import org.avengers.capstone.hostelrenting.dto.type.TypeDTOResponse;
 import org.avengers.capstone.hostelrenting.dto.renter.ResRenterDTO;
 import org.avengers.capstone.hostelrenting.dto.vendor.ResVendorDTO;
 import org.avengers.capstone.hostelrenting.model.Contract;
-import org.avengers.capstone.hostelrenting.model.GroupService;
-import org.avengers.capstone.hostelrenting.model.serialized.ServiceFull;
 
 import java.util.Collection;
 import java.util.UUID;
@@ -32,7 +30,7 @@ public class ContractDTOResponse {
     private ResVendorDTO vendor;
     private ResRenterDTO renter;
     private DealDTOShort deal;
-    private BookingDTOShort booking;
+    private BookingDTOCreate booking;
     private long startTime;
     private Float duration;
     private String evidenceImgUrl;

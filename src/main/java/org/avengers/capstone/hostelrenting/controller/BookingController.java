@@ -1,16 +1,14 @@
 package org.avengers.capstone.hostelrenting.controller;
 
+import org.avengers.capstone.hostelrenting.dto.booking.BookingDTOUpdate;
 import org.avengers.capstone.hostelrenting.dto.group.GroupDTOResponse;
-import org.avengers.capstone.hostelrenting.dto.booking.BookingDTOFull;
-import org.avengers.capstone.hostelrenting.dto.booking.BookingDTOShort;
+import org.avengers.capstone.hostelrenting.dto.booking.BookingDTOResponse;
+import org.avengers.capstone.hostelrenting.dto.booking.BookingDTOCreate;
 import org.avengers.capstone.hostelrenting.dto.deal.DealDTOShort;
 import org.avengers.capstone.hostelrenting.dto.response.ApiSuccess;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
-import org.avengers.capstone.hostelrenting.model.Booking;
-import org.avengers.capstone.hostelrenting.model.Deal;
-import org.avengers.capstone.hostelrenting.model.Group;
-import org.avengers.capstone.hostelrenting.service.BookingService;
-import org.avengers.capstone.hostelrenting.service.DealService;
+import org.avengers.capstone.hostelrenting.model.*;
+import org.avengers.capstone.hostelrenting.service.*;
 import org.avengers.capstone.hostelrenting.service.GroupService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +27,25 @@ public class BookingController {
     private BookingService bookingService;
     private GroupService groupService;
     private DealService dealService;
+    private VendorService vendorService;
+    private RenterService renterService;
+    private TypeService typeService;
     private ModelMapper modelMapper;
+
+    @Autowired
+    public void setVendorService(VendorService vendorService) {
+        this.vendorService = vendorService;
+    }
+
+    @Autowired
+    public void setRenterService(RenterService renterService) {
+        this.renterService = renterService;
+    }
+
+    @Autowired
+    public void setHostelTypeService(TypeService typeService) {
+        this.typeService = typeService;
+    }
 
     @Autowired
     public void setDealService(DealService dealService) {
@@ -52,10 +68,20 @@ public class BookingController {
     }
 
     @PostMapping("/bookings")
-    public ResponseEntity<?> create(@RequestBody @Valid BookingDTOShort reqDTO) {
+    public ResponseEntity<?> create(@RequestBody @Valid BookingDTOCreate reqDTO) {
+        Vendor exVendor = vendorService.findById(reqDTO.getVendorId());
+        Renter exRenter = renterService.findById(reqDTO.getRenterId());
+        Type exType = typeService.findById(reqDTO.getTypeId());
+        Booking reqModel = modelMapper.map(reqDTO, Booking.class);
+        reqModel = reqModel.toBuilder()
+                .vendor(exVendor)
+                .renter(exRenter)
+                .type(exType)
+                .build();
 
-        Booking resModel = bookingService.create(reqDTO);
-        BookingDTOFull resDTO = modelMapper.map(resModel, BookingDTOFull.class);
+        Booking resModel = bookingService.create(reqModel);
+
+        BookingDTOResponse resDTO = modelMapper.map(resModel, BookingDTOResponse.class);
 
         ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTO, "Your booking has been created successfully!");
 
@@ -64,12 +90,12 @@ public class BookingController {
 
     @PutMapping("/bookings/{bookingId}")
     public ResponseEntity<?> updateBooking(@PathVariable Integer bookingId,
-                                           @Valid @RequestBody BookingDTOShort reqDTO) {
+                                           @Valid @RequestBody BookingDTOUpdate reqDTO) {
 
         String resMsg = "Your booking has been updated";
-        reqDTO.setBookingId(bookingId);
-        Booking resModel = bookingService.update(reqDTO);
-        BookingDTOFull resDTO = modelMapper.map(resModel, BookingDTOFull.class);
+        Booking exModel = bookingService.findById(bookingId);
+        Booking resModel = bookingService.confirm(exModel, reqDTO);
+        BookingDTOResponse resDTO = modelMapper.map(resModel, BookingDTOResponse.class);
         if (resDTO == null)
             resMsg = "Your booking is up to date";
 
@@ -82,7 +108,7 @@ public class BookingController {
     @GetMapping("/bookings/{bookingId}")
     public ResponseEntity<?> getBookingById(@PathVariable Integer bookingId) {
         Booking resModel = bookingService.findById(bookingId);
-        BookingDTOFull resDTO = modelMapper.map(resModel, BookingDTOFull.class);
+        BookingDTOResponse resDTO = modelMapper.map(resModel, BookingDTOResponse.class);
 
         // get group
         getGroupForDTO(resDTO);
@@ -99,9 +125,9 @@ public class BookingController {
     public ResponseEntity<?> getByRenterId(@PathVariable Long renterId) throws EntityNotFoundException {
         String resMsg = "Your booking(s) has been retrieved successfully!";
 
-        List<BookingDTOFull> resDTOs = bookingService.findByRenterId(renterId)
+        List<BookingDTOResponse> resDTOs = bookingService.findByRenterId(renterId)
                 .stream()
-                .map(booking -> modelMapper.map(booking, BookingDTOFull.class))
+                .map(booking -> modelMapper.map(booking, BookingDTOResponse.class))
                 .collect(Collectors.toList());
 
         if (resDTOs.isEmpty())
@@ -120,9 +146,9 @@ public class BookingController {
     public ResponseEntity<?> getByVendorId(@PathVariable Long vendorId) throws EntityNotFoundException {
         String resMsg = "Your booking(s) has been retrieved successfully!";
 
-        List<BookingDTOFull> resDTOs = bookingService.findByVendorId(vendorId)
+        List<BookingDTOResponse> resDTOs = bookingService.findByVendorId(vendorId)
                 .stream()
-                .map(booking -> modelMapper.map(booking, BookingDTOFull.class))
+                .map(booking -> modelMapper.map(booking, BookingDTOResponse.class))
                 .collect(Collectors.toList());
 
         if (resDTOs.isEmpty())
@@ -142,7 +168,7 @@ public class BookingController {
      *
      * @param resDTOs list of {@link Booking} need to fill {@link Group}
      */
-    private void getDealForDTOs(List<BookingDTOFull> resDTOs) {
+    private void getDealForDTOs(List<BookingDTOResponse> resDTOs) {
         resDTOs.forEach(dto -> {
             if (dto.getDeal() != null) {
                 Deal existedDeal = dealService.findById(dto.getDeal().getDealId());
@@ -156,19 +182,19 @@ public class BookingController {
      *
      * @param resDTOs list of {@link Booking} need to fill {@link Group}
      */
-    private void getGroupForDTOs(List<BookingDTOFull> resDTOs) {
+    private void getGroupForDTOs(List<BookingDTOResponse> resDTOs) {
         resDTOs.forEach(resDTO -> {
             Group existedGroup = groupService.findById(resDTO.getType().getGroupId());
             resDTO.setGroup(modelMapper.map(existedGroup, GroupDTOResponse.class));
         });
     }
 
-    private void getGroupForDTO(BookingDTOFull resDTO) {
+    private void getGroupForDTO(BookingDTOResponse resDTO) {
         Group existedGroup = groupService.findById(resDTO.getType().getGroupId());
         resDTO.setGroup(modelMapper.map(existedGroup, GroupDTOResponse.class));
     }
 
-    private void getDealForDTO(BookingDTOFull resDTO) {
+    private void getDealForDTO(BookingDTOResponse resDTO) {
         if (resDTO.getDeal() != null) {
             Deal existedDeal = dealService.findById(resDTO.getDeal().getDealId());
             resDTO.setDeal(modelMapper.map(existedDeal, DealDTOShort.class));
