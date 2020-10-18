@@ -19,7 +19,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @RestController
@@ -105,9 +107,8 @@ public class RenterController {
 
     @GetMapping("/renters")
     public ResponseEntity<?> getRenterByIds(@RequestParam Long[] renterIds) {
-        List<ResRenterDTO> resDTOs = Arrays.stream(renterIds)
-                .map(id -> modelMapper.map(renterService.findById(id), ResRenterDTO.class))
-                .collect(Collectors.toList());
+        Set<ResRenterDTO> resDTOs = renterService.findByIds(Arrays.stream(renterIds).collect(Collectors.toSet())).stream()
+                .map(renter -> modelMapper.map(renter, ResRenterDTO.class)).collect(Collectors.toSet());
 
         ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTOs, "Renter information have been retrieved successfully!");
 
