@@ -103,8 +103,8 @@ public class TypeServiceImpl implements TypeService {
         Sort sort = Sort.by(asc == true ? Sort.Direction.ASC : Sort.Direction.DESC, sortBy);
         Pageable pageable = PageRequest.of(page - 1, size, sort);
         Collection<Type> locTypes;
-        Collection<Type> schoolMateTypes = new ArrayList<>();
-        Collection<Type> compatriotTypes = new ArrayList<>();
+        Collection<Type> schoolMateTypes;
+        Collection<Type> compatriotTypes;
         if (latitude != null && longitude != null) {
             // if long&lat != null ==> get surroundings
             logger.info("START - Get surrounding based on lng, lat and distance");
@@ -113,46 +113,44 @@ public class TypeServiceImpl implements TypeService {
         } else {
             //default get ...
             //TODO: implement get default
-            logger.info("START - Get default ");
             locTypes = typeRepository.findAll();
-            logger.info("END - Get default");
         }
 
+        List<Type> temp = new ArrayList<>(locTypes);
         if (schoolId != null) {
-            logger.info("START - Get schoolmate");
             schoolMateTypes = convertMapToList(typeRepository.getBySchoolMates(schoolId), 1);
-            logger.info("END - Get types with schoolmate");
+            if (schoolMateTypes == null)
+                schoolMateTypes = new ArrayList<>();
+            temp.retainAll(schoolMateTypes);
         }
 
         if (provinceId != null) {
-            logger.info("START - Get compatriot");
             compatriotTypes = convertMapToList(typeRepository.getByCompatriot(provinceId), 2);
-            logger.info("END - Get compatriot");
+            if (compatriotTypes == null)
+                compatriotTypes = new ArrayList<>();
+            temp.retainAll(compatriotTypes);
         }
 
-        // new collection to retainAll (unmodifiable collection cannot be removed)
-        List<Type> temp = new ArrayList<>(locTypes);
-        if (!compatriotTypes.isEmpty() || !schoolMateTypes.isEmpty()) {
-            temp.retainAll(Stream.concat(compatriotTypes.stream(), schoolMateTypes.stream()).collect(Collectors.toList()));
-        }
-        logger.info("START - Get availableRoom and currentBooking");
-        temp = temp.stream().map(this::countAvailableRoomAndCurrentBooking).filter(type -> type.getAvailableRoom()>0).collect(Collectors.toList());
-        logger.info("END - Get availableRoom and currentBooking");
+//        // new collection to retainAll (unmodifiable collection cannot be removed)
+//        if (compatriotTypes.() && schoolMateTypes != null){
+//            temp.retainAll(Stream.concat(compatriotTypes.stream(), schoolMateTypes.stream()).collect(Collectors.toList()));
+//        }
+        temp = temp.stream().map(this::countAvailableRoomAndCurrentBooking).filter(type -> type.getAvailableRoom() > 0).collect(Collectors.toList());
         return temp;
     }
 
     @Override
-    public Type countAvailableRoomAndCurrentBooking(Type type){
+    public Type countAvailableRoomAndCurrentBooking(Type type) {
         long availableRoom = type.getRooms().stream().filter(Room::isAvailable).count();
         type.setAvailableRoom((int) availableRoom);
-        long currentBooking = type.getBookings().stream().filter(booking -> booking.getStatus()== Booking.STATUS.INCOMING).count();
+        long currentBooking = type.getBookings().stream().filter(booking -> booking.getStatus() == Booking.STATUS.INCOMING).count();
         type.setCurrentBooking((int) currentBooking);
         return type;
     }
 
     /**
      * @param inputList
-     * @param code == 1 is schoolmate, otherwise is compatriot
+     * @param code      == 1 is schoolmate, otherwise is compatriot
      * @return list of types has been converted from map to list
      */
     private List<Type> convertMapToList(List<Object[]> inputList, int code) {
