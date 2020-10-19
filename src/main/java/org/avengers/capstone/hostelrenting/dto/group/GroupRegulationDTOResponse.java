@@ -1,8 +1,8 @@
 package org.avengers.capstone.hostelrenting.dto.group;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
-import org.apache.commons.lang3.builder.ToStringExclude;
 
 import java.io.Serializable;
 
@@ -18,4 +18,10 @@ public class GroupRegulationDTOResponse implements Serializable {
     private String regulationName;
     private boolean isAllowed;
     private boolean isActive;
+
+    @JsonIgnore
+    public boolean isActive() {
+        return isActive;
+    }
 }
+

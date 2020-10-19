@@ -1,14 +1,20 @@
 package org.avengers.capstone.hostelrenting.dto.contract;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 import org.avengers.capstone.hostelrenting.dto.group.GroupDTOResponse;
 import org.avengers.capstone.hostelrenting.dto.HostelRoomDTO;
-import org.avengers.capstone.hostelrenting.dto.booking.BookingDTOShort;
+import org.avengers.capstone.hostelrenting.dto.booking.BookingDTOCreate;
 import org.avengers.capstone.hostelrenting.dto.deal.DealDTOShort;
+import org.avengers.capstone.hostelrenting.dto.group.GroupServiceDTOResponse;
 import org.avengers.capstone.hostelrenting.dto.type.TypeDTOResponse;
 import org.avengers.capstone.hostelrenting.dto.renter.ResRenterDTO;
 import org.avengers.capstone.hostelrenting.dto.vendor.ResVendorDTO;
+import org.avengers.capstone.hostelrenting.model.Contract;
+
+import java.util.Collection;
+import java.util.UUID;
 
 /**
  * Contains all information that relative with contract
@@ -16,7 +22,7 @@ import org.avengers.capstone.hostelrenting.dto.vendor.ResVendorDTO;
 
 @Getter
 @Setter
-public class ContractDTOFull {
+public class ContractDTOResponse {
     private int contractId;
     private HostelRoomDTO room;
     private TypeDTOResponse type;
@@ -24,9 +30,15 @@ public class ContractDTOFull {
     private ResVendorDTO vendor;
     private ResRenterDTO renter;
     private DealDTOShort deal;
-    private BookingDTOShort booking;
+    private BookingDTOCreate booking;
     private long startTime;
     private Float duration;
+    private String evidenceImgUrl;
+    private String contractUrl;
+    private UUID qrCode;
+    private Contract.STATUS status;
+    @JsonProperty(value = "agreementServices")
+    private Collection<GroupServiceDTOResponse> groupServices;
 
     private Long createdAt;
     private Long updatedAt;

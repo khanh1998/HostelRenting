@@ -1,6 +1,7 @@
 package org.avengers.capstone.hostelrenting.model;
 
 import lombok.*;
+import org.springframework.beans.factory.annotation.Value;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -8,14 +9,15 @@ import java.util.Collection;
 
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 @EqualsAndHashCode
 
 @Entity
 @Table(name = "type_hostel")
 public class Type {
+
     @Id
     @Column(name = "type_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,13 +44,19 @@ public class Type {
 
     // unit: month
     @Column(nullable = false)
-    private float deposit;
+    private int deposit;
 
     @Transient
     private int schoolmate;
 
     @Transient
     private int compatriot;
+
+    @Transient
+    private int availableRoom;
+
+    @Transient
+    private int currentBooking;
 
     @Column(columnDefinition = "boolean default false")
     private boolean isDeleted;
@@ -70,6 +78,12 @@ public class Type {
 
     @OneToMany(mappedBy = "type", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Collection<TypeImage> typeImages;
+
+    @OneToMany(mappedBy = "type", fetch = FetchType.LAZY)
+    private Collection<Booking> bookings;
+
+    @OneToMany(mappedBy = "type", fetch = FetchType.LAZY)
+    private Collection<Deal> deals;
 
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @EqualsAndHashCode.Exclude

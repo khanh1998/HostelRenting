@@ -1,8 +1,11 @@
-package org.avengers.capstone.hostelrenting.dto;
+package org.avengers.capstone.hostelrenting.dto.group;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonUnwrapped;
+import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.*;
+import org.avengers.capstone.hostelrenting.dto.schedule.ScheduleDTO;
 import org.avengers.capstone.hostelrenting.model.Schedule;
 
 import java.io.Serializable;
@@ -13,11 +16,13 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
-public class ScheduleDTO implements Serializable {
+@Builder(toBuilder = true)
+public class GroupScheduleDTOResponse implements Serializable {
     private int scheduleId;
-    private String dayOfWeek;
-    private Schedule.CODE code;
+    //    private String dayOfWeek;
+//    private Schedule.CODE code;
+    @JsonUnwrapped
+    private ScheduleDTO schedule;
     @JsonIgnore
     private String startTime;
     @JsonIgnore

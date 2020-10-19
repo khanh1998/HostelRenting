@@ -22,6 +22,8 @@ public class Category {
     @NotBlank(message = "Category name is mandatory")
     private String categoryName;
 
+    private int displayOrder;
+
     @OneToMany(mappedBy = "category",cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Type> types;
 }

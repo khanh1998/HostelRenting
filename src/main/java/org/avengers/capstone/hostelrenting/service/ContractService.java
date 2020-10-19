@@ -1,19 +1,17 @@
 package org.avengers.capstone.hostelrenting.service;
 
-import org.avengers.capstone.hostelrenting.dto.booking.BookingDTOShort;
-import org.avengers.capstone.hostelrenting.dto.contract.ContractDTOShort;
-import org.avengers.capstone.hostelrenting.model.Booking;
+import org.avengers.capstone.hostelrenting.dto.contract.ContractDTOConfirm;
 import org.avengers.capstone.hostelrenting.model.Contract;
-import org.avengers.capstone.hostelrenting.model.District;
 
 import java.util.List;
 
 public interface ContractService {
-    void checkActive(Integer id);
+    void checkExist(Integer id);
     Contract findById(Integer id);
-    Contract create(ContractDTOShort reqDTO);
-    Contract update(ContractDTOShort reqDTO);
+    Contract create(Contract reqModel);
+    Contract confirm(Contract exModel, ContractDTOConfirm reqDTO);
     List<Contract> findByRenterId(Long renterId);
     List<Contract> findByVendorId(Long vendorId);
-
+    String createPDF(String contractId);
+    void sendMailWithEmbed(String mail);
 }

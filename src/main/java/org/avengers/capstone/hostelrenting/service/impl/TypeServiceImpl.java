@@ -1,10 +1,14 @@
 package org.avengers.capstone.hostelrenting.service.impl;
 
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
+import org.avengers.capstone.hostelrenting.model.Booking;
+import org.avengers.capstone.hostelrenting.model.Room;
 import org.avengers.capstone.hostelrenting.model.Type;
 import org.avengers.capstone.hostelrenting.repository.TypeRepository;
-import org.avengers.capstone.hostelrenting.service.HostelGroupService;
-import org.avengers.capstone.hostelrenting.service.HostelTypeService;
+import org.avengers.capstone.hostelrenting.service.GroupService;
+import org.avengers.capstone.hostelrenting.service.TypeService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -17,13 +21,14 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Service
-public class HostelTypeServiceImpl implements HostelTypeService {
+public class TypeServiceImpl implements TypeService {
     private TypeRepository typeRepository;
-    private HostelGroupService hostelGroupService;
+    private GroupService groupService;
+    private static final Logger logger = LoggerFactory.getLogger(TypeServiceImpl.class);
 
     @Autowired
-    public void setHostelGroupService(HostelGroupService hostelGroupService) {
-        this.hostelGroupService = hostelGroupService;
+    public void setHostelGroupService(GroupService groupService) {
+        this.groupService = groupService;
     }
 
     @Autowired
@@ -75,7 +80,7 @@ public class HostelTypeServiceImpl implements HostelTypeService {
      */
     @Override
     public List<Type> findByHostelGroupId(Integer hostelGroupId) {
-        hostelGroupService.checkExist(hostelGroupId);
+        groupService.checkExist(hostelGroupId);
         List<Type> types = typeRepository.findByGroup_GroupId((hostelGroupId));
         return types;
     }
@@ -95,43 +100,60 @@ public class HostelTypeServiceImpl implements HostelTypeService {
      */
     @Override
     public Collection<Type> searchWithMainFactors(Double latitude, Double longitude, Double distance, Integer schoolId, Integer provinceId, String sortBy, Boolean asc, int size, int page) {
-
         Sort sort = Sort.by(asc == true ? Sort.Direction.ASC : Sort.Direction.DESC, sortBy);
         Pageable pageable = PageRequest.of(page - 1, size, sort);
-        Collection<Type> locTypes = new ArrayList<>();
-        Collection<Type> schoolMateTypes = new ArrayList<>();
-        Collection<Type> compatriotTypes = new ArrayList<>();
+        Collection<Type> locTypes;
+        Collection<Type> schoolMateTypes;
+        Collection<Type> compatriotTypes;
         if (latitude != null && longitude != null) {
             // if long&lat != null ==> get surroundings
-            locTypes = typeRepository.getSurroundings(latitude, longitude, distance, pageable);
+            logger.info("START - Get surrounding based on lng, lat and distance");
+            locTypes = typeRepository.getSurroundings(latitude, longitude, distance);
+            logger.info("END - Get surrounding");
         } else {
             //default get ...
-            locTypes = typeRepository.findAll(pageable).toList();
+            //TODO: implement get default
+            locTypes = typeRepository.findAll();
         }
 
+        List<Type> temp = new ArrayList<>(locTypes);
         if (schoolId != null) {
             schoolMateTypes = convertMapToList(typeRepository.getBySchoolMates(schoolId), 1);
+            if (schoolMateTypes == null)
+                schoolMateTypes = new ArrayList<>();
+            temp.retainAll(schoolMateTypes);
         }
 
         if (provinceId != null) {
             compatriotTypes = convertMapToList(typeRepository.getByCompatriot(provinceId), 2);
+            if (compatriotTypes == null)
+                compatriotTypes = new ArrayList<>();
+            temp.retainAll(compatriotTypes);
         }
 
-        // new collection to retainAll (unmodifiable collection cannot be removed)
-        Collection temp = new ArrayList(locTypes);
-        if (!compatriotTypes.isEmpty() || !schoolMateTypes.isEmpty()) {
-            temp.retainAll(Stream.concat(compatriotTypes.stream(), schoolMateTypes.stream()).collect(Collectors.toList()));
-        }
-
+//        // new collection to retainAll (unmodifiable collection cannot be removed)
+//        if (compatriotTypes.() && schoolMateTypes != null){
+//            temp.retainAll(Stream.concat(compatriotTypes.stream(), schoolMateTypes.stream()).collect(Collectors.toList()));
+//        }
+        temp = temp.stream().map(this::countAvailableRoomAndCurrentBooking).filter(type -> type.getAvailableRoom() > 0).collect(Collectors.toList());
         return temp;
+    }
+
+    @Override
+    public Type countAvailableRoomAndCurrentBooking(Type type) {
+        long availableRoom = type.getRooms().stream().filter(Room::isAvailable).count();
+        type.setAvailableRoom((int) availableRoom);
+        long currentBooking = type.getBookings().stream().filter(booking -> booking.getStatus() == Booking.STATUS.INCOMING).count();
+        type.setCurrentBooking((int) currentBooking);
+        return type;
     }
 
     /**
      * @param inputList
      * @param code      == 1 is schoolmate, otherwise is compatriot
-     * @return
+     * @return list of types has been converted from map to list
      */
-    public List<Type> convertMapToList(List<Object[]> inputList, int code) {
+    private List<Type> convertMapToList(List<Object[]> inputList, int code) {
         if (inputList.isEmpty())
             return null;
         Map<Integer, Integer> inputMap = new HashMap<>();

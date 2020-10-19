@@ -24,7 +24,7 @@ public interface TypeRepository extends JpaRepository<Type, Integer> {
      * @return
      */
     @Query(value = "SELECT * FROM get_surroundings(?1, ?2, ?3)", nativeQuery = true)
-    List<Type> getSurroundings(double latitude, double longitude, double distance, Pageable pageable);
+    List<Type> getSurroundings(double latitude, double longitude, double distance);
 
     @Query(value = "SELECT * FROM get_type_by_schoolmate(?1)", nativeQuery = true)
     List<Object[]> getBySchoolMates(int schoolId);

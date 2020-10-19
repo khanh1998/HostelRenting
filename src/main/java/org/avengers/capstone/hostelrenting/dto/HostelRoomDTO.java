@@ -1,12 +1,9 @@
 package org.avengers.capstone.hostelrenting.dto;
 
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
-import org.avengers.capstone.hostelrenting.dto.contract.ContractDTOFull;
 
 import java.io.Serializable;
-import java.util.List;
 
 @Getter
 @Setter

@@ -12,5 +12,5 @@ import java.io.Serializable;
 @AllArgsConstructor
 public class TypeAndGroupDTO implements Serializable {
     TypeDTOResponse type;
-    GroupDTOResponse groupDTOFull;
+    GroupDTOResponse group;
 }

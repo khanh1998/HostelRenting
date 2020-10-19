@@ -32,5 +32,4 @@ public class Schedule {
 
     @OneToMany(mappedBy = "schedule", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Collection<GroupSchedule> groupSchedules;
-
 }

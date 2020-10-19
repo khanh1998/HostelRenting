@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -58,6 +59,11 @@ public class RenterServiceIml implements RenterService {
         checkExist(id);
         return renterRepository.getOne(id);
 
+    }
+
+    @Override
+    public Collection<Renter> findByIds(Collection<Long> ids) {
+        return renterRepository.findByUserIdIn(ids);
     }
 
     @Override

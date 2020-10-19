@@ -3,11 +3,13 @@ package org.avengers.capstone.hostelrenting.model;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.UUID;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder(toBuilder = true)
 
 @Entity
 @Table(name = "booking")
@@ -37,8 +39,8 @@ public class Booking {
     @Column(columnDefinition = "int default null")
     private Integer dealId;
 
-    @Column
-    private String qrCode;
+    @Column(nullable = false)
+    private UUID qrCode;
 
     @Column(nullable = false)
     private Long meetTime;
