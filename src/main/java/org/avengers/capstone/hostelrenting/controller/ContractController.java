@@ -90,7 +90,7 @@ public class ContractController {
         logger.info("START - creating contract");
         /* Prepare object for contract model */
         Vendor exVendor = vendorService.findById(reqDTO.getVendorId());
-        Renter exRenter = renterService.findById(reqDTO.getVendorId());
+        Renter exRenter = renterService.findById(reqDTO.getRenterId());
         Room exRoom = roomService.findById(reqDTO.getRoomId());
         Contract reqModel = modelMapper.map(reqDTO, Contract.class);
         reqModel = reqModel.toBuilder().vendor(exVendor).renter(exRenter).room(exRoom).build();
