@@ -34,6 +34,7 @@ public class ContractDTOResponse {
     private long startTime;
     private Float duration;
     private String evidenceImgUrl;
+    private String contractUrl;
     private UUID qrCode;
     private Contract.STATUS status;
     @JsonProperty(value = "agreementServices")
