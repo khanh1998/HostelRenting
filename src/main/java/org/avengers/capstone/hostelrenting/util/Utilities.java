@@ -1,6 +1,16 @@
 package org.avengers.capstone.hostelrenting.util;
 
 import org.avengers.capstone.hostelrenting.Constant;
+import org.avengers.capstone.hostelrenting.service.impl.ContractServiceImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 /**
  * @author duattt on 9/16/20
@@ -8,7 +18,7 @@ import org.avengers.capstone.hostelrenting.Constant;
  * @project youthhostelapp
  */
 public class Utilities {
-
+    private static final Logger logger = LoggerFactory.getLogger(Utilities.class);
     /**
      * Calculate Haversine Distance Algorithm between two places
      *
@@ -36,5 +46,18 @@ public class Utilities {
 
     public static float roundFloatNumber(Float number){
         return (float) (Math.round(number * 100.0)/100.0);
+    }
+
+    public static MultipartFile pathToMultipartFile(String pathFile, String fileName, String originalFileName, String contentType){
+        Path path = Paths.get(pathFile);
+        byte[] content = null;
+        try {
+            content = Files.readAllBytes(path);
+        } catch (final IOException e) {
+        logger.error(e.getMessage(), e);
+        }
+        MultipartFile multipartFile = new MockMultipartFile(fileName,
+                originalFileName, contentType, content);
+        return multipartFile;
     }
 }

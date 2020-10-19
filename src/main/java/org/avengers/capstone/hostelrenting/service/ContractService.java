@@ -12,4 +12,6 @@ public interface ContractService {
     Contract confirm(Contract exModel, ContractDTOConfirm reqDTO);
     List<Contract> findByRenterId(Long renterId);
     List<Contract> findByVendorId(Long vendorId);
+    String createPDF(String contractId);
+    void sendMailWithEmbed(String mail);
 }

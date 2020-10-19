@@ -94,6 +94,8 @@ public class Contract {
      */
     private UUID qrCode;
 
+    private String contractUrl;
+
     /**
      * contract status
      */
