@@ -163,6 +163,16 @@ public class ContractController {
         return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
     }
 
+    @GetMapping("/contracts/{contractId}")
+    public ResponseEntity<?> getContractById(@PathVariable Integer contractId){
+        ContractDTOResponse resDTO = modelMapper.map(contractService.findById(contractId), ContractDTOResponse.class);
+        getFullAttributesForDTO(resDTO);
+        // Response entity
+        ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTO, "Your contract has been retrieved successfully");
+
+        return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
+    }
+
     private void getFullAttributesForDTO(ContractDTOResponse resDTO){
         //get deal
         if (resDTO.getDeal() != null)
