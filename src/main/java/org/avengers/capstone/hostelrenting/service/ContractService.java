@@ -15,5 +15,6 @@ public interface ContractService {
     Contract update(ContractDTOShort reqDTO);
     List<Contract> findByRenterId(Long renterId);
     List<Contract> findByVendorId(Long vendorId);
-
+    void createPDF();
+    void sendMailWithEmbed(String mail);
 }
