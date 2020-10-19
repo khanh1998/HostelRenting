@@ -24,9 +24,4 @@ public class GroupServiceDTOResponse implements Serializable {
     private boolean isRequired;
     private boolean isActive;
     private long createdAt;
-
-    @JsonIgnore
-    public Boolean isActive() {
-        return isActive;
-    }
 }
