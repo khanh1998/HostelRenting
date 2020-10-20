@@ -71,8 +71,8 @@ public class RenterController {
         // set critical data for model: role, school, province
         reqModel.setPassword(passwordEncoder.encode(reqDTO.getPassword()));
         reqModel.setRole(roleService.findById(2));
-        reqModel.setSchool(schoolService.findById(reqDTO.getSchoolId()));
-        reqModel.setProvince(provinceService.findById(reqDTO.getProvinceId()));
+//        reqModel.setSchool(schoolService.findById(reqDTO.getSchoolId()));
+//        reqModel.setProvince(provinceService.findById(reqDTO.getProvinceId()));
         Renter createdModel = renterService.save(reqModel);
 
         ResRenterDTO resDTO = modelMapper.map(createdModel, ResRenterDTO.class);
