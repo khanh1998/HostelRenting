@@ -16,9 +16,9 @@ import javax.validation.constraints.NotNull;
 @Getter
 @Setter
 public class ReqRenterDTO extends UserDTORegister {
-    @NotNull(message = "School id is mandatory")
-    private Integer schoolId;
-
-    @NotNull(message = "Province id is mandatory")
-    private Integer provinceId;
+//    @NotNull(message = "School id is mandatory")
+//    private Integer schoolId;
+//
+//    @NotNull(message = "Province id is mandatory")
+//    private Integer provinceId;
 }
