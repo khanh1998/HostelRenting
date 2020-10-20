@@ -18,7 +18,8 @@ public class WebConfiguation implements WebMvcConfigurer {
                         "https://td-vue-firestore-chat.web.app",
                         "https://hotel-renting-develop.netlify.app",
                         "http://127.0.0.1:8080"
-                ).allowedMethods("POST", "GET", "PUT", "OPTIONS", "DELETE");
+                ).allowedMethods("POST", "GET", "PUT", "OPTIONS", "DELETE")
+                .allowedHeaders("Content-Type", "Origin", "Authorization");
     }
 
     @Override
