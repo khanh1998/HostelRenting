@@ -10,4 +10,5 @@ import java.util.Optional;
 public interface RoomRepository extends JpaRepository<Room, Integer> {
     Room getByRoomName(String hostelRoomName);
     Optional<Room> findByRoomIdAndType_TypeId(Integer hostelRoomId, Integer hostelTypeId);
+    int countByType_TypeIdAndIsAvailableIsTrue(Integer typeId);
 }

@@ -17,7 +17,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     @NotBlank(message = "Username is mandatory")
     private String username;
 
@@ -32,6 +32,16 @@ public class User {
     private String avatar;
 
     private String firebaseToken;
+
+    private Long yearOfBirth;
+
+    private String idIssuedLocation;
+
+    private Long idIssuedDate;
+
+    private String householdAddress;
+
+    private String currentAddress;
 
     @ManyToOne
     @JoinColumn(name = "role_id", nullable = false)

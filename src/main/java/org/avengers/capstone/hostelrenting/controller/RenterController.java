@@ -14,11 +14,14 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @RestController
@@ -29,6 +32,12 @@ public class RenterController {
     private RoleService roleService;
     private SchoolService schoolService;
     private ProvinceService provinceService;
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    public void setPasswordEncoder(PasswordEncoder passwordEncoder) {
+        this.passwordEncoder = passwordEncoder;
+    }
 
     @Autowired
     public void setSchoolService(SchoolService schoolService) {
@@ -60,9 +69,10 @@ public class RenterController {
     public ResponseEntity<?> create(@Valid @RequestBody ReqRenterDTO reqDTO) {
         Renter reqModel = modelMapper.map(reqDTO, Renter.class);
         // set critical data for model: role, school, province
+        reqModel.setPassword(passwordEncoder.encode(reqDTO.getPassword()));
         reqModel.setRole(roleService.findById(2));
-        reqModel.setSchool(schoolService.findById(reqDTO.getSchoolId()));
-        reqModel.setProvince(provinceService.findById(reqDTO.getProvinceId()));
+//        reqModel.setSchool(schoolService.findById(reqDTO.getSchoolId()));
+//        reqModel.setProvince(provinceService.findById(reqDTO.getProvinceId()));
         Renter createdModel = renterService.save(reqModel);
 
         ResRenterDTO resDTO = modelMapper.map(createdModel, ResRenterDTO.class);
@@ -97,9 +107,8 @@ public class RenterController {
 
     @GetMapping("/renters")
     public ResponseEntity<?> getRenterByIds(@RequestParam Long[] renterIds) {
-        List<ResRenterDTO> resDTOs = Arrays.stream(renterIds)
-                .map(id -> modelMapper.map(renterService.findById(id), ResRenterDTO.class))
-                .collect(Collectors.toList());
+        Set<ResRenterDTO> resDTOs = renterService.findByIds(Arrays.stream(renterIds).collect(Collectors.toSet())).stream()
+                .map(renter -> modelMapper.map(renter, ResRenterDTO.class)).collect(Collectors.toSet());
 
         ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTOs, "Renter information have been retrieved successfully!");
 

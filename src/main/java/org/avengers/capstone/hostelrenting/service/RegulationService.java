@@ -5,6 +5,8 @@ import org.avengers.capstone.hostelrenting.model.GroupRegulation;
 import org.avengers.capstone.hostelrenting.model.Regulation;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
+
 /**
  * @author duattt on 10/8/20
  * @created 08/10/2020 - 11:22
@@ -18,4 +20,6 @@ public interface RegulationService {
      * @return facility model
      */
     Regulation findById(Integer id);
+
+    Collection<Regulation> getAllRegulation();
 }

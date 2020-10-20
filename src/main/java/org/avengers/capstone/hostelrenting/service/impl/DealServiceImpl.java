@@ -8,7 +8,7 @@ import org.avengers.capstone.hostelrenting.model.Renter;
 import org.avengers.capstone.hostelrenting.model.Vendor;
 import org.avengers.capstone.hostelrenting.repository.DealRepository;
 import org.avengers.capstone.hostelrenting.service.DealService;
-import org.avengers.capstone.hostelrenting.service.HostelTypeService;
+import org.avengers.capstone.hostelrenting.service.TypeService;
 import org.avengers.capstone.hostelrenting.service.RenterService;
 import org.avengers.capstone.hostelrenting.service.VendorService;
 import org.modelmapper.ModelMapper;
@@ -23,7 +23,7 @@ public class DealServiceImpl implements DealService {
     private DealRepository dealRepository;
     private VendorService vendorService;
     private RenterService renterService;
-    private HostelTypeService hostelTypeService;
+    private TypeService typeService;
     private ModelMapper modelMapper;
 
     @Autowired
@@ -37,8 +37,8 @@ public class DealServiceImpl implements DealService {
     }
 
     @Autowired
-    public void setHostelTypeService(HostelTypeService hostelTypeService) {
-        this.hostelTypeService = hostelTypeService;
+    public void setHostelTypeService(TypeService typeService) {
+        this.typeService = typeService;
     }
 
     @Autowired
@@ -88,7 +88,7 @@ public class DealServiceImpl implements DealService {
     public Deal create(DealDTOShort reqDTO) {
         Vendor existedVendor = vendorService.findById(reqDTO.getVendorId());
         Renter existedRenter = renterService.findById(reqDTO.getRenterId());
-        Type existedType = hostelTypeService.findById(reqDTO.getTypeId());
+        Type existedType = typeService.findById(reqDTO.getTypeId());
 
         Deal reqModel = modelMapper.map(reqDTO, Deal.class);
         reqModel.setVendor(existedVendor);

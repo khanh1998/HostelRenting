@@ -5,7 +5,7 @@ import org.avengers.capstone.hostelrenting.model.Type;
 import java.util.Collection;
 import java.util.List;
 
-public interface HostelTypeService {
+public interface TypeService {
 
     void checkExist(Integer id);
     Type findById(Integer id);
@@ -13,6 +13,8 @@ public interface HostelTypeService {
     Type update(Type reqModel);
     void deleteById(Integer id);
     List<Type> findByHostelGroupId(Integer hostelGroupId);
+
+    Type countAvailableRoomAndCurrentBooking(Type type);
 
     /**
      * Get hostel types based on input factors

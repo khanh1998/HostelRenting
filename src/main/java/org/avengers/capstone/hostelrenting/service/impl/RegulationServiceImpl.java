@@ -9,6 +9,7 @@ import org.avengers.capstone.hostelrenting.service.RegulationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
 import java.util.Optional;
 
 /**
@@ -32,6 +33,11 @@ public class RegulationServiceImpl implements RegulationService {
             throw new EntityNotFoundException(Schedule.class, "id", id.toString());
         }
         return regulationRepository.getOne(id);
+    }
+
+    @Override
+    public Collection<Regulation> getAllRegulation() {
+        return regulationRepository.findAll();
     }
 
     private boolean isNotFound(Integer id) {

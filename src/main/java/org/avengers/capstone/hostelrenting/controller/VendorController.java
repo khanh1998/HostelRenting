@@ -12,6 +12,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -23,6 +24,12 @@ public class VendorController {
     private ModelMapper modelMapper;
     private VendorService vendorService;
     private RoleService roleService;
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    public void setPasswordEncoder(PasswordEncoder passwordEncoder) {
+        this.passwordEncoder = passwordEncoder;
+    }
 
     @Autowired
     public void setRoleService(RoleService roleService) {
@@ -42,6 +49,7 @@ public class VendorController {
     @PostMapping("/vendors/register")
     public ResponseEntity<?> create(@Valid @RequestBody UserDTORegister reqDTO) throws EntityNotFoundException {
         Vendor rqModel = modelMapper.map(reqDTO, Vendor.class);
+        rqModel.setPassword(passwordEncoder.encode(reqDTO.getPassword()));
         rqModel.setRole(roleService.findById(1));
         Vendor createdModel = vendorService.save(rqModel);
 

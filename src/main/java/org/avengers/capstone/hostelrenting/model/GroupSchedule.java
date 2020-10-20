@@ -32,4 +32,11 @@ public class GroupSchedule {
     @Column(nullable = false)
     @NotBlank(message = "End time is mandatory")
     private String endTime;
+
+    @Transient
+    private String timeRange;
+
+    public String getTimeRange() {
+        return startTime + " - " + endTime;
+    }
 }

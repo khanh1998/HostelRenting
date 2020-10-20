@@ -2,10 +2,12 @@ package org.avengers.capstone.hostelrenting.controller;
 
 import org.avengers.capstone.hostelrenting.dto.group.GroupDTOResponse;
 import org.avengers.capstone.hostelrenting.dto.group.GroupDTOCreate;
+import org.avengers.capstone.hostelrenting.dto.group.GroupDTOUpdate;
 import org.avengers.capstone.hostelrenting.dto.response.ApiSuccess;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
 import org.avengers.capstone.hostelrenting.model.*;
 import org.avengers.capstone.hostelrenting.service.*;
+import org.avengers.capstone.hostelrenting.service.GroupService;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,12 +22,15 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static org.avengers.capstone.hostelrenting.Constant.Pagination.DEFAULT_PAGE;
+import static org.avengers.capstone.hostelrenting.Constant.Pagination.DEFAULT_SIZE;
+
 @RestController
 @RequestMapping("/api/v1")
 public class HostelGroupController {
     private static final Logger logger = LoggerFactory.getLogger(HostelGroupController.class);
 
-    private HostelGroupService hostelGroupService;
+    private GroupService groupService;
 
     private StreetWardService streetWardService;
 
@@ -58,8 +63,8 @@ public class HostelGroupController {
     }
 
     @Autowired
-    public void setHostelGroupService(HostelGroupService hostelGroupService) {
-        this.hostelGroupService = hostelGroupService;
+    public void setHostelGroupService(GroupService groupService) {
+        this.groupService = groupService;
     }
 
     @Autowired
@@ -75,7 +80,7 @@ public class HostelGroupController {
      * @throws EntityNotFoundException when some object not found
      */
     @PostMapping("/groups")
-    public ResponseEntity<?> createHostelGroup(@Valid @RequestBody List<GroupDTOCreate> reqDTOs) throws EntityNotFoundException {
+    public ResponseEntity<?> createGroup(@Valid @RequestBody List<GroupDTOCreate> reqDTOs) throws EntityNotFoundException {
         logger.info("START - creating group(s)");
         // get necessary for model: vendor, address, services
         List<GroupDTOResponse> resDTOs = new ArrayList<>();
@@ -89,15 +94,13 @@ public class HostelGroupController {
             reqModel.setAddress(address);
             // set services object
             if (reqDTO.getServices() != null) {
-                Collection<GroupService> groupServices = reqDTO.getServices()
+                Collection<org.avengers.capstone.hostelrenting.model.GroupService> groupServices = reqDTO.getServices()
                         .stream()
                         .map(dto -> {
-                            GroupService groupService = GroupService.builder()
+                            org.avengers.capstone.hostelrenting.model.GroupService groupService = org.avengers.capstone.hostelrenting.model.GroupService.builder()
                                     .createdAt(System.currentTimeMillis())
                                     .group(reqModel)
-                                    .priceUnit(dto.getPriceUnit())
                                     .price(dto.getPrice())
-                                    .timeUnit(dto.getTimeUnit())
                                     .userUnit(dto.getUserUnit())
                                     .service(serviceService.findById(dto.getServiceId()))
                                     .isActive(true)
@@ -125,7 +128,7 @@ public class HostelGroupController {
                 reqModel.setGroupRegulations(regulations);
             }
 
-            Group resModel = hostelGroupService.create(reqModel);
+            Group resModel = groupService.create(reqModel);
 
             // log created group
             logger.info("CREATED Group with id: " + resModel.getGroupId());
@@ -150,7 +153,7 @@ public class HostelGroupController {
     @GetMapping("/groups/{groupId}")
     public ResponseEntity<?> getGroupById(@PathVariable Integer groupId) {
         logger.info("START - Get group with id: " + groupId);
-        Group resModel = hostelGroupService.findById(groupId);
+        Group resModel = groupService.findById(groupId);
         GroupDTOResponse resDTO = modelMapper.map(resModel, GroupDTOResponse.class);
         if (resModel != null) {
             logger.info("SUCCESSFUL - Get group by id");
@@ -170,16 +173,13 @@ public class HostelGroupController {
      * @throws EntityNotFoundException when object is not found
      */
     @GetMapping("/vendors/{vendorId}/groups")
-    public ResponseEntity<?> getGroupsByVendorId(@PathVariable Long vendorId) throws EntityNotFoundException {
+    public ResponseEntity<?> getGroupsByVendorId(@PathVariable Long vendorId,
+                                                 @RequestParam(required = false, defaultValue = DEFAULT_SIZE) Integer size,
+                                                 @RequestParam(required = false, defaultValue = DEFAULT_PAGE) Integer page) {
         //log start
         logger.info("START - Get group by vendor with id: " + vendorId);
-        Vendor existedModel = vendorService.findById(vendorId);
-        List<GroupDTOResponse> resDTOs = existedModel.getGroups()
-                .stream()
-                .map(hostelGroup -> {
-                    logger.info("RETRIEVED - groupId: " + hostelGroup.getGroupId());
-                    return modelMapper.map(hostelGroup, GroupDTOResponse.class);
-                })
+        List<GroupDTOResponse> resDTOs = groupService.getByVendorId(vendorId, size, page-1)
+                .stream().map(group -> modelMapper.map(group, GroupDTOResponse.class))
                 .collect(Collectors.toList());
 
         logger.info("SUCCESSFUL - Get group by vendorId");
@@ -187,4 +187,30 @@ public class HostelGroupController {
 
         return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
     }
+
+    /**
+     * Update group information
+     * @param reqDTO request dto
+     * @param groupId group id to update
+     * @return
+     */
+    @PutMapping("/groups/{groupId}")
+    public ResponseEntity<?> updateGroup(@Valid @RequestBody GroupDTOUpdate reqDTO,
+                                         @PathVariable Integer groupId) {
+        //log start update
+        logger.info("START - updating group");
+        Group existedModel = groupService.findById(groupId);
+
+        modelMapper.map(reqDTO, existedModel);
+        Group resModel = groupService.update(existedModel);
+        GroupDTOResponse resDTO = modelMapper.map(resModel, GroupDTOResponse.class);
+
+        //log end update
+        logger.info("SUCCESSFUL - updating group");
+
+        ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTO, "Your hostel group has been retrieved successfully!");
+
+        return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
+    }
+
 }

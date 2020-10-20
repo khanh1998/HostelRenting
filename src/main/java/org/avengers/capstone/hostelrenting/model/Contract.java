@@ -5,6 +5,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.util.Collection;
+import java.util.UUID;
 
 /**
  * @author duattt on 10/6/20
@@ -16,12 +17,12 @@ import java.util.Collection;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-
+@Builder(toBuilder = true)
 @Entity
 @Table(name = "contract")
 public class Contract {
 
-    public enum STATUS{EXPIRED, WORKING}
+    public enum STATUS{EXPIRED, ACTIVATED, INACTIVE, REVERSED }
 
     /**
      * contract id
@@ -36,6 +37,15 @@ public class Contract {
     @ManyToOne
     @JoinColumn(name = "room_id", nullable = false)
     private Room room;
+
+//    @Transient
+//    private Type type;
+//    @Transient
+//    private Group group;
+//    @Transient
+//    private Deal deal;
+//    @Transient
+//    private Booking booking;
 
     /**
      * vendor object
@@ -62,7 +72,6 @@ public class Contract {
      */
     private Long startTime;
 
-
     /**
      * deal id for tracking
      */
@@ -81,9 +90,16 @@ public class Contract {
     private String evidenceImgUrl;
 
     /**
+     * qrCode to scan
+     */
+    private UUID qrCode;
+
+    private String contractUrl;
+
+    /**
      * contract status
      */
-    @Column(columnDefinition = "varchar(10) default 'WORKING'")
+    @Column(columnDefinition = "varchar(15) default 'INACTIVE'")
     @Enumerated(EnumType.STRING)
     private Contract.STATUS status;
 
@@ -100,14 +116,13 @@ public class Contract {
     private Long updatedAt;
 
     /**
-     * Service details
+     * Group services
      */
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @EqualsAndHashCode.Exclude
-    @ToString.Exclude
-    @JoinTable(name = "contract_serDetail",
-            joinColumns = @JoinColumn(name = "contractId"),
-            inverseJoinColumns = @JoinColumn(name = "serDetailId")
+    @JoinTable(name = "group_service_contract",
+            joinColumns = @JoinColumn(name = "contract_id"),
+            inverseJoinColumns = @JoinColumn(name = "group_service_id")
     )
-    private Collection<GroupService> serDetails;
+    private Collection<GroupService> groupServices;
+
 }
