@@ -61,7 +61,7 @@ stages:
         deploy:
           steps:
           - task: AzureWebApp@1
-            displayName: 'Azure Web App Deploy: youthhostel-api'
+            displayName: 'Azure Web App Deploy: youthhostelapi'
             inputs:
               azureSubscription: $(azureSubscription)
               appType: webAppLinux

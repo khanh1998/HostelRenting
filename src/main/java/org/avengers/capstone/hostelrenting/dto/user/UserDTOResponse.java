@@ -34,6 +34,9 @@ public class UserDTOResponse implements Serializable {
     private Long idIssuedDate;
     private String householdAddress;
     private String currentAddress;
+    private String citizenIdNum;
+    private String citizenIdFrontImg;
+    private String citizenIdBackImg;
     private RoleDTO role;
     private String jwtToken;
 }

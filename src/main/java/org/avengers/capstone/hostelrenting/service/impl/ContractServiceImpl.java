@@ -283,7 +283,7 @@ public class ContractServiceImpl implements ContractService {
         Map<String, String> contractInfo = new HashMap<>();
         contractInfo.put(Constant.Contract.VENDOR_NAME, model.getVendor().getUsername());
         contractInfo.put(Constant.Contract.VENDOR_YEAR_OF_BIRTH, String.valueOf(model.getVendor().getYearOfBirth()));
-        contractInfo.put(Constant.Contract.VENDOR_ID_NUMBER, model.getVendor().getIdNum());
+        contractInfo.put(Constant.Contract.VENDOR_ID_NUMBER, model.getVendor().getCitizenIdNum());
         contractInfo.put(Constant.Contract.VENDOR_ID_ISSUED_DATE, Utilities.getTimeStrFromMillisecond(model.getVendor().getIdIssuedDate()));
         contractInfo.put(Constant.Contract.VENDOR_ID_ISSUED_LOCATION, model.getVendor().getIdIssuedLocation());
         contractInfo.put(Constant.Contract.VENDOR_HOUSEHOLD_ADDRESS, model.getVendor().getHouseholdAddress());
@@ -292,7 +292,7 @@ public class ContractServiceImpl implements ContractService {
 
         contractInfo.put(Constant.Contract.RENTER_NAME, model.getRenter().getUsername());
         contractInfo.put(Constant.Contract.RENTER_YEAR_OF_BIRTH, String.valueOf(model.getRenter().getYearOfBirth()));
-        contractInfo.put(Constant.Contract.RENTER_ID_NUMBER, model.getRenter().getIdNum());
+        contractInfo.put(Constant.Contract.RENTER_ID_NUMBER, model.getRenter().getCitizenIdNum());
         contractInfo.put(Constant.Contract.RENTER_ID_ISSUED_DATE, Utilities.getTimeStrFromMillisecond(model.getRenter().getIdIssuedDate()));
         contractInfo.put(Constant.Contract.RENTER_ID_ISSUED_LOCATION, model.getRenter().getIdIssuedLocation());
         contractInfo.put(Constant.Contract.RENTER_HOUSEHOLD_ADDRESS, model.getRenter().getHouseholdAddress());
@@ -301,6 +301,7 @@ public class ContractServiceImpl implements ContractService {
         contractInfo.put(Constant.Contract.RENTER_SCHOOL_NAME, model.getRenter().getSchool().getSchoolName());
         String schoolDistrict = model.getRenter().getSchool().getDistrict().getDistrictName();
         String schoolProvince = model.getRenter().getSchool().getDistrict().getProvince().getProvinceName();
+
         contractInfo.put(Constant.Contract.RENTER_SCHOOL_ADDRESS, String.format("%s, %s",schoolDistrict, schoolProvince));
 
 //        String templateName = Utilities.getFileNameWithoutExtensionFromPath(contractTemplatePath);
