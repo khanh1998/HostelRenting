@@ -144,9 +144,9 @@ public class ContractServiceImpl implements ContractService {
                 reqModel.getRoom().getRoomId());
         if (tempContract.isPresent())
             throw new GenericException(Contract.class, "Contract has already with ",
-                    "contractId", String.valueOf(reqModel.getContractId()),
-                    "renterId", String.valueOf(reqModel.getRenter().getUserId()),
-                    "vendorId", String.valueOf(reqModel.getVendor().getUserId()));
+                    "contractId", String.valueOf(tempContract.get().getContractId()),
+                    "renterId", String.valueOf(tempContract.get().getRenter().getUserId()),
+                    "vendorId", String.valueOf(tempContract.get().getVendor().getUserId()));
 
         int groupId = reqModel.getRoom().getType().getGroup().getGroupId();
         Collection<Integer> reqServiceIds = reqModel.getGroupServices().stream().map(GroupService::getGroupServiceId).collect(Collectors.toList());
@@ -289,6 +289,19 @@ public class ContractServiceImpl implements ContractService {
         contractInfo.put(Constant.Contract.VENDOR_HOUSEHOLD_ADDRESS, model.getVendor().getHouseholdAddress());
         contractInfo.put(Constant.Contract.VENDOR_CURRENT_ADDRESS, model.getVendor().getCurrentAddress());
         contractInfo.put(Constant.Contract.VENDOR_PHONE_NUMBER, model.getVendor().getPhone());
+
+        contractInfo.put(Constant.Contract.RENTER_NAME, model.getRenter().getUsername());
+        contractInfo.put(Constant.Contract.RENTER_YEAR_OF_BIRTH, String.valueOf(model.getRenter().getYearOfBirth()));
+        contractInfo.put(Constant.Contract.RENTER_ID_NUMBER, model.getRenter().getIdNum());
+        contractInfo.put(Constant.Contract.RENTER_ID_ISSUED_DATE, Utilities.getTimeStrFromMillisecond(model.getRenter().getIdIssuedDate()));
+        contractInfo.put(Constant.Contract.RENTER_ID_ISSUED_LOCATION, model.getRenter().getIdIssuedLocation());
+        contractInfo.put(Constant.Contract.RENTER_HOUSEHOLD_ADDRESS, model.getRenter().getHouseholdAddress());
+        contractInfo.put(Constant.Contract.RENTER_CURRENT_ADDRESS, model.getRenter().getCurrentAddress());
+        contractInfo.put(Constant.Contract.RENTER_PHONE_NUMBER, model.getRenter().getPhone());
+        contractInfo.put(Constant.Contract.RENTER_SCHOOL_NAME, model.getRenter().getSchool().getSchoolName());
+        String schoolDistrict = model.getRenter().getSchool().getDistrict().getDistrictName();
+        String schoolProvince = model.getRenter().getSchool().getDistrict().getProvince().getProvinceName();
+        contractInfo.put(Constant.Contract.RENTER_SCHOOL_ADDRESS, String.format("%s, %s",schoolDistrict, schoolProvince));
 
 //        String templateName = Utilities.getFileNameWithoutExtensionFromPath(contractTemplatePath);
         String contractHtml = Utilities.parseThymeleafTemplate(Constant.Contract.TEMPLATE_NAME, contractInfo);

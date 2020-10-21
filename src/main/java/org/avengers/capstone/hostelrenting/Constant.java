@@ -45,6 +45,7 @@ public class Constant {
     public static class Contract {
         public final static String UNICODE_TRUETYPE_SOURCE_SANS_PRO = "'Source Sans Pro'";
         public final static String TEMPLATE_NAME = "contract_template";
+        /* VENDOR INFORMATION*/
         public final static String VENDOR_NAME = "vendorName";
         public final static String VENDOR_YEAR_OF_BIRTH = "vendorYob";
         public final static String VENDOR_ID_NUMBER = "vendorIdNumber";
@@ -53,6 +54,20 @@ public class Constant {
         public final static String VENDOR_HOUSEHOLD_ADDRESS = "vendorHouseholdAddress";
         public final static String VENDOR_CURRENT_ADDRESS = "vendorCurrentAddress";
         public final static String VENDOR_PHONE_NUMBER = "vendorPhoneNumber";
+
+        /* RENTER INFORMATION*/
+        public final static String RENTER_NAME = "renterName";
+        public final static String RENTER_YEAR_OF_BIRTH = "renterYob";
+        public final static String RENTER_ID_NUMBER = "renterIdNumber";
+        public final static String RENTER_ID_ISSUED_DATE = "renterIdIssuedDate";
+        public final static String RENTER_ID_ISSUED_LOCATION = "renterIdIssuedLocation";
+        public final static String RENTER_HOUSEHOLD_ADDRESS = "renterHouseholdAddress";
+        public final static String RENTER_CURRENT_ADDRESS = "renterCurrentAddress";
+        public final static String RENTER_PHONE_NUMBER = "renterPhoneNumber";
+        public final static String RENTER_SCHOOL_NAME = "renterSchoolName";
+        public final static String RENTER_SCHOOL_ADDRESS = "renterSchoolAddress";
+
+
         public final static String DATE_TIME_STRING_PATTERN = "%s/%s/%-4s";
     }
     public static class Extension{
