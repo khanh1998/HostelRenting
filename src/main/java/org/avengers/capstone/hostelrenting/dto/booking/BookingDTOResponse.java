@@ -21,6 +21,7 @@ public class BookingDTOResponse implements Serializable {
     private GroupDTOResponse group;
     private Booking.STATUS status;
     private DealDTOShort deal;
+    private Integer contractId;
     private String qrCode;
     private Long meetTime;
 
