@@ -1,10 +1,11 @@
 package org.avengers.capstone.hostelrenting.service.impl;
 
 
+import com.lowagie.text.DocumentException;
 import org.apache.commons.collections.CollectionUtils;
+import org.avengers.capstone.hostelrenting.Constant;
 import org.avengers.capstone.hostelrenting.dto.contract.ContractDTOConfirm;
 
-import com.aspose.pdf.HtmlLoadOptions;
 
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
 import org.avengers.capstone.hostelrenting.exception.GenericException;
@@ -17,35 +18,36 @@ import org.avengers.capstone.hostelrenting.repository.ContractRepository;
 import org.avengers.capstone.hostelrenting.repository.GroupServiceRepository;
 import org.avengers.capstone.hostelrenting.repository.RoomRepository;
 import org.avengers.capstone.hostelrenting.service.*;
+import org.avengers.capstone.hostelrenting.util.BASE64DecodedMultipartFile;
 import org.avengers.capstone.hostelrenting.util.Utilities;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 import javax.mail.Message;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
-import java.io.File;
-import java.util.Properties;
+import javax.swing.text.html.Option;
+import java.io.IOException;
+import java.util.*;
+import java.util.stream.Collectors;
 
 
 @Service
 public class ContractServiceImpl implements ContractService {
 
     private static final Logger logger = LoggerFactory.getLogger(ContractServiceImpl.class);
+    //    @Value("${azure.storage.contract-template}")
+//    private String contractTemplatePath;
+    @Value("${azure.storage.contract-font}")
+    private String fontPath;
 
     private ContractRepository contractRepository;
     private GroupServiceRepository groupServiceRepository;
@@ -140,7 +142,7 @@ public class ContractServiceImpl implements ContractService {
                 reqModel.getVendor().getUserId(),
                 reqModel.getRenter().getUserId(),
                 reqModel.getRoom().getRoomId());
-        if ( tempContract.isPresent())
+        if (tempContract.isPresent())
             throw new GenericException(Contract.class, "Contract has already with ",
                     "contractId", String.valueOf(reqModel.getContractId()),
                     "renterId", String.valueOf(reqModel.getRenter().getUserId()),
@@ -156,7 +158,7 @@ public class ContractServiceImpl implements ContractService {
         /* Set groupServices for contract model */
         reqModel.setGroupServices(validServices);
         /* Set room for contract model */
-        reqModel.setRoom(roomService.updateStatus(reqModel.getRoom().getRoomId(), false));
+//        reqModel.setRoom(roomService.updateStatus(reqModel.getRoom().getRoomId(), false));
         Contract resModel = contractRepository.save(reqModel);
 
         // process business after create contract
@@ -173,9 +175,12 @@ public class ContractServiceImpl implements ContractService {
         if (exModel.getQrCode().equals(reqDTO.getQrCode())) {
             modelMapper.map(reqDTO, exModel);
             //send mail
+            String contractHtml = generateContractHTML(exModel);
+            String contractUrl = uploadPDF(contractHtml, String.valueOf(exModel.getContractId()));
+            sendMailWithEmbed(contractHtml, exModel.getRenter().getEmail());
+            sendMailWithEmbed(contractHtml, exModel.getVendor().getEmail());
+            exModel.setContractUrl(contractUrl);
             Contract resModel = contractRepository.save(exModel);
-            sendMailWithEmbed(resModel.getRenter().getEmail());
-            sendMailWithEmbed(resModel.getVendor().getEmail());
             return resModel;
         }
         throw new GenericException(Contract.class, "qrCode not matched", "contractId", String.valueOf(exModel.getContractId()), "qrCode", exModel.getQrCode().toString());
@@ -206,7 +211,6 @@ public class ContractServiceImpl implements ContractService {
 
         return vendorService.findById(vendorId).getContracts();
     }
-
 
     /**
      * @param model
@@ -256,36 +260,49 @@ public class ContractServiceImpl implements ContractService {
             Collection<Booking> incomingBookings = bookingRepository.findByType_TypeIdAndStatusIs(resModel.getRoom().getType().getTypeId(), Booking.STATUS.INCOMING);
             bookingService.cancelBookings(incomingBookings.stream().map(Booking::getBookingId).collect(Collectors.toList()));
         }
-        //create PDF
-        String pdfStorageUrl = createPDF(String.valueOf(resModel.getContractId()));
-        resModel.setContractUrl(pdfStorageUrl);
         return resModel;
     }
-    @Override
-    public String createPDF(String contractId) {
-        java.util.Locale.setDefault(new java.util.Locale("en", "us"));
-        // Create HTML load options
-        HtmlLoadOptions htmloptions = new HtmlLoadOptions();
-//        String htmlPath = "https://youthhostelstorage.blob.core.windows.net/images/contract.html";
-        // Load HTML file
-        com.aspose.pdf.Document doc = new com.aspose.pdf.Document("src/main/resources/contract/contract.html", htmloptions);
-        // Convert HTML file to PDF
-        String fileName = "contract_"+contractId+".pdf";
-        String savedPath = "src/main/resources/contract/" + fileName;
-        doc.save(savedPath);
-        String url = fileStorageService.storeFile(Utilities.pathToMultipartFile(savedPath, fileName, fileName, "application/pdf")).getFileDownloadUri();
 
-        return url;
+    private String uploadPDF(String contractHtml, String contractId){
+        try {
+            BASE64DecodedMultipartFile multipartFile = BASE64DecodedMultipartFile.builder()
+                    .fileContent(Utilities.generatePdfFromHtml(contractHtml, fontPath))
+                    .fileName(Contract.class.getSimpleName() + Constant.Symbol.UNDERSCORE + contractId + Constant.Extension.PDF)
+                    .contentType(Constant.ContentType.PDF)
+                    .build();
+            return fileStorageService.storeFile(multipartFile).getFileDownloadUri();
+
+        } catch (IOException | DocumentException e) {
+            logger.error(e.getMessage(), e);
+        }
+        //TODO: handle
+        return null;
     }
 
-    @Override
-    public void sendMailWithEmbed(String receivedMail) {
+    public String generateContractHTML(Contract model) {
+        Map<String, String> contractInfo = new HashMap<>();
+        contractInfo.put(Constant.Contract.VENDOR_NAME, model.getVendor().getUsername());
+        contractInfo.put(Constant.Contract.VENDOR_YEAR_OF_BIRTH, String.valueOf(model.getVendor().getYearOfBirth()));
+        contractInfo.put(Constant.Contract.VENDOR_ID_NUMBER, model.getVendor().getIdNum());
+        contractInfo.put(Constant.Contract.VENDOR_ID_ISSUED_DATE, Utilities.getTimeStrFromMillisecond(model.getVendor().getIdIssuedDate()));
+        contractInfo.put(Constant.Contract.VENDOR_ID_ISSUED_LOCATION, model.getVendor().getIdIssuedLocation());
+        contractInfo.put(Constant.Contract.VENDOR_HOUSEHOLD_ADDRESS, model.getVendor().getHouseholdAddress());
+        contractInfo.put(Constant.Contract.VENDOR_CURRENT_ADDRESS, model.getVendor().getCurrentAddress());
+        contractInfo.put(Constant.Contract.VENDOR_PHONE_NUMBER, model.getVendor().getPhone());
+
+//        String templateName = Utilities.getFileNameWithoutExtensionFromPath(contractTemplatePath);
+        String contractHtml = Utilities.parseThymeleafTemplate(Constant.Contract.TEMPLATE_NAME, contractInfo);
+
+        return contractHtml;
+    }
+
+    public void sendMailWithEmbed(String contractHtml, String receivedMail) {
 //        String to = "thanhnv.se@gmail.com";
 
         // Sender's email ID needs to be mentioned
-        String from = "winsupersentai@gmail.com";
-        final String username = "winsupersentai@gmail.com";
-        final String password = "Thanh71227198";
+        String from = "avenger.youthhostel@gmail.com";
+        final String username = "avenger.youthhostel@gmail.com";
+        final String password = "KieuTrongKhanh!$&1";
 
         String host = "smtp.gmail.com";
 
@@ -313,10 +330,7 @@ public class ContractServiceImpl implements ContractService {
             message.setRecipients(Message.RecipientType.TO,
                     InternetAddress.parse(receivedMail));
             message.setSubject("Hợp đồng thuê nhà");
-            File input = new File("src/main/resources/contract/contract.html");
-            Document doc = Jsoup.parse(input, "UTF-8", "");
-            String html = doc.toString();
-            message.setContent(html,"text/html; charset=UTF-8");
+            message.setContent(contractHtml,"text/html; charset=UTF-8");
             // Send message
             Transport.send(message);
 

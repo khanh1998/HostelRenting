@@ -15,12 +15,6 @@ import java.util.List;
 @Table(name = "renter")
 public class Renter extends User{
 
-    private String idNum;
-
-    private String idFrontImg;
-
-    private String idBackImg;
-
     @ManyToOne
     @JoinColumn(name = "school_id")
     private School school;

@@ -43,6 +43,12 @@ public class User {
 
     private String currentAddress;
 
+    private String idNum;
+
+    private String idFrontImg;
+
+    private String idBackImg;
+
     @ManyToOne
     @JoinColumn(name = "role_id", nullable = false)
     private Role role;
