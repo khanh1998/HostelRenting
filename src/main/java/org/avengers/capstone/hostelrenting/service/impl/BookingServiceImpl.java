@@ -79,10 +79,11 @@ public class BookingServiceImpl implements BookingService {
                 reqModel.getType().getTypeId());
         if (tempBooking.isPresent()) {
             throw new GenericException(Booking.class, "has already existed with ",
-                    "bookingId", String.valueOf(reqModel.getBookingId()),
-                    "renterId", String.valueOf(reqModel.getRenter().getUserId()),
-                    "typeId", String.valueOf(reqModel.getType().getTypeId()));
+                    "bookingId", String.valueOf(tempBooking.get().getBookingId()),
+                    "renterId", String.valueOf(tempBooking.get().getRenter().getUserId()),
+                    "typeId", String.valueOf(tempBooking.get().getType().getTypeId()));
         }
+        // check out of room
         if (roomRepository.countByType_TypeIdAndIsAvailableIsTrue(reqModel.getType().getTypeId()) == 0)
             throw new GenericException(Type.class, "is out of room",
                     "typeId", String.valueOf(reqModel.getType().getTypeId()));
