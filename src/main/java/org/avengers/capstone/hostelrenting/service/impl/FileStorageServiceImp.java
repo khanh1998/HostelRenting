@@ -34,8 +34,8 @@ public class FileStorageServiceImp {
     private String storageLocation;
     @Value("${azure.storage-connection}")
     private String storageConnection;
-    @Value("${azure.storage-container}")
-    private String storageContainer;
+    @Value("${azure.storage-images}")
+    private String storageImages;
 
     public UploadFileResponse storeFile(MultipartFile file) {
         // Normalize file name
@@ -76,7 +76,7 @@ public class FileStorageServiceImp {
         try {
             storageAccount = CloudStorageAccount.parse(storageConnection);
             blobClient = storageAccount.createCloudBlobClient();
-            container = blobClient.getContainerReference(storageContainer);
+            container = blobClient.getContainerReference(storageImages);
 
         // Create the container if it does not exist with public access.
             logger.info("Creating container: " + container.getName());

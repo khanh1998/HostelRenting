@@ -1,17 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8"></meta>
     <title>Hợp đồng thuê nhà</title>
-    <script>
-        $(document).ready(
-            function () {
-                $.getJSON("http:/", function (result) {
-                   $("contractJson").append()
-                });
-            }
-        );
-    </script>
     <style>
         table {
             border-collapse: collapse;
@@ -23,6 +14,10 @@
             text-align: left;
             padding: 8px;
         }
+
+        body {
+            font-family: 'Source Sans Pro';
+        }
     </style>
 </head>
 <body>
@@ -33,11 +28,11 @@
     <p><span style="font-weight: 400;">&nbsp;</span></p>
     <p style="text-align: center;font-size: 30px"><strong>HỢP ĐỒNG THUÊ PHÒNG TRỌ</strong></p>
     <p style="font-size: 24px;"><strong>BÊN A: BÊN CHO THUÊ</strong></p>
-    <p><span style="font-weight: 400; font-size: 20px">Ông/bà : ............................................................... Năm sinh : ..........................................</span></p>
-    <p><span style="font-weight: 400; font-size: 20px;">CMND số : ....................................... Ngày cấp ............... Nơi cấp .................................</span></p>
-    <p><span style="font-weight: 400; font-size: 20px;">Hộ khẩu : ..........................................................................................................................</span></p>
-    <p><span style="font-weight: 400; font-size: 20px;">Địa chỉ : ............................................................................................................................</span></p>
-    <p><span style="font-weight: 400; font-size: 20px;">Điện thoại : .......................................................................................................................</span></p>
+    <p><span >Ông/bà : [[${vendorName}]]       Năm sinh : [[${vendorYob}]]</span></p>
+    <p><span >CMND số : [[${vendorIdNumber}]]  Ngày cấp: [[${vendorIdIssuedDate}]] Nơi cấp: [[${vendorIdIssuedLocation}]]</span></p>
+    <p><span >Hộ khẩu : [[${vendorHouseholdAddress}]]</span></p>
+    <p><span>Địa chỉ : [[${vendorCurrentAddress}]]</span></p>
+    <p><span >Điện thoại : [[${vendorPhoneNumber}]]</span></p>
     <p>&nbsp;</p>
     <p style=" font-size: 24px;"><strong>BÊN B: BÊN THUÊ</strong></p>
     <p><span style="font-weight: 400; font-size: 20px;">Ông/bà : .............................................................. Năm sinh : ..........................................</span></p>
@@ -298,3 +293,5 @@
 </div>
 </body>
 </html>
+
+
