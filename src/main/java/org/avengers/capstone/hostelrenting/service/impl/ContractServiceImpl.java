@@ -158,7 +158,7 @@ public class ContractServiceImpl implements ContractService {
         /* Set groupServices for contract model */
         reqModel.setGroupServices(validServices);
         /* Set room for contract model */
-//        reqModel.setRoom(roomService.updateStatus(reqModel.getRoom().getRoomId(), false));
+        reqModel.setRoom(roomService.updateStatus(reqModel.getRoom().getRoomId(), false));
         Contract resModel = contractRepository.save(reqModel);
 
         // process business after create contract
@@ -181,6 +181,12 @@ public class ContractServiceImpl implements ContractService {
             sendMailWithEmbed(contractHtml, exModel.getVendor().getEmail());
             exModel.setContractUrl(contractUrl);
             Contract resModel = contractRepository.save(exModel);
+
+            /* Set contract id of booking when create corresponding contract */
+            Booking exBooking = bookingService.findById(resModel.getBookingId());
+            exBooking.setContractId(resModel.getContractId());
+            bookingRepository.save(exBooking);
+
             return resModel;
         }
         throw new GenericException(Contract.class, "qrCode not matched", "contractId", String.valueOf(exModel.getContractId()), "qrCode", exModel.getQrCode().toString());
@@ -255,11 +261,13 @@ public class ContractServiceImpl implements ContractService {
     }
 
     private Contract processAfterCreate(Contract resModel) {
+        /* Cancel all booking if the type out of room after create contract */
         int remainRoom = roomRepository.countByType_TypeIdAndIsAvailableIsTrue(resModel.getRoom().getType().getTypeId());
         if (remainRoom == 0) {
             Collection<Booking> incomingBookings = bookingRepository.findByType_TypeIdAndStatusIs(resModel.getRoom().getType().getTypeId(), Booking.STATUS.INCOMING);
             bookingService.cancelBookings(incomingBookings.stream().map(Booking::getBookingId).collect(Collectors.toList()));
         }
+
         return resModel;
     }
 
