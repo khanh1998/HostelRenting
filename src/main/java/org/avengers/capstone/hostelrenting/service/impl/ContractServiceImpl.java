@@ -12,6 +12,7 @@ import org.avengers.capstone.hostelrenting.exception.GenericException;
 import org.avengers.capstone.hostelrenting.exception.PreCreationException;
 import org.avengers.capstone.hostelrenting.model.Booking;
 import org.avengers.capstone.hostelrenting.model.Contract;
+import org.avengers.capstone.hostelrenting.model.Group;
 import org.avengers.capstone.hostelrenting.model.GroupService;
 import org.avengers.capstone.hostelrenting.repository.BookingRepository;
 import org.avengers.capstone.hostelrenting.repository.ContractRepository;
@@ -44,10 +45,37 @@ import java.util.stream.Collectors;
 public class ContractServiceImpl implements ContractService {
 
     private static final Logger logger = LoggerFactory.getLogger(ContractServiceImpl.class);
-    //    @Value("${azure.storage.contract-template}")
-//    private String contractTemplatePath;
     @Value("${azure.storage.contract-font}")
     private String fontPath;
+
+    @Value("${mail.admin.username}")
+    private String adminGmailUsername;
+    @Value("${mail.admin.password}")
+    private String adminGmailPwd;
+
+    @Value("${mail.smtp.auth}")
+    private String mailAuth;
+
+    @Value("${mail.smtp.starttls.enable}")
+    private String mailStartTlsEnable;
+
+    @Value("${mail.smtp.host}")
+    private String mailHost;
+
+    @Value("${mail.smtp.port}")
+    private String mailPort;
+
+    @Value("${mail.smtp.debug}")
+    private String mailDebug;
+
+    @Value("${mail.smtp.socketFactory.port}")
+    private String mailSocketFactoryPort;
+
+    @Value("${mail.smtp.socketFactory.class}")
+    private String mailSocketFactoryClass;
+
+    @Value("${mail.smtp.socketFactory.fallback}")
+    private String mailSocketFactoryFallback;
 
     private ContractRepository contractRepository;
     private GroupServiceRepository groupServiceRepository;
@@ -309,8 +337,22 @@ public class ContractServiceImpl implements ContractService {
         contractInfo.put(Constant.Contract.RENTER_SCHOOL_NAME, model.getRenter().getSchool().getSchoolName());
         String schoolDistrict = model.getRenter().getSchool().getDistrict().getDistrictName();
         String schoolProvince = model.getRenter().getSchool().getDistrict().getProvince().getProvinceName();
-
         contractInfo.put(Constant.Contract.RENTER_SCHOOL_ADDRESS, String.format("%s, %s",schoolDistrict, schoolProvince));
+
+        contractInfo.put(Constant.Contract.DURATION, String.valueOf(model.getDuration()));
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(model.getStartTime());
+        contractInfo.put(Constant.Contract.START_DAY, String.valueOf(calendar.get(Calendar.DAY_OF_MONTH)));
+        contractInfo.put(Constant.Contract.START_MONTH, String.valueOf(calendar.get(Calendar.MONTH)+1));
+        contractInfo.put(Constant.Contract.START_YEAR, String.valueOf(calendar.get(Calendar.YEAR)));
+
+        Group group = model.getRoom().getType().getGroup();
+        String buildingNo = group.getBuildingNo();
+        String streetName =group.getAddress().getStreetName();
+        String wardName =group.getAddress().getWardName();
+        String districtName =group.getAddress().getDistrictName();
+        String provinceName = group.getAddress().getProvinceName();
+        contractInfo.put(Constant.Contract.ADDRESS, String.format("%s, %s, %s, %s, %s",buildingNo, streetName, wardName, districtName, provinceName));
 
 //        String templateName = Utilities.getFileNameWithoutExtensionFromPath(contractTemplatePath);
         String contractHtml = Utilities.parseThymeleafTemplate(Constant.Contract.TEMPLATE_NAME, contractInfo);
@@ -319,36 +361,33 @@ public class ContractServiceImpl implements ContractService {
     }
 
     public void sendMailWithEmbed(String contractHtml, String receivedMail) {
-//        String to = "thanhnv.se@gmail.com";
 
         // Sender's email ID needs to be mentioned
         String from = "avenger.youthhostel@gmail.com";
         final String username = "avenger.youthhostel@gmail.com";
         final String password = "KieuTrongKhanh!$&1";
 
-        String host = "smtp.gmail.com";
-
         Properties props = new Properties();
-        props.put("mail.smtp.auth", "true");
-        props.put("mail.smtp.starttls.enable", "true");
-        props.put("mail.smtp.host", host);
-        props.put("mail.smtp.port", "465");
-        props.put("mail.smtp.debug", "true");
-        props.put("mail.smtp.socketFactory.port", "465");
-        props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
-        props.put("mail.smtp.socketFactory.fallback", "false");
+        props.put(Constant.Mail.MAIL_SMTP_AUTH, mailAuth);
+        props.put(Constant.Mail.MAIL_SMTP_STARTTLS_ENABLE, mailStartTlsEnable);
+        props.put(Constant.Mail.MAIL_SMTP_HOST, mailHost);
+        props.put(Constant.Mail.MAIL_SMTP_PORT, mailPort);
+        props.put(Constant.Mail.MAIL_SMTP_DEBUG, mailDebug);
+        props.put(Constant.Mail.MAIL_SMTP_SOCKET_FACTORY_PORT, mailSocketFactoryPort);
+        props.put(Constant.Mail.MAIL_SMTP_SOCKET_FACTORY_CLASS, mailSocketFactoryClass);
+        props.put(Constant.Mail.MAIL_SMTP_SOCKET_FACTORY_FALLBACK, mailSocketFactoryFallback);
 
         // Get the Session object.
         Session session = Session.getInstance(props,
                 new javax.mail.Authenticator() {
                     protected PasswordAuthentication getPasswordAuthentication() {
-                        return new PasswordAuthentication(username, password);
+                        return new PasswordAuthentication(adminGmailUsername, adminGmailPwd);
                     }
                 });
 
         try {
             Message message = new MimeMessage(session);
-            message.setFrom(new InternetAddress(from));
+            message.setFrom(new InternetAddress(adminGmailUsername));
             message.setRecipients(Message.RecipientType.TO,
                     InternetAddress.parse(receivedMail));
             message.setSubject("Hợp đồng thuê nhà");
@@ -356,11 +395,8 @@ public class ContractServiceImpl implements ContractService {
             // Send message
             Transport.send(message);
 
-            System.out.println("Sent message successfully....");
-
         } catch (Exception e) {
-            e.printStackTrace();
-            throw new RuntimeException(e);
+            logger.error(e.getMessage(), e);
         }
     }
 }

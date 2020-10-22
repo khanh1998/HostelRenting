@@ -67,17 +67,39 @@ public class Constant {
         public final static String RENTER_SCHOOL_NAME = "renterSchoolName";
         public final static String RENTER_SCHOOL_ADDRESS = "renterSchoolAddress";
 
+        /* CONTRACT INFORMATION */
+        public final static String DURATION = "contractDuration";
+        public final static String START_DAY = "contractStartDay";
+        public final static String START_MONTH = "contractStartMonth";
+        public final static String START_YEAR = "contractStartYear";
+
+        /* GROUP INFORMATION */
+        public final static String ADDRESS = "groupAddress";
 
         public final static String DATE_TIME_STRING_PATTERN = "%s/%s/%-4s";
     }
-    public static class Extension{
+
+    public static class Extension {
         public final static String HTML = ".html";
         public final static String PDF = ".pdf";
     }
-    public static class Symbol{
+
+    public static class Symbol {
         public final static String UNDERSCORE = "_";
     }
-    public static class ContentType{
+
+    public static class ContentType {
         public final static String PDF = "application/pdf";
+    }
+
+    public static class Mail {
+        public final static String MAIL_SMTP_AUTH="mail.smtp.auth";
+        public final static String MAIL_SMTP_STARTTLS_ENABLE="mail.smtp.starttls.enable";
+        public final static String MAIL_SMTP_HOST="mail.smtp.host";
+        public final static String MAIL_SMTP_PORT="mail.smtp.port";
+        public final static String MAIL_SMTP_DEBUG="mail.smtp.debug";
+        public final static String MAIL_SMTP_SOCKET_FACTORY_PORT="mail.smtp.socketFactory.port";
+        public final static String MAIL_SMTP_SOCKET_FACTORY_CLASS="mail.smtp.socketFactory.class";
+        public final static String MAIL_SMTP_SOCKET_FACTORY_FALLBACK="mail.smtp.socketFactory.fallback";
     }
 }
