@@ -86,7 +86,6 @@ public class ContractServiceImpl implements ContractService {
     private VendorService vendorService;
     private RoomService roomService;
     private GroupServiceService groupServiceService;
-    private DealService dealService;
     private BookingService bookingService;
     private FileStorageServiceImp fileStorageService;
 
@@ -113,11 +112,6 @@ public class ContractServiceImpl implements ContractService {
     @Autowired
     public void setGroupServiceService(GroupServiceService groupServiceService) {
         this.groupServiceService = groupServiceService;
-    }
-
-    @Autowired
-    public void setDealService(DealService dealService) {
-        this.dealService = dealService;
     }
 
     @Autowired

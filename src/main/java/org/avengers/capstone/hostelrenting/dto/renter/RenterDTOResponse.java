@@ -11,7 +11,7 @@ import java.io.Serializable;
 
 @Getter
 @Setter
-public class ResRenterDTO extends UserDTOResponse implements Serializable  {
+public class RenterDTOResponse extends UserDTOResponse implements Serializable  {
 
     private String idNum;
 

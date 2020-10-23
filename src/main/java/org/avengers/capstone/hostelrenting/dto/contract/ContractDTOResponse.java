@@ -9,7 +9,7 @@ import org.avengers.capstone.hostelrenting.dto.booking.BookingDTOCreate;
 import org.avengers.capstone.hostelrenting.dto.deal.DealDTOShort;
 import org.avengers.capstone.hostelrenting.dto.group.GroupServiceDTOResponse;
 import org.avengers.capstone.hostelrenting.dto.type.TypeDTOResponse;
-import org.avengers.capstone.hostelrenting.dto.renter.ResRenterDTO;
+import org.avengers.capstone.hostelrenting.dto.renter.RenterDTOResponse;
 import org.avengers.capstone.hostelrenting.dto.vendor.ResVendorDTO;
 import org.avengers.capstone.hostelrenting.model.Contract;
 
@@ -28,7 +28,7 @@ public class ContractDTOResponse {
     private TypeDTOResponse type;
     private GroupDTOResponse group;
     private ResVendorDTO vendor;
-    private ResRenterDTO renter;
+    private RenterDTOResponse renter;
     private DealDTOShort deal;
     private BookingDTOCreate booking;
     private long startTime;
