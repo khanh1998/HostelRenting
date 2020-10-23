@@ -75,8 +75,8 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public Booking create(Booking reqModel) {
-        Optional<Booking> tempBooking = bookingRepository.findBookingByRenter_UserIdAndType_TypeId(reqModel.getRenter().getUserId(),
-                reqModel.getType().getTypeId());
+        Optional<Booking> tempBooking = bookingRepository.findBookingByRenter_UserIdAndType_TypeIdAndStatusIs(reqModel.getRenter().getUserId(),
+                reqModel.getType().getTypeId(), Booking.STATUS.INCOMING);
         if (tempBooking.isPresent()) {
             throw new GenericException(Booking.class, "has already existed with ",
                     "bookingId", String.valueOf(tempBooking.get().getBookingId()),
