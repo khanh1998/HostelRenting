@@ -7,6 +7,7 @@ import org.avengers.capstone.hostelrenting.dto.SchoolDTOFull;
 import org.avengers.capstone.hostelrenting.dto.province.ProvinceDTOShort;
 import org.avengers.capstone.hostelrenting.dto.user.UserDTOUpdate;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -19,10 +20,10 @@ public class RenterDTOUpdate extends UserDTOUpdate {
     @Setter
     @NotNull(message = "Hometown province id is mandatory!")
     @JsonProperty("hometown")
-    private ProvinceDTOShort province;
+    private @Valid ProvinceDTOShort province;
 
     @Getter
     @Setter
     @NotNull(message = "School id is mandatory!")
-    private SchoolDTOFull school;
+    private @Valid SchoolDTOFull school;
 }
