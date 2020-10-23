@@ -1,5 +1,6 @@
 package org.avengers.capstone.hostelrenting.service.impl;
 
+import lombok.NonNull;
 import org.avengers.capstone.hostelrenting.Constant;
 import org.avengers.capstone.hostelrenting.dto.renter.RenterDTOResponse;
 import org.avengers.capstone.hostelrenting.dto.renter.RenterDTOUpdate;
@@ -58,8 +59,8 @@ public class RenterServiceIml implements RenterService {
 
     @Override
     public Renter updateInfo(Renter exModel, RenterDTOUpdate reqDTO) {
-        Province province = provinceService.findById(reqDTO.getProvinceId());
-        School school = schoolService.findById(reqDTO.getSchoolId());
+        Province province = provinceService.findById(reqDTO.getProvince().getProvinceId());
+        School school = schoolService.findById(reqDTO.getSchool().getSchoolId());
         modelMapper.map(reqDTO, exModel);
         exModel.setProvince(province);
         exModel.setSchool(school);

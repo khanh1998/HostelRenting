@@ -1,7 +1,10 @@
 package org.avengers.capstone.hostelrenting.dto.renter;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
+import org.avengers.capstone.hostelrenting.dto.SchoolDTOFull;
+import org.avengers.capstone.hostelrenting.dto.province.ProvinceDTOShort;
 import org.avengers.capstone.hostelrenting.dto.user.UserDTOUpdate;
 
 import javax.validation.constraints.NotNull;
@@ -15,10 +18,11 @@ public class RenterDTOUpdate extends UserDTOUpdate {
     @Getter
     @Setter
     @NotNull(message = "Hometown province id is mandatory!")
-    private Integer provinceId;
+    @JsonProperty("hometown")
+    private ProvinceDTOShort province;
 
     @Getter
     @Setter
     @NotNull(message = "School id is mandatory!")
-    private Integer schoolId;
+    private SchoolDTOFull school;
 }
