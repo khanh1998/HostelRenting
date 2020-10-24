@@ -59,11 +59,15 @@ public class RenterServiceIml implements RenterService {
 
     @Override
     public Renter updateInfo(Renter exModel, RenterDTOUpdate reqDTO) {
-        Province province = provinceService.findById(reqDTO.getProvince().getProvinceId());
-        School school = schoolService.findById(reqDTO.getSchool().getSchoolId());
+        if (reqDTO.getProvince() != null) {
+            Province province = provinceService.findById(reqDTO.getProvince().getProvinceId());
+            exModel.setProvince(province);
+        }
+        if (reqDTO.getSchool() != null) {
+            School school = schoolService.findById(reqDTO.getSchool().getSchoolId());
+            exModel.setSchool(school);
+        }
         modelMapper.map(reqDTO, exModel);
-        exModel.setProvince(province);
-        exModel.setSchool(school);
 
 
         return renterRepository.save(exModel);
@@ -88,7 +92,7 @@ public class RenterServiceIml implements RenterService {
 
     @Override
     public Renter save(Renter renter) {
-        if (renterRepository.equals(renter)){
+        if (renterRepository.equals(renter)) {
             throw new DuplicateKeyException(String.format(Constant.Message.DUPLICATED_ERROR, "all", "all"));
         }
 

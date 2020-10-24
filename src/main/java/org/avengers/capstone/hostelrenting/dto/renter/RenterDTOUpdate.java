@@ -18,12 +18,12 @@ import javax.validation.constraints.NotNull;
 public class RenterDTOUpdate extends UserDTOUpdate {
     @Getter
     @Setter
-    @NotNull(message = "Hometown province id is mandatory!")
+//    @NotNull(message = "Hometown province id is mandatory!")
     @JsonProperty("hometown")
     private @Valid ProvinceDTOShort province;
 
     @Getter
     @Setter
-    @NotNull(message = "School id is mandatory!")
+//    @NotNull(message = "School id is mandatory!")
     private @Valid SchoolDTOFull school;
 }

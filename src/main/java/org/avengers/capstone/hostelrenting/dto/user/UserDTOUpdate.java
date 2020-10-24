@@ -18,6 +18,10 @@ public class UserDTOUpdate implements Serializable {
     public UserDTOUpdate(){
         this.updatedAt = System.currentTimeMillis();
     }
+
+    @Getter
+    @Setter
+    private String username;
     @Getter
     @Setter
     @NotNull(message = "Year of birth is mandatory!")
