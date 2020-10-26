@@ -1,5 +1,6 @@
 package org.avengers.capstone.hostelrenting.service.impl;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
@@ -66,20 +67,21 @@ public class FirebaseService {
     }
 
     public String sendPnsToDevice(NotificationRequestDTO notificationRequestDto) {
-        ObjectMapper objMapper = new ObjectMapper();
-        Map<String, String> data = objMapper.convertValue(notificationRequestDto.getData(), Map.class);
-
-        Message message = Message.builder()
-                .setToken(notificationRequestDto.getDestination())
-                .setNotification(new Notification(notificationRequestDto.getContent().getTitle(), notificationRequestDto.getContent().getBody()))
-                .putAllData(data)
-                .build();
-
         String response = null;
         try {
+            ObjectMapper objMapper = new ObjectMapper();
+            Object data = notificationRequestDto.getData();
+            String json = objMapper.writeValueAsString(data);
+
+            Message message = Message.builder()
+                    .setToken(notificationRequestDto.getDestination())
+                    .setNotification(new Notification(notificationRequestDto.getContent().getTitle(), notificationRequestDto.getContent().getBody()))
+                    .putData("json", json)
+                    .build();
+            System.out.println(json);
+
             response = FirebaseMessaging.getInstance().send(message);
-        } catch (FirebaseMessagingException e) {
-//            log.error("Fail to send firebase notification", e);
+        } catch (JsonProcessingException | FirebaseMessagingException e) {
             e.printStackTrace();
         }
 
@@ -87,17 +89,21 @@ public class FirebaseService {
     }
 
     public String sendPnsToTopic(NotificationRequestDTO notificationRequestDto) {
-        Message message = Message.builder()
-                .setTopic(notificationRequestDto.getDestination())
-                .setNotification(new Notification(notificationRequestDto.getContent().getTitle(), notificationRequestDto.getContent().getBody()))
-                .putData("content", notificationRequestDto.getData().toString())
-                .build();
-
         String response = null;
         try {
+            ObjectMapper objMapper = new ObjectMapper();
+            Object data = notificationRequestDto.getData();
+            String json = objMapper.writeValueAsString(data);
+
+            Message message = Message.builder()
+                    .setTopic(notificationRequestDto.getDestination())
+                    .setNotification(new Notification(notificationRequestDto.getContent().getTitle(), notificationRequestDto.getContent().getBody()))
+                    .putData("json", json)
+                    .build();
             response = FirebaseMessaging.getInstance().send(message);
         } catch (FirebaseMessagingException e) {
-//            log.error("Fail to send firebase notification", e);
+            e.printStackTrace();
+        } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
 
