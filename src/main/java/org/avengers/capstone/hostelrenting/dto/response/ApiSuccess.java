@@ -13,6 +13,8 @@ import java.io.Serializable;
 public class ApiSuccess<T> implements Serializable {
     private boolean isSuccess;
     private String message;
+    private int page;
+    private int size;
     private T data;
 
     private ApiSuccess(){
@@ -28,6 +30,14 @@ public class ApiSuccess<T> implements Serializable {
         this();
         this.data = data;
         this.message = message;
+    }
+
+    public ApiSuccess(T data, String message, int size, int page){
+        this();
+        this.data = data;
+        this.message = message;
+        this.size = size;
+        this.page = page;
     }
 
     public ApiSuccess(String message, boolean isSuccess) {

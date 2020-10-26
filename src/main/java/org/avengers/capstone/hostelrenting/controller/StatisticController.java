@@ -1,7 +1,8 @@
 package org.avengers.capstone.hostelrenting.controller;
 
-import org.avengers.capstone.hostelrenting.dto.StatisticDTO;
+import org.avengers.capstone.hostelrenting.dto.statistic.Statistic;
 import org.avengers.capstone.hostelrenting.dto.response.ApiSuccess;
+import org.avengers.capstone.hostelrenting.dto.statistic.StatisticDTOResponse;
 import org.avengers.capstone.hostelrenting.service.StatisticService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -25,11 +26,10 @@ public class StatisticController {
         this.statisticService = statisticService;
     }
 
-
     @GetMapping("/statistic")
-    public ResponseEntity<?> getStatistic(@RequestParam Integer[] streetIds) {
-        List<StatisticDTO> resDTOs = statisticService.getStatisticByStreetIds(streetIds);
-        ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTOs, "Get statistic successfully!");
+    public ResponseEntity<?> getStatisticByStreetIds(@RequestParam Integer[] ids) {
+        StatisticDTOResponse resDTO = statisticService.getStatisticByDistrictId(ids);
+        ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTO, "Get statistic successfully!");
 
         return ResponseEntity.ok(apiSuccess);
     }

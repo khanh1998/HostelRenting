@@ -3,12 +3,12 @@ package org.avengers.capstone.hostelrenting.service.impl;
 import org.avengers.capstone.hostelrenting.dto.deal.DealDTOShort;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
 import org.avengers.capstone.hostelrenting.model.Deal;
-import org.avengers.capstone.hostelrenting.model.HostelType;
+import org.avengers.capstone.hostelrenting.model.Type;
 import org.avengers.capstone.hostelrenting.model.Renter;
 import org.avengers.capstone.hostelrenting.model.Vendor;
 import org.avengers.capstone.hostelrenting.repository.DealRepository;
 import org.avengers.capstone.hostelrenting.service.DealService;
-import org.avengers.capstone.hostelrenting.service.HostelTypeService;
+import org.avengers.capstone.hostelrenting.service.TypeService;
 import org.avengers.capstone.hostelrenting.service.RenterService;
 import org.avengers.capstone.hostelrenting.service.VendorService;
 import org.modelmapper.ModelMapper;
@@ -23,7 +23,7 @@ public class DealServiceImpl implements DealService {
     private DealRepository dealRepository;
     private VendorService vendorService;
     private RenterService renterService;
-    private HostelTypeService hostelTypeService;
+    private TypeService typeService;
     private ModelMapper modelMapper;
 
     @Autowired
@@ -37,8 +37,8 @@ public class DealServiceImpl implements DealService {
     }
 
     @Autowired
-    public void setHostelTypeService(HostelTypeService hostelTypeService) {
-        this.hostelTypeService = hostelTypeService;
+    public void setHostelTypeService(TypeService typeService) {
+        this.typeService = typeService;
     }
 
     @Autowired
@@ -59,8 +59,6 @@ public class DealServiceImpl implements DealService {
     public void checkActive(Integer id) {
         Optional<Deal> model = dealRepository.findById(id);
         if (model.isEmpty())
-            throw new EntityNotFoundException(Deal.class, "id", id.toString());
-        else if (model.get().isDeleted())
             throw new EntityNotFoundException(Deal.class, "id", id.toString());
     }
 
@@ -90,12 +88,12 @@ public class DealServiceImpl implements DealService {
     public Deal create(DealDTOShort reqDTO) {
         Vendor existedVendor = vendorService.findById(reqDTO.getVendorId());
         Renter existedRenter = renterService.findById(reqDTO.getRenterId());
-        HostelType existedType = hostelTypeService.findById(reqDTO.getTypeId());
+        Type existedType = typeService.findById(reqDTO.getTypeId());
 
         Deal reqModel = modelMapper.map(reqDTO, Deal.class);
         reqModel.setVendor(existedVendor);
         reqModel.setRenter(existedRenter);
-        reqModel.setHostelType(existedType);
+        reqModel.setType(existedType);
         reqModel.setStatus(Deal.STATUS.CREATED);
         reqModel.setCreatedAt(System.currentTimeMillis());
 
@@ -116,17 +114,6 @@ public class DealServiceImpl implements DealService {
         }
 
         return null;
-    }
-
-    @Override
-    public void delete(Integer id) {
-        checkActive(id);
-        Deal exModel = dealRepository.getOne(id);
-        if (exModel.isDeleted())
-            throw new EntityNotFoundException(Deal.class, "id", id.toString());
-        exModel.setDeleted(true);
-        setUpdatedTime(exModel);
-        dealRepository.save(exModel);
     }
 
     @Override

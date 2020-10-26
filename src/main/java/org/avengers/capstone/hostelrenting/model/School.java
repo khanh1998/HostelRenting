@@ -1,13 +1,12 @@
 package org.avengers.capstone.hostelrenting.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.List;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 
@@ -22,10 +21,10 @@ public class School {
     private String schoolName;
 
     @Column(nullable = false)
-    private String longitude;
+    private Double longitude;
 
     @Column(nullable = false)
-    private String latitude;
+    private Double latitude;
 
     @OneToMany(mappedBy = "school", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Renter> renters;

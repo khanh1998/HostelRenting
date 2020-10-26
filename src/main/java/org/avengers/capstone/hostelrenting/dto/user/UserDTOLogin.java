@@ -1,10 +1,13 @@
 package org.avengers.capstone.hostelrenting.dto.user;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.validation.constraints.NotEmpty;
 
-@Data
+@Getter
+@Setter
 public class UserDTOLogin {
     @NotEmpty(message = "Phone is mandatory")
     private String phone;

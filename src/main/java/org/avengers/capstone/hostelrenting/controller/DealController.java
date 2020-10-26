@@ -1,14 +1,14 @@
 package org.avengers.capstone.hostelrenting.controller;
 
-import org.avengers.capstone.hostelrenting.dto.hostelgroup.HostelGroupDTOFull;
+import org.avengers.capstone.hostelrenting.dto.group.GroupDTOResponse;
 import org.avengers.capstone.hostelrenting.dto.deal.DealDTOFull;
 import org.avengers.capstone.hostelrenting.dto.deal.DealDTOShort;
 import org.avengers.capstone.hostelrenting.dto.response.ApiSuccess;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
 import org.avengers.capstone.hostelrenting.model.Deal;
-import org.avengers.capstone.hostelrenting.model.HostelGroup;
+import org.avengers.capstone.hostelrenting.model.Group;
 import org.avengers.capstone.hostelrenting.service.DealService;
-import org.avengers.capstone.hostelrenting.service.HostelGroupService;
+import org.avengers.capstone.hostelrenting.service.GroupService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,12 +24,12 @@ import java.util.stream.Collectors;
 public class DealController {
 
     private ModelMapper modelMapper;
-    private HostelGroupService hostelGroupService;
+    private GroupService groupService;
     private DealService dealService;
 
     @Autowired
-    public void setHostelGroupService(HostelGroupService hostelGroupService) {
-        this.hostelGroupService = hostelGroupService;
+    public void setHostelGroupService(GroupService groupService) {
+        this.groupService = groupService;
     }
 
     @Autowired
@@ -74,17 +74,6 @@ public class DealController {
         return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
     }
 
-    @DeleteMapping("/deals/{dealId}")
-    public ResponseEntity<?> deleteDeal(@PathVariable Integer dealId) {
-
-        dealService.delete(dealId);
-
-        // Response entity
-        ApiSuccess<?> apiSuccess = new ApiSuccess<>(null, "Your deal has been deleted successfully");
-
-        return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
-    }
-
     @GetMapping("/deals/{dealId}")
     public ResponseEntity<?> getDealById(@PathVariable Integer dealId) throws EntityNotFoundException {
         Deal resModel = dealService.findById(dealId);
@@ -125,15 +114,15 @@ public class DealController {
     }
 
     /**
-     * Get corresponding {@link HostelGroup}
+     * Get corresponding {@link Group}
      *
-     * @param deals list of {@link org.avengers.capstone.hostelrenting.model.Booking} need to fill {@link HostelGroup}
-     * @return list of {@link org.avengers.capstone.hostelrenting.model.Booking} with corresponding {@link HostelGroup}
+     * @param deals list of {@link org.avengers.capstone.hostelrenting.model.Booking} need to fill {@link Group}
+     * @return list of {@link org.avengers.capstone.hostelrenting.model.Booking} with corresponding {@link Group}
      */
     private List<DealDTOFull> getGroupForDeal(List<DealDTOFull> deals) {
         deals.forEach(deal -> {
-            HostelGroup existedGroup = hostelGroupService.findById(deal.getType().getGroupId());
-            deal.setGroup(modelMapper.map(existedGroup, HostelGroupDTOFull.class));
+            Group existedGroup = groupService.findById(deal.getType().getGroupId());
+            deal.setGroup(modelMapper.map(existedGroup, GroupDTOResponse.class));
         });
         return deals;
     }

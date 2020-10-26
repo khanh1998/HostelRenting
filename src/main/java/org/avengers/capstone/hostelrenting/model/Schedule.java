@@ -6,10 +6,9 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.Collection;
-import java.util.List;
-import java.util.Set;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 
@@ -32,6 +31,5 @@ public class Schedule {
     private String dayOfWeek;
 
     @OneToMany(mappedBy = "schedule", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Collection<HGSchedule> hgSchedules;
-
+    private Collection<GroupSchedule> groupSchedules;
 }

@@ -1,14 +1,12 @@
 package org.avengers.capstone.hostelrenting.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 
@@ -19,7 +17,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     @NotBlank(message = "Username is mandatory")
     private String username;
 
@@ -34,6 +32,16 @@ public class User {
     private String avatar;
 
     private String firebaseToken;
+
+    private Long yearOfBirth;
+
+    private String idIssuedLocation;
+
+    private Long idIssuedDate;
+
+    private String householdAddress;
+
+    private String currentAddress;
 
     @ManyToOne
     @JoinColumn(name = "role_id", nullable = false)

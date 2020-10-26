@@ -1,32 +1,36 @@
 package org.avengers.capstone.hostelrenting.service.impl;
 
-import org.avengers.capstone.hostelrenting.dto.booking.BookingDTOShort;
+import org.avengers.capstone.hostelrenting.dto.booking.BookingDTOCreate;
+import org.avengers.capstone.hostelrenting.dto.booking.BookingDTOUpdate;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
+import org.avengers.capstone.hostelrenting.exception.GenericException;
 import org.avengers.capstone.hostelrenting.model.*;
 import org.avengers.capstone.hostelrenting.repository.BookingRepository;
+import org.avengers.capstone.hostelrenting.repository.RoomRepository;
 import org.avengers.capstone.hostelrenting.service.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
-import java.util.stream.Collectors;
 
 @Service
 public class BookingServiceImpl implements BookingService {
 
     private BookingRepository bookingRepository;
-    private VendorService vendorService;
-    private RenterService renterService;
-    private HostelTypeService hostelTypeService;
+    private RoomRepository roomRepository;
+
     private DealService dealService;
     private ModelMapper modelMapper;
+    private VendorService vendorService;
+    private RenterService renterService;
 
     @Autowired
-    public void setModelMapper(ModelMapper modelMapper) {
-        this.modelMapper = modelMapper;
+    public void setRoomRepository(RoomRepository roomRepository) {
+        this.roomRepository = roomRepository;
     }
 
     @Autowired
@@ -40,9 +44,10 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Autowired
-    public void setHostelTypeService(HostelTypeService hostelTypeService) {
-        this.hostelTypeService = hostelTypeService;
+    public void setModelMapper(ModelMapper modelMapper) {
+        this.modelMapper = modelMapper;
     }
+
 
     @Autowired
     public void setDealService(DealService dealService) {
@@ -55,77 +60,57 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public void checkActive(Integer id) {
+    public void checkExist(Integer id) {
         Optional<Booking> model = bookingRepository.findById(id);
         if (model.isEmpty())
-            throw new EntityNotFoundException(Booking.class, "id", id.toString());
-        else if (model.get().isDeleted())
             throw new EntityNotFoundException(Booking.class, "id", id.toString());
     }
 
     @Override
     public Booking findById(Integer id) {
-        checkActive(id);
+        checkExist(id);
         return bookingRepository.getOne(id);
 
     }
 
     @Override
-    public Booking create(BookingDTOShort reqDTO) {
-        Vendor exVendor = vendorService.findById(reqDTO.getVendorId());
-        Renter exRenter = renterService.findById(reqDTO.getRenterId());
-        HostelType exType = hostelTypeService.findById(reqDTO.getTypeId());
-
-        Booking reqModel = modelMapper.map(reqDTO, Booking.class);
+    public Booking create(Booking reqModel) {
+        Optional<Booking> tempBooking = bookingRepository.findBookingByRenter_UserIdAndType_TypeId(reqModel.getRenter().getUserId(),
+                reqModel.getType().getTypeId());
+        if (tempBooking.isPresent()) {
+            throw new GenericException(Booking.class, "has already existed with ",
+                    "bookingId", String.valueOf(reqModel.getBookingId()),
+                    "renterId", String.valueOf(reqModel.getRenter().getUserId()),
+                    "typeId", String.valueOf(reqModel.getType().getTypeId()));
+        }
+        if (roomRepository.countByType_TypeIdAndIsAvailableIsTrue(reqModel.getType().getTypeId()) == 0)
+            throw new GenericException(Type.class, "is out of room",
+                    "typeId", String.valueOf(reqModel.getType().getTypeId()));
 
         // Update deal status if exist (booking created means deal is done)
-        Integer dealId = reqDTO.getDealId();
+        Integer dealId = reqModel.getDealId();
         if (dealId != null) {
             dealService.checkActive(dealId);
             dealService.changeStatus(dealId, Deal.STATUS.DONE);
-        }
-
-        reqModel.setHostelType(exType);
-        reqModel.setRenter(exRenter);
-        reqModel.setVendor(exVendor);
-        reqModel.setStatus(Booking.STATUS.INCOMING);
-        reqModel.setCreatedAt(System.currentTimeMillis());
-
-
-        if (reqModel.getQrCode() == null) {
-            String qrCode = generateQRCode();
-            reqModel.setQrCode(qrCode);
         }
 
         return bookingRepository.save(reqModel);
     }
 
     @Override
-    public Booking update(BookingDTOShort reqDTO) {
-        checkActive(reqDTO.getBookingId());
-
+    public Booking confirm(Booking exModel, BookingDTOUpdate reqDTO) {
+        if (exModel.getStatus() == Booking.STATUS.DONE) {
+            throw new GenericException(Booking.class, "cannot be updated", "bookingId", String.valueOf(exModel.getBookingId()), "status", exModel.getStatus().toString());
+        }
         // Update status
-        Booking exModel = bookingRepository.getOne(reqDTO.getBookingId());
-        if (!exModel.getStatus().equals(reqDTO.getStatus())) {
-            exModel.setStatus(reqDTO.getStatus());
-            setUpdatedTime(exModel);
+        if (exModel.getQrCode().equals(reqDTO.getQrCode())) {
+            modelMapper.map(reqDTO, exModel);
             return bookingRepository.save(exModel);
         }
+        throw new GenericException(Booking.class, "qrCode not matched", "bookingId", String.valueOf(exModel.getBookingId()), "qrCode", exModel.getQrCode().toString());
         // Update meetTime
         //TODO: Implement here
 
-        return null;
-    }
-
-    @Override
-    public void delete(Integer id) {
-        checkActive(id);
-        Booking exModel = bookingRepository.getOne(id);
-        if (exModel.isDeleted())
-            throw new EntityNotFoundException(Booking.class, "id", id.toString());
-        exModel.setDeleted(true);
-        setUpdatedTime(exModel);
-        bookingRepository.save(exModel);
     }
 
     /**
@@ -138,14 +123,12 @@ public class BookingServiceImpl implements BookingService {
     public List<Booking> findByRenterId(Long renterId) {
         renterService.checkExist(renterId);
 
-        return renterService.findById(renterId).getBookings()
-                .stream()
-                .filter(booking -> !booking.isDeleted())
-                .collect(Collectors.toList());
+        return renterService.findById(renterId).getBookings();
     }
 
     /**
      * Get list of bookings by given vendor id
+     *
      * @param vendorId given vendor id to get booking
      * @return list of booking models
      */
@@ -153,30 +136,18 @@ public class BookingServiceImpl implements BookingService {
     public List<Booking> findByVendorId(Long vendorId) {
         vendorService.checkExist(vendorId);
 
-        return vendorService.findById(vendorId).getBookings()
-                .stream()
-                .filter(booking -> !booking.isDeleted())
-                .collect(Collectors.toList());
+        return vendorService.findById(vendorId).getBookings();
     }
 
     @Override
-    public Booking changeStatus(Integer id, Booking.STATUS status) {
-        Optional<Booking> existed = bookingRepository.findById(id);
-        if (existed.isPresent() && existed.get().getStatus().equals(Booking.STATUS.INCOMING)){
-            existed.get().setStatus(status);
-            setUpdatedTime(existed.get());
-        }
-        return existed.orElse(null);
-    }
-
-
-    private String generateQRCode() {
-        Random rnd = new Random();
-        int number = rnd.nextInt(999999);
-        return String.format("%06d", number);
-    }
-
-    private void setUpdatedTime(Booking exModel){
-        exModel.setUpdatedAt(System.currentTimeMillis());
+    public boolean cancelBookings(Collection<Integer> bookingIds) {
+        bookingIds.stream().forEach(id -> {
+            Booking model = findById(id);
+            bookingRepository.save(model.toBuilder()
+                    .status(Booking.STATUS.CANCELLED)
+                    .updatedAt(System.currentTimeMillis())
+                    .build());
+        });
+        return true;
     }
 }
