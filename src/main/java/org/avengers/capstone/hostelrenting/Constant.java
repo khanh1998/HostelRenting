@@ -1,7 +1,7 @@
 package org.avengers.capstone.hostelrenting;
 
 public class Constant {
-    public static class Message{
+    public static class Message {
         /**
          * Example: Province has been created successfully
          */
@@ -26,7 +26,8 @@ public class Constant {
 
         public static final String DUPLICATED_ERROR = "Key (%s)=(%s) already exists";
     }
-    public static class Pagination{
+
+    public static class Pagination {
         public static final String DEFAULT_SIZE = "50";
         public static final String DEFAULT_PAGE = "1";
     }
@@ -40,4 +41,65 @@ public class Constant {
      * distance to collect hostelgroups
      */
     public static final double DEFAULT_RANGE = 5;
+
+    public static class Contract {
+        public final static String UNICODE_TRUETYPE_SOURCE_SANS_PRO = "'Source Sans Pro'";
+        public final static String TEMPLATE_NAME = "contract_template";
+        /* VENDOR INFORMATION*/
+        public final static String VENDOR_NAME = "vendorName";
+        public final static String VENDOR_YEAR_OF_BIRTH = "vendorYob";
+        public final static String VENDOR_ID_NUMBER = "vendorIdNumber";
+        public final static String VENDOR_ID_ISSUED_DATE = "vendorIdIssuedDate";
+        public final static String VENDOR_ID_ISSUED_LOCATION = "vendorIdIssuedLocation";
+        public final static String VENDOR_HOUSEHOLD_ADDRESS = "vendorHouseholdAddress";
+        public final static String VENDOR_CURRENT_ADDRESS = "vendorCurrentAddress";
+        public final static String VENDOR_PHONE_NUMBER = "vendorPhoneNumber";
+
+        /* RENTER INFORMATION*/
+        public final static String RENTER_NAME = "renterName";
+        public final static String RENTER_YEAR_OF_BIRTH = "renterYob";
+        public final static String RENTER_ID_NUMBER = "renterIdNumber";
+        public final static String RENTER_ID_ISSUED_DATE = "renterIdIssuedDate";
+        public final static String RENTER_ID_ISSUED_LOCATION = "renterIdIssuedLocation";
+        public final static String RENTER_HOUSEHOLD_ADDRESS = "renterHouseholdAddress";
+        public final static String RENTER_CURRENT_ADDRESS = "renterCurrentAddress";
+        public final static String RENTER_PHONE_NUMBER = "renterPhoneNumber";
+        public final static String RENTER_SCHOOL_NAME = "renterSchoolName";
+        public final static String RENTER_SCHOOL_ADDRESS = "renterSchoolAddress";
+
+        /* CONTRACT INFORMATION */
+        public final static String DURATION = "contractDuration";
+        public final static String START_DAY = "contractStartDay";
+        public final static String START_MONTH = "contractStartMonth";
+        public final static String START_YEAR = "contractStartYear";
+
+        /* GROUP INFORMATION */
+        public final static String ADDRESS = "groupAddress";
+
+        public final static String DATE_TIME_STRING_PATTERN = "%s/%s/%-4s";
+    }
+
+    public static class Extension {
+        public final static String HTML = ".html";
+        public final static String PDF = ".pdf";
+    }
+
+    public static class Symbol {
+        public final static String UNDERSCORE = "_";
+    }
+
+    public static class ContentType {
+        public final static String PDF = "application/pdf";
+    }
+
+    public static class Mail {
+        public final static String MAIL_SMTP_AUTH="mail.smtp.auth";
+        public final static String MAIL_SMTP_STARTTLS_ENABLE="mail.smtp.starttls.enable";
+        public final static String MAIL_SMTP_HOST="mail.smtp.host";
+        public final static String MAIL_SMTP_PORT="mail.smtp.port";
+        public final static String MAIL_SMTP_DEBUG="mail.smtp.debug";
+        public final static String MAIL_SMTP_SOCKET_FACTORY_PORT="mail.smtp.socketFactory.port";
+        public final static String MAIL_SMTP_SOCKET_FACTORY_CLASS="mail.smtp.socketFactory.class";
+        public final static String MAIL_SMTP_SOCKET_FACTORY_FALLBACK="mail.smtp.socketFactory.fallback";
+    }
 }

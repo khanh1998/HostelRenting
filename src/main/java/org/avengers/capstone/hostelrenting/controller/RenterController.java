@@ -1,11 +1,11 @@
 package org.avengers.capstone.hostelrenting.controller;
 
-import org.avengers.capstone.hostelrenting.dto.renter.ReqRenterDTO;
-import org.avengers.capstone.hostelrenting.dto.renter.ResRenterDTO;
+import org.avengers.capstone.hostelrenting.dto.renter.RenterDTOUpdate;
+import org.avengers.capstone.hostelrenting.dto.renter.RenterDTOCreate;
+import org.avengers.capstone.hostelrenting.dto.renter.RenterDTOResponse;
 import org.avengers.capstone.hostelrenting.dto.response.ApiSuccess;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
 import org.avengers.capstone.hostelrenting.model.Renter;
-import org.avengers.capstone.hostelrenting.model.User;
 import org.avengers.capstone.hostelrenting.service.ProvinceService;
 import org.avengers.capstone.hostelrenting.service.RenterService;
 import org.avengers.capstone.hostelrenting.service.RoleService;
@@ -19,8 +19,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -66,16 +64,14 @@ public class RenterController {
 
 
     @PostMapping("/renters/register")
-    public ResponseEntity<?> create(@Valid @RequestBody ReqRenterDTO reqDTO) {
+    public ResponseEntity<?> create(@Valid @RequestBody RenterDTOCreate reqDTO) {
         Renter reqModel = modelMapper.map(reqDTO, Renter.class);
         // set critical data for model: role, school, province
         reqModel.setPassword(passwordEncoder.encode(reqDTO.getPassword()));
         reqModel.setRole(roleService.findById(2));
-//        reqModel.setSchool(schoolService.findById(reqDTO.getSchoolId()));
-//        reqModel.setProvince(provinceService.findById(reqDTO.getProvinceId()));
-        Renter createdModel = renterService.save(reqModel);
+        Renter createdModel = renterService.create(reqModel);
 
-        ResRenterDTO resDTO = modelMapper.map(createdModel, ResRenterDTO.class);
+        RenterDTOResponse resDTO = modelMapper.map(createdModel, RenterDTOResponse.class);
 
         ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTO, "Your account has been created successfully!");
 
@@ -84,12 +80,12 @@ public class RenterController {
 
     @PutMapping("/renters/{renterId}")
     public ResponseEntity<?> update(@PathVariable Long renterId,
-                                    @RequestBody ResRenterDTO reqDTO) throws EntityNotFoundException {
-        String resMsg = "Your information has been up to date!";
+                                    @RequestBody @Valid RenterDTOUpdate reqDTO) throws EntityNotFoundException {
+        String resMsg = "Your information has been updated successfully!";
+        Renter exModel = renterService.findById(renterId);
+        Renter resModel = renterService.updateInfo(exModel, reqDTO);
+        RenterDTOResponse resDTO = modelMapper.map(resModel, RenterDTOResponse.class);
 
-        reqDTO.setUserId(renterId);
-        User resModel = renterService.update(reqDTO);
-        ResRenterDTO resDTO = modelMapper.map(resModel, ResRenterDTO.class);
         ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTO, resMsg);
 
         return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
@@ -98,7 +94,7 @@ public class RenterController {
     @GetMapping("/renters/{renterId}")
     public ResponseEntity<?> getById(@PathVariable Long renterId) throws EntityNotFoundException {
         Renter existedModel = renterService.findById(renterId);
-        ResRenterDTO resDTO = modelMapper.map(existedModel, ResRenterDTO.class);
+        RenterDTOResponse resDTO = modelMapper.map(existedModel, RenterDTOResponse.class);
 
         ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTO, "Your information has been retrieved successfully!");
 
@@ -107,8 +103,8 @@ public class RenterController {
 
     @GetMapping("/renters")
     public ResponseEntity<?> getRenterByIds(@RequestParam Long[] renterIds) {
-        Set<ResRenterDTO> resDTOs = renterService.findByIds(Arrays.stream(renterIds).collect(Collectors.toSet())).stream()
-                .map(renter -> modelMapper.map(renter, ResRenterDTO.class)).collect(Collectors.toSet());
+        Set<RenterDTOResponse> resDTOs = renterService.findByIds(Arrays.stream(renterIds).collect(Collectors.toSet())).stream()
+                .map(renter -> modelMapper.map(renter, RenterDTOResponse.class)).collect(Collectors.toSet());
 
         ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTOs, "Renter information have been retrieved successfully!");
 

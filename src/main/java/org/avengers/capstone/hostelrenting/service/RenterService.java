@@ -1,6 +1,8 @@
 package org.avengers.capstone.hostelrenting.service;
 
-import org.avengers.capstone.hostelrenting.dto.renter.ResRenterDTO;
+import org.avengers.capstone.hostelrenting.dto.renter.RenterDTOResponse;
+import org.avengers.capstone.hostelrenting.dto.renter.RenterDTOUpdate;
+import org.avengers.capstone.hostelrenting.dto.user.UserDTOUpdate;
 import org.avengers.capstone.hostelrenting.model.Renter;
 
 import java.util.Collection;
@@ -8,11 +10,10 @@ import java.util.List;
 
 public interface RenterService {
     void checkExist(Long id);
-    Renter update(ResRenterDTO reqDTO);
+    Renter updateInfo(Renter exModel, RenterDTOUpdate reqDTO);
 
     Renter findById(Long id);
     Collection<Renter> findByIds(Collection<Long> ids);
     List<Renter> findAll();
-    Renter save(Renter renter);
-    void deleteById(Long id);
+    Renter create(Renter renter);
 }

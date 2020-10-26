@@ -18,7 +18,6 @@ public class User {
     private Long userId;
 
     @Column(nullable = false)
-    @NotBlank(message = "Username is mandatory")
     private String username;
 
     private String password;
@@ -33,7 +32,7 @@ public class User {
 
     private String firebaseToken;
 
-    private Long yearOfBirth;
+    private Integer yearOfBirth;
 
     private String idIssuedLocation;
 
@@ -42,6 +41,12 @@ public class User {
     private String householdAddress;
 
     private String currentAddress;
+
+    private String citizenIdNum;
+
+    private String citizenIdFrontImg;
+
+    private String citizenIdBackImg;
 
     @ManyToOne
     @JoinColumn(name = "role_id", nullable = false)
@@ -52,4 +57,16 @@ public class User {
 
     @Column(columnDefinition = "boolean default false")
     private boolean isCensored;
+
+    /**
+     * creating timestamp
+     */
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private Long createdAt;
+
+    /**
+     * updating timestamp
+     */
+    @Column(name = "updated_at")
+    private Long updatedAt;
 }

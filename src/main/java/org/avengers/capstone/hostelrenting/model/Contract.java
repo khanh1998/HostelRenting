@@ -65,7 +65,7 @@ public class Contract {
      * contract duration
      */
     @Column(nullable = false)
-    private Float duration;
+    private Integer duration;
 
     /**
      * start time of duration

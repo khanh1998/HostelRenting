@@ -75,14 +75,15 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public Booking create(Booking reqModel) {
-        Optional<Booking> tempBooking = bookingRepository.findBookingByRenter_UserIdAndType_TypeId(reqModel.getRenter().getUserId(),
-                reqModel.getType().getTypeId());
+        Optional<Booking> tempBooking = bookingRepository.findBookingByRenter_UserIdAndType_TypeIdAndStatusIs(reqModel.getRenter().getUserId(),
+                reqModel.getType().getTypeId(), Booking.STATUS.INCOMING);
         if (tempBooking.isPresent()) {
             throw new GenericException(Booking.class, "has already existed with ",
-                    "bookingId", String.valueOf(reqModel.getBookingId()),
-                    "renterId", String.valueOf(reqModel.getRenter().getUserId()),
-                    "typeId", String.valueOf(reqModel.getType().getTypeId()));
+                    "bookingId", String.valueOf(tempBooking.get().getBookingId()),
+                    "renterId", String.valueOf(tempBooking.get().getRenter().getUserId()),
+                    "typeId", String.valueOf(tempBooking.get().getType().getTypeId()));
         }
+        // check out of room
         if (roomRepository.countByType_TypeIdAndIsAvailableIsTrue(reqModel.getType().getTypeId()) == 0)
             throw new GenericException(Type.class, "is out of room",
                     "typeId", String.valueOf(reqModel.getType().getTypeId()));

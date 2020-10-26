@@ -207,7 +207,7 @@ public class HostelTypeController {
                                       @RequestParam(required = false, defaultValue = "score") String sortBy,
                                       @RequestParam(required = false, defaultValue = "false") Boolean asc,
                                       @RequestParam(required = false, defaultValue = DEFAULT_SIZE) Integer size,
-                                      @RequestParam(required = false, defaultValue = DEFAULT_PAGE) Integer page) throws EntityNotFoundException {
+                                      @RequestParam(required = false, defaultValue = DEFAULT_PAGE) Integer page){
         //log start
         logger.info("START - Get type(s)");
         if (typeId != null) {

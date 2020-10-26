@@ -1,51 +1,81 @@
 package org.avengers.capstone.hostelrenting.service.impl;
 
 
+import com.lowagie.text.DocumentException;
 import org.apache.commons.collections.CollectionUtils;
+import org.avengers.capstone.hostelrenting.Constant;
 import org.avengers.capstone.hostelrenting.dto.contract.ContractDTOConfirm;
 
-import com.aspose.pdf.HtmlLoadOptions;
 
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
 import org.avengers.capstone.hostelrenting.exception.GenericException;
 import org.avengers.capstone.hostelrenting.exception.PreCreationException;
 import org.avengers.capstone.hostelrenting.model.Booking;
 import org.avengers.capstone.hostelrenting.model.Contract;
+import org.avengers.capstone.hostelrenting.model.Group;
 import org.avengers.capstone.hostelrenting.model.GroupService;
 import org.avengers.capstone.hostelrenting.repository.BookingRepository;
 import org.avengers.capstone.hostelrenting.repository.ContractRepository;
 import org.avengers.capstone.hostelrenting.repository.GroupServiceRepository;
 import org.avengers.capstone.hostelrenting.repository.RoomRepository;
 import org.avengers.capstone.hostelrenting.service.*;
+import org.avengers.capstone.hostelrenting.util.BASE64DecodedMultipartFile;
 import org.avengers.capstone.hostelrenting.util.Utilities;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 import javax.mail.Message;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
-import java.io.File;
-import java.util.Properties;
+import javax.swing.text.html.Option;
+import java.io.IOException;
+import java.util.*;
+import java.util.stream.Collectors;
 
 
 @Service
 public class ContractServiceImpl implements ContractService {
 
     private static final Logger logger = LoggerFactory.getLogger(ContractServiceImpl.class);
+    @Value("${azure.storage.contract-font}")
+    private String fontPath;
+
+    @Value("${mail.admin.username}")
+    private String adminGmailUsername;
+    @Value("${mail.admin.password}")
+    private String adminGmailPwd;
+
+    @Value("${mail.smtp.auth}")
+    private String mailAuth;
+
+    @Value("${mail.smtp.starttls.enable}")
+    private String mailStartTlsEnable;
+
+    @Value("${mail.smtp.host}")
+    private String mailHost;
+
+    @Value("${mail.smtp.port}")
+    private String mailPort;
+
+    @Value("${mail.smtp.debug}")
+    private String mailDebug;
+
+    @Value("${mail.smtp.socketFactory.port}")
+    private String mailSocketFactoryPort;
+
+    @Value("${mail.smtp.socketFactory.class}")
+    private String mailSocketFactoryClass;
+
+    @Value("${mail.smtp.socketFactory.fallback}")
+    private String mailSocketFactoryFallback;
 
     private ContractRepository contractRepository;
     private GroupServiceRepository groupServiceRepository;
@@ -56,7 +86,6 @@ public class ContractServiceImpl implements ContractService {
     private VendorService vendorService;
     private RoomService roomService;
     private GroupServiceService groupServiceService;
-    private DealService dealService;
     private BookingService bookingService;
     private FileStorageServiceImp fileStorageService;
 
@@ -83,11 +112,6 @@ public class ContractServiceImpl implements ContractService {
     @Autowired
     public void setGroupServiceService(GroupServiceService groupServiceService) {
         this.groupServiceService = groupServiceService;
-    }
-
-    @Autowired
-    public void setDealService(DealService dealService) {
-        this.dealService = dealService;
     }
 
     @Autowired
@@ -140,11 +164,11 @@ public class ContractServiceImpl implements ContractService {
                 reqModel.getVendor().getUserId(),
                 reqModel.getRenter().getUserId(),
                 reqModel.getRoom().getRoomId());
-        if ( tempContract.isPresent())
+        if (tempContract.isPresent())
             throw new GenericException(Contract.class, "Contract has already with ",
-                    "contractId", String.valueOf(reqModel.getContractId()),
-                    "renterId", String.valueOf(reqModel.getRenter().getUserId()),
-                    "vendorId", String.valueOf(reqModel.getVendor().getUserId()));
+                    "contractId", String.valueOf(tempContract.get().getContractId()),
+                    "renterId", String.valueOf(tempContract.get().getRenter().getUserId()),
+                    "vendorId", String.valueOf(tempContract.get().getVendor().getUserId()));
 
         int groupId = reqModel.getRoom().getType().getGroup().getGroupId();
         Collection<Integer> reqServiceIds = reqModel.getGroupServices().stream().map(GroupService::getGroupServiceId).collect(Collectors.toList());
@@ -173,9 +197,18 @@ public class ContractServiceImpl implements ContractService {
         if (exModel.getQrCode().equals(reqDTO.getQrCode())) {
             modelMapper.map(reqDTO, exModel);
             //send mail
+            String contractHtml = generateContractHTML(exModel);
+            String contractUrl = uploadPDF(contractHtml, String.valueOf(exModel.getContractId()));
+            sendMailWithEmbed(contractHtml, exModel.getRenter().getEmail());
+            sendMailWithEmbed(contractHtml, exModel.getVendor().getEmail());
+            exModel.setContractUrl(contractUrl);
             Contract resModel = contractRepository.save(exModel);
-            sendMailWithEmbed(resModel.getRenter().getEmail());
-            sendMailWithEmbed(resModel.getVendor().getEmail());
+
+            /* Set contract id of booking when create corresponding contract */
+            Booking exBooking = bookingService.findById(resModel.getBookingId());
+            exBooking.setContractId(resModel.getContractId());
+            bookingRepository.save(exBooking);
+
             return resModel;
         }
         throw new GenericException(Contract.class, "qrCode not matched", "contractId", String.valueOf(exModel.getContractId()), "qrCode", exModel.getQrCode().toString());
@@ -206,7 +239,6 @@ public class ContractServiceImpl implements ContractService {
 
         return vendorService.findById(vendorId).getContracts();
     }
-
 
     /**
      * @param model
@@ -251,80 +283,114 @@ public class ContractServiceImpl implements ContractService {
     }
 
     private Contract processAfterCreate(Contract resModel) {
+        /* Cancel all booking if the type out of room after create contract */
         int remainRoom = roomRepository.countByType_TypeIdAndIsAvailableIsTrue(resModel.getRoom().getType().getTypeId());
         if (remainRoom == 0) {
             Collection<Booking> incomingBookings = bookingRepository.findByType_TypeIdAndStatusIs(resModel.getRoom().getType().getTypeId(), Booking.STATUS.INCOMING);
             bookingService.cancelBookings(incomingBookings.stream().map(Booking::getBookingId).collect(Collectors.toList()));
         }
-        //create PDF
-        String pdfStorageUrl = createPDF(String.valueOf(resModel.getContractId()));
-        resModel.setContractUrl(pdfStorageUrl);
+
         return resModel;
     }
-    @Override
-    public String createPDF(String contractId) {
-        java.util.Locale.setDefault(new java.util.Locale("en", "us"));
-        // Create HTML load options
-        HtmlLoadOptions htmloptions = new HtmlLoadOptions();
-//        String htmlPath = "https://youthhostelstorage.blob.core.windows.net/images/contract.html";
-        // Load HTML file
-        com.aspose.pdf.Document doc = new com.aspose.pdf.Document("src/main/resources/contract/contract.html", htmloptions);
-        // Convert HTML file to PDF
-        String fileName = "contract_"+contractId+".pdf";
-        String savedPath = "src/main/resources/contract/" + fileName;
-        doc.save(savedPath);
-        String url = fileStorageService.storeFile(Utilities.pathToMultipartFile(savedPath, fileName, fileName, "application/pdf")).getFileDownloadUri();
 
-        return url;
+    private String uploadPDF(String contractHtml, String contractId){
+        try {
+            BASE64DecodedMultipartFile multipartFile = BASE64DecodedMultipartFile.builder()
+                    .fileContent(Utilities.generatePdfFromHtml(contractHtml, fontPath))
+                    .fileName(Contract.class.getSimpleName() + Constant.Symbol.UNDERSCORE + contractId + Constant.Extension.PDF)
+                    .contentType(Constant.ContentType.PDF)
+                    .build();
+            return fileStorageService.storeFile(multipartFile).getFileDownloadUri();
+
+        } catch (IOException | DocumentException e) {
+            logger.error(e.getMessage(), e);
+        }
+        //TODO: handle
+        return null;
     }
 
-    @Override
-    public void sendMailWithEmbed(String receivedMail) {
-//        String to = "thanhnv.se@gmail.com";
+    public String generateContractHTML(Contract model) {
+        Map<String, String> contractInfo = new HashMap<>();
+        contractInfo.put(Constant.Contract.VENDOR_NAME, model.getVendor().getUsername());
+        contractInfo.put(Constant.Contract.VENDOR_YEAR_OF_BIRTH, String.valueOf(model.getVendor().getYearOfBirth()));
+        contractInfo.put(Constant.Contract.VENDOR_ID_NUMBER, model.getVendor().getCitizenIdNum());
+        contractInfo.put(Constant.Contract.VENDOR_ID_ISSUED_DATE, Utilities.getTimeStrFromMillisecond(model.getVendor().getIdIssuedDate()));
+        contractInfo.put(Constant.Contract.VENDOR_ID_ISSUED_LOCATION, model.getVendor().getIdIssuedLocation());
+        contractInfo.put(Constant.Contract.VENDOR_HOUSEHOLD_ADDRESS, model.getVendor().getHouseholdAddress());
+        contractInfo.put(Constant.Contract.VENDOR_CURRENT_ADDRESS, model.getVendor().getCurrentAddress());
+        contractInfo.put(Constant.Contract.VENDOR_PHONE_NUMBER, model.getVendor().getPhone());
+
+        contractInfo.put(Constant.Contract.RENTER_NAME, model.getRenter().getUsername());
+        contractInfo.put(Constant.Contract.RENTER_YEAR_OF_BIRTH, String.valueOf(model.getRenter().getYearOfBirth()));
+        contractInfo.put(Constant.Contract.RENTER_ID_NUMBER, model.getRenter().getCitizenIdNum());
+        contractInfo.put(Constant.Contract.RENTER_ID_ISSUED_DATE, Utilities.getTimeStrFromMillisecond(model.getRenter().getIdIssuedDate()));
+        contractInfo.put(Constant.Contract.RENTER_ID_ISSUED_LOCATION, model.getRenter().getIdIssuedLocation());
+        contractInfo.put(Constant.Contract.RENTER_HOUSEHOLD_ADDRESS, model.getRenter().getHouseholdAddress());
+        contractInfo.put(Constant.Contract.RENTER_CURRENT_ADDRESS, model.getRenter().getCurrentAddress());
+        contractInfo.put(Constant.Contract.RENTER_PHONE_NUMBER, model.getRenter().getPhone());
+        contractInfo.put(Constant.Contract.RENTER_SCHOOL_NAME, model.getRenter().getSchool().getSchoolName());
+        String schoolDistrict = model.getRenter().getSchool().getDistrict().getDistrictName();
+        String schoolProvince = model.getRenter().getSchool().getDistrict().getProvince().getProvinceName();
+        contractInfo.put(Constant.Contract.RENTER_SCHOOL_ADDRESS, String.format("%s, %s",schoolDistrict, schoolProvince));
+
+        contractInfo.put(Constant.Contract.DURATION, String.valueOf(model.getDuration()));
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(model.getStartTime());
+        contractInfo.put(Constant.Contract.START_DAY, String.valueOf(calendar.get(Calendar.DAY_OF_MONTH)));
+        contractInfo.put(Constant.Contract.START_MONTH, String.valueOf(calendar.get(Calendar.MONTH)+1));
+        contractInfo.put(Constant.Contract.START_YEAR, String.valueOf(calendar.get(Calendar.YEAR)));
+
+        Group group = model.getRoom().getType().getGroup();
+        String buildingNo = group.getBuildingNo();
+        String streetName =group.getAddress().getStreetName();
+        String wardName =group.getAddress().getWardName();
+        String districtName =group.getAddress().getDistrictName();
+        String provinceName = group.getAddress().getProvinceName();
+        contractInfo.put(Constant.Contract.ADDRESS, String.format("%s, %s, %s, %s, %s",buildingNo, streetName, wardName, districtName, provinceName));
+
+//        String templateName = Utilities.getFileNameWithoutExtensionFromPath(contractTemplatePath);
+        String contractHtml = Utilities.parseThymeleafTemplate(Constant.Contract.TEMPLATE_NAME, contractInfo);
+
+        return contractHtml;
+    }
+
+    public void sendMailWithEmbed(String contractHtml, String receivedMail) {
 
         // Sender's email ID needs to be mentioned
-        String from = "winsupersentai@gmail.com";
-        final String username = "winsupersentai@gmail.com";
-        final String password = "Thanh71227198";
-
-        String host = "smtp.gmail.com";
+        String from = "avenger.youthhostel@gmail.com";
+        final String username = "avenger.youthhostel@gmail.com";
+        final String password = "KieuTrongKhanh!$&1";
 
         Properties props = new Properties();
-        props.put("mail.smtp.auth", "true");
-        props.put("mail.smtp.starttls.enable", "true");
-        props.put("mail.smtp.host", host);
-        props.put("mail.smtp.port", "465");
-        props.put("mail.smtp.debug", "true");
-        props.put("mail.smtp.socketFactory.port", "465");
-        props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
-        props.put("mail.smtp.socketFactory.fallback", "false");
+        props.put(Constant.Mail.MAIL_SMTP_AUTH, mailAuth);
+        props.put(Constant.Mail.MAIL_SMTP_STARTTLS_ENABLE, mailStartTlsEnable);
+        props.put(Constant.Mail.MAIL_SMTP_HOST, mailHost);
+        props.put(Constant.Mail.MAIL_SMTP_PORT, mailPort);
+        props.put(Constant.Mail.MAIL_SMTP_DEBUG, mailDebug);
+        props.put(Constant.Mail.MAIL_SMTP_SOCKET_FACTORY_PORT, mailSocketFactoryPort);
+        props.put(Constant.Mail.MAIL_SMTP_SOCKET_FACTORY_CLASS, mailSocketFactoryClass);
+        props.put(Constant.Mail.MAIL_SMTP_SOCKET_FACTORY_FALLBACK, mailSocketFactoryFallback);
 
         // Get the Session object.
         Session session = Session.getInstance(props,
                 new javax.mail.Authenticator() {
                     protected PasswordAuthentication getPasswordAuthentication() {
-                        return new PasswordAuthentication(username, password);
+                        return new PasswordAuthentication(adminGmailUsername, adminGmailPwd);
                     }
                 });
 
         try {
             Message message = new MimeMessage(session);
-            message.setFrom(new InternetAddress(from));
+            message.setFrom(new InternetAddress(adminGmailUsername));
             message.setRecipients(Message.RecipientType.TO,
                     InternetAddress.parse(receivedMail));
             message.setSubject("Hợp đồng thuê nhà");
-            File input = new File("src/main/resources/contract/contract.html");
-            Document doc = Jsoup.parse(input, "UTF-8", "");
-            String html = doc.toString();
-            message.setContent(html,"text/html; charset=UTF-8");
+            message.setContent(contractHtml,"text/html; charset=UTF-8");
             // Send message
             Transport.send(message);
 
-            System.out.println("Sent message successfully....");
-
         } catch (Exception e) {
-            e.printStackTrace();
-            throw new RuntimeException(e);
+            logger.error(e.getMessage(), e);
         }
     }
 }

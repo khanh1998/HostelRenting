@@ -1,17 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8"></meta>
     <title>Hợp đồng thuê nhà</title>
-    <script>
-        $(document).ready(
-            function () {
-                $.getJSON("http:/", function (result) {
-                   $("contractJson").append()
-                });
-            }
-        );
-    </script>
     <style>
         table {
             border-collapse: collapse;
@@ -23,6 +14,14 @@
             text-align: left;
             padding: 8px;
         }
+
+        body {
+            font-family: 'Source Sans Pro';
+        }
+
+        .tab2 {
+            tab-size: 4;
+        }
     </style>
 </head>
 <body>
@@ -33,33 +32,33 @@
     <p><span style="font-weight: 400;">&nbsp;</span></p>
     <p style="text-align: center;font-size: 30px"><strong>HỢP ĐỒNG THUÊ PHÒNG TRỌ</strong></p>
     <p style="font-size: 24px;"><strong>BÊN A: BÊN CHO THUÊ</strong></p>
-    <p><span style="font-weight: 400; font-size: 20px">Ông/bà : ............................................................... Năm sinh : ..........................................</span></p>
-    <p><span style="font-weight: 400; font-size: 20px;">CMND số : ....................................... Ngày cấp ............... Nơi cấp .................................</span></p>
-    <p><span style="font-weight: 400; font-size: 20px;">Hộ khẩu : ..........................................................................................................................</span></p>
-    <p><span style="font-weight: 400; font-size: 20px;">Địa chỉ : ............................................................................................................................</span></p>
-    <p><span style="font-weight: 400; font-size: 20px;">Điện thoại : .......................................................................................................................</span></p>
+    <p><span style="font-weight: 400; font-size: 20px;" class="tab2">Ông/bà : [[${vendorName}]]  Năm sinh : [[${vendorYob}]]</span></p>
+    <p><span style="font-weight: 400; font-size: 20px;" class="tab2">CMND số : [[${vendorIdNumber}]]  Ngày cấp: [[${vendorIdIssuedDate}]]  Nơi cấp: [[${vendorIdIssuedLocation}]]</span></p>
+    <p><span style="font-weight: 400; font-size: 20px;" class="tab2">Hộ khẩu : [[${vendorHouseholdAddress}]]</span></p>
+    <p><span style="font-weight: 400; font-size: 20px;" class="tab2">Địa chỉ : [[${vendorCurrentAddress}]]</span></p>
+    <p><span style="font-weight: 400; font-size: 20px;" class="tab2">Điện thoại : [[${vendorPhoneNumber}]]</span></p>
     <p>&nbsp;</p>
     <p style=" font-size: 24px;"><strong>BÊN B: BÊN THUÊ</strong></p>
-    <p><span style="font-weight: 400; font-size: 20px;">Ông/bà : .............................................................. Năm sinh : ..........................................</span></p>
-    <p><span style="font-weight: 400; font-size: 20px;">CMND số : ...................................... Ngày cấp ............... Nơi cấp .................................</span></p>
-    <p><span style="font-weight: 400; font-size: 20px;">Hộ khẩu : .........................................................................................................................</span></p>
-    <p><span style="font-weight: 400; font-size: 20px;">Địa chỉ : ............................................................................................................................</span></p>
-    <p><span style="font-weight: 400; font-size: 20px;">Điện thoại : .......................................................................................................................</span></p>
-    <p><span style="font-weight: 400; font-size: 20px;">Trường đại học (đã và đang học) : ...................................................................................</span></p>
-    <p><span style="font-weight: 400; font-size: 20px;">Địa chỉ trường : ................................................................................................................</span></p>
-    <p><span style="font-weight: 400; font-size: 20px;">Hai bên cùng thỏa thuận ký hợp đồng với những nội dung sau:</span></p>
+    <p><span style="font-weight: 400; font-size: 20px;" class="tab2">Ông/bà : [[${renterName}]]  Năm sinh: [[${renterYob}]]</span></p>
+    <p><span style="font-weight: 400; font-size: 20px;" class="tab2">CMND số : [[${renterIdNumber}]]  Ngày cấp: [[${renterIdIssuedDate}]]  Nơi cấp: [[${renterIdIssuedLocation}]]</span></p>
+    <p><span style="font-weight: 400; font-size: 20px;" class="tab2">Hộ khẩu : [[${renterHouseholdAddress}]]</span></p>
+    <p><span style="font-weight: 400; font-size: 20px;" class="tab2">Địa chỉ : [[${renterCurrentAddress}]]</span></p>
+    <p><span style="font-weight: 400; font-size: 20px;" class="tab2">Điện thoại : [[${renterPhoneNumber}]]</span></p>
+    <p><span style="font-weight: 400; font-size: 20px;" class="tab2">Trường đại học (đã và đang học) : [[${renterSchoolName}]]</span></p>
+    <p><span style="font-weight: 400; font-size: 20px;" class="tab2">Địa chỉ trường : [[${renterSchoolAddress}]]</span></p>
+    <p><span style="font-weight: 400; font-size: 20px;" class="tab2">Hai bên cùng thỏa thuận ký hợp đồng với những nội dung sau:</span></p>
     <h2><strong>Điều 1:</strong></h2>
     <ol>
         <li style="font-weight: 400; font-size: 20px;">
             <p>
-                <span style="font-weight: 400;">Bên A đồng ý cho bên B thuê; một phòng thuộc địa chỉ </span>
-                <span style="font-weight: 400;">...............................................................................................................................</span>
+                <span style="font-weight: 400;">Bên A đồng ý cho bên B thuê; một phòng thuộc địa chỉ: </span>
+                <span style="font-weight: 400;">[[${groupAddress}]]</span>
             </p>
         </li>
         <li style="font-weight: 400; font-size: 20px;">
-            <p><span style="font-weight: 400;">Thời hạn thuê nhà là </span><span style="font-weight: 400;">.............. </span>
-                <span style="font-weight: 400;">tháng kể từ ngày</span><span style="font-weight: 400;">......... </span>
-                <span style="font-weight: 400;">tháng </span><span style="font-weight: 400;">......... </span><span style="font-weight: 400;">năm </span><span style="font-weight: 400;">.........</span></p>
+            <p><span style="font-weight: 400;">Thời hạn thuê nhà là </span><span style="font-weight: 400;">[[${contractDuration}]] </span>
+                <span style="font-weight: 400;">tháng kể từ ngày </span><span style="font-weight: 400;">[[${contractStartDay}]] </span>
+                <span style="font-weight: 400;">tháng </span><span style="font-weight: 400;">[[${contractStartMonth}]] </span><span style="font-weight: 400;"> năm </span><span style="font-weight: 400;">[[${contractStartYear}]]</span></p>
         </li>
     </ol>
     <p><br /><br /><br /><br /><br /><br /><br /></p>
@@ -298,3 +297,5 @@
 </div>
 </body>
 </html>
+
+

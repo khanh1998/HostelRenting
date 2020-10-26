@@ -1,17 +1,17 @@
 package org.avengers.capstone.hostelrenting.controller;
 
-import org.avengers.capstone.hostelrenting.dto.contract.ContractDTOConfirm;
-import org.avengers.capstone.hostelrenting.dto.group.GroupDTOResponse;
 import org.avengers.capstone.hostelrenting.dto.booking.BookingDTOCreate;
-import org.avengers.capstone.hostelrenting.dto.deal.DealDTOShort;
-import org.avengers.capstone.hostelrenting.dto.type.TypeDTOResponse;
-import org.avengers.capstone.hostelrenting.dto.contract.ContractDTOResponse;
+import org.avengers.capstone.hostelrenting.dto.contract.ContractDTOConfirm;
 import org.avengers.capstone.hostelrenting.dto.contract.ContractDTOCreate;
+import org.avengers.capstone.hostelrenting.dto.contract.ContractDTOResponse;
+import org.avengers.capstone.hostelrenting.dto.deal.DealDTOShort;
+import org.avengers.capstone.hostelrenting.dto.group.GroupDTOResponse;
 import org.avengers.capstone.hostelrenting.dto.response.ApiSuccess;
+import org.avengers.capstone.hostelrenting.dto.type.TypeDTOResponse;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
 import org.avengers.capstone.hostelrenting.model.*;
-import org.avengers.capstone.hostelrenting.service.*;
 import org.avengers.capstone.hostelrenting.service.GroupService;
+import org.avengers.capstone.hostelrenting.service.*;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -110,7 +110,7 @@ public class ContractController {
 
     @PutMapping("/contracts/{contractId}")
     public ResponseEntity<?> confirmContract(@PathVariable Integer contractId,
-                                            @RequestBody @Valid ContractDTOConfirm reqDTO){
+                                             @RequestBody @Valid ContractDTOConfirm reqDTO) {
         Contract exModel = contractService.findById(contractId);
         Contract resModel = contractService.confirm(exModel, reqDTO);
         ContractDTOResponse resDTO = modelMapper.map(resModel, ContractDTOResponse.class);
@@ -164,7 +164,7 @@ public class ContractController {
     }
 
     @GetMapping("/contracts/{contractId}")
-    public ResponseEntity<?> getContractById(@PathVariable Integer contractId){
+    public ResponseEntity<?> getContractById(@PathVariable Integer contractId) {
         ContractDTOResponse resDTO = modelMapper.map(contractService.findById(contractId), ContractDTOResponse.class);
         getFullAttributesForDTO(resDTO);
         // Response entity
@@ -173,7 +173,7 @@ public class ContractController {
         return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
     }
 
-    private void getFullAttributesForDTO(ContractDTOResponse resDTO){
+    private void getFullAttributesForDTO(ContractDTOResponse resDTO) {
         //get deal
         if (resDTO.getDeal() != null)
             getDealForDTO(resDTO);

@@ -18,14 +18,11 @@ import java.io.Serializable;
 
 public class UserDTOResponse implements Serializable {
     private Long userId;
-    @NotEmpty(message = "Username is mandatory")
     private String username;
     @JsonIgnore
     @ToString.Exclude
     private String password;
-    @Email
     private String email;
-    @NotEmpty(message = "Phone is mandatory")
     private String phone;
     private String avatar;
     private String firebaseToken;
@@ -34,6 +31,12 @@ public class UserDTOResponse implements Serializable {
     private Long idIssuedDate;
     private String householdAddress;
     private String currentAddress;
+    private String citizenIdNum;
+    private String citizenIdFrontImg;
+    private String citizenIdBackImg;
     private RoleDTO role;
     private String jwtToken;
+
+    private Long createdAt;
+    private Long updatedAt;
 }

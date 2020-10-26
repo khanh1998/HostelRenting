@@ -11,13 +11,7 @@ import java.io.Serializable;
 
 @Getter
 @Setter
-public class ResRenterDTO extends UserDTOResponse implements Serializable  {
-
-    private String idNum;
-
-    private String idFrontImg;
-
-    private String idBackImg;
+public class RenterDTOResponse extends UserDTOResponse implements Serializable  {
 
     private String avatar;
 

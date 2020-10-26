@@ -7,4 +7,5 @@ import java.util.Optional;
 
 public interface ContractRepository extends JpaRepository<Contract, Integer> {
     Optional<Contract> findByVendor_UserIdAndRenter_UserIdAndRoom_RoomId(Long vendorId, Long renterId, Integer roomId);
+    Optional<Contract> findByRenter_UserIdAndContractIdAndStatusIs(Long renterId, Integer contractId, Contract.STATUS status);
 }
