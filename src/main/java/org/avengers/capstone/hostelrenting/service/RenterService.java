@@ -15,5 +15,5 @@ public interface RenterService {
     Renter findById(Long id);
     Collection<Renter> findByIds(Collection<Long> ids);
     List<Renter> findAll();
-    Renter save(Renter renter);
+    Renter create(Renter renter);
 }

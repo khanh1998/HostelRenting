@@ -91,9 +91,12 @@ public class RenterServiceIml implements RenterService {
     }
 
     @Override
-    public Renter save(Renter renter) {
-        if (renterRepository.equals(renter)) {
-            throw new DuplicateKeyException(String.format(Constant.Message.DUPLICATED_ERROR, "all", "all"));
+    public Renter create(Renter renter) {
+        if (renter.getSchool()!=null){
+            renter.setSchool(schoolService.findById(renter.getSchool().getSchoolId()));
+        }
+        if (renter.getProvince() != null){
+            renter.setProvince(provinceService.findById(renter.getProvince().getProvinceId()));
         }
 
         return renterRepository.save(renter);

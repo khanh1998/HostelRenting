@@ -16,9 +16,10 @@ import java.io.Serializable;
 
 public class UserDTORegister implements Serializable {
 
-    public UserDTORegister(){
+    public UserDTORegister() {
         this.createdAt = System.currentTimeMillis();
     }
+
     @Getter
     @Setter
     @NotEmpty(message = "Username is mandatory")
@@ -34,7 +35,40 @@ public class UserDTORegister implements Serializable {
     @NotEmpty(message = "Phone is mandatory")
     private String phone;
 
+    @Getter
+    @Setter
+    private String email;
+    @Getter
+    @Setter
+    private String avatar;
+    @Getter
+    @Setter
+    private Integer yearOfBirth;
+    @Getter
+    @Setter
+    private String idIssuedLocation;
+    @Getter
+    @Setter
+    private Long idIssuedDate;
+    @Getter
+    @Setter
+    private String householdAddress;
+    @Getter
+    @Setter
+    private String currentAddress;
+    @Getter
+    @Setter
+    private String citizenIdNum;
+    @Getter
+    @Setter
+    private String citizenIdFrontImg;
+    @Getter
+    @Setter
+    private String citizenIdBackImg;
+
     @JsonIgnore
     @Getter
     private Long createdAt;
+
+
 }

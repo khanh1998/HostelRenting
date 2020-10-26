@@ -1,13 +1,11 @@
 package org.avengers.capstone.hostelrenting.controller;
 
 import org.avengers.capstone.hostelrenting.dto.renter.RenterDTOUpdate;
-import org.avengers.capstone.hostelrenting.dto.renter.ReqRenterDTO;
+import org.avengers.capstone.hostelrenting.dto.renter.RenterDTOCreate;
 import org.avengers.capstone.hostelrenting.dto.renter.RenterDTOResponse;
 import org.avengers.capstone.hostelrenting.dto.response.ApiSuccess;
-import org.avengers.capstone.hostelrenting.dto.user.UserDTOUpdate;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
 import org.avengers.capstone.hostelrenting.model.Renter;
-import org.avengers.capstone.hostelrenting.model.User;
 import org.avengers.capstone.hostelrenting.service.ProvinceService;
 import org.avengers.capstone.hostelrenting.service.RenterService;
 import org.avengers.capstone.hostelrenting.service.RoleService;
@@ -66,14 +64,12 @@ public class RenterController {
 
 
     @PostMapping("/renters/register")
-    public ResponseEntity<?> create(@Valid @RequestBody ReqRenterDTO reqDTO) {
+    public ResponseEntity<?> create(@Valid @RequestBody RenterDTOCreate reqDTO) {
         Renter reqModel = modelMapper.map(reqDTO, Renter.class);
         // set critical data for model: role, school, province
         reqModel.setPassword(passwordEncoder.encode(reqDTO.getPassword()));
         reqModel.setRole(roleService.findById(2));
-//        reqModel.setSchool(schoolService.findById(reqDTO.getSchoolId()));
-//        reqModel.setProvince(provinceService.findById(reqDTO.getProvinceId()));
-        Renter createdModel = renterService.save(reqModel);
+        Renter createdModel = renterService.create(reqModel);
 
         RenterDTOResponse resDTO = modelMapper.map(createdModel, RenterDTOResponse.class);
 
