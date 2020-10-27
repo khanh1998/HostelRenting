@@ -102,7 +102,9 @@ public class ContractController {
         // get deal, booking, group and type
         getFullAttributesForDTO(resDTO);
 
-        ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTO, String.format("Your contract has been created with status: %s", resModel.getStatus()));
+        String msg = String.format("Your contract has been created with status: %s", resModel.getStatus());
+        logger.info(msg);
+        ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTO, msg);
         logger.info("END - creating contract");
 
         return ResponseEntity.status(HttpStatus.CREATED).body(apiSuccess);

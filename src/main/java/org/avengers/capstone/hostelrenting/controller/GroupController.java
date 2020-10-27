@@ -27,8 +27,8 @@ import static org.avengers.capstone.hostelrenting.Constant.Pagination.DEFAULT_SI
 
 @RestController
 @RequestMapping("/api/v1")
-public class HostelGroupController {
-    private static final Logger logger = LoggerFactory.getLogger(HostelGroupController.class);
+public class GroupController {
+    private static final Logger logger = LoggerFactory.getLogger(GroupController.class);
 
     private GroupService groupService;
 

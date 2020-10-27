@@ -23,7 +23,7 @@ import static org.avengers.capstone.hostelrenting.Constant.Message.*;
 
 @RestController
 @RequestMapping("/api/v1")
-public class HostelRoomController {
+public class RoomController {
 
     private RoomService roomService;
     private TypeService typeService;

@@ -75,7 +75,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public Booking create(Booking reqModel) {
-        Optional<Booking> tempBooking = bookingRepository.findBookingByRenter_UserIdAndType_TypeIdAndStatusIs(reqModel.getRenter().getUserId(),
+        Optional<Booking> tempBooking = bookingRepository.findFirstByRenter_UserIdAndType_TypeIdAndStatusOrderByCreatedAtDesc(reqModel.getRenter().getUserId(),
                 reqModel.getType().getTypeId(), Booking.STATUS.INCOMING);
         if (tempBooking.isPresent()) {
             throw new GenericException(Booking.class, "has already existed with ",
@@ -142,7 +142,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public boolean cancelBookings(Collection<Integer> bookingIds) {
-        bookingIds.stream().forEach(id -> {
+        bookingIds.forEach(id -> {
             Booking model = findById(id);
             bookingRepository.save(model.toBuilder()
                     .status(Booking.STATUS.CANCELLED)
@@ -151,4 +151,5 @@ public class BookingServiceImpl implements BookingService {
         });
         return true;
     }
+
 }

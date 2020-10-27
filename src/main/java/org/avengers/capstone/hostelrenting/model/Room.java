@@ -28,7 +28,7 @@ public class Room {
     @JoinColumn(name = "type_id", nullable = false)
     private Type type;
 
-    @Column(name = "is_available", nullable = false, columnDefinition = "boolean default true")
+    @Column(name = "is_available", nullable = false, columnDefinition = "bool default true")
     private boolean isAvailable;
 
     @OneToMany(mappedBy = "room", cascade = CascadeType.ALL, fetch = FetchType.LAZY)

@@ -85,6 +85,9 @@ public class Type {
     @OneToMany(mappedBy = "type", fetch = FetchType.LAZY)
     private Collection<Deal> deals;
 
+    @OneToMany(mappedBy = "type", fetch = FetchType.LAZY)
+    private Collection<Feedback> feedbacks;
+
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @EqualsAndHashCode.Exclude
     @ToString.Exclude

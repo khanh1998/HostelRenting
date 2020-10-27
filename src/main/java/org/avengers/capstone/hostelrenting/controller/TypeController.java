@@ -1,7 +1,9 @@
 package org.avengers.capstone.hostelrenting.controller;
 
+import com.sun.mail.iap.Response;
 import org.avengers.capstone.hostelrenting.dto.combination.TypeAndGroupDTO;
 import org.avengers.capstone.hostelrenting.dto.combination.TypesAndGroupsDTO;
+import org.avengers.capstone.hostelrenting.dto.feedback.FeedbackDTOResponse;
 import org.avengers.capstone.hostelrenting.dto.group.GroupDTOResponse;
 import org.avengers.capstone.hostelrenting.dto.response.ApiSuccess;
 import org.avengers.capstone.hostelrenting.dto.type.TypeDTOCreate;
@@ -30,16 +32,22 @@ import static org.avengers.capstone.hostelrenting.Constant.Pagination.DEFAULT_SI
 @Validated
 @RestController
 @RequestMapping("/api/v1")
-public class HostelTypeController {
+public class TypeController {
 
-    private static final Logger logger = LoggerFactory.getLogger(HostelTypeController.class);
+    private static final Logger logger = LoggerFactory.getLogger(TypeController.class);
 
     private TypeService typeService;
     private GroupService groupService;
     private CategoryService categoryService;
     private TypeStatusService typeStatusService;
     private FacilityService facilityService;
+    private FeedbackService feedbackService;
     private ModelMapper modelMapper;
+
+    @Autowired
+    public void setFeedbackService(FeedbackService feedbackService) {
+        this.feedbackService = feedbackService;
+    }
 
     @Autowired
     public void setCategoryService(CategoryService categoryService) {
@@ -165,27 +173,26 @@ public class HostelTypeController {
     /**
      * Get types with many criteria
      *
-     * @param typeId
-     * @param schoolId
-     * @param provinceId
-     * @param categoryId
-     * @param latitude
-     * @param longitude
-     * @param distance
-     * @param minPrice
-     * @param maxPrice
-     * @param minSuperficiality
-     * @param maxSuperficiality
-     * @param minCapacity
-     * @param maxCapacity
-     * @param facilityIds
-     * @param serviceIds
-     * @param sortBy
-     * @param asc
-     * @param size
-     * @param page
-     * @return
-     * @throws EntityNotFoundException
+     * @param typeId            type id
+     * @param schoolId          school id
+     * @param provinceId        province id
+     * @param categoryId        category id
+     * @param latitude          latitude
+     * @param longitude         longtitude
+     * @param distance          distance from the search point
+     * @param minPrice          min price for filter
+     * @param maxPrice          max price for filter
+     * @param minSuperficiality min superficiality for filter
+     * @param maxSuperficiality mas superficiality for filter
+     * @param minCapacity       min capacity for filter
+     * @param maxCapacity       max capacity for filter
+     * @param facilityIds       facility ids for searching
+     * @param serviceIds        service ids for searching
+     * @param sortBy            string for sortBy
+     * @param asc               false for desc
+     * @param size              size of a page
+     * @param page              number of page
+     * @return collection of types
      */
     @GetMapping("/types")
     public ResponseEntity<?> getTypes(@RequestParam(required = false) Integer typeId,
@@ -207,7 +214,7 @@ public class HostelTypeController {
                                       @RequestParam(required = false, defaultValue = "score") String sortBy,
                                       @RequestParam(required = false, defaultValue = "false") Boolean asc,
                                       @RequestParam(required = false, defaultValue = DEFAULT_SIZE) Integer size,
-                                      @RequestParam(required = false, defaultValue = DEFAULT_PAGE) Integer page){
+                                      @RequestParam(required = false, defaultValue = DEFAULT_PAGE) Integer page) {
         //log start
         logger.info("START - Get type(s)");
         if (typeId != null) {
@@ -270,7 +277,7 @@ public class HostelTypeController {
                                 .stream()
                                 .anyMatch(serviceDetail -> Arrays
                                         .stream(serviceIds)
-                                        .anyMatch(id -> id == serviceDetail.getGroupServiceId()));
+                                        .anyMatch(id -> id.equals(serviceDetail.getGroupServiceId())));
                     return true;
                 }).filter(hostelType -> {
                     if (regulationIds != null && regulationIds.length > 0)
@@ -338,4 +345,12 @@ public class HostelTypeController {
         return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
     }
 
+    @GetMapping("types/{typeId}/feedbacks")
+    public ResponseEntity<?> getFeedbacksByTypeId(@PathVariable Integer typeId) {
+        Collection<FeedbackDTOResponse> resDTOs = feedbackService.findByTypeId(typeId)
+                .stream().map(feedback -> modelMapper.map(feedback, FeedbackDTOResponse.class))
+                .collect(Collectors.toList());
+        ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTOs, "Your feedback has been retrieved successfully!");
+        return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
+    }
 }
