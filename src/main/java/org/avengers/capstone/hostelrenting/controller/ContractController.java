@@ -21,8 +21,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static org.avengers.capstone.hostelrenting.Constant.Pagination.DEFAULT_PAGE;
+import static org.avengers.capstone.hostelrenting.Constant.Pagination.DEFAULT_SIZE;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -124,12 +128,16 @@ public class ContractController {
     }
 
     @GetMapping("/renters/{renterId}/contracts")
-    public ResponseEntity<?> getByRenterId(@PathVariable Long renterId) throws EntityNotFoundException {
+    public ResponseEntity<?> getByRenterId(@PathVariable Long renterId,
+                                           @RequestParam(required = false, defaultValue = "createdAt") String sortBy,
+                                           @RequestParam(required = false, defaultValue = "false") Boolean asc,
+                                           @RequestParam(required = false, defaultValue = DEFAULT_SIZE) Integer size,
+                                           @RequestParam(required = false, defaultValue = DEFAULT_PAGE) Integer page) throws EntityNotFoundException {
         String resMsg = "Your contract(s) has been retrieved successfully!";
 
-        List<ContractDTOResponse> resDTOs = contractService.findByRenterId(renterId)
+        List<ContractDTOResponse> resDTOs = contractService.findByVendorId(renterId, page, size, sortBy, asc)
                 .stream()
-                .map(contract -> modelMapper.map(contract, ContractDTOResponse.class))
+                .map(resDTO -> modelMapper.map(resDTO, ContractDTOResponse.class))
                 .collect(Collectors.toList());
 
         if (resDTOs.isEmpty())
@@ -140,17 +148,23 @@ public class ContractController {
 
         // Response entity
         ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTOs, resMsg);
+        apiSuccess.setPage(page);
+        apiSuccess.setSize(size);
 
         return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
     }
 
     @GetMapping("/vendors/{vendorId}/contracts")
-    public ResponseEntity<?> getByVendorId(@PathVariable Long vendorId) throws EntityNotFoundException {
+    public ResponseEntity<?> getByVendorId(@PathVariable Long vendorId,
+                                           @RequestParam(required = false, defaultValue = "createdAt") String sortBy,
+                                           @RequestParam(required = false, defaultValue = "false") Boolean asc,
+                                           @RequestParam(required = false, defaultValue = DEFAULT_SIZE) Integer size,
+                                           @RequestParam(required = false, defaultValue = DEFAULT_PAGE) Integer page) throws EntityNotFoundException {
         String resMsg = "Your contract(s) has been retrieved successfully!";
 
-        List<ContractDTOResponse> resDTOs = contractService.findByVendorId(vendorId)
+        List<ContractDTOResponse> resDTOs = contractService.findByVendorId(vendorId, page, size, sortBy, asc)
                 .stream()
-                .map(contract -> modelMapper.map(contract, ContractDTOResponse.class))
+                .map(resDTO -> modelMapper.map(resDTO, ContractDTOResponse.class))
                 .collect(Collectors.toList());
 
         if (resDTOs.isEmpty())
@@ -161,6 +175,8 @@ public class ContractController {
 
         // Response entity
         ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTOs, resMsg);
+        apiSuccess.setPage(page);
+        apiSuccess.setSize(size);
 
         return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
     }

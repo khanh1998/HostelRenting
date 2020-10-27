@@ -26,6 +26,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 
@@ -214,35 +217,23 @@ public class ContractServiceImpl implements ContractService {
         throw new GenericException(Contract.class, "qrCode not matched", "contractId", String.valueOf(exModel.getContractId()), "qrCode", exModel.getQrCode().toString());
     }
 
-    /**
-     * Get list of contracts by given renter id
-     *
-     * @param renterId given renter id to get contract
-     * @return list of contract models
-     */
     @Override
-    public List<Contract> findByRenterId(Long renterId) {
-        renterService.checkExist(renterId);
-
-        return renterService.findById(renterId).getContracts();
+    public List<Contract> findByRenterId(Long renterId, int page, int size, String sortBy, boolean asc) {
+        Sort sort = Sort.by(asc == true ? Sort.Direction.ASC : Sort.Direction.DESC, sortBy);
+        Pageable pageable = PageRequest.of(page - 1, size, sort);
+        return contractRepository.findByVendor_UserId(renterId, pageable);
     }
 
-    /**
-     * Get list of contracts by given vendor id
-     *
-     * @param vendorId given vendor id to get contract
-     * @return list of contract models
-     */
     @Override
-    public List<Contract> findByVendorId(Long vendorId) {
-        vendorService.checkExist(vendorId);
-
-        return vendorService.findById(vendorId).getContracts();
+    public List<Contract> findByVendorId(Long vendorId, int page, int size, String sortBy, boolean asc) {
+        Sort sort = Sort.by(asc == true ? Sort.Direction.ASC : Sort.Direction.DESC, sortBy);
+        Pageable pageable = PageRequest.of(page - 1, size, sort);
+        return contractRepository.findByVendor_UserId(vendorId, pageable);
     }
 
+
     /**
-     * @param model
-     * @return
+     * @param model contract model
      */
     private void validatePreCreate(Contract model, Collection<Integer> reqServiceIds, Collection<GroupService> availableServices) throws PreCreationException {
         int groupId = model.getRoom().getType().getGroup().getGroupId();
