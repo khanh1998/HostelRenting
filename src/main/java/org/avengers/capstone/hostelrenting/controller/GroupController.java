@@ -44,8 +44,14 @@ public class GroupController {
     private ServiceService serviceService;
 
     private ScheduleService scheduleService;
+    private StreetService streetService;
 
     private ModelMapper modelMapper;
+
+    @Autowired
+    public void setStreetService(StreetService streetService) {
+        this.streetService = streetService;
+    }
 
     @Autowired
     public void setScheduleService(ScheduleService scheduleService) {
@@ -102,7 +108,11 @@ public class GroupController {
             Vendor vendor = vendorService.findById(reqDTO.getVendorId());
             reqModel.setVendor(vendor);
             // set address object
-            StreetWard address = streetWardService.findByStreetIdAndWardId(reqDTO.getAddressFull().getStreetId(), reqDTO.getAddressFull().getWardId());
+            Street street = Street.builder()
+                    .streetName(reqDTO.getAddressFull().getStreetName())
+                    .build();
+            // create street and save streetward if not exist
+            StreetWard address = streetWardService.findByStreetIdAndWardId(streetService.createIfNotExist(street).getStreetId(), reqDTO.getAddressFull().getWardId());
             reqModel.setAddress(address);
             // set manager info
             if (reqModel.getManagerName() == null){
@@ -188,6 +198,32 @@ public class GroupController {
     }
 
     /**
+     * Update group information
+     *
+     * @param reqDTO  request dto
+     * @param groupId group id to update
+     * @return
+     */
+    @PutMapping("/groups/{groupId}")
+    public ResponseEntity<?> updateGroup(@Valid @RequestBody GroupDTOUpdate reqDTO,
+                                         @PathVariable Integer groupId) {
+        //log start update
+        logger.info("START - updating group");
+        Group existedModel = groupService.findById(groupId);
+
+        modelMapper.map(reqDTO, existedModel);
+        Group resModel = groupService.update(existedModel);
+        GroupDTOResponse resDTO = modelMapper.map(resModel, GroupDTOResponse.class);
+
+        //log end update
+        logger.info("SUCCESSFUL - updating group");
+
+        ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTO, "Your hostel group has been retrieved successfully!");
+
+        return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
+    }
+
+    /**
      * Get group object by the given id
      *
      * @param groupId specific id of group
@@ -231,30 +267,5 @@ public class GroupController {
         return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
     }
 
-    /**
-     * Update group information
-     *
-     * @param reqDTO  request dto
-     * @param groupId group id to update
-     * @return
-     */
-    @PutMapping("/groups/{groupId}")
-    public ResponseEntity<?> updateGroup(@Valid @RequestBody GroupDTOUpdate reqDTO,
-                                         @PathVariable Integer groupId) {
-        //log start update
-        logger.info("START - updating group");
-        Group existedModel = groupService.findById(groupId);
-
-        modelMapper.map(reqDTO, existedModel);
-        Group resModel = groupService.update(existedModel);
-        GroupDTOResponse resDTO = modelMapper.map(resModel, GroupDTOResponse.class);
-
-        //log end update
-        logger.info("SUCCESSFUL - updating group");
-
-        ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTO, "Your hostel group has been retrieved successfully!");
-
-        return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
-    }
 
 }

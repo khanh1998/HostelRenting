@@ -1,10 +1,9 @@
 package org.avengers.capstone.hostelrenting.dto.group;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
 import lombok.Setter;
-
-import javax.validation.constraints.NotNull;
 
 /**
  * @author duattt on 10/9/20
@@ -15,7 +14,9 @@ import javax.validation.constraints.NotNull;
 @Getter
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class GroupDTOUpdate {
-    private Integer groupId;
+    public GroupDTOUpdate() {
+        this.updatedAt = System.currentTimeMillis();
+    }
     private String groupName;
     private String curfewTime;
     private Boolean ownerJoin;
@@ -23,4 +24,8 @@ public class GroupDTOUpdate {
     private String managerName;
     private String managerPhone;
     private Float downPayment;
+
+    @Getter
+    @JsonIgnore
+    private Long updatedAt;
 }

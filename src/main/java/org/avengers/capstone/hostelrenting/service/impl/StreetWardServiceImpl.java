@@ -4,7 +4,11 @@ import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
 import org.avengers.capstone.hostelrenting.model.Street;
 import org.avengers.capstone.hostelrenting.model.StreetWard;
 import org.avengers.capstone.hostelrenting.repository.StreetWardRepository;
+import org.avengers.capstone.hostelrenting.service.StreetService;
 import org.avengers.capstone.hostelrenting.service.StreetWardService;
+import org.avengers.capstone.hostelrenting.service.WardService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +22,18 @@ import java.util.Optional;
 @Service
 public class StreetWardServiceImpl implements StreetWardService {
     StreetWardRepository streetWardRepository;
+    private StreetService streetService;
+    private WardService wardService;
+    private static final Logger logger = LoggerFactory.getLogger(StreetWardServiceImpl.class);
+    @Autowired
+    public void setWardService(WardService wardService) {
+        this.wardService = wardService;
+    }
+
+    @Autowired
+    public void setStreetService(StreetService streetService) {
+        this.streetService = streetService;
+    }
 
     @Autowired
     public void setStreetWardRepository(StreetWardRepository streetWardRepository) {
@@ -40,6 +56,19 @@ public class StreetWardServiceImpl implements StreetWardService {
 
     @Override
     public StreetWard findByStreetIdAndWardId(Integer streetId, Integer wardId) {
-        return streetWardRepository.findByStreet_StreetIdAndWard_WardId(streetId, wardId);
+        Optional<StreetWard> streetWard = streetWardRepository.findByStreet_StreetIdAndWard_WardId(streetId, wardId);
+        if (streetWard.isEmpty()) {
+            StreetWard newStreetWard = streetWardRepository.save(StreetWard.builder()
+                    .street(streetService.findById(streetId))
+                    .ward(wardService.findById(wardId))
+                    .build());
+            logger.info(String.format("Created streetWard: {id=%s} {streetId=%s} {streetName=%s} {wardId=%s} {wardName=%s}",
+                    newStreetWard.getStreetWardId(),
+                    newStreetWard.getStreet().getStreetId(),
+                    newStreetWard.getStreet().getStreetName(),
+                    newStreetWard.getWard().getWardId(),
+                    newStreetWard.getWard().getWardName()));
+            return newStreetWard;
+        } else return streetWard.get();
     }
 }
