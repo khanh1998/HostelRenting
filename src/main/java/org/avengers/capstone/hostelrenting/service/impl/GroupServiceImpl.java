@@ -49,8 +49,6 @@ public class GroupServiceImpl implements GroupService {
     @Override
     public Group create(Group reqModel) {
         //TODO: check duplicate
-        // Set createdAt
-        reqModel.setCreatedAt(System.currentTimeMillis());
 
         return groupRepository.save(reqModel);
     }

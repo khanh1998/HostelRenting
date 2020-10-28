@@ -19,8 +19,6 @@ import java.util.List;
 @Builder(toBuilder = true)
 public class GroupScheduleDTOResponse implements Serializable {
     private int scheduleId;
-    //    private String dayOfWeek;
-//    private Schedule.CODE code;
     @JsonUnwrapped
     private ScheduleDTO schedule;
     @JsonIgnore
