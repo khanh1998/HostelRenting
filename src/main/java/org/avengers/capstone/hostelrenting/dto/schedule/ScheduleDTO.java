@@ -15,5 +15,4 @@ import org.avengers.capstone.hostelrenting.model.Schedule;
 public class ScheduleDTO {
     private Schedule.CODE code;
     private String dayOfWeek;
-
 }
