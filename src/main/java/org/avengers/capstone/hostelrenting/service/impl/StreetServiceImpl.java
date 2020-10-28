@@ -39,4 +39,10 @@ public class StreetServiceImpl implements StreetService {
         return streetRepository.getOne(id);
     }
 
+    @Override
+    public Street createIfNotExist(Street street) {
+        Optional<Street> model = streetRepository.findByStreetName(street.getStreetName());
+        return model.orElseGet(() -> streetRepository.save(street));
+    }
+
 }

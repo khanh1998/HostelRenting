@@ -1,6 +1,5 @@
 package org.avengers.capstone.hostelrenting.service;
 
-import org.avengers.capstone.hostelrenting.model.Street;
 import org.avengers.capstone.hostelrenting.model.StreetWard;
 
 /**

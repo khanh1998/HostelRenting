@@ -4,13 +4,11 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
-import org.avengers.capstone.hostelrenting.model.Contract;
 import org.avengers.capstone.hostelrenting.model.serialized.AddressFull;
 
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.List;
-import java.util.UUID;
 
 
 public class GroupDTOCreate implements Serializable {
