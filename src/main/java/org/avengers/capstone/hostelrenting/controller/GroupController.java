@@ -14,9 +14,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -25,6 +27,7 @@ import java.util.stream.Collectors;
 import static org.avengers.capstone.hostelrenting.Constant.Pagination.DEFAULT_PAGE;
 import static org.avengers.capstone.hostelrenting.Constant.Pagination.DEFAULT_SIZE;
 
+@Validated
 @RestController
 @RequestMapping("/api/v1")
 public class GroupController {
@@ -40,7 +43,14 @@ public class GroupController {
 
     private ServiceService serviceService;
 
+    private ScheduleService scheduleService;
+
     private ModelMapper modelMapper;
+
+    @Autowired
+    public void setScheduleService(ScheduleService scheduleService) {
+        this.scheduleService = scheduleService;
+    }
 
     @Autowired
     public void setServiceService(ServiceService serviceService) {
@@ -80,7 +90,9 @@ public class GroupController {
      * @throws EntityNotFoundException when some object not found
      */
     @PostMapping("/groups")
-    public ResponseEntity<?> createGroup(@Valid @RequestBody List<GroupDTOCreate> reqDTOs) throws EntityNotFoundException {
+    public ResponseEntity<?> createGroup(@RequestBody
+                                         @NotEmpty(message = "Input group list cannot be empty.")
+                                                 List<@Valid GroupDTOCreate> reqDTOs) throws EntityNotFoundException {
         logger.info("START - creating group(s)");
         // get necessary for model: vendor, address, services
         List<GroupDTOResponse> resDTOs = new ArrayList<>();
@@ -92,7 +104,15 @@ public class GroupController {
             // set address object
             StreetWard address = streetWardService.findByStreetIdAndWardId(reqDTO.getAddressFull().getStreetId(), reqDTO.getAddressFull().getWardId());
             reqModel.setAddress(address);
-            // set services object
+            // set manager info
+            if (reqModel.getManagerName() == null){
+                reqModel.setManagerName(vendor.getUsername());
+            }
+            if (reqModel.getManagerPhone() == null){
+                reqModel.setManagerPhone(vendor.getPhone());
+            }
+
+            /* set services */
             if (reqDTO.getServices() != null) {
                 Collection<org.avengers.capstone.hostelrenting.model.GroupService> groupServices = reqDTO.getServices()
                         .stream()
@@ -111,21 +131,44 @@ public class GroupController {
                         .collect(Collectors.toList());
                 reqModel.setGroupServices(groupServices);
             }
-            // set regulation
+
+            /* set regulation */
             if (reqDTO.getRegulations() != null) {
                 Collection<GroupRegulation> regulations = reqDTO.getRegulations()
                         .stream()
                         .map(dto -> {
                             GroupRegulation model = GroupRegulation.builder()
                                     .group(reqModel)
-                                    .isActive(dto.isActive())
-                                    .isAllowed(dto.isAllowed())
+                                    .isActive(dto.getIsActive())
+                                    .isAllowed(dto.getIsAllowed())
                                     .regulation(regulationService.findById(dto.getRegulationId()))
                                     .build();
                             return model;
                         })
                         .collect(Collectors.toList());
                 reqModel.setGroupRegulations(regulations);
+            }
+
+            /* Set schedules */
+            if (reqDTO.getSchedules() != null) {
+                Collection<GroupSchedule> schedules = reqDTO.getSchedules()
+                        .stream()
+                        .map(dto -> {
+                            List<GroupSchedule> models = new ArrayList<>();
+                            for (String s : dto.getTimeRange()) {
+                                GroupSchedule model = GroupSchedule.builder()
+                                        .group(reqModel)
+                                        .schedule(scheduleService.findById(dto.getScheduleId()))
+                                        .startTime(s.substring(0, s.indexOf("-") - 1))
+                                        .endTime(s.substring(s.indexOf("-") + 2))
+                                        .build();
+                                models.add(model);
+                            }
+                            return models;
+                        })
+                        .flatMap(Collection::stream)
+                        .collect(Collectors.toList());
+                reqModel.setGroupSchedules(schedules);
             }
 
             Group resModel = groupService.create(reqModel);
@@ -178,7 +221,7 @@ public class GroupController {
                                                  @RequestParam(required = false, defaultValue = DEFAULT_PAGE) Integer page) {
         //log start
         logger.info("START - Get group by vendor with id: " + vendorId);
-        List<GroupDTOResponse> resDTOs = groupService.getByVendorId(vendorId, size, page-1)
+        List<GroupDTOResponse> resDTOs = groupService.getByVendorId(vendorId, size, page - 1)
                 .stream().map(group -> modelMapper.map(group, GroupDTOResponse.class))
                 .collect(Collectors.toList());
 
@@ -190,7 +233,8 @@ public class GroupController {
 
     /**
      * Update group information
-     * @param reqDTO request dto
+     *
+     * @param reqDTO  request dto
      * @param groupId group id to update
      * @return
      */

@@ -29,9 +29,13 @@ public class GroupDTOResponse implements Serializable {
 
     private String buildingNo;
 
-    private String longitude;
+    private Double longitude;
 
-    private String latitude;
+    private Double latitude;
+
+    private String managerName;
+
+    private String managerPhone;
 
     /**
      * curfewTime that limit the time to come back home
@@ -54,26 +58,30 @@ public class GroupDTOResponse implements Serializable {
     private Collection<GroupScheduleDTOResponse> groupSchedules;
 
     public Collection<GroupRegulationDTOResponse> getGroupRegulations() {
-        return groupRegulations.stream().filter(GroupRegulationDTOResponse::isActive).collect(Collectors.toList());
+        if (groupRegulations != null)
+            return groupRegulations.stream().filter(GroupRegulationDTOResponse::isActive).collect(Collectors.toList());
+        return null;
     }
 
     public Collection<GroupScheduleDTOResponse> getGroupSchedules() {
-        return groupSchedules.stream()
-                .collect(Collectors.groupingBy(GroupScheduleDTOResponse::getScheduleId))
-                .values().stream()
-                .map(scheduleDTO -> GroupScheduleDTOResponse
-                        .builder().scheduleId(scheduleDTO.get(0).getScheduleId())
-                        .schedule(scheduleDTO.get(0).getSchedule())
-                        .startTime(scheduleDTO.get(0).getStartTime())
-                        .endTime(scheduleDTO.get(0).getEndTime())
-                        .timeRange(scheduleDTO
-                                .stream()
-                                .map(dto ->{
-                                    ArrayList<String> timeRange = new ArrayList<>();
-                                    timeRange.add(dto.getStartTime() + " - " + dto.getEndTime());
-                                    return timeRange;
-                                })
-                                .flatMap(Collection::stream)
-                                .collect(Collectors.toList())).build()).collect(Collectors.toList());
+        if (groupSchedules != null)
+            return groupSchedules.stream()
+                    .collect(Collectors.groupingBy(GroupScheduleDTOResponse::getScheduleId))
+                    .values().stream()
+                    .map(scheduleDTO -> GroupScheduleDTOResponse
+                            .builder().scheduleId(scheduleDTO.get(0).getScheduleId())
+                            .schedule(scheduleDTO.get(0).getSchedule())
+                            .startTime(scheduleDTO.get(0).getStartTime())
+                            .endTime(scheduleDTO.get(0).getEndTime())
+                            .timeRange(scheduleDTO
+                                    .stream()
+                                    .map(dto -> {
+                                        ArrayList<String> timeRange = new ArrayList<>();
+                                        timeRange.add(dto.getStartTime() + " - " + dto.getEndTime());
+                                        return timeRange;
+                                    })
+                                    .flatMap(Collection::stream)
+                                    .collect(Collectors.toList())).build()).collect(Collectors.toList());
+        return null;
     }
 }

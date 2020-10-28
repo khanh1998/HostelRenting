@@ -52,13 +52,13 @@ public class Group {
     /**
      * longitude of the group
      */
-//    @NotBlank(message = "Longitude is mandatory")
+    @Column(nullable = false)
     private Double longitude;
 
     /**
      * latitude of the group
      */
-//    @NotBlank(message = "Latitude is mandatory")
+    @Column(nullable = false)
     private Double latitude;
 
     /**

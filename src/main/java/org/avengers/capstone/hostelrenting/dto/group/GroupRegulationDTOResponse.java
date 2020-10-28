@@ -18,10 +18,5 @@ public class GroupRegulationDTOResponse implements Serializable {
     private String regulationName;
     private boolean isAllowed;
     private boolean isActive;
-
-    @JsonIgnore
-    public boolean isActive() {
-        return isActive;
-    }
 }
 
