@@ -7,6 +7,8 @@ import org.avengers.capstone.hostelrenting.Constant;
 import org.avengers.capstone.hostelrenting.dto.contract.ContractDTOConfirm;
 
 
+import org.avengers.capstone.hostelrenting.dto.notification.NotificationContent;
+import org.avengers.capstone.hostelrenting.dto.notification.NotificationRequest;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
 import org.avengers.capstone.hostelrenting.exception.GenericException;
 import org.avengers.capstone.hostelrenting.exception.PreCreationException;
@@ -40,6 +42,7 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.swing.text.html.Option;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -85,12 +88,16 @@ public class ContractServiceImpl implements ContractService {
     private RoomRepository roomRepository;
     private BookingRepository bookingRepository;
     private ModelMapper modelMapper;
-    private RenterService renterService;
-    private VendorService vendorService;
     private RoomService roomService;
     private GroupServiceService groupServiceService;
     private BookingService bookingService;
     private FileStorageServiceImp fileStorageService;
+    private FirebaseService firebaseService;
+
+    @Autowired
+    public void setFirebaseService(FirebaseService firebaseService) {
+        this.firebaseService = firebaseService;
+    }
 
     @Autowired
     public void setFileStorageService(FileStorageServiceImp fileStorageService) {
@@ -125,16 +132,6 @@ public class ContractServiceImpl implements ContractService {
     @Autowired
     public void setRoomService(RoomService roomService) {
         this.roomService = roomService;
-    }
-
-    @Autowired
-    public void setVendorService(VendorService vendorService) {
-        this.vendorService = vendorService;
-    }
-
-    @Autowired
-    public void setRenterService(RenterService renterService) {
-        this.renterService = renterService;
     }
 
     @Autowired
@@ -211,7 +208,7 @@ public class ContractServiceImpl implements ContractService {
             Booking exBooking = bookingService.findById(resModel.getBookingId());
             exBooking.setContractId(resModel.getContractId());
             bookingRepository.save(exBooking);
-
+            handleNotification(resModel, Constant.Notification.CONFIRM_CONTRACT, Constant.Notification.STATIC_CONFIRM_CONTRACT_MESSAGE);
             return resModel;
         }
         throw new GenericException(Contract.class, "qrCode not matched", "contractId", String.valueOf(exModel.getContractId()), "qrCode", exModel.getQrCode().toString());
@@ -383,5 +380,30 @@ public class ContractServiceImpl implements ContractService {
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
         }
+    }
+
+    private void handleNotification(Contract resModel, String action, String staticMessage){
+        /* send notification after booking */
+        Map<String, String> data = new HashMap<>();
+        data.put(Constant.Field.CONTRACT_ID, String.valueOf(resModel.getContractId()));
+        data.put(Constant.Field.ACTION, action);
+        String title = staticMessage +  resModel.getRenter().getUsername();
+        String icon = resModel.getRenter().getAvatar();
+        sendNotification(resModel, title, data, icon);
+    }
+
+    private void sendNotification(Contract model, String title, Map<String, String> data, String icon){
+        NotificationRequest notificationRequest = NotificationRequest.builder()
+                .destination(model.getVendor().getFirebaseToken())
+                .data(data)
+                .content(NotificationContent.builder()
+                        .title(title)
+                        .body(LocalDateTime.now().toString())
+                        .clickAction("")
+                        .icon(icon)
+                        .build())
+                .build();
+
+        firebaseService.sendPnsToDevice(notificationRequest);
     }
 }

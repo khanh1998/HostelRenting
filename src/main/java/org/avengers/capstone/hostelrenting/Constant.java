@@ -102,4 +102,19 @@ public class Constant {
         public final static String MAIL_SMTP_SOCKET_FACTORY_CLASS="mail.smtp.socketFactory.class";
         public final static String MAIL_SMTP_SOCKET_FACTORY_FALLBACK="mail.smtp.socketFactory.fallback";
     }
+
+    public static class Notification{
+        public final static String NEW_BOOKING = "NEW_BOOKING";
+        public final static String NEW_BOOKING_MESSAGE = "New booking from user ";
+        public final static String CONFIRM_BOOKING = "CONFIRM_BOOKING";
+        public final static String STATIC_CONFIRM_BOOKING_MESSAGE = "Booking has been confirm by user ";
+        public final static String CONFIRM_CONTRACT = "CONFIRM_CONTRACT";
+        public final static String STATIC_CONFIRM_CONTRACT_MESSAGE = "Contract has been confirm by user ";
+    }
+
+    public static class Field{
+        public final static String BOOKING_ID = "bookingId";
+        public final static String ACTION = "action";
+        public final static String CONTRACT_ID= "contractId";
+    }
 }

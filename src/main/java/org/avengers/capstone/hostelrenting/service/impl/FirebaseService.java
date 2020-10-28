@@ -7,8 +7,11 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
-import com.google.firebase.messaging.*;
-import org.avengers.capstone.hostelrenting.dto.notification.NotificationRequestDTO;
+import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.messaging.FirebaseMessagingException;
+import com.google.firebase.messaging.Message;
+import com.google.firebase.messaging.Notification;
+import org.avengers.capstone.hostelrenting.dto.notification.NotificationRequest;
 import org.avengers.capstone.hostelrenting.dto.notification.SubscriptionRequestDTO;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
@@ -66,44 +69,37 @@ public class FirebaseService {
         }
     }
 
-    public String sendPnsToDevice(NotificationRequestDTO notificationRequestDto) {
+    public String sendPnsToDevice(NotificationRequest notificationRequestDto) {
         String response = null;
         try {
-            ObjectMapper objMapper = new ObjectMapper();
-            Object data = notificationRequestDto.getData();
-            String json = objMapper.writeValueAsString(data);
-
             Message message = Message.builder()
                     .setToken(notificationRequestDto.getDestination())
                     .setNotification(new Notification(notificationRequestDto.getContent().getTitle(), notificationRequestDto.getContent().getBody()))
-                    .putData("json", json)
+                    .putAllData(notificationRequestDto.getData())
                     .build();
-            System.out.println(json);
 
             response = FirebaseMessaging.getInstance().send(message);
-        } catch (JsonProcessingException | FirebaseMessagingException e) {
+        } catch (FirebaseMessagingException e) {
             e.printStackTrace();
         }
 
         return response;
     }
 
-    public String sendPnsToTopic(NotificationRequestDTO notificationRequestDto) {
+    public String sendPnsToTopic(NotificationRequest notificationRequest) {
         String response = null;
         try {
             ObjectMapper objMapper = new ObjectMapper();
-            Object data = notificationRequestDto.getData();
+            Object data = notificationRequest.getData();
             String json = objMapper.writeValueAsString(data);
 
             Message message = Message.builder()
-                    .setTopic(notificationRequestDto.getDestination())
-                    .setNotification(new Notification(notificationRequestDto.getContent().getTitle(), notificationRequestDto.getContent().getBody()))
+                    .setTopic(notificationRequest.getDestination())
+                    .setNotification(new Notification(notificationRequest.getContent().getTitle(), notificationRequest.getContent().getBody()))
                     .putData("json", json)
                     .build();
             response = FirebaseMessaging.getInstance().send(message);
-        } catch (FirebaseMessagingException e) {
-            e.printStackTrace();
-        } catch (JsonProcessingException e) {
+        } catch (FirebaseMessagingException | JsonProcessingException e) {
             e.printStackTrace();
         }
 
@@ -115,8 +111,7 @@ public class FirebaseService {
         Map<String, Object> additionalClaims = new HashMap<>();
 //        additionalClaims.put("vendor", true);
 
-        String token = FirebaseAuth.getInstance().createCustomToken(uid, additionalClaims);
-        return token;
+        return FirebaseAuth.getInstance().createCustomToken(uid, additionalClaims);
     }
 
 

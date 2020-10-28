@@ -1,6 +1,6 @@
 package org.avengers.capstone.hostelrenting.controller;
 
-import org.avengers.capstone.hostelrenting.dto.notification.NotificationRequestDTO;
+import org.avengers.capstone.hostelrenting.dto.notification.NotificationRequest;
 import org.avengers.capstone.hostelrenting.dto.notification.SubscriptionRequestDTO;
 import org.avengers.capstone.hostelrenting.service.impl.FirebaseService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,12 +30,12 @@ public class PushNotificationController {
     }
 
     @PostMapping("/token")
-    public String sendPnsToDevice(@RequestBody NotificationRequestDTO notificationRequestDTO) {
-        return firebaseService.sendPnsToDevice(notificationRequestDTO);
+    public String sendPnsToDevice(@RequestBody NotificationRequest notificationRequest) {
+        return firebaseService.sendPnsToDevice(notificationRequest);
     }
 
     @PostMapping("/topic")
-    public String sendPnsToTopic(@RequestBody NotificationRequestDTO notificationRequestDTO) {
-        return firebaseService.sendPnsToTopic(notificationRequestDTO);
+    public String sendPnsToTopic(@RequestBody NotificationRequest notificationRequest) {
+        return firebaseService.sendPnsToTopic(notificationRequest);
     }
 }

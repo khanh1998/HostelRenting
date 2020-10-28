@@ -1,21 +1,26 @@
 package org.avengers.capstone.hostelrenting.service.impl;
 
-import org.avengers.capstone.hostelrenting.dto.booking.BookingDTOCreate;
+import org.avengers.capstone.hostelrenting.Constant;
 import org.avengers.capstone.hostelrenting.dto.booking.BookingDTOUpdate;
+import org.avengers.capstone.hostelrenting.dto.notification.NotificationContent;
+import org.avengers.capstone.hostelrenting.dto.notification.NotificationRequest;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
 import org.avengers.capstone.hostelrenting.exception.GenericException;
-import org.avengers.capstone.hostelrenting.model.*;
+import org.avengers.capstone.hostelrenting.model.Booking;
+import org.avengers.capstone.hostelrenting.model.Deal;
+import org.avengers.capstone.hostelrenting.model.Type;
 import org.avengers.capstone.hostelrenting.repository.BookingRepository;
 import org.avengers.capstone.hostelrenting.repository.RoomRepository;
-import org.avengers.capstone.hostelrenting.service.*;
+import org.avengers.capstone.hostelrenting.service.BookingService;
+import org.avengers.capstone.hostelrenting.service.DealService;
+import org.avengers.capstone.hostelrenting.service.RenterService;
+import org.avengers.capstone.hostelrenting.service.VendorService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
+import java.time.LocalDateTime;
+import java.util.*;
 
 @Service
 public class BookingServiceImpl implements BookingService {
@@ -27,6 +32,12 @@ public class BookingServiceImpl implements BookingService {
     private ModelMapper modelMapper;
     private VendorService vendorService;
     private RenterService renterService;
+    private FirebaseService firebaseService;
+
+    @Autowired
+    public void setFirebaseService(FirebaseService firebaseService) {
+        this.firebaseService = firebaseService;
+    }
 
     @Autowired
     public void setRoomRepository(RoomRepository roomRepository) {
@@ -95,8 +106,12 @@ public class BookingServiceImpl implements BookingService {
             dealService.changeStatus(dealId, Deal.STATUS.DONE);
         }
 
-        return bookingRepository.save(reqModel);
+        Booking resModel = bookingRepository.save(reqModel);
+        handleNotification(resModel, Constant.Notification.NEW_BOOKING, Constant.Notification.NEW_BOOKING_MESSAGE);
+
+        return resModel;
     }
+
 
     @Override
     public Booking confirm(Booking exModel, BookingDTOUpdate reqDTO) {
@@ -106,12 +121,13 @@ public class BookingServiceImpl implements BookingService {
         // Update status
         if (exModel.getQrCode().equals(reqDTO.getQrCode())) {
             modelMapper.map(reqDTO, exModel);
-            return bookingRepository.save(exModel);
+            Booking resModel = bookingRepository.save(exModel);
+            handleNotification(resModel, Constant.Notification.CONFIRM_BOOKING, Constant.Notification.STATIC_CONFIRM_BOOKING_MESSAGE);
+            return resModel;
         }
         throw new GenericException(Booking.class, "qrCode not matched", "bookingId", String.valueOf(exModel.getBookingId()), "qrCode", exModel.getQrCode().toString());
         // Update meetTime
         //TODO: Implement here
-
     }
 
     /**
@@ -150,6 +166,31 @@ public class BookingServiceImpl implements BookingService {
                     .build());
         });
         return true;
+    }
+
+    private void handleNotification(Booking resModel, String action, String staticMessage){
+        /* send notification after booking */
+        Map<String, String> data = new HashMap<>();
+        data.put(Constant.Field.BOOKING_ID, String.valueOf(resModel.getBookingId()));
+        data.put(Constant.Field.ACTION, action);
+        String title = staticMessage +  resModel.getRenter().getUsername();
+        String icon = resModel.getRenter().getAvatar();
+        sendNotification(resModel, title, data, icon);
+    }
+
+    private void sendNotification(Booking model, String title, Map<String, String> data, String icon){
+        NotificationRequest notificationRequest = NotificationRequest.builder()
+                .destination(model.getVendor().getFirebaseToken())
+                .data(data)
+                .content(NotificationContent.builder()
+                        .title(title)
+                        .body(LocalDateTime.now().toString())
+                        .clickAction("")
+                        .icon(icon)
+                        .build())
+                .build();
+
+        firebaseService.sendPnsToDevice(notificationRequest);
     }
 
 }
