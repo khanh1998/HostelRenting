@@ -17,7 +17,6 @@ public class GroupDTOUpdate {
     public GroupDTOUpdate() {
         this.updatedAt = System.currentTimeMillis();
     }
-//    private Integer groupId;
     private String groupName;
     private String curfewTime;
     private Boolean ownerJoin;
