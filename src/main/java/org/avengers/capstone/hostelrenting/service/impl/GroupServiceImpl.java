@@ -55,8 +55,6 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     public Group update(Group reqModel) {
-        // Set updatedAt
-        reqModel.setUpdatedAt(System.currentTimeMillis());
 
         return groupRepository.save(reqModel);
     }
