@@ -9,8 +9,8 @@ import java.io.Serializable;
 @Getter
 @Setter
 public class ProvinceDTOShort implements Serializable {
-    @NotNull(message = "Province id is mandatory!")
     private Integer provinceId;
 
+    @NotNull(message = "Province name is mandatory!")
     private String provinceName;
 }
