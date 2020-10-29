@@ -21,7 +21,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -90,7 +89,7 @@ public class ContractController {
     }
 
     @PostMapping("/contracts")
-    public ResponseEntity<?> create(@RequestBody @Valid ContractDTOCreate reqDTO) {
+    public ResponseEntity<?> createContract(@RequestBody @Valid ContractDTOCreate reqDTO) {
         logger.info("START - creating contract");
         /* Prepare object for contract model */
         Vendor exVendor = vendorService.findById(reqDTO.getVendorId());
@@ -115,7 +114,7 @@ public class ContractController {
     }
 
     @PutMapping("/contracts/{contractId}")
-    public ResponseEntity<?> confirmContract(@PathVariable Integer contractId,
+    public ResponseEntity<?> confirmContractById(@PathVariable Integer contractId,
                                              @RequestBody @Valid ContractDTOConfirm reqDTO) {
         Contract exModel = contractService.findById(contractId);
         Contract resModel = contractService.confirm(exModel, reqDTO);
@@ -128,14 +127,14 @@ public class ContractController {
     }
 
     @GetMapping("/renters/{renterId}/contracts")
-    public ResponseEntity<?> getByRenterId(@PathVariable Long renterId,
+    public ResponseEntity<?> getContractsByRenterId(@PathVariable Long renterId,
                                            @RequestParam(required = false, defaultValue = "createdAt") String sortBy,
                                            @RequestParam(required = false, defaultValue = "false") Boolean asc,
                                            @RequestParam(required = false, defaultValue = DEFAULT_SIZE) Integer size,
                                            @RequestParam(required = false, defaultValue = DEFAULT_PAGE) Integer page) throws EntityNotFoundException {
         String resMsg = "Your contract(s) has been retrieved successfully!";
 
-        List<ContractDTOResponse> resDTOs = contractService.findByVendorId(renterId, page, size, sortBy, asc)
+        List<ContractDTOResponse> resDTOs = contractService.findByRenterId(renterId, page, size, sortBy, asc)
                 .stream()
                 .map(resDTO -> modelMapper.map(resDTO, ContractDTOResponse.class))
                 .collect(Collectors.toList());
@@ -155,7 +154,7 @@ public class ContractController {
     }
 
     @GetMapping("/vendors/{vendorId}/contracts")
-    public ResponseEntity<?> getByVendorId(@PathVariable Long vendorId,
+    public ResponseEntity<?> getContractsByVendorId(@PathVariable Long vendorId,
                                            @RequestParam(required = false, defaultValue = "createdAt") String sortBy,
                                            @RequestParam(required = false, defaultValue = "false") Boolean asc,
                                            @RequestParam(required = false, defaultValue = DEFAULT_SIZE) Integer size,
@@ -202,8 +201,6 @@ public class ContractController {
 
         //get type & group
         getTypeAndGroupForDTO(resDTO);
-
-        Renter renter = contractService.findById(resDTO.getContractId()).getRenter();
     }
 
     private void getDealForDTO(ContractDTOResponse resDTO) {

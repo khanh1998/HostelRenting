@@ -24,7 +24,7 @@ public class CategoryController {
 
 
     @GetMapping("/categories")
-    public ResponseEntity<?> getAll() {
+    public ResponseEntity<?> getAllCategories() {
         String resMsg = "Categories has been retrieved successfully!";
         List<CategoryDTO> resDTOs = categoryService.getAll();
 

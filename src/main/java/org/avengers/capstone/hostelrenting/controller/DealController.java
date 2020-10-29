@@ -43,7 +43,7 @@ public class DealController {
     }
 
     @PostMapping("/deals")
-    public ResponseEntity<?> create(@RequestBody @Valid DealDTOShort reqDTO) {
+    public ResponseEntity<?> createDeal(@RequestBody @Valid DealDTOShort reqDTO) {
         Deal resModel = dealService.create(reqDTO);
         DealDTOShort resDTO = modelMapper.map(resModel, DealDTOShort.class);
 
@@ -55,8 +55,8 @@ public class DealController {
     }
 
     @PutMapping("/deals/{dealId}")
-    public ResponseEntity<?> updateDeal(@PathVariable Integer dealId,
-                                        @Valid @RequestBody DealDTOShort reqDTO) {
+    public ResponseEntity<?> updateDealById(@PathVariable Integer dealId,
+                                            @Valid @RequestBody DealDTOShort reqDTO) {
 
         String resMsg = "Your deal has been updated";
         DealDTOShort resDTO = null;
