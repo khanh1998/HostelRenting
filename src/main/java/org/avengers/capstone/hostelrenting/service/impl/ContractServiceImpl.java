@@ -218,7 +218,7 @@ public class ContractServiceImpl implements ContractService {
     public List<Contract> findByRenterId(Long renterId, int page, int size, String sortBy, boolean asc) {
         Sort sort = Sort.by(asc == true ? Sort.Direction.ASC : Sort.Direction.DESC, sortBy);
         Pageable pageable = PageRequest.of(page - 1, size, sort);
-        return contractRepository.findByVendor_UserId(renterId, pageable);
+        return contractRepository.findByRenter_UserId(renterId, pageable);
     }
 
     @Override
