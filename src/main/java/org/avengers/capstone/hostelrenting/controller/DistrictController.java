@@ -46,7 +46,7 @@ public class DistrictController {
     }
 
     @GetMapping("/provinces/{provinceId}/districts/{districtId}")
-    public ResponseEntity<?> getDistrictByProvinceId(@PathVariable Integer provinceId,
+    public ResponseEntity<?> getDistrictByDistrictId(@PathVariable Integer provinceId,
                                                               @PathVariable Integer districtId) throws EntityNotFoundException {
         Province provinceModel = provinceService.findById(provinceId);
         District responseModel = provinceModel.getDistricts()

@@ -327,7 +327,7 @@ public class TypeController {
     }
 
     @PutMapping("types/{typeId}")
-    public ResponseEntity<?> updateGroup(@Valid @RequestBody TypeDTOUpdate reqDTO,
+    public ResponseEntity<?> updateType(@Valid @RequestBody TypeDTOUpdate reqDTO,
                                          @PathVariable Integer typeId) {
         // log start update
         logger.info("START - updating type");

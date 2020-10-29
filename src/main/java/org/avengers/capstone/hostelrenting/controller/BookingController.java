@@ -69,7 +69,7 @@ public class BookingController {
     }
 
     @PostMapping("/bookings")
-    public ResponseEntity<?> create(@RequestBody @Valid BookingDTOCreate reqDTO) {
+    public ResponseEntity<?> createBooking(@RequestBody @Valid BookingDTOCreate reqDTO) {
         Vendor exVendor = vendorService.findById(reqDTO.getVendorId());
         Renter exRenter = renterService.findById(reqDTO.getRenterId());
         Type exType = typeService.findById(reqDTO.getTypeId());
@@ -90,7 +90,7 @@ public class BookingController {
     }
 
     @PutMapping("/bookings/{bookingId}")
-    public ResponseEntity<?> updateBooking(@PathVariable Integer bookingId,
+    public ResponseEntity<?> updateBookingById(@PathVariable Integer bookingId,
                                            @Valid @RequestBody BookingDTOUpdate reqDTO) {
 
         String resMsg = "Your booking has been updated";
@@ -123,7 +123,7 @@ public class BookingController {
     }
 
     @GetMapping("/renters/{renterId}/bookings")
-    public ResponseEntity<?> getByRenterId(@PathVariable Long renterId) throws EntityNotFoundException {
+    public ResponseEntity<?> getBookingsByRenterId(@PathVariable Long renterId) throws EntityNotFoundException {
         String resMsg = "Your booking(s) has been retrieved successfully!";
 
         List<BookingDTOResponse> resDTOs = bookingService.findByRenterId(renterId)
@@ -144,7 +144,7 @@ public class BookingController {
     }
 
     @GetMapping("/vendors/{vendorId}/bookings")
-    public ResponseEntity<?> getByVendorId(@PathVariable Long vendorId) throws EntityNotFoundException {
+    public ResponseEntity<?> getBookingsByVendorId(@PathVariable Long vendorId) throws EntityNotFoundException {
         String resMsg = "Your booking(s) has been retrieved successfully!";
 
         List<BookingDTOResponse> resDTOs = bookingService.findByVendorId(vendorId)
