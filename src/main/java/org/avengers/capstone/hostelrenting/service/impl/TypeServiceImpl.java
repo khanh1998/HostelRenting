@@ -103,12 +103,13 @@ public class TypeServiceImpl implements TypeService {
         Sort sort = Sort.by(asc == true ? Sort.Direction.ASC : Sort.Direction.DESC, sortBy);
         Pageable pageable = PageRequest.of(page - 1, size, sort);
         Collection<Type> locTypes;
-        Collection<Type> schoolMateTypes;
-        Collection<Type> compatriotTypes;
+        Collection<Type> schoolMateTypesOnly = null;
+        Collection<Type> compatriotTypesOnly = null;
         if (latitude != null && longitude != null) {
             // if long&lat != null ==> get surroundings
             logger.info("START - Get surrounding based on lng, lat and distance");
             locTypes = typeRepository.getSurroundings(latitude, longitude, distance);
+            locTypes = handleAfterRetrieve(locTypes);
             logger.info("END - Get surrounding");
         } else {
             //default get ...
@@ -116,30 +117,53 @@ public class TypeServiceImpl implements TypeService {
             locTypes = typeRepository.findAll();
         }
 
-        List<Type> temp = new ArrayList<>(locTypes);
+        /* list of return types */
+        Collection<Type> result = new ArrayList<>(locTypes);
+
+        /* list of type has only schoolMate */
         if (schoolId != null) {
-            schoolMateTypes = convertMapToList(typeRepository.getBySchoolMates(schoolId), 1);
-            if (schoolMateTypes == null)
-                schoolMateTypes = new ArrayList<>();
-            temp.retainAll(schoolMateTypes);
-        }
+            schoolMateTypesOnly = convertMapToList(typeRepository.getBySchoolMates(schoolId), 1);
+            if (schoolMateTypesOnly != null)
+                schoolMateTypesOnly.retainAll(result);
+        } else
+            schoolMateTypesOnly = new ArrayList<>();
 
+        /* list of type has only compatriot */
         if (provinceId != null) {
-            compatriotTypes = convertMapToList(typeRepository.getByCompatriot(provinceId), 2);
-            if (compatriotTypes == null)
-                compatriotTypes = new ArrayList<>();
-            temp.retainAll(compatriotTypes);
-        }
+            compatriotTypesOnly = convertMapToList(typeRepository.getByCompatriot(provinceId), 2);
+            if (compatriotTypesOnly != null)
+                compatriotTypesOnly.retainAll(result);
+        } else
+            compatriotTypesOnly = new ArrayList<>();
 
-//        // new collection to retainAll (unmodifiable collection cannot be removed)
-//        if (compatriotTypes.() && schoolMateTypes != null){
-//            temp.retainAll(Stream.concat(compatriotTypes.stream(), schoolMateTypes.stream()).collect(Collectors.toList()));
-//        }
-        temp = temp.stream().map(this::countAvailableRoomAndCurrentBooking).filter(type -> type.getAvailableRoom() > 0).collect(Collectors.toList());
-        return temp;
+        Comparator<Type> compareByCompatriotAndSchoolmate = Comparator
+                .comparing((Type type) -> (type.getSchoolmate() > 0 && type.getCompatriot() > 0))
+                .thenComparing(Type::getSchoolmate)
+                .thenComparing(Type::getCompatriot)
+                .reversed();
+
+//        (type.getCompatriot() + type.getSchoolmate())
+
+        /* result list types */
+        result = Stream.concat(result.stream(), Stream.concat(schoolMateTypesOnly.stream(), compatriotTypesOnly.stream()))
+                .sorted(compareByCompatriotAndSchoolmate)
+                .collect(Collectors.toCollection(LinkedHashSet::new));
+
+        return result;
     }
 
+    /* 1. Retrieving available rooms
+     * 2. Retrieving current bookings
+     * 3. Filter the type has available room > 0
+     */
     @Override
+    public Collection<Type> handleAfterRetrieve(Collection<Type> types) {
+        return types.stream().map(this::countAvailableRoomAndCurrentBooking)
+                .filter(type -> type.getAvailableRoom() > 0)
+                .sorted(Comparator.comparing(Type::getScore).reversed())
+                .collect(Collectors.toList());
+    }
+
     public Type countAvailableRoomAndCurrentBooking(Type type) {
         long availableRoom = type.getRooms().stream().filter(Room::isAvailable).count();
         type.setAvailableRoom((int) availableRoom);

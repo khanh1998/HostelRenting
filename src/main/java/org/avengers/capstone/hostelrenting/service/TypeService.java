@@ -14,6 +14,7 @@ public interface TypeService {
     void deleteById(Integer id);
     List<Type> findByHostelGroupId(Integer hostelGroupId);
 
+    Collection<Type> handleAfterRetrieve(Collection<Type> types);
     Type countAvailableRoomAndCurrentBooking(Type type);
 
     /**
