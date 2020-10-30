@@ -147,6 +147,7 @@ public class TypeServiceImpl implements TypeService {
         /* result list types */
         result = Stream.concat(result.stream(), Stream.concat(schoolMateTypesOnly.stream(), compatriotTypesOnly.stream()))
                 .sorted(compareByCompatriotAndSchoolmate)
+                .filter(type -> type.getCompatriot() + type.getSchoolmate() > 0)
                 .collect(Collectors.toCollection(LinkedHashSet::new));
 
         return result;
