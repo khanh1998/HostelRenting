@@ -233,7 +233,7 @@ public class TypeController {
             return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
         }
 
-        Set<TypeDTOResponse> typeDTOs = typeService.searchWithMainFactors(latitude, longitude, distance, schoolId, provinceId, sortBy, asc, size, page).stream()
+        List<TypeDTOResponse> typeDTOs = typeService.searchWithMainFactors(latitude, longitude, distance, schoolId, provinceId, sortBy, asc, size, page).stream()
                 .filter(hostelType -> {
                     if (categoryId != null)
                         return hostelType.getCategory().getCategoryId() == categoryId;
@@ -290,7 +290,7 @@ public class TypeController {
                 })
                 .map(hostelType -> modelMapper.map(hostelType, TypeDTOResponse.class)
                 )
-                .collect(Collectors.toSet());
+                .collect(Collectors.toList());
 
 
         Set<GroupDTOResponse> groupDTOs = typeDTOs.stream()
@@ -301,11 +301,11 @@ public class TypeController {
         int totalType = typeDTOs.size();
         int totalGroup = groupDTOs.size();
 
-        Set<TypeDTOResponse> resTypes = typeDTOs
+        List<TypeDTOResponse> resTypes = typeDTOs
                 .stream()
                 .skip(size * (page - 1))
                 .limit(size)
-                .collect(Collectors.toSet());
+                .collect(Collectors.toList());
         Set<GroupDTOResponse> resGroups = resTypes.stream()
                 .map(typeDTO -> modelMapper.map(groupService.findById(typeDTO.getGroupId()), GroupDTOResponse.class))
                 .collect(Collectors.toSet());
