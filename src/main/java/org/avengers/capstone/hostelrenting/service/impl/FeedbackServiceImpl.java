@@ -11,6 +11,7 @@ import org.avengers.capstone.hostelrenting.repository.FeedbackRepository;
 import org.avengers.capstone.hostelrenting.service.BookingService;
 import org.avengers.capstone.hostelrenting.service.ContractService;
 import org.avengers.capstone.hostelrenting.service.FeedbackService;
+import org.avengers.capstone.hostelrenting.service.TypeService;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,18 +31,13 @@ public class FeedbackServiceImpl implements FeedbackService {
     private static final Logger logger = LoggerFactory.getLogger(FeedbackServiceImpl.class);
     private FeedbackRepository feedbackRepository;
     private BookingRepository bookingRepository;
-    private BookingService bookingService;
-    private ContractService contractService;
+    private TypeService typeService;
     private ContractRepository contractRepository;
     private ModelMapper modelMapper;
 
     @Autowired
-    public void setBookingService(BookingService bookingService) {
-        this.bookingService = bookingService;
-    }
-    @Autowired
-    public void setContractService(ContractService contractService) {
-        this.contractService = contractService;
+    public void setTypeService(TypeService typeService) {
+        this.typeService = typeService;
     }
 
     @Autowired
@@ -100,7 +96,9 @@ public class FeedbackServiceImpl implements FeedbackService {
 
     @Override
     public Collection<Feedback> findByTypeId(Integer typeId) {
-        return feedbackRepository.findByType_TypeIdAndIsDeletedIsFalse(typeId);
+        /* check type existed or not */
+        typeService.findById(typeId);
+        return feedbackRepository.findByType_TypeIdAndIsDeletedIsFalseOrderByRatingDesc(typeId);
     }
 
 

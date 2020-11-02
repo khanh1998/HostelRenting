@@ -1,14 +1,12 @@
 package org.avengers.capstone.hostelrenting.controller;
 
-import com.google.protobuf.Api;
-import lombok.NonNull;
-import org.avengers.capstone.hostelrenting.dto.contract.ContractDTOCreate;
-import org.avengers.capstone.hostelrenting.dto.contract.ContractDTOResponse;
 import org.avengers.capstone.hostelrenting.dto.feedback.FeedbackDTOCreate;
 import org.avengers.capstone.hostelrenting.dto.feedback.FeedbackDTOResponse;
 import org.avengers.capstone.hostelrenting.dto.feedback.FeedbackDTOUpdate;
 import org.avengers.capstone.hostelrenting.dto.response.ApiSuccess;
-import org.avengers.capstone.hostelrenting.model.*;
+import org.avengers.capstone.hostelrenting.model.Feedback;
+import org.avengers.capstone.hostelrenting.model.Renter;
+import org.avengers.capstone.hostelrenting.model.Type;
 import org.avengers.capstone.hostelrenting.service.*;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
@@ -20,6 +18,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.Collection;
+import java.util.stream.Collectors;
 
 /**
  * @author duattt on 10/27/20
@@ -33,19 +33,8 @@ public class FeedbackController {
     private FeedbackService feedbackService;
     private TypeService typeService;
     private RenterService renterService;
-    private BookingService bookingService;
-    private ContractService contractService;
     private ModelMapper modelMapper;
 
-    @Autowired
-    public void setBookingService(BookingService bookingService) {
-        this.bookingService = bookingService;
-    }
-
-    @Autowired
-    public void setContractService(ContractService contractService) {
-        this.contractService = contractService;
-    }
 
     @Autowired
     public void setModelMapper(ModelMapper modelMapper) {
@@ -103,8 +92,17 @@ public class FeedbackController {
     @DeleteMapping("/feedbacks/{feedbackId}")
     public ResponseEntity<?> deleteFeedback(@PathVariable Integer feedbackId) {
         Feedback exModel = feedbackService.findById(feedbackId);
-        feedbackService.deleteById(feedbackId);
-        ApiSuccess apiSuccess = new ApiSuccess<>("Delete successfully!", true);
+        feedbackService.deleteById(exModel.getFeedbackId());
+        ApiSuccess<?> apiSuccess = new ApiSuccess<>("Delete successfully!", true);
+        return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
+    }
+
+    @GetMapping("types/{typeId}/feedbacks")
+    public ResponseEntity<?> getFeedbacksByTypeId(@PathVariable Integer typeId) {
+        Collection<FeedbackDTOResponse> resDTOs = feedbackService.findByTypeId(typeId)
+                .stream().map(feedback -> modelMapper.map(feedback, FeedbackDTOResponse.class))
+                .collect(Collectors.toList());
+        ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTOs, "Feedback has been retrieved successfully!");
         return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
     }
 }

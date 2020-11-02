@@ -345,12 +345,5 @@ public class TypeController {
         return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
     }
 
-    @GetMapping("types/{typeId}/feedbacks")
-    public ResponseEntity<?> getFeedbacksByTypeId(@PathVariable Integer typeId) {
-        Collection<FeedbackDTOResponse> resDTOs = feedbackService.findByTypeId(typeId)
-                .stream().map(feedback -> modelMapper.map(feedback, FeedbackDTOResponse.class))
-                .collect(Collectors.toList());
-        ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTOs, "Your feedback has been retrieved successfully!");
-        return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
-    }
+
 }

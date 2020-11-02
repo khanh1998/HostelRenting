@@ -26,7 +26,7 @@ public class Feedback {
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int feedbackID;
+    private int feedbackId;
 
 
     @ManyToOne
