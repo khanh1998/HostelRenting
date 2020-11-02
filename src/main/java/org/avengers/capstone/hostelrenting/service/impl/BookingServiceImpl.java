@@ -109,7 +109,7 @@ public class BookingServiceImpl implements BookingService {
         }
 
         Booking resModel = bookingRepository.save(reqModel);
-        handleNotification(resModel, Constant.Notification.NEW_BOOKING, Constant.Notification.STATIC_NEW_BOOKING_MESSAGE);
+        sendNotification(resModel, Constant.Notification.NEW_BOOKING, Constant.Notification.STATIC_NEW_BOOKING_MESSAGE);
 
         return resModel;
     }
@@ -124,7 +124,7 @@ public class BookingServiceImpl implements BookingService {
         if (exModel.getQrCode().equals(reqDTO.getQrCode())) {
             modelMapper.map(reqDTO, exModel);
             Booking resModel = bookingRepository.save(exModel);
-            handleNotification(resModel, Constant.Notification.CONFIRM_BOOKING, Constant.Notification.STATIC_CONFIRM_BOOKING_MESSAGE);
+            sendNotification(resModel, Constant.Notification.CONFIRM_BOOKING, Constant.Notification.STATIC_CONFIRM_BOOKING_MESSAGE);
             return resModel;
         }
         throw new GenericException(Booking.class, "qrCode not matched", "bookingId", String.valueOf(exModel.getBookingId()), "qrCode", exModel.getQrCode().toString());
@@ -170,23 +170,6 @@ public class BookingServiceImpl implements BookingService {
         return true;
     }
 
-    /**
-     * Handle and prepare for sending notification
-     * @param model for handling notification
-     * @param action notification action
-     * @param staticMessage static message for booking controller
-     */
-    private void handleNotification(Booking model, String action, String staticMessage){
-        /* handling notification after booking */
-        Map<String, String> data = new HashMap<>();
-        data.put(Constant.Notification.ID_FIELD_NAME, String.valueOf(model.getBookingId()));
-        data.put(Constant.Notification.BODY_FIELD_NAME, LocalDateTime.now().toString());
-        data.put(Constant.Notification.CLICK_ACTION_FIELD_NAME, "");
-        data.put(Constant.Notification.ICON_FIELD_NAME, model.getRenter().getAvatar());
-        data.put(Constant.Notification.TITLE_FIELD_NAME, staticMessage + model.getRenter().getUsername());
-        data.put(Constant.Notification.ACTION_FIELD_NAME, action);
-        sendNotification(model, action, staticMessage);
-    }
 
     /**
      * sending notification after handling

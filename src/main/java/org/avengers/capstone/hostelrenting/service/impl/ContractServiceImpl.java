@@ -1,6 +1,7 @@
 package org.avengers.capstone.hostelrenting.service.impl;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lowagie.text.DocumentException;
 import org.apache.commons.collections.CollectionUtils;
 import org.avengers.capstone.hostelrenting.Constant;
@@ -42,6 +43,7 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.swing.text.html.Option;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -208,7 +210,7 @@ public class ContractServiceImpl implements ContractService {
             Booking exBooking = bookingService.findById(resModel.getBookingId());
             exBooking.setContractId(resModel.getContractId());
             bookingRepository.save(exBooking);
-            handleNotification(resModel, Constant.Notification.CONFIRM_CONTRACT, Constant.Notification.STATIC_CONFIRM_CONTRACT_MESSAGE);
+            sendNotification(resModel, Constant.Notification.CONFIRM_CONTRACT, Constant.Notification.STATIC_CONFIRM_CONTRACT_MESSAGE);
             return resModel;
         }
         throw new GenericException(Contract.class, "qrCode not matched", "contractId", String.valueOf(exModel.getContractId()), "qrCode", exModel.getQrCode().toString());
@@ -382,19 +384,25 @@ public class ContractServiceImpl implements ContractService {
         }
     }
 
-    private void handleNotification(Contract model, String action, String staticMessage){
-        /* handling notification after booking */
-        Map<String, String> data = new HashMap<>();
-        data.put(Constant.Notification.ID_FIELD_NAME, String.valueOf(model.getBookingId()));
-        data.put(Constant.Notification.BODY_FIELD_NAME, LocalDateTime.now().toString());
-        data.put(Constant.Notification.CLICK_ACTION_FIELD_NAME, "");
-        data.put(Constant.Notification.ICON_FIELD_NAME, model.getRenter().getAvatar());
-        data.put(Constant.Notification.TITLE_FIELD_NAME, staticMessage + model.getRenter().getUsername());
-        data.put(Constant.Notification.ACTION_FIELD_NAME, action);
-        sendNotification(model, data);
-    }
+    private void sendNotification(Contract model, String action, String staticMsg){
 
-    private void sendNotification(Contract model, Map<String, String> data){
+        String pattern = "dd/MM/yyyy hh:mm:ss";
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+        String timestamp = simpleDateFormat.format(new Date());
+
+
+        NotificationContent content = NotificationContent.builder()
+                .id(String.valueOf(model.getContractId()))
+                .action(action)
+                .title(staticMsg + model.getRenter().getUsername())
+                .body(timestamp)
+                .icon(model.getRenter().getAvatar())
+                .clickAction("")
+                .build();
+
+        ObjectMapper objMapper = new ObjectMapper();
+        Map<String, String> data = objMapper.convertValue(content, Map.class);
+
         NotificationRequest notificationRequest = NotificationRequest.builder()
                 .destination(model.getVendor().getFirebaseToken())
                 .data(data)
