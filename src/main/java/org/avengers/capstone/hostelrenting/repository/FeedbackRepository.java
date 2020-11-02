@@ -13,5 +13,5 @@ import java.util.Collection;
  */
 @Repository
 public interface FeedbackRepository extends JpaRepository<Feedback, Integer> {
-    Collection<Feedback> findByType_TypeIdAndIsDeletedIsFalse(Integer typeId);
+    Collection<Feedback> findByType_TypeIdAndIsDeletedIsFalseOrderByRatingDesc(Integer typeId);
 }

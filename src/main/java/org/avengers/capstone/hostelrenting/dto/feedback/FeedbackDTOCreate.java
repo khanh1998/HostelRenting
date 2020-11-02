@@ -19,7 +19,7 @@ public class FeedbackDTOCreate {
         this.createdAt = System.currentTimeMillis();
     }
     @Getter @Setter
-    @JsonIgnore
+//    @JsonIgnore
     private Integer feedbackId;
 
     @Getter @Setter
