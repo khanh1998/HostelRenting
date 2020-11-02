@@ -31,9 +31,6 @@ public class FeedbackDTOCreate {
     private Integer typeId;
 
     @Getter @Setter
-    private String subject;
-
-    @Getter @Setter
     private String comment;
 
     @Getter @Setter

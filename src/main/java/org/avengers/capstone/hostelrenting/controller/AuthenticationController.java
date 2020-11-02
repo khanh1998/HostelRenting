@@ -52,7 +52,7 @@ public class AuthenticationController {
     }
 
     @PostMapping(value = "/login")
-    public ResponseEntity<?> createAuthenticationToken(@RequestBody UserDTOLogin reqDTO) throws Exception {
+    public ResponseEntity<?> login(@RequestBody UserDTOLogin reqDTO) throws Exception {
 
         authenticate(reqDTO.getPhone(), reqDTO.getPassword());
         final UserDetails userDetails = customUserService.loadUserByUsername(reqDTO.getPhone());
