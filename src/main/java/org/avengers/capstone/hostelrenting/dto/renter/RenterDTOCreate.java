@@ -18,8 +18,6 @@ import javax.validation.constraints.NotNull;
  * @created 29/09/2020 - 09:46
  * @project youthhostelapp
  */
-@Getter
-@Setter
 public class RenterDTOCreate extends UserDTORegister {
     @Getter
     @Setter

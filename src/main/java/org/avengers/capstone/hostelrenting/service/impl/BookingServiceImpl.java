@@ -1,5 +1,6 @@
 package org.avengers.capstone.hostelrenting.service.impl;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.avengers.capstone.hostelrenting.Constant;
 import org.avengers.capstone.hostelrenting.dto.booking.BookingDTOUpdate;
 import org.avengers.capstone.hostelrenting.dto.notification.NotificationContent;
@@ -19,6 +20,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -107,7 +109,7 @@ public class BookingServiceImpl implements BookingService {
         }
 
         Booking resModel = bookingRepository.save(reqModel);
-        handleNotification(resModel, Constant.Notification.NEW_BOOKING, Constant.Notification.NEW_BOOKING_MESSAGE);
+        sendNotification(resModel, Constant.Notification.NEW_BOOKING, Constant.Notification.STATIC_NEW_BOOKING_MESSAGE);
 
         return resModel;
     }
@@ -122,7 +124,7 @@ public class BookingServiceImpl implements BookingService {
         if (exModel.getQrCode().equals(reqDTO.getQrCode())) {
             modelMapper.map(reqDTO, exModel);
             Booking resModel = bookingRepository.save(exModel);
-            handleNotification(resModel, Constant.Notification.CONFIRM_BOOKING, Constant.Notification.STATIC_CONFIRM_BOOKING_MESSAGE);
+            sendNotification(resModel, Constant.Notification.CONFIRM_BOOKING, Constant.Notification.STATIC_CONFIRM_BOOKING_MESSAGE);
             return resModel;
         }
         throw new GenericException(Booking.class, "qrCode not matched", "bookingId", String.valueOf(exModel.getBookingId()), "qrCode", exModel.getQrCode().toString());
@@ -168,26 +170,31 @@ public class BookingServiceImpl implements BookingService {
         return true;
     }
 
-    private void handleNotification(Booking resModel, String action, String staticMessage){
-        /* send notification after booking */
-        Map<String, String> data = new HashMap<>();
-        data.put(Constant.Field.BOOKING_ID, String.valueOf(resModel.getBookingId()));
-        data.put(Constant.Field.ACTION, action);
-        String title = staticMessage +  resModel.getRenter().getUsername();
-        String icon = resModel.getRenter().getAvatar();
-        sendNotification(resModel, title, data, icon);
-    }
 
-    private void sendNotification(Booking model, String title, Map<String, String> data, String icon){
+    /**
+     * sending notification after handling
+     * @param model for sending notification
+     */
+    private void sendNotification(Booking model, String action, String staticMsg){
+        String pattern = "dd/MM/yyyy hh:mm:ss";
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+        String timestamp = simpleDateFormat.format(new Date());
+
+        NotificationContent content = NotificationContent.builder()
+                .id(String.valueOf(model.getBookingId()))
+                .action(action)
+                .title(staticMsg + model.getRenter().getUsername())
+                .body(timestamp)
+                .icon(model.getRenter().getAvatar())
+                .clickAction("")
+                .build();
+
+        ObjectMapper objMapper = new ObjectMapper();
+        Map<String, String> data = objMapper.convertValue(content, Map.class);
+
         NotificationRequest notificationRequest = NotificationRequest.builder()
                 .destination(model.getVendor().getFirebaseToken())
                 .data(data)
-                .content(NotificationContent.builder()
-                        .title(title)
-                        .body(LocalDateTime.now().toString())
-                        .clickAction("")
-                        .icon(icon)
-                        .build())
                 .build();
 
         firebaseService.sendPnsToDevice(notificationRequest);

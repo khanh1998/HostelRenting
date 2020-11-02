@@ -4,7 +4,7 @@ import org.avengers.capstone.hostelrenting.dto.renter.RenterDTOResponse;
 import org.avengers.capstone.hostelrenting.dto.response.ApiSuccess;
 import org.avengers.capstone.hostelrenting.dto.user.UserDTOResponse;
 import org.avengers.capstone.hostelrenting.dto.user.UserDTOLogin;
-import org.avengers.capstone.hostelrenting.dto.vendor.ResVendorDTO;
+import org.avengers.capstone.hostelrenting.dto.vendor.VendorDTOResponse;
 import org.avengers.capstone.hostelrenting.model.Role;
 import org.avengers.capstone.hostelrenting.model.User;
 import org.avengers.capstone.hostelrenting.service.impl.CustomUserService;
@@ -62,7 +62,7 @@ public class AuthenticationController {
         if (resModel.getRole().getCode().equals(Role.CODE.RENTER)){
             resDTO = modelMapper.map(resModel, RenterDTOResponse.class);
         }else{
-            resDTO = modelMapper.map(resModel, ResVendorDTO.class);
+            resDTO = modelMapper.map(resModel, VendorDTOResponse.class);
         }
 
         resDTO.setJwtToken(token);

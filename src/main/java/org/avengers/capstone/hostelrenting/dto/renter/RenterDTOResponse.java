@@ -13,8 +13,6 @@ import java.io.Serializable;
 @Setter
 public class RenterDTOResponse extends UserDTOResponse implements Serializable  {
 
-    private String avatar;
-
     private SchoolDTOFull school;
 
     @JsonProperty("hometown")

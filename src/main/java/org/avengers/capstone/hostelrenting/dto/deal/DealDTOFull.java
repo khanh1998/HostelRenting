@@ -6,7 +6,7 @@ import lombok.Setter;
 import org.avengers.capstone.hostelrenting.dto.group.GroupDTOResponse;
 import org.avengers.capstone.hostelrenting.dto.type.TypeDTOResponse;
 import org.avengers.capstone.hostelrenting.dto.renter.RenterDTOResponse;
-import org.avengers.capstone.hostelrenting.dto.vendor.ResVendorDTO;
+import org.avengers.capstone.hostelrenting.dto.vendor.VendorDTOResponse;
 import org.avengers.capstone.hostelrenting.model.Deal;
 
 @Getter
@@ -18,7 +18,7 @@ public class DealDTOFull {
     private TypeDTOResponse type;
     private GroupDTOResponse group;
     private RenterDTOResponse renter;
-    private ResVendorDTO vendor;
+    private VendorDTOResponse vendor;
     private float offeredPrice;
 
     private long createdAt;
