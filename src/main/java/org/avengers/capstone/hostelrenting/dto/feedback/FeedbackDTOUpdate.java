@@ -22,9 +22,6 @@ public class FeedbackDTOUpdate implements Serializable {
     private String comment;
 
     @Getter @Setter
-    private String subject;
-
-    @Getter @Setter
     private Integer rating;
 
     @Getter

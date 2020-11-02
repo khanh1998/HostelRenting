@@ -37,8 +37,6 @@ public class Feedback {
     @JoinColumn(name = "type_id", nullable = false)
     private Type type;
 
-    private String subject;
-
     private String comment;
 
     @Column(nullable = false)

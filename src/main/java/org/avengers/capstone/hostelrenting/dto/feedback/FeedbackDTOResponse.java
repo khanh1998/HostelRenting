@@ -21,7 +21,6 @@ public class FeedbackDTOResponse implements Serializable {
     private Integer feedbackId;
     private UserDTOResponseShort renter;
     private TypeDTOResponseShort type;
-    private String subject;
     private String comment;
     private Integer rating;
     @JsonIgnore
