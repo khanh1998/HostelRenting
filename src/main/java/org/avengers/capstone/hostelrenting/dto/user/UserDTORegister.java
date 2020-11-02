@@ -20,6 +20,8 @@ public class UserDTORegister implements Serializable {
         this.createdAt = System.currentTimeMillis();
     }
 
+
+
     @Getter
     @Setter
     @NotEmpty(message = "Username is mandatory")

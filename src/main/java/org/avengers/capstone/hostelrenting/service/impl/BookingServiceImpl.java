@@ -1,5 +1,6 @@
 package org.avengers.capstone.hostelrenting.service.impl;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.avengers.capstone.hostelrenting.Constant;
 import org.avengers.capstone.hostelrenting.dto.booking.BookingDTOUpdate;
 import org.avengers.capstone.hostelrenting.dto.notification.NotificationContent;
@@ -19,6 +20,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -107,7 +109,7 @@ public class BookingServiceImpl implements BookingService {
         }
 
         Booking resModel = bookingRepository.save(reqModel);
-        handleNotification(resModel, Constant.Notification.NEW_BOOKING, Constant.Notification.NEW_BOOKING_MESSAGE);
+        handleNotification(resModel, Constant.Notification.NEW_BOOKING, Constant.Notification.STATIC_NEW_BOOKING_MESSAGE);
 
         return resModel;
     }
@@ -168,26 +170,48 @@ public class BookingServiceImpl implements BookingService {
         return true;
     }
 
-    private void handleNotification(Booking resModel, String action, String staticMessage){
-        /* send notification after booking */
+    /**
+     * Handle and prepare for sending notification
+     * @param model for handling notification
+     * @param action notification action
+     * @param staticMessage static message for booking controller
+     */
+    private void handleNotification(Booking model, String action, String staticMessage){
+        /* handling notification after booking */
         Map<String, String> data = new HashMap<>();
-        data.put(Constant.Field.BOOKING_ID, String.valueOf(resModel.getBookingId()));
-        data.put(Constant.Field.ACTION, action);
-        String title = staticMessage +  resModel.getRenter().getUsername();
-        String icon = resModel.getRenter().getAvatar();
-        sendNotification(resModel, title, data, icon);
+        data.put(Constant.Notification.ID_FIELD_NAME, String.valueOf(model.getBookingId()));
+        data.put(Constant.Notification.BODY_FIELD_NAME, LocalDateTime.now().toString());
+        data.put(Constant.Notification.CLICK_ACTION_FIELD_NAME, "");
+        data.put(Constant.Notification.ICON_FIELD_NAME, model.getRenter().getAvatar());
+        data.put(Constant.Notification.TITLE_FIELD_NAME, staticMessage + model.getRenter().getUsername());
+        data.put(Constant.Notification.ACTION_FIELD_NAME, action);
+        sendNotification(model, action, staticMessage);
     }
 
-    private void sendNotification(Booking model, String title, Map<String, String> data, String icon){
+    /**
+     * sending notification after handling
+     * @param model for sending notification
+     */
+    private void sendNotification(Booking model, String action, String staticMsg){
+        String pattern = "dd/MM/yyyy hh:mm:ss";
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+        String timestamp = simpleDateFormat.format(new Date());
+
+        NotificationContent content = NotificationContent.builder()
+                .id(String.valueOf(model.getBookingId()))
+                .action(action)
+                .title(staticMsg + model.getRenter().getUsername())
+                .body(timestamp)
+                .icon(model.getRenter().getAvatar())
+                .clickAction("")
+                .build();
+
+        ObjectMapper objMapper = new ObjectMapper();
+        Map<String, String> data = objMapper.convertValue(content, Map.class);
+
         NotificationRequest notificationRequest = NotificationRequest.builder()
                 .destination(model.getVendor().getFirebaseToken())
                 .data(data)
-                .content(NotificationContent.builder()
-                        .title(title)
-                        .body(LocalDateTime.now().toString())
-                        .clickAction("")
-                        .icon(icon)
-                        .build())
                 .build();
 
         firebaseService.sendPnsToDevice(notificationRequest);

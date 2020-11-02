@@ -104,17 +104,24 @@ public class Constant {
     }
 
     public static class Notification{
+        public final static String ID_FIELD_NAME = "id";
+        public final static String BODY_FIELD_NAME = "body";
+        public final static String CLICK_ACTION_FIELD_NAME = "clickAction";
+        public final static String ICON_FIELD_NAME = "icon";
+        public final static String TITLE_FIELD_NAME = "title";
+        public final static String ACTION_FIELD_NAME = "action";
+
         public final static String NEW_BOOKING = "NEW_BOOKING";
-        public final static String NEW_BOOKING_MESSAGE = "New booking from user ";
+        public final static String STATIC_NEW_BOOKING_MESSAGE = "Bạn có lịch hẹn mới từ: ";
         public final static String CONFIRM_BOOKING = "CONFIRM_BOOKING";
-        public final static String STATIC_CONFIRM_BOOKING_MESSAGE = "Booking has been confirm by user ";
+        public final static String STATIC_CONFIRM_BOOKING_MESSAGE = "Lịch hẹn của bạn đã được xác nhận từ: ";
         public final static String CONFIRM_CONTRACT = "CONFIRM_CONTRACT";
         public final static String STATIC_CONFIRM_CONTRACT_MESSAGE = "Contract has been confirm by user ";
     }
 
     public static class Field{
         public final static String BOOKING_ID = "bookingId";
-        public final static String ACTION = "action";
         public final static String CONTRACT_ID= "contractId";
+
     }
 }

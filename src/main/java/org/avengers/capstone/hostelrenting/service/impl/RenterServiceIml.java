@@ -86,11 +86,6 @@ public class RenterServiceIml implements RenterService {
     }
 
     @Override
-    public List<Renter> findAll() {
-        return renterRepository.findAll();
-    }
-
-    @Override
     public Renter create(Renter renter) {
         if (renter.getSchool()!=null){
             renter.setSchool(schoolService.findById(renter.getSchool().getSchoolId()));

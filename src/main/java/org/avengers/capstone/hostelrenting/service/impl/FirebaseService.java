@@ -13,6 +13,11 @@ import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
 import org.avengers.capstone.hostelrenting.dto.notification.NotificationRequest;
 import org.avengers.capstone.hostelrenting.dto.notification.SubscriptionRequestDTO;
+import org.avengers.capstone.hostelrenting.model.Renter;
+import org.avengers.capstone.hostelrenting.model.Vendor;
+import org.avengers.capstone.hostelrenting.service.RenterService;
+import org.avengers.capstone.hostelrenting.service.VendorService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -30,6 +35,18 @@ public class FirebaseService {
     private String firebaseConfig;
 
     private FirebaseApp firebaseApp;
+    private VendorService vendorService;
+    private RenterService renterService;
+
+    @Autowired
+    public void setVendorService(VendorService vendorService) {
+        this.vendorService = vendorService;
+    }
+
+    @Autowired
+    public void setRenterService(RenterService renterService) {
+        this.renterService = renterService;
+    }
 
     @PostConstruct
     private void initialize() {
@@ -69,16 +86,26 @@ public class FirebaseService {
         }
     }
 
-    public String sendPnsToDevice(NotificationRequest notificationRequestDto) {
+    public String sendPnsToDevice(NotificationRequest notificationRequest) {
+        if (notificationRequest.getRenterId() != null) {
+            Renter exRenter = renterService.findById(notificationRequest.getRenterId());
+            notificationRequest.setDestination(exRenter.getFirebaseToken());
+        } else if (notificationRequest.getVendorId() != null) {
+            Vendor exVendor = vendorService.findById(notificationRequest.getVendorId());
+            notificationRequest.setDestination(exVendor.getFirebaseToken());
+        }
+
+
         String response = null;
         try {
             Message message = Message.builder()
-                    .setToken(notificationRequestDto.getDestination())
-                    .setNotification(new Notification(notificationRequestDto.getContent().getTitle(), notificationRequestDto.getContent().getBody()))
-                    .putAllData(notificationRequestDto.getData())
+                    .setNotification(null)
+                    .setToken(notificationRequest.getDestination())
+                    .putAllData(notificationRequest.getData())
                     .build();
 
             response = FirebaseMessaging.getInstance().send(message);
+            System.out.println(response);
         } catch (FirebaseMessagingException e) {
             e.printStackTrace();
         }
@@ -95,7 +122,7 @@ public class FirebaseService {
 
             Message message = Message.builder()
                     .setTopic(notificationRequest.getDestination())
-                    .setNotification(new Notification(notificationRequest.getContent().getTitle(), notificationRequest.getContent().getBody()))
+//                    .setNotification(new Notification(notificationRequest.getContent().getTitle(), notificationRequest.getContent().getBody()))
                     .putData("json", json)
                     .build();
             response = FirebaseMessaging.getInstance().send(message);

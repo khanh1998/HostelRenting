@@ -382,26 +382,22 @@ public class ContractServiceImpl implements ContractService {
         }
     }
 
-    private void handleNotification(Contract resModel, String action, String staticMessage){
-        /* send notification after booking */
+    private void handleNotification(Contract model, String action, String staticMessage){
+        /* handling notification after booking */
         Map<String, String> data = new HashMap<>();
-        data.put(Constant.Field.CONTRACT_ID, String.valueOf(resModel.getContractId()));
-        data.put(Constant.Field.ACTION, action);
-        String title = staticMessage +  resModel.getRenter().getUsername();
-        String icon = resModel.getRenter().getAvatar();
-        sendNotification(resModel, title, data, icon);
+        data.put(Constant.Notification.ID_FIELD_NAME, String.valueOf(model.getBookingId()));
+        data.put(Constant.Notification.BODY_FIELD_NAME, LocalDateTime.now().toString());
+        data.put(Constant.Notification.CLICK_ACTION_FIELD_NAME, "");
+        data.put(Constant.Notification.ICON_FIELD_NAME, model.getRenter().getAvatar());
+        data.put(Constant.Notification.TITLE_FIELD_NAME, staticMessage + model.getRenter().getUsername());
+        data.put(Constant.Notification.ACTION_FIELD_NAME, action);
+        sendNotification(model, data);
     }
 
-    private void sendNotification(Contract model, String title, Map<String, String> data, String icon){
+    private void sendNotification(Contract model, Map<String, String> data){
         NotificationRequest notificationRequest = NotificationRequest.builder()
                 .destination(model.getVendor().getFirebaseToken())
                 .data(data)
-                .content(NotificationContent.builder()
-                        .title(title)
-                        .body(LocalDateTime.now().toString())
-                        .clickAction("")
-                        .icon(icon)
-                        .build())
                 .build();
 
         firebaseService.sendPnsToDevice(notificationRequest);

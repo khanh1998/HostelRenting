@@ -1,15 +1,13 @@
 package org.avengers.capstone.hostelrenting.controller;
 
-import org.avengers.capstone.hostelrenting.dto.renter.RenterDTOUpdate;
 import org.avengers.capstone.hostelrenting.dto.renter.RenterDTOCreate;
 import org.avengers.capstone.hostelrenting.dto.renter.RenterDTOResponse;
+import org.avengers.capstone.hostelrenting.dto.renter.RenterDTOUpdate;
 import org.avengers.capstone.hostelrenting.dto.response.ApiSuccess;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
 import org.avengers.capstone.hostelrenting.model.Renter;
-import org.avengers.capstone.hostelrenting.service.ProvinceService;
 import org.avengers.capstone.hostelrenting.service.RenterService;
 import org.avengers.capstone.hostelrenting.service.RoleService;
-import org.avengers.capstone.hostelrenting.service.SchoolService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -28,23 +26,11 @@ public class RenterController {
     private ModelMapper modelMapper;
     private RenterService renterService;
     private RoleService roleService;
-    private SchoolService schoolService;
-    private ProvinceService provinceService;
     private PasswordEncoder passwordEncoder;
 
     @Autowired
     public void setPasswordEncoder(PasswordEncoder passwordEncoder) {
         this.passwordEncoder = passwordEncoder;
-    }
-
-    @Autowired
-    public void setSchoolService(SchoolService schoolService) {
-        this.schoolService = schoolService;
-    }
-
-    @Autowired
-    public void setProvinceService(ProvinceService provinceService) {
-        this.provinceService = provinceService;
     }
 
     @Autowired
@@ -72,7 +58,6 @@ public class RenterController {
         Renter createdModel = renterService.create(reqModel);
 
         RenterDTOResponse resDTO = modelMapper.map(createdModel, RenterDTOResponse.class);
-
         ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTO, "Your account has been created successfully!");
 
         return ResponseEntity.status(HttpStatus.CREATED).body(apiSuccess);

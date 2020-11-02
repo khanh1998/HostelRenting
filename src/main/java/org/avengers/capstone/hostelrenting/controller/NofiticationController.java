@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/v1/notification")
-public class PushNotificationController {
+public class NofiticationController {
     private FirebaseService firebaseService;
 
     @Autowired
@@ -19,23 +19,23 @@ public class PushNotificationController {
         this.firebaseService = firebaseService;
     }
 
-    @PostMapping("/subscribe")
-    public void subscribeToTopic(@RequestBody SubscriptionRequestDTO subscriptionRequestDTO) {
-        firebaseService.subscribeToTopic(subscriptionRequestDTO);
-    }
-
-    @PostMapping("/unsubscribe")
-    public void unsubscribeFromTopic(SubscriptionRequestDTO subscriptionRequestDTO) {
-        firebaseService.unsubscribeFromTopic(subscriptionRequestDTO);
-    }
+//    @PostMapping("/subscribe")
+//    public void subscribeToTopic(@RequestBody SubscriptionRequestDTO subscriptionRequestDTO) {
+//        firebaseService.subscribeToTopic(subscriptionRequestDTO);
+//    }
+//
+//    @PostMapping("/unsubscribe")
+//    public void unsubscribeFromTopic(SubscriptionRequestDTO subscriptionRequestDTO) {
+//        firebaseService.unsubscribeFromTopic(subscriptionRequestDTO);
+//    }
 
     @PostMapping("/token")
     public String sendPnsToDevice(@RequestBody NotificationRequest notificationRequest) {
         return firebaseService.sendPnsToDevice(notificationRequest);
     }
 
-    @PostMapping("/topic")
-    public String sendPnsToTopic(@RequestBody NotificationRequest notificationRequest) {
-        return firebaseService.sendPnsToTopic(notificationRequest);
-    }
+//    @PostMapping("/topic")
+//    public String sendPnsToTopic(@RequestBody NotificationRequest notificationRequest) {
+//        return firebaseService.sendPnsToTopic(notificationRequest);
+//    }
 }
