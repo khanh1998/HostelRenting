@@ -102,7 +102,7 @@ public class FeedbackServiceImpl implements FeedbackService {
     public Collection<Feedback> findByTypeId(Integer typeId) {
         /* check type existed or not */
         typeService.findById(typeId);
-        return feedbackRepository.findByType_TypeIdAndIsDeletedIsFalseOrderByRatingDesc(typeId);
+        return feedbackRepository.findByType_TypeIdAndIsDeletedIsFalseOrderByCreatedAtDesc(typeId);
     }
 
     private void handlePreCreate(Feedback reqModel) {
