@@ -216,8 +216,6 @@ public class TypeController {
                                       @RequestParam(required = false, defaultValue = DEFAULT_SIZE) Integer size,
                                       @RequestParam(required = false, defaultValue = DEFAULT_PAGE) Integer page) {
         //log start
-        logger.info("START - Get type(s)");
-
         String message;
 
         if (typeId != null) {
@@ -296,7 +294,7 @@ public class TypeController {
                 .collect(Collectors.toList());
 
         if (typeDTOs.isEmpty())
-            message = "There is no matched hostel type";
+            message = "There is no hostel type";
         else
             message = "Hostel type(s) has been retrieved successfully!";
 
@@ -308,26 +306,20 @@ public class TypeController {
         int totalType = typeDTOs.size();
         int totalGroup = groupDTOs.size();
 
-        List<TypeDTOResponse> resTypes = typeDTOs
-                .stream()
-                .skip(size * (page - 1))
-                .limit(size)
-                .collect(Collectors.toList());
-        Set<GroupDTOResponse> resGroups = resTypes.stream()
+        Set<GroupDTOResponse> resGroups = typeDTOs.stream()
                 .map(typeDTO -> modelMapper.map(groupService.findById(typeDTO.getGroupId()), GroupDTOResponse.class))
                 .collect(Collectors.toSet());
 
         // DTO contains list of Types and groups follow that type
         TypesAndGroupsDTO resDTO = TypesAndGroupsDTO
                 .builder()
-                .types(resTypes)
+                .types(typeDTOs)
                 .groups(resGroups)
                 .totalType(totalType)
                 .totalGroup(totalGroup)
                 .build();
 
         //log success
-        logger.info("SUCCESSFULLY - Get type(s) ");
         ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTO, message, size, page);
 
         return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);

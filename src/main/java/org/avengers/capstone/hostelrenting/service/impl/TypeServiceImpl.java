@@ -115,22 +115,20 @@ public class TypeServiceImpl implements TypeService {
      */
     @Override
     public Collection<Type> searchWithMainFactors(Double latitude, Double longitude, Double distance, Integer schoolId, Integer provinceId, String sortBy, Boolean asc, int size, int page) {
-//        Sort sort = Sort.by(asc == true ? Sort.Direction.ASC : Sort.Direction.DESC, sortBy);
-//        Pageable pageable = PageRequest.of(page - 1, size, sort);
+        Sort sort = Sort.by(asc == true ? Sort.Direction.ASC : Sort.Direction.DESC, sortBy);
+        Pageable pageable = PageRequest.of(page - 1, size, sort);
         Collection<Type> locTypes;
         Collection<Type> schoolMateTypesOnly = new ArrayList<>();
         Collection<Type> compatriotTypesOnly = new ArrayList<>();
         boolean basicSearch = true;
+
+        /* Get surrounding based on long and lat */
         if (latitude != null && longitude != null) {
-            // if long&lat != null ==> get surroundings
-            logger.info("START - Get surrounding based on lng, lat and distance");
             locTypes = typeRepository.getSurroundings(latitude, longitude, distance);
             locTypes = handleAfterRetrieve(locTypes);
-            logger.info("END - Get surrounding");
         } else {
-            //default get ...
             //TODO: implement get default
-            locTypes = typeRepository.findAll();
+            locTypes = typeRepository.findTop50OrderByScore(size, (page-1)*size);
         }
 
         /* list of return types */
@@ -158,8 +156,24 @@ public class TypeServiceImpl implements TypeService {
                 compatriotTypesOnly.retainAll(result);
         }
 
-        /* result list types */
-        result = Stream.concat(result.stream(), Stream.concat(schoolMateTypesOnly.stream(), compatriotTypesOnly.stream()))
+        /* Generate result collection and sort */
+        result = generateResult(result, schoolMateTypesOnly, compatriotTypesOnly);
+
+        /* Immediately return if only search by location */
+        if (basicSearch)
+            return result;
+
+        if (!basicSearch) {
+            result = result.stream()
+                    .filter(type -> type.getCompatriot() + type.getSchoolmate() > 0)
+                    .collect(Collectors.toCollection(LinkedHashSet::new));
+        }
+
+        return result;
+    }
+
+    private Collection<Type> generateResult(Collection<Type> result, Collection<Type> schoolMateTypesOnly, Collection<Type> compatriotTypesOnly){
+        return Stream.concat(result.stream(), Stream.concat(schoolMateTypesOnly.stream(), compatriotTypesOnly.stream()))
                 // sort - the order is reversed
                 .sorted((o1, o2) -> {
                     int s1 = o1.getSchoolmate();
@@ -180,16 +194,6 @@ public class TypeServiceImpl implements TypeService {
                     return 1;
                 })
                 .collect(Collectors.toCollection(LinkedHashSet::new));
-
-        // immediately return if only search by location
-        if (basicSearch)
-            return result;
-
-        if (!basicSearch) {
-            result = result.stream().filter(type -> type.getCompatriot() + type.getSchoolmate() > 0).collect(Collectors.toCollection(LinkedHashSet::new));
-        }
-
-        return result;
     }
 
     /* 1. Retrieving available rooms
