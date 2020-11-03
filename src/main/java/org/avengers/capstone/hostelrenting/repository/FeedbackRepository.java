@@ -18,5 +18,6 @@ import java.util.Optional;
  */
 @Repository
 public interface FeedbackRepository extends JpaRepository<Feedback, Integer> {
-    List<Feedback> findByType_TypeIdAndIsDeletedIsFalseOrderByCreatedAtDesc(Integer typeId);
+    @Query("SELECT f from Feedback f WHERE f.type.typeId= :typeId and f.isDeleted=false")
+    List<Feedback> findByTypeIdAndDeletedIsFalse(Integer typeId, Pageable pageable);
 }

@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * @author duattt on 10/26/20
@@ -99,10 +100,14 @@ public class FeedbackServiceImpl implements FeedbackService {
     }
 
     @Override
-    public Collection<Feedback> findByTypeId(Integer typeId) {
+    public Collection<Feedback> findByTypeId(Integer typeId, String sortBy, int page, int size, boolean asc) {
         /* check type existed or not */
         typeService.findById(typeId);
-        return feedbackRepository.findByType_TypeIdAndIsDeletedIsFalseOrderByCreatedAtDesc(typeId);
+        Sort sort = Sort.by(asc ? Sort.Direction.ASC : Sort.Direction.DESC, sortBy);
+        Pageable pageable = PageRequest.of(page-1, size, sort);
+
+        return feedbackRepository.findByTypeIdAndDeletedIsFalse(typeId,pageable).stream()
+                .peek(this::handleFeedbackObj).collect(Collectors.toList());
     }
 
     private void handlePreCreate(Feedback reqModel) {
@@ -111,7 +116,6 @@ public class FeedbackServiceImpl implements FeedbackService {
             throw new GenericException(Feedback.class, "Cannot send feedback (booking or contract is required)");
         }
     }
-
 
     private Feedback handleFeedbackObj(Feedback model) {
         Optional<Booking> exBooking = bookingRepository.findFirstByRenter_UserIdAndType_TypeIdAndStatusOrderByCreatedAtDesc(model.getRenter().getUserId(),

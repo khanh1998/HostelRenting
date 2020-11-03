@@ -1,8 +1,9 @@
 package org.avengers.capstone.hostelrenting.dto.type;
 
+import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import lombok.Getter;
 import lombok.Setter;
-import org.avengers.capstone.hostelrenting.dto.CategoryDTO;
+import org.avengers.capstone.hostelrenting.dto.category.CategoryDTO;
 import org.avengers.capstone.hostelrenting.dto.TypeStatusDTO;
 
 import java.util.Collection;
@@ -19,6 +20,7 @@ public class TypeDTOResponseShort {
     private float score;
     private int groupId;
     private String title;
+    @JsonUnwrapped
     private CategoryDTO category;
     private float price;
     private String priceUnit;
