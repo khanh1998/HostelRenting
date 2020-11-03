@@ -34,5 +34,5 @@ public interface TypeRepository extends JpaRepository<Type, Integer> {
     List<Object[]> getByCompatriot(int provinceId);
 
     @Query(value = "SELECT * FROM type_hostel AS t ORDER BY t.score DESC LIMIT ?1 OFFSET ?2", nativeQuery = true)
-    Collection<Type> findTop50OrderByScore(int size, int offset);
+    Collection<Type> findTopOrderByScore(int size, int offset);
 }

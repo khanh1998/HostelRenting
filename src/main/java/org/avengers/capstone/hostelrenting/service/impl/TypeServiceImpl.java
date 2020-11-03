@@ -128,7 +128,7 @@ public class TypeServiceImpl implements TypeService {
             locTypes = handleAfterRetrieve(locTypes);
         } else {
             //TODO: implement get default
-            locTypes = typeRepository.findTop50OrderByScore(size, (page-1)*size);
+            locTypes = typeRepository.findTopOrderByScore(size, (page-1)*size);
         }
 
         /* list of return types */
