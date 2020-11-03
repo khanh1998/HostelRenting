@@ -217,8 +217,11 @@ public class TypeController {
                                       @RequestParam(required = false, defaultValue = DEFAULT_PAGE) Integer page) {
         //log start
         logger.info("START - Get type(s)");
+
+        String message;
+
         if (typeId != null) {
-            String message = "Hostel type {id=" + typeId + "} has been retrieved successfully!";
+            message = "Hostel type {id=" + typeId + "} has been retrieved successfully!";
             // handle hostel type and corresponding hostel group
             Type model = typeService.findById(typeId);
             model = typeService.countAvailableRoomAndCurrentBooking(model);
@@ -292,6 +295,10 @@ public class TypeController {
                 )
                 .collect(Collectors.toList());
 
+        if (typeDTOs.isEmpty())
+            message = "There is no matched hostel type";
+        else
+            message = "Hostel type(s) has been retrieved successfully!";
 
         Set<GroupDTOResponse> groupDTOs = typeDTOs.stream()
                 .map(typeDTO -> modelMapper
@@ -321,7 +328,7 @@ public class TypeController {
 
         //log success
         logger.info("SUCCESSFULLY - Get type(s) ");
-        ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTO, "Hostel type(s) has been retrieved successfully!", size, page);
+        ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTO, message, size, page);
 
         return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
     }
