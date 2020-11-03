@@ -1,6 +1,6 @@
 package org.avengers.capstone.hostelrenting.controller;
 
-import org.avengers.capstone.hostelrenting.dto.CategoryDTO;
+import org.avengers.capstone.hostelrenting.dto.category.CategoryDTO;
 import org.avengers.capstone.hostelrenting.dto.response.ApiSuccess;
 import org.avengers.capstone.hostelrenting.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;

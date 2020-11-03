@@ -117,7 +117,7 @@ public class FeedbackController {
                                                   @RequestParam(required = false, defaultValue = DEFAULT_SIZE) Integer size,
                                                   @RequestParam(required = false, defaultValue = DEFAULT_PAGE) Integer page) {
         logger.info("START - getting feedback");
-        Collection<FeedbackDTOResponse> resDTOs = feedbackService.findByTypeId(typeId)
+        Collection<FeedbackDTOResponse> resDTOs = feedbackService.findByTypeId(typeId, sortBy, page, size, asc)
                 .stream().map(feedback -> modelMapper.map(feedback, FeedbackDTOResponse.class))
                 .collect(Collectors.toList());
         ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTOs, "Feedback has been retrieved successfully!");
