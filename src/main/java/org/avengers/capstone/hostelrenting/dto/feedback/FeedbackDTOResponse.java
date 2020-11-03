@@ -9,6 +9,7 @@ import org.avengers.capstone.hostelrenting.model.Booking;
 import org.avengers.capstone.hostelrenting.model.Contract;
 
 import java.io.Serializable;
+import java.util.Collection;
 
 /**
  * @author duattt on 10/27/20
@@ -33,6 +34,7 @@ public class FeedbackDTOResponse implements Serializable {
     private Long contractTimestamp;
     private Long createdAt;
     private Long updatedAt;
+    private Collection<FeedbackImageDTOResponse> feedbackImages;
 
     public Long getBookingTimestamp() {
         if (booking != null)
