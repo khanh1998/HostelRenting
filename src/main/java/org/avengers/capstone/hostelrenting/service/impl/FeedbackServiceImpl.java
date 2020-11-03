@@ -2,6 +2,7 @@ package org.avengers.capstone.hostelrenting.service.impl;
 
 import org.avengers.capstone.hostelrenting.dto.feedback.FeedbackDTOUpdate;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
+import org.avengers.capstone.hostelrenting.exception.GenericException;
 import org.avengers.capstone.hostelrenting.model.Booking;
 import org.avengers.capstone.hostelrenting.model.Contract;
 import org.avengers.capstone.hostelrenting.model.Feedback;
@@ -16,6 +17,9 @@ import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
@@ -75,7 +79,7 @@ public class FeedbackServiceImpl implements FeedbackService {
 
     @Override
     public Feedback create(Feedback reqModel) {
-        reqModel = handleFeedbackObj(reqModel);
+        handlePreCreate(reqModel);
         return feedbackRepository.save(reqModel);
     }
 
@@ -101,17 +105,27 @@ public class FeedbackServiceImpl implements FeedbackService {
         return feedbackRepository.findByType_TypeIdAndIsDeletedIsFalseOrderByRatingDesc(typeId);
     }
 
+    private void handlePreCreate(Feedback reqModel) {
+        Feedback tempModel = handleFeedbackObj(reqModel);
+        if (tempModel.getBooking() == null && tempModel.getContract() == null) {
+            throw new GenericException(Feedback.class, "Cannot send feedback (booking or contract is required)");
+        }
+    }
 
-    private Feedback handleFeedbackObj(Feedback model){
+
+    private Feedback handleFeedbackObj(Feedback model) {
         Optional<Booking> exBooking = bookingRepository.findFirstByRenter_UserIdAndType_TypeIdAndStatusOrderByCreatedAtDesc(model.getRenter().getUserId(),
                 model.getType().getTypeId(),
                 Booking.STATUS.DONE);
         exBooking.ifPresent(model::setBooking);
 
-        Optional<Contract> exContract = contractRepository.findFirstByRenter_UserIdAndRoom_Type_TypeIdAndStatusOrStatusOrderByCreatedAt(model.getRenter().getUserId(),
-                model.getType().getTypeId(),
-                Contract.STATUS.ACTIVATED,
-                Contract.STATUS.EXPIRED);
+        Optional<Contract> exContract = contractRepository.findFirstByRenter_UserIdAndRoom_Type_TypeIdAndStatusOrRenter_UserIdAndRoom_Type_TypeIdAndStatusOrderByCreatedAt
+                (model.getRenter().getUserId(),
+                        model.getType().getTypeId(),
+                        Contract.STATUS.ACTIVATED,
+                        model.getRenter().getUserId(),
+                        model.getType().getTypeId(),
+                        Contract.STATUS.EXPIRED);
         exContract.ifPresent(model::setContract);
 
         return model;

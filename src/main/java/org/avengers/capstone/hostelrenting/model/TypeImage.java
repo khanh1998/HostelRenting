@@ -19,7 +19,6 @@ public class TypeImage {
     private int imageId;
 
     @Column(nullable = false)
-    @NotBlank(message = "Image resource is mandatory")
     private String resourceUrl;
 
     @ManyToOne

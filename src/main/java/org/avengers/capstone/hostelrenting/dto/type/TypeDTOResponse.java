@@ -4,9 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.avengers.capstone.hostelrenting.dto.CategoryDTO;
 import org.avengers.capstone.hostelrenting.dto.FacilityDTO;
-import org.avengers.capstone.hostelrenting.dto.TypeImageDTO;
 import org.avengers.capstone.hostelrenting.dto.TypeStatusDTO;
-import org.springframework.beans.factory.annotation.Value;
 
 import java.io.Serializable;
 import java.util.Collection;

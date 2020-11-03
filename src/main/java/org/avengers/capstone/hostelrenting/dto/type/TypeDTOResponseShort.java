@@ -3,7 +3,6 @@ package org.avengers.capstone.hostelrenting.dto.type;
 import lombok.Getter;
 import lombok.Setter;
 import org.avengers.capstone.hostelrenting.dto.CategoryDTO;
-import org.avengers.capstone.hostelrenting.dto.TypeImageDTO;
 import org.avengers.capstone.hostelrenting.dto.TypeStatusDTO;
 
 import java.util.Collection;
