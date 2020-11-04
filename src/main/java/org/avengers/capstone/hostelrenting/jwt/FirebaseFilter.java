@@ -79,10 +79,12 @@ public class FirebaseFilter extends OncePerRequestFilter {
             }
             filterChain.doFilter(request, response);
         } catch (IllegalArgumentException e) {
+            //TODO: skip for development
             FirebaseIllegalArgumentException ex = new FirebaseIllegalArgumentException("Unable to get JWT Token", e);
             resolver.resolveException(request, response, null, ex);
         } catch (FirebaseAuthException e) {
-            resolver.resolveException(request, response, null, e);
+            //TODO: skip for development
+//            resolver.resolveException(request, response, null, e);
         }
     }
 }
