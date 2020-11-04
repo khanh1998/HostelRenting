@@ -184,6 +184,7 @@ public class ContractServiceImpl implements ContractService {
         /* Set room for contract model */
         reqModel.setRoom(roomService.updateStatus(reqModel.getRoom().getRoomId(), false));
         Contract resModel = contractRepository.save(reqModel);
+        sendNotification(resModel, Constant.Notification.NEW_CONTRACT, Constant.Notification.STATIC_NEW_CONTRACT_MESSAGE);
 
         // process business after create contract
         resModel = processAfterCreate(resModel);
