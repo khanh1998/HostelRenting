@@ -1,11 +1,13 @@
 package org.avengers.capstone.hostelrenting.dto.feedback;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Getter;
-import lombok.Setter;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.*;
+import org.avengers.capstone.hostelrenting.dto.contract.GroupServiceDTOForContract;
 import org.avengers.capstone.hostelrenting.model.Contract;
 
 import javax.validation.constraints.NotNull;
+import java.util.Collection;
 import java.util.UUID;
 
 /**
@@ -13,6 +15,7 @@ import java.util.UUID;
  * @created 27/10/2020 - 06:57
  * @project youthhostelapp
  */
+
 public class FeedbackDTOCreate {
     public FeedbackDTOCreate() {
         this.isDeleted = false;
@@ -31,9 +34,6 @@ public class FeedbackDTOCreate {
     private Integer typeId;
 
     @Getter @Setter
-    private String subject;
-
-    @Getter @Setter
     private String comment;
 
     @Getter @Setter
@@ -47,4 +47,8 @@ public class FeedbackDTOCreate {
     @JsonIgnore
     @Getter
     private final Long createdAt;
+
+    @Getter @Setter
+    @JsonProperty(value = "images")
+    private Collection<FeedbackImageDTOCreate> feedbackImages;
 }

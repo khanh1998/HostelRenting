@@ -6,6 +6,8 @@ import org.avengers.capstone.hostelrenting.model.Room;
 import org.avengers.capstone.hostelrenting.model.Type;
 import org.avengers.capstone.hostelrenting.repository.TypeRepository;
 import org.avengers.capstone.hostelrenting.service.GroupService;
+import org.avengers.capstone.hostelrenting.service.ProvinceService;
+import org.avengers.capstone.hostelrenting.service.SchoolService;
 import org.avengers.capstone.hostelrenting.service.TypeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +26,19 @@ import java.util.stream.Stream;
 public class TypeServiceImpl implements TypeService {
     private TypeRepository typeRepository;
     private GroupService groupService;
+    private ProvinceService provinceService;
+    private SchoolService schoolService;
+
+    @Autowired
+    public void setProvinceService(ProvinceService provinceService) {
+        this.provinceService = provinceService;
+    }
+
+    @Autowired
+    public void setSchoolService(SchoolService schoolService) {
+        this.schoolService = schoolService;
+    }
+
     private static final Logger logger = LoggerFactory.getLogger(TypeServiceImpl.class);
 
     @Autowired
@@ -100,21 +115,20 @@ public class TypeServiceImpl implements TypeService {
      */
     @Override
     public Collection<Type> searchWithMainFactors(Double latitude, Double longitude, Double distance, Integer schoolId, Integer provinceId, String sortBy, Boolean asc, int size, int page) {
-        Sort sort = Sort.by(asc == true ? Sort.Direction.ASC : Sort.Direction.DESC, sortBy);
+        Sort sort = Sort.by(asc ? Sort.Direction.ASC : Sort.Direction.DESC, sortBy);
         Pageable pageable = PageRequest.of(page - 1, size, sort);
         Collection<Type> locTypes;
-        Collection<Type> schoolMateTypesOnly = null;
-        Collection<Type> compatriotTypesOnly = null;
+        Collection<Type> schoolMateTypesOnly = new ArrayList<>();
+        Collection<Type> compatriotTypesOnly = new ArrayList<>();
+        boolean basicSearch = true;
+
+        /* Get surrounding based on long and lat */
         if (latitude != null && longitude != null) {
-            // if long&lat != null ==> get surroundings
-            logger.info("START - Get surrounding based on lng, lat and distance");
             locTypes = typeRepository.getSurroundings(latitude, longitude, distance);
             locTypes = handleAfterRetrieve(locTypes);
-            logger.info("END - Get surrounding");
         } else {
-            //default get ...
             //TODO: implement get default
-            locTypes = typeRepository.findAll();
+            locTypes = typeRepository.findTopOrderByScore(size, (page-1)*size);
         }
 
         /* list of return types */
@@ -122,37 +136,64 @@ public class TypeServiceImpl implements TypeService {
 
         /* list of type has only schoolMate */
         if (schoolId != null) {
+            //check whether schoolId exist or not
+            schoolService.findById(schoolId);
+
+            basicSearch = false;
             schoolMateTypesOnly = convertMapToList(typeRepository.getBySchoolMates(schoolId), 1);
-            if (schoolMateTypesOnly != null)
+            if (schoolMateTypesOnly.size() > 0)
                 schoolMateTypesOnly.retainAll(result);
-        } else
-            schoolMateTypesOnly = new ArrayList<>();
+        }
 
         /* list of type has only compatriot */
         if (provinceId != null) {
+            //check whether provinceId exist or not
+            provinceService.findById(provinceId);
+
+            basicSearch = false;
             compatriotTypesOnly = convertMapToList(typeRepository.getByCompatriot(provinceId), 2);
-            if (compatriotTypesOnly != null)
+            if (compatriotTypesOnly.size() > 0)
                 compatriotTypesOnly.retainAll(result);
-        } else
-            compatriotTypesOnly = new ArrayList<>();
+        }
 
-        Comparator<Type> compareByCompatriotAndSchoolmate = Comparator
-                .comparing((Type type) -> (type.getSchoolmate() > 0 && type.getCompatriot() > 0))
-                .thenComparing(Type::getSchoolmate)
-                .thenComparing(Type::getCompatriot)
-                .reversed();
+        /* Generate result collection and sort */
+        result = generateResult(result, schoolMateTypesOnly, compatriotTypesOnly);
 
-//        (type.getCompatriot() + type.getSchoolmate())
+        /* Immediately return if only search by location */
+        if (basicSearch)
+            return result;
 
-        /* result list types */
-        result = Stream.concat(result.stream(), Stream.concat(schoolMateTypesOnly.stream(), compatriotTypesOnly.stream()))
-                .sorted(compareByCompatriotAndSchoolmate)
-                .collect(Collectors.toCollection(LinkedHashSet::new));
-        if (provinceId!= null && schoolId != null){
-            result = result.stream().filter(type -> type.getCompatriot() + type.getSchoolmate() > 0).collect(Collectors.toSet());
+        if (!basicSearch) {
+            result = result.stream()
+                    .filter(type -> type.getCompatriot() + type.getSchoolmate() > 0)
+                    .collect(Collectors.toCollection(LinkedHashSet::new));
         }
 
         return result;
+    }
+
+    private Collection<Type> generateResult(Collection<Type> result, Collection<Type> schoolMateTypesOnly, Collection<Type> compatriotTypesOnly){
+        return Stream.concat(result.stream(), Stream.concat(schoolMateTypesOnly.stream(), compatriotTypesOnly.stream()))
+                // sort - the order is reversed
+                .sorted((o1, o2) -> {
+                    int s1 = o1.getSchoolmate();
+                    int s2 = o2.getSchoolmate();
+                    int c1 = o1.getCompatriot();
+                    int c2 = o2.getCompatriot();
+                    int total1 = o1.getSchoolmate() + o1.getCompatriot();
+                    int total2 = o2.getSchoolmate() + o2.getCompatriot();
+                    // compare type has both criteria with type has only 1
+                    if ((s1 > 0 && c1 > 0) && (s2 == 0 || c2 == 0))
+                        return -1;
+                    // compare 2 types that have both criteria >0
+                    if ((s1 > 0 && c1 > 0) && (s2 > 0 && c2 > 0))
+                        return Integer.compare(total2, total1);
+                    // compare 2 types that have only 1 criteria
+                    if ((s1 == 0 || c1 == 0) && (s2 == 0 || c2 == 0))
+                        return Integer.compare(total2, total1);
+                    return 1;
+                })
+                .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
     /* 1. Retrieving available rooms
@@ -176,13 +217,13 @@ public class TypeServiceImpl implements TypeService {
     }
 
     /**
-     * @param inputList
+     * @param inputList object list that returned from procedure
      * @param code      == 1 is schoolmate, otherwise is compatriot
      * @return list of types has been converted from map to list
      */
     private List<Type> convertMapToList(List<Object[]> inputList, int code) {
         if (inputList.isEmpty())
-            return null;
+            return new ArrayList<>();
         Map<Integer, Integer> inputMap = new HashMap<>();
         for (Object[] obj : inputList) {
             Integer typeId = (Integer) obj[0];
@@ -199,11 +240,7 @@ public class TypeServiceImpl implements TypeService {
                         temp.setCompatriot(Math.toIntExact(inputMap.get(integer)));
                     return temp;
                 }).collect(Collectors.toList());
-        return types;
-    }
 
-    private boolean isNotFound(Integer id) {
-        Optional<Type> hostelType = typeRepository.findById(id);
-        return hostelType.isEmpty();
+        return types;
     }
 }

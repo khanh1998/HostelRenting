@@ -1,6 +1,6 @@
 package org.avengers.capstone.hostelrenting.service;
 
-import org.avengers.capstone.hostelrenting.dto.CategoryDTO;
+import org.avengers.capstone.hostelrenting.dto.category.CategoryDTO;
 import org.avengers.capstone.hostelrenting.model.Category;
 
 import java.util.List;

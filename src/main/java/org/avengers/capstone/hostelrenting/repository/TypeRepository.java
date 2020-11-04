@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,4 +32,7 @@ public interface TypeRepository extends JpaRepository<Type, Integer> {
 
     @Query(value = "SELECT * FROM get_type_by_compatriot(?1)", nativeQuery = true)
     List<Object[]> getByCompatriot(int provinceId);
+
+    @Query(value = "SELECT * FROM type_hostel AS t ORDER BY t.score DESC LIMIT ?1 OFFSET ?2", nativeQuery = true)
+    Collection<Type> findTopOrderByScore(int size, int offset);
 }

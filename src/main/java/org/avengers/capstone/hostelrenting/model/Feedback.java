@@ -5,6 +5,7 @@ import lombok.*;
 import javax.persistence.*;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
+import java.util.Collection;
 
 /**
  * @author duattt on 10/26/20
@@ -26,7 +27,7 @@ public class Feedback {
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int feedbackID;
+    private int feedbackId;
 
 
     @ManyToOne
@@ -36,8 +37,6 @@ public class Feedback {
     @ManyToOne
     @JoinColumn(name = "type_id", nullable = false)
     private Type type;
-
-    private String subject;
 
     private String comment;
 
@@ -56,6 +55,9 @@ public class Feedback {
 
     private Integer contractId;
 
+    @OneToMany(mappedBy = "feedback", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Collection<FeedbackImage> feedbackImages;
+
     /**
      * creating timestamp
      */
@@ -70,6 +72,7 @@ public class Feedback {
 
     @Column(columnDefinition = "bool default false")
     private boolean isDeleted;
+
 
     public void setBooking(Booking booking) {
         this.booking = booking;

@@ -18,8 +18,8 @@ public class SchoolDTOFull implements Serializable {
     @NotNull(message = "School id is mandatory!")
     private Integer schoolId;
     private String schoolName;
-    private String longitude;
-    private String latitude;
+    private Double longitude;
+    private Double latitude;
     @JsonProperty("address")
     private DistrictDTOShort district;
 }

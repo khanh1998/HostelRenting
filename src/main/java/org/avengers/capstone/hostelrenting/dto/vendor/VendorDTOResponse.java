@@ -9,7 +9,7 @@ import java.io.Serializable;
 
 @Getter
 @Setter
-public class ResVendorDTO extends UserDTOResponse implements Serializable {
+public class VendorDTOResponse extends UserDTOResponse implements Serializable {
 
 //    private List<ContractDTOShort> contracts;
 //    private List<HostelGroupDTO> hostelGroups;

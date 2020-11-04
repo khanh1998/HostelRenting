@@ -216,9 +216,10 @@ public class TypeController {
                                       @RequestParam(required = false, defaultValue = DEFAULT_SIZE) Integer size,
                                       @RequestParam(required = false, defaultValue = DEFAULT_PAGE) Integer page) {
         //log start
-        logger.info("START - Get type(s)");
+        String message;
+
         if (typeId != null) {
-            String message = "Hostel type {id=" + typeId + "} has been retrieved successfully!";
+            message = "Hostel type {id=" + typeId + "} has been retrieved successfully!";
             // handle hostel type and corresponding hostel group
             Type model = typeService.findById(typeId);
             model = typeService.countAvailableRoomAndCurrentBooking(model);
@@ -292,6 +293,10 @@ public class TypeController {
                 )
                 .collect(Collectors.toList());
 
+        if (typeDTOs.isEmpty())
+            message = "There is no hostel type";
+        else
+            message = "Hostel type(s) has been retrieved successfully!";
 
         Set<GroupDTOResponse> groupDTOs = typeDTOs.stream()
                 .map(typeDTO -> modelMapper
@@ -301,27 +306,21 @@ public class TypeController {
         int totalType = typeDTOs.size();
         int totalGroup = groupDTOs.size();
 
-        List<TypeDTOResponse> resTypes = typeDTOs
-                .stream()
-                .skip(size * (page - 1))
-                .limit(size)
-                .collect(Collectors.toList());
-        Set<GroupDTOResponse> resGroups = resTypes.stream()
+        Set<GroupDTOResponse> resGroups = typeDTOs.stream()
                 .map(typeDTO -> modelMapper.map(groupService.findById(typeDTO.getGroupId()), GroupDTOResponse.class))
                 .collect(Collectors.toSet());
 
         // DTO contains list of Types and groups follow that type
         TypesAndGroupsDTO resDTO = TypesAndGroupsDTO
                 .builder()
-                .types(resTypes)
+                .types(typeDTOs)
                 .groups(resGroups)
                 .totalType(totalType)
                 .totalGroup(totalGroup)
                 .build();
 
         //log success
-        logger.info("SUCCESSFULLY - Get type(s) ");
-        ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTO, "Hostel type(s) has been retrieved successfully!", size, page);
+        ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTO, message, size, page);
 
         return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
     }
@@ -345,12 +344,5 @@ public class TypeController {
         return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
     }
 
-    @GetMapping("types/{typeId}/feedbacks")
-    public ResponseEntity<?> getFeedbacksByTypeId(@PathVariable Integer typeId) {
-        Collection<FeedbackDTOResponse> resDTOs = feedbackService.findByTypeId(typeId)
-                .stream().map(feedback -> modelMapper.map(feedback, FeedbackDTOResponse.class))
-                .collect(Collectors.toList());
-        ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTOs, "Your feedback has been retrieved successfully!");
-        return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
-    }
+
 }

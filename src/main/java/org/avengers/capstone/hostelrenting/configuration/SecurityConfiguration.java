@@ -62,7 +62,12 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
         // We don't need CSRF for this example
-        httpSecurity.csrf().disable()
+        httpSecurity
+                .addFilterBefore(firebaseFilter, UsernamePasswordAuthenticationFilter.class)
+                .csrf().disable()
+                .cors()
+                .and()
+//                .authorizeRequests().antMatchers("/api/v1/").hasRole("RENTER")
                 // dont authenticate this particular request
                 .authorizeRequests().antMatchers("/api/v1/login").permitAll().
                 // all other requests need to be authenticated
@@ -73,6 +78,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
         // Add a filter to validate the tokens with every request
-        httpSecurity.addFilterBefore(firebaseFilter, UsernamePasswordAuthenticationFilter.class);
+//        httpSecurity.addFilterBefore(firebaseFilter, UsernamePasswordAuthenticationFilter.class);
     }
 }

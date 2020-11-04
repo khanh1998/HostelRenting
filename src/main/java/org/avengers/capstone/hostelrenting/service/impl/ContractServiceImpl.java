@@ -1,6 +1,7 @@
 package org.avengers.capstone.hostelrenting.service.impl;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lowagie.text.DocumentException;
 import org.apache.commons.collections.CollectionUtils;
 import org.avengers.capstone.hostelrenting.Constant;
@@ -42,6 +43,7 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.swing.text.html.Option;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -182,6 +184,7 @@ public class ContractServiceImpl implements ContractService {
         /* Set room for contract model */
         reqModel.setRoom(roomService.updateStatus(reqModel.getRoom().getRoomId(), false));
         Contract resModel = contractRepository.save(reqModel);
+        sendNotification(resModel, Constant.Notification.NEW_CONTRACT, Constant.Notification.STATIC_NEW_CONTRACT_MESSAGE);
 
         // process business after create contract
         resModel = processAfterCreate(resModel);
@@ -208,7 +211,7 @@ public class ContractServiceImpl implements ContractService {
             Booking exBooking = bookingService.findById(resModel.getBookingId());
             exBooking.setContractId(resModel.getContractId());
             bookingRepository.save(exBooking);
-            handleNotification(resModel, Constant.Notification.CONFIRM_CONTRACT, Constant.Notification.STATIC_CONFIRM_CONTRACT_MESSAGE);
+            sendNotification(resModel, Constant.Notification.CONFIRM_CONTRACT, Constant.Notification.STATIC_CONFIRM_CONTRACT_MESSAGE);
             return resModel;
         }
         throw new GenericException(Contract.class, "qrCode not matched", "contractId", String.valueOf(exModel.getContractId()), "qrCode", exModel.getQrCode().toString());
@@ -382,26 +385,28 @@ public class ContractServiceImpl implements ContractService {
         }
     }
 
-    private void handleNotification(Contract resModel, String action, String staticMessage){
-        /* send notification after booking */
-        Map<String, String> data = new HashMap<>();
-        data.put(Constant.Field.CONTRACT_ID, String.valueOf(resModel.getContractId()));
-        data.put(Constant.Field.ACTION, action);
-        String title = staticMessage +  resModel.getRenter().getUsername();
-        String icon = resModel.getRenter().getAvatar();
-        sendNotification(resModel, title, data, icon);
-    }
+    private void sendNotification(Contract model, String action, String staticMsg){
 
-    private void sendNotification(Contract model, String title, Map<String, String> data, String icon){
+        String pattern = "dd/MM/yyyy hh:mm:ss";
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+        String timestamp = simpleDateFormat.format(new Date());
+
+
+        NotificationContent content = NotificationContent.builder()
+                .id(String.valueOf(model.getContractId()))
+                .action(action)
+                .title(staticMsg + model.getRenter().getUsername())
+                .body(timestamp)
+                .icon(model.getRenter().getAvatar())
+                .clickAction("")
+                .build();
+
+        ObjectMapper objMapper = new ObjectMapper();
+        Map<String, String> data = objMapper.convertValue(content, Map.class);
+
         NotificationRequest notificationRequest = NotificationRequest.builder()
                 .destination(model.getVendor().getFirebaseToken())
                 .data(data)
-                .content(NotificationContent.builder()
-                        .title(title)
-                        .body(LocalDateTime.now().toString())
-                        .clickAction("")
-                        .icon(icon)
-                        .build())
                 .build();
 
         firebaseService.sendPnsToDevice(notificationRequest);

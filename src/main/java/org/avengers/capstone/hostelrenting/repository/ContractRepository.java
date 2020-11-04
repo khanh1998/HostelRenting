@@ -10,7 +10,8 @@ import java.util.Optional;
 
 public interface ContractRepository extends JpaRepository<Contract, Integer> {
     Optional<Contract> findByVendor_UserIdAndRenter_UserIdAndRoom_RoomId(Long vendorId, Long renterId, Integer roomId);
-    Optional<Contract> findFirstByRenter_UserIdAndRoom_Type_TypeIdAndStatusOrStatusOrderByCreatedAt(Long renterId, Integer contractId, Contract.STATUS status1, Contract.STATUS status2);
+    Optional<Contract> findFirstByRenter_UserIdAndRoom_Type_TypeIdAndStatusOrRenter_UserIdAndRoom_Type_TypeIdAndStatusOrderByCreatedAt
+            (Long renterId, Integer typeId, Contract.STATUS status1,Long renterId2, Integer typeId2, Contract.STATUS status2);
     List<Contract> findByVendor_UserId(Long vendorId, Pageable pageable);
     List<Contract> findByRenter_UserId(Long renterId, Pageable pageable);
 }

@@ -1,14 +1,14 @@
 package org.avengers.capstone.hostelrenting.controller;
 
-import com.google.protobuf.Api;
-import lombok.NonNull;
-import org.avengers.capstone.hostelrenting.dto.contract.ContractDTOCreate;
-import org.avengers.capstone.hostelrenting.dto.contract.ContractDTOResponse;
 import org.avengers.capstone.hostelrenting.dto.feedback.FeedbackDTOCreate;
 import org.avengers.capstone.hostelrenting.dto.feedback.FeedbackDTOResponse;
 import org.avengers.capstone.hostelrenting.dto.feedback.FeedbackDTOUpdate;
+import org.avengers.capstone.hostelrenting.dto.feedback.FeedbackImageDTOCreate;
 import org.avengers.capstone.hostelrenting.dto.response.ApiSuccess;
-import org.avengers.capstone.hostelrenting.model.*;
+import org.avengers.capstone.hostelrenting.model.Feedback;
+import org.avengers.capstone.hostelrenting.model.FeedbackImage;
+import org.avengers.capstone.hostelrenting.model.Renter;
+import org.avengers.capstone.hostelrenting.model.Type;
 import org.avengers.capstone.hostelrenting.service.*;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
@@ -20,6 +20,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.Collection;
+import java.util.stream.Collectors;
+
+import static org.avengers.capstone.hostelrenting.Constant.Pagination.DEFAULT_PAGE;
+import static org.avengers.capstone.hostelrenting.Constant.Pagination.DEFAULT_SIZE;
 
 /**
  * @author duattt on 10/27/20
@@ -33,19 +38,8 @@ public class FeedbackController {
     private FeedbackService feedbackService;
     private TypeService typeService;
     private RenterService renterService;
-    private BookingService bookingService;
-    private ContractService contractService;
     private ModelMapper modelMapper;
 
-    @Autowired
-    public void setBookingService(BookingService bookingService) {
-        this.bookingService = bookingService;
-    }
-
-    @Autowired
-    public void setContractService(ContractService contractService) {
-        this.contractService = contractService;
-    }
 
     @Autowired
     public void setModelMapper(ModelMapper modelMapper) {
@@ -72,12 +66,16 @@ public class FeedbackController {
         logger.info("START - creating feedback");
         Feedback reqModel = modelMapper.map(reqDTO, Feedback.class);
 
-        /* Prepare object for feedback model */
+        /* Prepare object for feedback model: renter, type, feedbackImage */
         Renter exRenter = renterService.findById(reqDTO.getRenterId());
         Type exType = typeService.findById(reqDTO.getTypeId());
+        for (FeedbackImage feedbackImage : reqModel.getFeedbackImages()) {
+            feedbackImage.setFeedback(reqModel);
+        }
 
         /* Create and response feedback object */
-        reqModel = reqModel.toBuilder().type(exType).renter(exRenter).build();
+        reqModel.setType(exType);
+        reqModel.setRenter(exRenter);
         Feedback resModel = feedbackService.create(reqModel);
         FeedbackDTOResponse resDTO = modelMapper.map(resModel, FeedbackDTOResponse.class);
 
@@ -90,21 +88,40 @@ public class FeedbackController {
     @PutMapping("/feedbacks/{feedbackId}")
     public ResponseEntity<?> updateFeedback(@PathVariable Integer feedbackId,
                                             @RequestBody @Valid FeedbackDTOUpdate reqDTO) {
+        logger.info("START - updating feedback");
         Feedback exModel = feedbackService.findById(feedbackId);
         Feedback resModel = feedbackService.update(exModel, reqDTO);
         ApiSuccess<?> apiSuccess;
         FeedbackDTOResponse resDTO = modelMapper.map(resModel, FeedbackDTOResponse.class);
         apiSuccess = new ApiSuccess<>(resDTO, "Your feedback has been updated successfully!");
 
-
+        logger.info("END - updating feedback");
         return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
     }
 
     @DeleteMapping("/feedbacks/{feedbackId}")
     public ResponseEntity<?> deleteFeedback(@PathVariable Integer feedbackId) {
+        logger.info("START - deleting feedback");
         Feedback exModel = feedbackService.findById(feedbackId);
-        feedbackService.deleteById(feedbackId);
-        ApiSuccess apiSuccess = new ApiSuccess<>("Delete successfully!", true);
+        feedbackService.deleteById(exModel.getFeedbackId());
+        ApiSuccess<?> apiSuccess = new ApiSuccess<>("Delete successfully!", true);
+        logger.info("END - deleting feedback");
+
+        return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
+    }
+
+    @GetMapping("types/{typeId}/feedbacks")
+    public ResponseEntity<?> getFeedbacksByTypeId(@PathVariable Integer typeId,
+                                                  @RequestParam(required = false, defaultValue = "createdAt") String sortBy,
+                                                  @RequestParam(required = false, defaultValue = "false") Boolean asc,
+                                                  @RequestParam(required = false, defaultValue = DEFAULT_SIZE) Integer size,
+                                                  @RequestParam(required = false, defaultValue = DEFAULT_PAGE) Integer page) {
+        logger.info("START - getting feedback");
+        Collection<FeedbackDTOResponse> resDTOs = feedbackService.findByTypeId(typeId, sortBy, page, size, asc)
+                .stream().map(feedback -> modelMapper.map(feedback, FeedbackDTOResponse.class))
+                .collect(Collectors.toList());
+        ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTOs, "Feedback has been retrieved successfully!");
+        logger.info("END - getting feedback");
         return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
     }
 }
