@@ -1,5 +1,6 @@
 package org.avengers.capstone.hostelrenting.handler;
 
+import com.google.firebase.auth.FirebaseAuthException;
 import org.avengers.capstone.hostelrenting.dto.response.ApiError;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
 import org.avengers.capstone.hostelrenting.exception.GenericException;
@@ -269,6 +270,26 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         apiError.setDebugMessage(ex.getLocalizedMessage());
         logger.error(ex);
         return buildResponseEntity(apiError);
+    }
+
+    @ExceptionHandler(FirebaseAuthException.class)
+    public ResponseEntity<?> handleFirebseAuthException(FirebaseAuthException ex) {
+        ApiError apiError = new ApiError(UNAUTHORIZED);
+        apiError.setMessage(ex.getMessage());
+        apiError.setDebugMessage(ex.getLocalizedMessage());
+        logger.error(ex);
+        return buildResponseEntity(apiError);
+
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<?> handleIllegalArgumentException(IllegalArgumentException ex) {
+        ApiError apiError = new ApiError(BAD_REQUEST);
+        apiError.setMessage(ex.getMessage());
+        apiError.setDebugMessage(ex.getLocalizedMessage());
+        logger.error(ex);
+        return buildResponseEntity(apiError);
+
     }
 
     private ResponseEntity<Object> buildResponseEntity(ApiError apiError) {
