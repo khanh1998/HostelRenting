@@ -84,7 +84,7 @@ public class FirebaseFilter extends OncePerRequestFilter {
             resolver.resolveException(request, response, null, ex);
         } catch (FirebaseAuthException e) {
             //TODO: skip for development
-            resolver.resolveException(request, response, null, e);
+//            resolver.resolveException(request, response, null, e);
         }
     }
 }
