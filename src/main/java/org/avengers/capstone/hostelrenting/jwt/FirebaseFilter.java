@@ -3,16 +3,19 @@ package org.avengers.capstone.hostelrenting.jwt;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseToken;
-import org.apache.commons.lang3.StringUtils;
+import org.avengers.capstone.hostelrenting.exception.FirebaseIllegalArgumentException;
 import org.avengers.capstone.hostelrenting.service.impl.CustomUserService;
-import org.avengers.capstone.hostelrenting.service.impl.FirebaseService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.web.servlet.HandlerExceptionResolver;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -22,17 +25,15 @@ import java.io.IOException;
 
 @Component
 public class FirebaseFilter extends OncePerRequestFilter {
-
+    private static final Logger logger = LoggerFactory.getLogger(FirebaseFilter.class);
     private CustomUserService customUserService;
+    private HandlerExceptionResolver resolver;
 
-
-    private FirebaseService firebaseService;
-
+    @Qualifier("handlerExceptionResolver")
     @Autowired
-    public void setFirebaseService(FirebaseService firebaseService) {
-        this.firebaseService = firebaseService;
+    public void setResolver(@Qualifier("handlerExceptionResolver") HandlerExceptionResolver resolver) {
+        this.resolver = resolver;
     }
-
 
     @Autowired
     public void setCustomUserService(CustomUserService customUserService) {
@@ -40,45 +41,48 @@ public class FirebaseFilter extends OncePerRequestFilter {
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        final String requestTokenHeader = request.getHeader("Authorization");
-        String phone = null;
-        String idToken = null;
-        // JWT Token is in the form "Bearer token". Remove Bearer word and get only the Token
-        if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
-            idToken = requestTokenHeader.substring(7);
-            try {
-                FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(idToken);
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException, ServletException {
+        try {
+            final String requestTokenHeader = request.getHeader("Authorization");
+            String phone = null;
+            String idToken = null;
+            // JWT Token is in the form "Bearer token". Remove Bearer word and get only the Token
+            if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
+                idToken = requestTokenHeader.substring(7);
+                boolean checkRevoked = true;
+                FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(idToken, checkRevoked);
                 if (decodedToken != null)
                     phone = decodedToken.getUid();
-            } catch (FirebaseAuthException e) {
-                e.printStackTrace();
-            } catch (IllegalArgumentException e){
-                System.out.println("Invalid id token");
+
+            } else {
+                logger.warn("JWT Token does not begin with Bearer String");
             }
-        } else {
-            logger.warn("JWT Token does not begin with Bearer String");
-        }
-        // Once we get the token validate it.
-        if (phone != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            // Once we get the token validate it.
+            if (phone != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
-            UserDetails userDetails = this.customUserService.loadUserByUsername(phone);
+                UserDetails userDetails = this.customUserService.loadUserByUsername(phone);
 
-            // if token is valid configure Spring Security to manually set
-            // authentication
-            //TODO: check expired
-            if (phone.equals(userDetails.getUsername())) {
+                // if token is valid configure Spring Security to manually set
+                // authentication
+                //TODO: check expired
+                if (phone.equals(userDetails.getUsername())) {
 
-                UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
-                        userDetails, null, userDetails.getAuthorities());
-                usernamePasswordAuthenticationToken
-                        .setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                // After setting the Authentication in the context, we specify
-                // that the current user is authenticated. So it passes the
-                // Spring Security Configurations successfully.
-                SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+                    UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
+                            userDetails, null, userDetails.getAuthorities());
+                    usernamePasswordAuthenticationToken
+                            .setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    // After setting the Authentication in the context, we specify
+                    // that the current user is authenticated. So it passes the
+                    // Spring Security Configurations successfully.
+                    SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+                }
             }
+            filterChain.doFilter(request, response);
+        } catch (IllegalArgumentException e) {
+            FirebaseIllegalArgumentException ex = new FirebaseIllegalArgumentException("Unable to get JWT Token", e);
+            resolver.resolveException(request, response, null, ex);
+        } catch (FirebaseAuthException e) {
+            resolver.resolveException(request, response, null, e);
         }
-        filterChain.doFilter(request, response);
     }
 }
