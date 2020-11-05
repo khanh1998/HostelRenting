@@ -9,10 +9,10 @@ variables:
   azureSubscription: '6fa5bc09-252c-4f98-b99e-eaf6bc7a2673'
 
   # Web app name
-  webAppName: 'youthhostelapi'
+  webAppName: 'youthhostel-dev-api'
 
   # Environment name
-  environmentName: 'youthhostelapi'
+  environmentName: 'youthhostel-dev-api'
 
   # Agent VM image name
   vmImageName: 'ubuntu-latest'
@@ -58,7 +58,7 @@ stages:
             deploy:
               steps:
                 - task: AzureWebApp@1
-                  displayName: 'Azure Web App Deploy: youthhostelapi'
+                  displayName: 'Azure Web App Deploy: youthhostel-dev-api'
                   inputs:
                     azureSubscription: $(azureSubscription)
                     appType: webAppLinux
