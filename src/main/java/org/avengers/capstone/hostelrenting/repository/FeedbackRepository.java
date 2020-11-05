@@ -20,4 +20,7 @@ import java.util.Optional;
 public interface FeedbackRepository extends JpaRepository<Feedback, Integer> {
     @Query("SELECT f from Feedback f WHERE f.type.typeId= :typeId and f.isDeleted=false")
     List<Feedback> findByTypeIdAndDeletedIsFalse(Integer typeId, Pageable pageable);
+
+    @Query("SELECT count(f) FROM Feedback f WHERE f.type.typeId= :typeId and f.isDeleted=false")
+    int countFeedbackByTypeId(Integer typeId);
 }

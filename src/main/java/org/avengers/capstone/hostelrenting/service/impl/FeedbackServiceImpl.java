@@ -110,6 +110,11 @@ public class FeedbackServiceImpl implements FeedbackService {
                 .peek(this::handleFeedbackObj).collect(Collectors.toList());
     }
 
+    @Override
+    public int countFeedbackByTypeId(Integer typeId) {
+        return feedbackRepository.countFeedbackByTypeId(typeId);
+    }
+
     private void handlePreCreate(Feedback reqModel) {
         Feedback tempModel = handleFeedbackObj(reqModel);
         if (tempModel.getBooking() == null && tempModel.getContract() == null) {
