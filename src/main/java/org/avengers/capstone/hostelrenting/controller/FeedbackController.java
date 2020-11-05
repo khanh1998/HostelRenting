@@ -121,11 +121,10 @@ public class FeedbackController {
         Collection<FeedbackDTOResponse> resDTOs = feedbackService.findByTypeId(typeId, sortBy, page, size, asc)
                 .stream().map(feedback -> modelMapper.map(feedback, FeedbackDTOResponse.class))
                 .collect(Collectors.toList());
-        ApiSuccess<?> apiSuccess = ApiSuccess.builder()
-                .size(size)
-                .total(feedbackService.countFeedbackByTypeId(typeId))
-                .data(resDTOs)
-                .page(page).build();
+        ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTOs, "Feedback has been retrieved successfully!");
+        apiSuccess.setTotal(feedbackService.countFeedbackByTypeId(typeId));
+        apiSuccess.setSize(size);
+        apiSuccess.setPage(page);
         logger.info("END - getting feedback");
         return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
     }
