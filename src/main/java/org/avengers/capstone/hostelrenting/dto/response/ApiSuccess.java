@@ -12,16 +12,13 @@ import org.avengers.capstone.hostelrenting.handler.LowerCaseClassNameResolver;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
-@Builder(toBuilder = true)
 @JsonTypeIdResolver(LowerCaseClassNameResolver.class)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ApiSuccess<T> implements Serializable {
     @Getter
-    @Setter
     private boolean isSuccess;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy hh:mm:ss")
     @Getter
-    @Setter
     private LocalDateTime timestamp;
     @Getter
     @Setter
@@ -38,16 +35,6 @@ public class ApiSuccess<T> implements Serializable {
     @Getter
     @Setter
     private T data;
-
-    public ApiSuccess(boolean isSuccess, LocalDateTime timestamp, String message, Integer page, Integer size, T data, Integer total) {
-        this.isSuccess = true;
-        this.timestamp = LocalDateTime.now();
-        this.message = message;
-        this.page = page;
-        this.size = size;
-        this.data = data;
-        this.total = total;
-    }
 
     private ApiSuccess(){
         isSuccess = true;
