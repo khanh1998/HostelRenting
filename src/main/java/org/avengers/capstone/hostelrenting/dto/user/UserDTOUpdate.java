@@ -22,6 +22,7 @@ public class UserDTOUpdate implements Serializable {
     @Getter
     @Setter
     private String username;
+
     @Getter
     @Setter
     @NotNull(message = "Year of birth is mandatory!")
@@ -71,6 +72,10 @@ public class UserDTOUpdate implements Serializable {
     @Setter
     @NotNull(message = "Avatar is mandatory!")
     private String avatar;
+
+    @Getter
+    @Setter
+    private String firebaseToken;
 
     @Getter
     @JsonIgnore
