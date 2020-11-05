@@ -16,6 +16,7 @@ import org.avengers.capstone.hostelrenting.service.BookingService;
 import org.avengers.capstone.hostelrenting.service.DealService;
 import org.avengers.capstone.hostelrenting.service.RenterService;
 import org.avengers.capstone.hostelrenting.service.VendorService;
+import org.avengers.capstone.hostelrenting.util.Utilities;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,6 +24,7 @@ import org.springframework.stereotype.Service;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class BookingServiceImpl implements BookingService {
@@ -88,14 +90,8 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public Booking create(Booking reqModel) {
-        Optional<Booking> tempBooking = bookingRepository.findFirstByRenter_UserIdAndType_TypeIdAndStatusOrderByCreatedAtDesc(reqModel.getRenter().getUserId(),
-                reqModel.getType().getTypeId(), Booking.STATUS.INCOMING);
-        if (tempBooking.isPresent()) {
-            throw new GenericException(Booking.class, "has already existed with ",
-                    "bookingId", String.valueOf(tempBooking.get().getBookingId()),
-                    "renterId", String.valueOf(tempBooking.get().getRenter().getUserId()),
-                    "typeId", String.valueOf(tempBooking.get().getType().getTypeId()));
-        }
+        handlePreCreate(reqModel);
+
         // check out of room
         if (roomRepository.countByType_TypeIdAndIsAvailableIsTrue(reqModel.getType().getTypeId()) == 0)
             throw new GenericException(Type.class, "is out of room",
@@ -173,9 +169,10 @@ public class BookingServiceImpl implements BookingService {
 
     /**
      * sending notification after handling
+     *
      * @param model for sending notification
      */
-    private void sendNotification(Booking model, String action, String staticMsg){
+    private void sendNotification(Booking model, String action, String staticMsg) {
         String pattern = "dd/MM/yyyy hh:mm:ss";
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
         String timestamp = simpleDateFormat.format(new Date());
@@ -200,4 +197,24 @@ public class BookingServiceImpl implements BookingService {
         firebaseService.sendPnsToDevice(notificationRequest);
     }
 
+    private void handlePreCreate(Booking model) {
+        // 1 renter only have 1 incoming booking for 1 type
+        Optional<Booking> tempBooking = bookingRepository.findFirstByRenter_UserIdAndType_TypeIdAndStatusOrderByCreatedAtDesc(model.getRenter().getUserId(),
+                model.getType().getTypeId(), Booking.STATUS.INCOMING);
+        if (tempBooking.isPresent()) {
+            throw new GenericException(Booking.class, "has already existed with ",
+                    "bookingId", String.valueOf(tempBooking.get().getBookingId()),
+                    "renterId", String.valueOf(tempBooking.get().getRenter().getUserId()),
+                    "typeId", String.valueOf(tempBooking.get().getType().getTypeId()));
+        }
+
+        // only create booking at least 3 hours from now
+        System.out.println(System.currentTimeMillis());
+        System.out.println(model.getMeetTime());
+        Long remainTime = TimeUnit.MILLISECONDS.toHours(model.getMeetTime() - System.currentTimeMillis());
+        if (remainTime < 3) {
+            throw new GenericException(Booking.class, "remaining time should be at least 3 hours",
+                    "remainingTime", remainTime + "hours");
+        }
+    }
 }
