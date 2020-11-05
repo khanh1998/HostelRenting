@@ -2,7 +2,9 @@ package org.avengers.capstone.hostelrenting.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import org.avengers.capstone.hostelrenting.handler.LowerCaseClassNameResolver;
@@ -10,18 +12,42 @@ import org.avengers.capstone.hostelrenting.handler.LowerCaseClassNameResolver;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
-@Getter
-@Setter
+@Builder(toBuilder = true)
 @JsonTypeIdResolver(LowerCaseClassNameResolver.class)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ApiSuccess<T> implements Serializable {
+    @Getter
+    @Setter
     private boolean isSuccess;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy hh:mm:ss")
+    @Getter
+    @Setter
     private LocalDateTime timestamp;
+    @Getter
+    @Setter
     private String message;
+    @Getter
+    @Setter
     private Integer page;
+    @Getter
+    @Setter
     private Integer size;
+    @Getter
+    @Setter
+    private Integer total;
+    @Getter
+    @Setter
     private T data;
+
+    public ApiSuccess(boolean isSuccess, LocalDateTime timestamp, String message, Integer page, Integer size, T data, Integer total) {
+        this.isSuccess = true;
+        this.timestamp = LocalDateTime.now();
+        this.message = message;
+        this.page = page;
+        this.size = size;
+        this.data = data;
+        this.total = total;
+    }
 
     private ApiSuccess(){
         isSuccess = true;
