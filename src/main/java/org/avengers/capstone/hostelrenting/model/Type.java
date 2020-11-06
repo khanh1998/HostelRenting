@@ -67,10 +67,6 @@ public class Type {
     private Group group;
 
     @ManyToOne
-    @JoinColumn(name = "category_id")
-    private Category category;
-
-    @ManyToOne
     @JoinColumn(name = "status_id")
     private TypeStatus typeStatus;
 

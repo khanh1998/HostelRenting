@@ -44,9 +44,17 @@ public class GroupController {
     private ServiceService serviceService;
 
     private ScheduleService scheduleService;
+
     private StreetService streetService;
 
+    private CategoryService categoryService;
+
     private ModelMapper modelMapper;
+
+    @Autowired
+    public void setCategoryService(CategoryService categoryService) {
+        this.categoryService = categoryService;
+    }
 
     @Autowired
     public void setStreetService(StreetService streetService) {
@@ -104,6 +112,9 @@ public class GroupController {
         List<GroupDTOResponse> resDTOs = new ArrayList<>();
         reqDTOs.forEach(reqDTO -> {
             Group reqModel = modelMapper.map(reqDTO, Group.class);
+            // set category
+            Category category = categoryService.findById(reqDTO.getCategoryId());
+            reqModel.setCategory(category);
             // set vendor object
             Vendor vendor = vendorService.findById(reqDTO.getVendorId());
             reqModel.setVendor(vendor);

@@ -30,6 +30,10 @@ public class Group {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int groupId;
 
+    @ManyToOne
+    @JoinColumn(name = "category_id", nullable = false)
+    private Category category;
+
     /**
      * group name
      */

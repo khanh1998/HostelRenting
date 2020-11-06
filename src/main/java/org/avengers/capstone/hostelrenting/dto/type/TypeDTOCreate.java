@@ -10,12 +10,6 @@ import javax.validation.constraints.NotNull;
 public class TypeDTOCreate {
     private Integer typeId;
 
-    @NotNull(message = "groupId is mandatory!")
-    private Integer groupId;
-
-    @NotNull(message = "categoryId is mandatory!")
-    private Integer categoryId;
-
     @NotNull(message = "statusId is mandatory!")
     private Integer statusId;
 

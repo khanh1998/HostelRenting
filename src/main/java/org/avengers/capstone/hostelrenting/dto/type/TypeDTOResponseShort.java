@@ -20,8 +20,6 @@ public class TypeDTOResponseShort {
     private float score;
     private int groupId;
     private String title;
-    @JsonUnwrapped
-    private CategoryDTO category;
     private float price;
     private String priceUnit;
     private TypeStatusDTO typeStatus;

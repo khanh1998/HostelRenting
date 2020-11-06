@@ -25,5 +25,5 @@ public class Category {
     private int displayOrder;
 
     @OneToMany(mappedBy = "category",cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Type> types;
+    private List<Group> groups;
 }

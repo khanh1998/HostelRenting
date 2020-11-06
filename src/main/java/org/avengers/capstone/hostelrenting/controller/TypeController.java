@@ -99,8 +99,7 @@ public class TypeController {
             Type reqModel = modelMapper.map(reqDTO, Type.class);
             // set hostel group
             Group group = groupService.findById(groupId);
-            // set category
-            Category category = categoryService.findById(reqDTO.getCategoryId());
+
             // set status of type
             TypeStatus typeStatus = typeStatusService.findById(reqDTO.getStatusId());
             // set facilities
@@ -119,7 +118,6 @@ public class TypeController {
             }).collect(Collectors.toList());
             // set data for model
             reqModel.setRooms(rooms);
-            reqModel.setCategory(category);
             reqModel.setTypeStatus(typeStatus);
             reqModel.setGroup(group);
             reqModel.setFacilities(facilities);
@@ -237,7 +235,7 @@ public class TypeController {
         List<TypeDTOResponse> typeDTOs = typeService.searchWithMainFactors(latitude, longitude, distance, schoolId, provinceId, sortBy, asc, size, page).stream()
                 .filter(hostelType -> {
                     if (categoryId != null)
-                        return hostelType.getCategory().getCategoryId() == categoryId;
+                        return hostelType.getGroup().getCategory().getCategoryId() == categoryId;
                     return true;
                 })
                 .filter(hostelType -> {

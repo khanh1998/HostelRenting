@@ -3,6 +3,7 @@ package org.avengers.capstone.hostelrenting.dto.group;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
+import org.avengers.capstone.hostelrenting.dto.category.CategoryDTO;
 import org.avengers.capstone.hostelrenting.model.GroupSchedule;
 import org.avengers.capstone.hostelrenting.model.serialized.AddressFull;
 import org.avengers.capstone.hostelrenting.model.serialized.ServiceFull;
@@ -28,6 +29,8 @@ public class GroupDTOResponse implements Serializable {
     private String groupName;
 
     private String buildingNo;
+
+    private CategoryDTO category;
 
     private Double longitude;
 

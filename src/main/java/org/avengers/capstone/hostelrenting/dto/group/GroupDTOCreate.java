@@ -30,6 +30,11 @@ public class GroupDTOCreate implements Serializable {
     @Setter
     private Long vendorId;
 
+    @NotNull(message = "categoryId is mandatory!")
+    @Getter
+    @Setter
+    private Integer categoryId;
+
     @NotNull(message = "groupName is mandatory!")
     @Getter
     @Setter
