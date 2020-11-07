@@ -45,6 +45,11 @@ public class GroupDTOResponse implements Serializable {
      */
     private String curfewTime;
 
+    /**
+     * appendix contract of each group
+     */
+    private String appendixContract;
+
     private boolean ownerJoin;
 
     private String imgUrl;

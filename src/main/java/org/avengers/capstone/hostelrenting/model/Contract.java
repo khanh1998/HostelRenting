@@ -32,6 +32,12 @@ public class Contract {
     private int contractId;
 
     /**
+     * appendix contract string for each group
+     */
+    @Column(length = 5000)
+    private String appendixContract;
+
+    /**
      * hostel room object
      */
     @ManyToOne
