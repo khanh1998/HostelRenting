@@ -20,6 +20,10 @@ public class ContractDTOCreate {
     @Getter @Setter
     private Integer contractId;
 
+    @Getter
+    @Setter
+    private String appendixContract;
+
     @Getter @Setter
     @NotNull(message = "Room id is mandatory!")
     private Integer roomId;

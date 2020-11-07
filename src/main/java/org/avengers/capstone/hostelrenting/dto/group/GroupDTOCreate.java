@@ -17,13 +17,17 @@ public class GroupDTOCreate implements Serializable {
     }
 
     @Getter
-    @Setter
+    @JsonIgnore
     private int groupId;
 
     @JsonProperty("address")
     @Getter
     @Setter
     private AddressFull addressFull;
+
+    @Getter
+    @Setter
+    private String appendixContract;
 
     @NotNull(message = "vendorId is mandatory!")
     @Getter

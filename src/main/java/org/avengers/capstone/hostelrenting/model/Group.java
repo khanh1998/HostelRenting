@@ -91,6 +91,12 @@ public class Group {
     private String imgUrl;
 
     /**
+     * appendix contract string for each group
+     */
+    @Column(length = 5000)
+    private String appendixContract;
+
+    /**
      * Down payment for keeping a particular room in 7 days
      */
     @Column(nullable = false, columnDefinition = "float(4) DEFAULT 0")

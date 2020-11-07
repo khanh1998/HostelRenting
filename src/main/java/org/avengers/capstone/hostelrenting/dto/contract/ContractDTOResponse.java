@@ -1,5 +1,6 @@
 package org.avengers.capstone.hostelrenting.dto.contract;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
@@ -26,11 +27,13 @@ public class ContractDTOResponse {
     private int contractId;
     private HostelRoomDTO room;
     private TypeDTOResponse type;
+    @JsonIgnoreProperties(value = "appendixContract")
     private GroupDTOResponse group;
     private VendorDTOResponse vendor;
     private RenterDTOResponse renter;
     private DealDTOShort deal;
     private BookingDTOCreate booking;
+    private String appendixContract;
     private long startTime;
     private Float duration;
     private String evidenceImgUrl;
