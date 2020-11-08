@@ -86,6 +86,11 @@ public class DealServiceImpl implements DealService {
 
     @Override
     public Deal create(DealDTOShort reqDTO) {
+        Optional<Deal> exDeal = dealRepository.findByRenter_UserIdAndType_TypeIdAndStatusIs(reqDTO.getRenterId(), reqDTO.getTypeId(), Deal.STATUS.CREATED);
+        if (exDeal.isPresent()){
+            exDeal.get().setStatus(Deal.STATUS.CANCELLED);
+            dealRepository.save(exDeal.get());
+        }
         Vendor existedVendor = vendorService.findById(reqDTO.getVendorId());
         Renter existedRenter = renterService.findById(reqDTO.getRenterId());
         Type existedType = typeService.findById(reqDTO.getTypeId());
