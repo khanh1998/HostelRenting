@@ -4,6 +4,7 @@ import org.avengers.capstone.hostelrenting.dto.booking.BookingDTOCreate;
 import org.avengers.capstone.hostelrenting.dto.contract.ContractDTOConfirm;
 import org.avengers.capstone.hostelrenting.dto.contract.ContractDTOCreate;
 import org.avengers.capstone.hostelrenting.dto.contract.ContractDTOResponse;
+import org.avengers.capstone.hostelrenting.dto.contract.ContractDTOUpdate;
 import org.avengers.capstone.hostelrenting.dto.deal.DealDTOShort;
 import org.avengers.capstone.hostelrenting.dto.group.GroupDTOResponse;
 import org.avengers.capstone.hostelrenting.dto.response.ApiSuccess;
@@ -113,11 +114,24 @@ public class ContractController {
         return ResponseEntity.status(HttpStatus.CREATED).body(apiSuccess);
     }
 
-    @PutMapping("/contracts/{contractId}")
+    @PutMapping("/contracts/confirm/{contractId}")
     public ResponseEntity<?> confirmContractById(@PathVariable Integer contractId,
                                              @RequestBody @Valid ContractDTOConfirm reqDTO) {
         Contract exModel = contractService.findById(contractId);
         Contract resModel = contractService.confirm(exModel, reqDTO);
+        ContractDTOResponse resDTO = modelMapper.map(resModel, ContractDTOResponse.class);
+
+        getFullAttributesForDTO(resDTO);
+        ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTO, String.format("Your contract has been updated with status: %s", resModel.getStatus()));
+
+        return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
+    }
+
+    @PutMapping("/contracts/{contractId}")
+    public ResponseEntity<?> updateInactiveContract(@PathVariable Integer contractId,
+                                                    @RequestBody @Valid ContractDTOUpdate reqDTO) {
+        Contract exModel = contractService.findById(contractId);
+        Contract resModel = contractService.updateInactiveContract(exModel, reqDTO);
         ContractDTOResponse resDTO = modelMapper.map(resModel, ContractDTOResponse.class);
 
         getFullAttributesForDTO(resDTO);

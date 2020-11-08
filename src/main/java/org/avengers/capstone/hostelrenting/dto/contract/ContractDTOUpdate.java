@@ -5,19 +5,27 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 import org.avengers.capstone.hostelrenting.model.Contract;
+import org.avengers.capstone.hostelrenting.model.GroupService;
+import org.avengers.capstone.hostelrenting.model.Room;
 
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.UUID;
 
-public class ContractDTOCreate {
+/**
+ * @author duattt on 11/8/20
+ * @created 08/11/2020 - 10:28
+ * @project youthhostelapp
+ */
+public class ContractDTOUpdate implements Serializable {
 
-    public ContractDTOCreate() {
-        this.qrCode = UUID.randomUUID();
+    public ContractDTOUpdate() {
         this.status = Contract.STATUS.INACTIVE;
-        this.createdAt = System.currentTimeMillis();
+        this.updatedAt = System.currentTimeMillis();
     }
-    @Getter @Setter
+    @Getter
+    @Setter
     @JsonIgnore
     private Integer contractId;
 
@@ -30,18 +38,8 @@ public class ContractDTOCreate {
     private Integer roomId;
 
     @Getter @Setter
-    @NotNull(message = "Vendor id is mandatory!")
-    private Long vendorId;
-
-    @Getter @Setter
-    @NotNull(message = "Renter id is mandatory!")
-    private Long renterId;
-
-    @Getter @Setter
-    private Integer dealId;
-
-    @Getter @Setter
-    private Integer bookingId;
+    @JsonIgnore
+    private Room room;
 
     @Getter @Setter
     @NotNull(message = "Start time is mandatory!")
@@ -56,19 +54,19 @@ public class ContractDTOCreate {
 
     @JsonIgnore
     @Getter
-    private Long createdAt;
+    private Long updatedAt;
 
     @Getter
     @JsonIgnore
     private Contract.STATUS status;
 
-    @Getter
-    @JsonIgnore
-    private UUID qrCode;
-
     @Getter @Setter
     @NotNull(message = "List of agreement services is mandatory!")
     @JsonProperty(value = "groupServiceIds")
-    private Collection<GroupServiceDTOForContract> groupServices;
+    private Collection<GroupServiceDTOForContract> groupServiceIds;
+
+    @Getter @Setter
+    @JsonIgnore
+    private Collection<GroupService> groupServices;
 
 }

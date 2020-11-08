@@ -6,22 +6,21 @@ import com.lowagie.text.DocumentException;
 import org.apache.commons.collections.CollectionUtils;
 import org.avengers.capstone.hostelrenting.Constant;
 import org.avengers.capstone.hostelrenting.dto.contract.ContractDTOConfirm;
-
-
+import org.avengers.capstone.hostelrenting.dto.contract.ContractDTOUpdate;
 import org.avengers.capstone.hostelrenting.dto.notification.NotificationContent;
 import org.avengers.capstone.hostelrenting.dto.notification.NotificationRequest;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
 import org.avengers.capstone.hostelrenting.exception.GenericException;
 import org.avengers.capstone.hostelrenting.exception.PreCreationException;
-import org.avengers.capstone.hostelrenting.model.Booking;
-import org.avengers.capstone.hostelrenting.model.Contract;
-import org.avengers.capstone.hostelrenting.model.Group;
-import org.avengers.capstone.hostelrenting.model.GroupService;
+import org.avengers.capstone.hostelrenting.model.*;
 import org.avengers.capstone.hostelrenting.repository.BookingRepository;
 import org.avengers.capstone.hostelrenting.repository.ContractRepository;
 import org.avengers.capstone.hostelrenting.repository.GroupServiceRepository;
 import org.avengers.capstone.hostelrenting.repository.RoomRepository;
-import org.avengers.capstone.hostelrenting.service.*;
+import org.avengers.capstone.hostelrenting.service.BookingService;
+import org.avengers.capstone.hostelrenting.service.ContractService;
+import org.avengers.capstone.hostelrenting.service.GroupServiceService;
+import org.avengers.capstone.hostelrenting.service.RoomService;
 import org.avengers.capstone.hostelrenting.util.BASE64DecodedMultipartFile;
 import org.avengers.capstone.hostelrenting.util.Utilities;
 import org.modelmapper.ModelMapper;
@@ -34,22 +33,23 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-
 import javax.mail.Message;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
-import javax.swing.text.html.Option;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.transaction.Transactional;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
 
 @Service
+@Transactional
 public class ContractServiceImpl implements ContractService {
 
     private static final Logger logger = LoggerFactory.getLogger(ContractServiceImpl.class);
@@ -218,6 +218,34 @@ public class ContractServiceImpl implements ContractService {
     }
 
     @Override
+    public Contract updateInactiveContract(Contract exModel, ContractDTOUpdate reqDTO) {
+        if (exModel.getStatus() == Contract.STATUS.ACTIVATED) {
+            throw new GenericException(Contract.class, "cannot be updated", "contractId", String.valueOf(exModel.getContractId()), "status", exModel.getStatus().toString());
+        }
+        boolean isValid = true;
+        Integer roomId = reqDTO.getRoomId();
+        if (roomId != null) {
+            reqDTO.setRoom(roomService.findById(reqDTO.getRoomId()));
+            if (!roomRepository.IsRoomExistByVendorIdAndRoomId(exModel.getVendor().getUserId(), reqDTO.getRoomId()))
+                throw new GenericException(Room.class, "is not valid with id",
+                        "roomId", String.valueOf(reqDTO.getRoomId()));
+        }
+        //TODO: valid groupService
+        if (reqDTO.getGroupServiceIds() != null && !reqDTO.getGroupServiceIds().isEmpty()) {
+            reqDTO.setGroupServices(reqDTO.getGroupServiceIds()
+                    .stream()
+                    .map(dto -> {
+//                        if (groupServiceRepository.IsGroupServiceExistByVendorAndGroup(exModel.getVendor().getUserId(), ))
+                        return groupServiceService.findById(dto.getGroupServiceId());
+                    })
+                    .collect(Collectors.toList()));
+        }
+        modelMapper.map(reqDTO, exModel);
+
+        return contractRepository.save(exModel);
+    }
+
+    @Override
     public List<Contract> findByRenterId(Long renterId, int page, int size, String sortBy, boolean asc) {
         Sort sort = Sort.by(asc == true ? Sort.Direction.ASC : Sort.Direction.DESC, sortBy);
         Pageable pageable = PageRequest.of(page - 1, size, sort);
@@ -284,7 +312,7 @@ public class ContractServiceImpl implements ContractService {
         return resModel;
     }
 
-    private String uploadPDF(String contractHtml, String contractId){
+    private String uploadPDF(String contractHtml, String contractId) {
         try {
             BASE64DecodedMultipartFile multipartFile = BASE64DecodedMultipartFile.builder()
                     .fileContent(Utilities.generatePdfFromHtml(contractHtml, fontPath))
@@ -322,22 +350,22 @@ public class ContractServiceImpl implements ContractService {
         contractInfo.put(Constant.Contract.RENTER_SCHOOL_NAME, model.getRenter().getSchool().getSchoolName());
         String schoolDistrict = model.getRenter().getSchool().getDistrict().getDistrictName();
         String schoolProvince = model.getRenter().getSchool().getDistrict().getProvince().getProvinceName();
-        contractInfo.put(Constant.Contract.RENTER_SCHOOL_ADDRESS, String.format("%s, %s",schoolDistrict, schoolProvince));
+        contractInfo.put(Constant.Contract.RENTER_SCHOOL_ADDRESS, String.format("%s, %s", schoolDistrict, schoolProvince));
 
         contractInfo.put(Constant.Contract.DURATION, String.valueOf(model.getDuration()));
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(model.getStartTime());
         contractInfo.put(Constant.Contract.START_DAY, String.valueOf(calendar.get(Calendar.DAY_OF_MONTH)));
-        contractInfo.put(Constant.Contract.START_MONTH, String.valueOf(calendar.get(Calendar.MONTH)+1));
+        contractInfo.put(Constant.Contract.START_MONTH, String.valueOf(calendar.get(Calendar.MONTH) + 1));
         contractInfo.put(Constant.Contract.START_YEAR, String.valueOf(calendar.get(Calendar.YEAR)));
 
         Group group = model.getRoom().getType().getGroup();
         String buildingNo = group.getBuildingNo();
-        String streetName =group.getAddress().getStreetName();
-        String wardName =group.getAddress().getWardName();
-        String districtName =group.getAddress().getDistrictName();
+        String streetName = group.getAddress().getStreetName();
+        String wardName = group.getAddress().getWardName();
+        String districtName = group.getAddress().getDistrictName();
         String provinceName = group.getAddress().getProvinceName();
-        contractInfo.put(Constant.Contract.ADDRESS, String.format("%s, %s, %s, %s, %s",buildingNo, streetName, wardName, districtName, provinceName));
+        contractInfo.put(Constant.Contract.ADDRESS, String.format("%s, %s, %s, %s, %s", buildingNo, streetName, wardName, districtName, provinceName));
 
 //        String templateName = Utilities.getFileNameWithoutExtensionFromPath(contractTemplatePath);
         String contractHtml = Utilities.parseThymeleafTemplate(Constant.Contract.TEMPLATE_NAME, contractInfo);
@@ -376,7 +404,7 @@ public class ContractServiceImpl implements ContractService {
             message.setRecipients(Message.RecipientType.TO,
                     InternetAddress.parse(receivedMail));
             message.setSubject("Hợp đồng thuê nhà");
-            message.setContent(contractHtml,"text/html; charset=UTF-8");
+            message.setContent(contractHtml, "text/html; charset=UTF-8");
             // Send message
             Transport.send(message);
 
@@ -385,7 +413,7 @@ public class ContractServiceImpl implements ContractService {
         }
     }
 
-    private void sendNotification(Contract model, String action, String staticMsg){
+    private void sendNotification(Contract model, String action, String staticMsg) {
 
         String pattern = "dd/MM/yyyy hh:mm:ss";
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
