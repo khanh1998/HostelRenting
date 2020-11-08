@@ -19,6 +19,7 @@ import org.avengers.capstone.hostelrenting.service.VendorService;
 import org.avengers.capstone.hostelrenting.util.Utilities;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
@@ -28,6 +29,8 @@ import java.util.concurrent.TimeUnit;
 
 @Service
 public class BookingServiceImpl implements BookingService {
+    @Value("${deal.expiring.day}")
+    private Long dealExpiringTime;
 
     private BookingRepository bookingRepository;
     private RoomRepository roomRepository;
@@ -209,12 +212,17 @@ public class BookingServiceImpl implements BookingService {
         }
 
         // only create booking at least 3 hours from now
-        System.out.println(System.currentTimeMillis());
-        System.out.println(model.getMeetTime());
-        Long remainTime = TimeUnit.MILLISECONDS.toHours(model.getMeetTime() - System.currentTimeMillis());
-        if (remainTime < 3) {
+        Long remainBookingTime = TimeUnit.MILLISECONDS.toHours(model.getMeetTime() - System.currentTimeMillis());
+        if (remainBookingTime < 3) {
             throw new GenericException(Booking.class, "remaining time should be at least 3 hours",
-                    "remainingTime", remainTime + "hours");
+                    "remainingTime", remainBookingTime + "hours");
+        }
+
+        // check valid deal or not (3 day expiring)
+        Deal exDeal = dealService.findById(model.getDealId());
+        Long remainDealTime = TimeUnit.MILLISECONDS.toDays(System.currentTimeMillis() - exDeal.getCreatedAt());
+        if (remainDealTime >= dealExpiringTime){
+            model.setDealId(null);
         }
     }
 }
