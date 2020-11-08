@@ -219,10 +219,12 @@ public class BookingServiceImpl implements BookingService {
         }
 
         // check valid deal or not (3 day expiring)
-        Deal exDeal = dealService.findById(model.getDealId());
-        Long remainDealTime = TimeUnit.MILLISECONDS.toDays(System.currentTimeMillis() - exDeal.getCreatedAt());
-        if (remainDealTime >= dealExpiringTime){
-            model.setDealId(null);
+        if (model.getDealId()!= null) {
+            Deal exDeal = dealService.findById(model.getDealId());
+            Long remainDealTime = TimeUnit.MILLISECONDS.toDays(System.currentTimeMillis() - exDeal.getCreatedAt());
+            if (remainDealTime >= dealExpiringTime) {
+                model.setDealId(null);
+            }
         }
     }
 }
