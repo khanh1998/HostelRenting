@@ -187,10 +187,56 @@ public class ContractServiceImpl implements ContractService {
         /* Set room for contract model */
         reqModel.setRoom(roomService.updateStatus(reqModel.getRoom().getRoomId(), false));
         Contract resModel = contractRepository.save(reqModel);
-        sendNotification(resModel, Constant.Notification.NEW_CONTRACT, Constant.Notification.STATIC_NEW_CONTRACT_MESSAGE);
+        // send notification
+        sendNotification(resModel,
+                Constant.Notification.NEW_CONTRACT,
+                Constant.Notification.STATIC_NEW_CONTRACT_MESSAGE,
+                resModel.getRenter().getFirebaseToken());
 
         // process business after create contract
         resModel = processAfterCreate(resModel);
+
+        return resModel;
+    }
+
+    @Override
+    public Contract updateInactiveContract(Contract exModel, ContractDTOUpdate reqDTO) {
+        if (exModel.getStatus() == Contract.STATUS.ACTIVATED) {
+            throw new GenericException(Contract.class, "cannot be updated", "contractId", String.valueOf(exModel.getContractId()), "status", exModel.getStatus().toString());
+        }
+        boolean isValid = true;
+        Integer roomId = reqDTO.getRoomId();
+        if (roomId != null) {
+            reqDTO.setRoom(roomService.findById(reqDTO.getRoomId()));
+            if (!roomRepository.IsExistByVendorIdAndRoomId(exModel.getVendor().getUserId(), reqDTO.getRoomId()))
+                throw new GenericException(Room.class, "is not valid with id",
+                        "roomId", String.valueOf(reqDTO.getRoomId()));
+        } else {
+            roomId = exModel.getRoom().getRoomId();
+        }
+        int groupId = groupRepository.getGroupIdByRoomId(roomId);
+
+        //check whether groupService is valid or not
+        if (reqDTO.getGroupServiceIds() != null && !reqDTO.getGroupServiceIds().isEmpty()) {
+            reqDTO.setGroupServices(reqDTO.getGroupServiceIds()
+                    .stream()
+                    .map(dto -> {
+                        if (groupServiceRepository.IsGroupServiceExistByVendorAndGroup(exModel.getVendor().getUserId(), groupId, dto.getGroupServiceId()))
+                            return groupServiceService.findById(dto.getGroupServiceId());
+                        else {
+                            throw new GenericException(GroupService.class, "is not valid with id",
+                                    "groupServiceId", String.valueOf(dto.getGroupServiceId()));
+                        }
+                    })
+                    .collect(Collectors.toSet()));
+        }
+        modelMapper.map(reqDTO, exModel);
+        Contract resModel = contractRepository.save(exModel);
+        //send notification
+        sendNotification(resModel,
+                Constant.Notification.UPDATE_CONTRACT,
+                Constant.Notification.STATIC_UPDATE_CONTRACT_MESSAGE,
+                resModel.getRenter().getFirebaseToken());
 
         return resModel;
     }
@@ -214,47 +260,16 @@ public class ContractServiceImpl implements ContractService {
             Booking exBooking = bookingService.findById(resModel.getBookingId());
             exBooking.setContractId(resModel.getContractId());
             bookingRepository.save(exBooking);
-            sendNotification(resModel, Constant.Notification.CONFIRM_CONTRACT, Constant.Notification.STATIC_CONFIRM_CONTRACT_MESSAGE);
+            // send notification
+            sendNotification(resModel,
+                    Constant.Notification.CONFIRM_CONTRACT,
+                    Constant.Notification.STATIC_CONFIRM_CONTRACT_MESSAGE,
+                    resModel.getVendor().getFirebaseToken());
             return resModel;
         }
         throw new GenericException(Contract.class, "qrCode not matched", "contractId", String.valueOf(exModel.getContractId()), "qrCode", exModel.getQrCode().toString());
     }
 
-    @Override
-    public Contract updateInactiveContract(Contract exModel, ContractDTOUpdate reqDTO) {
-        if (exModel.getStatus() == Contract.STATUS.ACTIVATED) {
-            throw new GenericException(Contract.class, "cannot be updated", "contractId", String.valueOf(exModel.getContractId()), "status", exModel.getStatus().toString());
-        }
-        boolean isValid = true;
-        Integer roomId = reqDTO.getRoomId();
-        if (roomId != null) {
-            reqDTO.setRoom(roomService.findById(reqDTO.getRoomId()));
-            if (!roomRepository.IsExistByVendorIdAndRoomId(exModel.getVendor().getUserId(), reqDTO.getRoomId()))
-                throw new GenericException(Room.class, "is not valid with id",
-                        "roomId", String.valueOf(reqDTO.getRoomId()));
-        } else {
-            roomId = exModel.getRoom().getRoomId();
-        }
-        int groupId = groupRepository.getGroupIdByRoomId(roomId);
-
-        //check whether groupService is valid or not
-            if (reqDTO.getGroupServiceIds() != null && !reqDTO.getGroupServiceIds().isEmpty()) {
-            reqDTO.setGroupServices(reqDTO.getGroupServiceIds()
-                    .stream()
-                    .map(dto -> {
-                        if (groupServiceRepository.IsGroupServiceExistByVendorAndGroup(exModel.getVendor().getUserId(), groupId, dto.getGroupServiceId()))
-                            return groupServiceService.findById(dto.getGroupServiceId());
-                        else {
-                            throw new GenericException(GroupService.class, "is not valid with id",
-                                    "groupServiceId", String.valueOf(dto.getGroupServiceId()));
-                        }
-                    })
-                    .collect(Collectors.toSet()));
-        }
-        modelMapper.map(reqDTO, exModel);
-
-        return contractRepository.save(exModel);
-    }
 
     @Override
     public List<Contract> findByRenterId(Long renterId, int page, int size, String sortBy, boolean asc) {
@@ -270,6 +285,7 @@ public class ContractServiceImpl implements ContractService {
         return contractRepository.findByVendor_UserId(vendorId, pageable);
     }
 
+    /* Sub function for handling business */
 
     /**
      * @param model contract model
@@ -424,7 +440,7 @@ public class ContractServiceImpl implements ContractService {
         }
     }
 
-    private void sendNotification(Contract model, String action, String staticMsg) {
+    private void sendNotification(Contract model, String action, String staticMsg, String destination) {
 
         String pattern = "dd/MM/yyyy hh:mm:ss";
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
@@ -444,7 +460,7 @@ public class ContractServiceImpl implements ContractService {
         Map<String, String> data = objMapper.convertValue(content, Map.class);
 
         NotificationRequest notificationRequest = NotificationRequest.builder()
-                .destination(model.getVendor().getFirebaseToken())
+                .destination(destination)
                 .data(data)
                 .build();
 

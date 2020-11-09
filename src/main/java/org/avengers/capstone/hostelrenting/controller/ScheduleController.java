@@ -3,6 +3,7 @@ package org.avengers.capstone.hostelrenting.controller;
 import org.avengers.capstone.hostelrenting.dto.group.GroupDTOResponse;
 import org.avengers.capstone.hostelrenting.dto.group.GroupScheduleDTOResponse;
 import org.avengers.capstone.hostelrenting.dto.response.ApiSuccess;
+import org.avengers.capstone.hostelrenting.dto.schedule.ScheduleDTO;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
 import org.avengers.capstone.hostelrenting.model.Group;
 import org.avengers.capstone.hostelrenting.model.GroupSchedule;
@@ -71,5 +72,15 @@ public class ScheduleController {
         ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTO, "Your schedule has been retrieved successfully!");
 
         return ResponseEntity.ok(apiSuccess);
+    }
+
+    @GetMapping("/schedules")
+    public ResponseEntity<?> getAllSchedules(){
+        Collection<ScheduleDTO> resDTOs = scheduleService.findAll()
+                .stream().map(schedule -> modelMapper.map(schedule, ScheduleDTO.class))
+                .collect(Collectors.toList());
+        ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTOs, "Your schedule has been created successfully!");
+
+        return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
     }
 }
