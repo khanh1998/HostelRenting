@@ -7,6 +7,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface GroupRepository extends JpaRepository<Group, Integer> {
-//    @Query
-//    Integer getGroupIdByRoomId(Integer roomId);
+    @Query("select gr.groupId from Room r, Type t, Group gr where r.type.typeId = t.typeId and t.group.groupId = gr.groupId and r.roomId= :roomId")
+    Integer getGroupIdByRoomId(Integer roomId);
 }

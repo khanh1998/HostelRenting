@@ -16,6 +16,8 @@ import java.util.Collection;
 public interface GroupServiceRepository extends JpaRepository<GroupService, Integer> {
     Collection<GroupService> findByGroup_GroupIdAndIsActiveIsTrue(Integer groupId);
     Collection<GroupService> findByGroup_GroupIdAndIsActiveIsTrueAndIsRequiredIsTrueAndGroupServiceIdNotIn(Integer groupId, Collection<Integer> reqServiceIds);
-    @Query("select case when count (gs) > 0 then true else false end from GroupService gs where gs.group.vendor.userId= :vendorId and gs.group.groupId= :groupId")
-    boolean IsGroupServiceExistByVendorAndGroup(Long vendorId, Integer groupId);
+    @Query("select case when count (gs) > 0 then true else false end " +
+            "from GroupService gs " +
+            "where gs.group.vendor.userId= :vendorId and gs.group.groupId= :groupId and gs.groupServiceId= :groupServiceId")
+    boolean IsGroupServiceExistByVendorAndGroup(Long vendorId, int groupId, int groupServiceId);
 }
