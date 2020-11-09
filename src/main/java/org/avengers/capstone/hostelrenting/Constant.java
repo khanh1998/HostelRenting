@@ -116,9 +116,12 @@ public class Constant {
         public final static String CONFIRM_BOOKING = "CONFIRM_BOOKING";
         public final static String STATIC_CONFIRM_BOOKING_MESSAGE = "Lịch hẹn của bạn đã được xác nhận từ: ";
         public final static String NEW_CONTRACT = "NEW_CONTRACT";
-        public final static String STATIC_NEW_CONTRACT_MESSAGE = "Bạn có hợp đồng mới từ: ";
+        public final static String STATIC_NEW_CONTRACT_MESSAGE = "Bạn có hợp đồng mới (bản nháp) từ: ";
         public final static String CONFIRM_CONTRACT = "CONFIRM_CONTRACT";
-        public final static String STATIC_CONFIRM_CONTRACT_MESSAGE = "Hợp đồng đã được đồng ý từ: ";
+        public final static String STATIC_CONFIRM_CONTRACT_MESSAGE = "Hợp đồng đã được kích hoạt từ: ";
+        public final static String UPDATE_CONTRACT = "UPDATE_CONTRACT";
+        public final static String STATIC_UPDATE_CONTRACT_MESSAGE = "Hợp đồng (bản nháp) đã được cập nhật từ: ";
+
     }
 
     public static class Field{
