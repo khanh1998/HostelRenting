@@ -160,8 +160,6 @@ public class GroupController {
                         .map(dto -> {
                             GroupRegulation model = GroupRegulation.builder()
                                     .group(reqModel)
-                                    .isActive(dto.getIsActive())
-                                    .isAllowed(dto.getIsAllowed())
                                     .regulation(regulationService.findById(dto.getRegulationId()))
                                     .build();
                             return model;

@@ -16,7 +16,4 @@ import java.io.Serializable;
 public class GroupRegulationDTOResponse implements Serializable {
     private int regulationId;
     private String regulationName;
-    private boolean isAllowed;
-    private boolean isActive;
 }
-

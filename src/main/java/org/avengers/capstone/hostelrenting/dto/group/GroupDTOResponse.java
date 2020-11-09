@@ -67,7 +67,7 @@ public class GroupDTOResponse implements Serializable {
 
     public Collection<GroupRegulationDTOResponse> getGroupRegulations() {
         if (groupRegulations != null)
-            return groupRegulations.stream().filter(GroupRegulationDTOResponse::isActive).collect(Collectors.toList());
+            return groupRegulations;
         return null;
     }
 
