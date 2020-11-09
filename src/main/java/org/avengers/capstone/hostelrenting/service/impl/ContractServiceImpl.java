@@ -236,7 +236,8 @@ public class ContractServiceImpl implements ContractService {
             roomId = exModel.getRoom().getRoomId();
         }
         int groupId = groupRepository.getGroupIdByRoomId(roomId);
-        //TODO: valid groupService
+
+        //check whether groupService is valid or not
             if (reqDTO.getGroupServiceIds() != null && !reqDTO.getGroupServiceIds().isEmpty()) {
             reqDTO.setGroupServices(reqDTO.getGroupServiceIds()
                     .stream()
