@@ -9,8 +9,6 @@ import org.avengers.capstone.hostelrenting.model.Booking;
 import javax.validation.constraints.NotNull;
 import java.util.UUID;
 
-@Getter
-@Setter
 public class BookingDTOCreate {
     public BookingDTOCreate() {
         this.qrCode = UUID.randomUUID();
@@ -20,6 +18,7 @@ public class BookingDTOCreate {
 
     @Getter
     @Setter
+    @JsonIgnore
     private Integer bookingId;
 
     @Getter

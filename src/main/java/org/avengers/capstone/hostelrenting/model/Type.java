@@ -34,6 +34,9 @@ public class Type {
     @Column(nullable = false)
     private float price;
 
+    @Column(nullable = false, columnDefinition = "varchar(10) default 'triệu'")
+    private String priceUnit;
+
     @Column(nullable = false)
     private float superficiality;
 
