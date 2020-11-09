@@ -13,10 +13,7 @@ import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
 import org.avengers.capstone.hostelrenting.exception.GenericException;
 import org.avengers.capstone.hostelrenting.exception.PreCreationException;
 import org.avengers.capstone.hostelrenting.model.*;
-import org.avengers.capstone.hostelrenting.repository.BookingRepository;
-import org.avengers.capstone.hostelrenting.repository.ContractRepository;
-import org.avengers.capstone.hostelrenting.repository.GroupServiceRepository;
-import org.avengers.capstone.hostelrenting.repository.RoomRepository;
+import org.avengers.capstone.hostelrenting.repository.*;
 import org.avengers.capstone.hostelrenting.service.BookingService;
 import org.avengers.capstone.hostelrenting.service.ContractService;
 import org.avengers.capstone.hostelrenting.service.GroupServiceService;
@@ -89,12 +86,18 @@ public class ContractServiceImpl implements ContractService {
     private GroupServiceRepository groupServiceRepository;
     private RoomRepository roomRepository;
     private BookingRepository bookingRepository;
+    private GroupRepository groupRepository;
     private ModelMapper modelMapper;
     private RoomService roomService;
     private GroupServiceService groupServiceService;
     private BookingService bookingService;
     private FileStorageServiceImp fileStorageService;
     private FirebaseService firebaseService;
+
+    @Autowired
+    public void setGroupRepository(GroupRepository groupRepository) {
+        this.groupRepository = groupRepository;
+    }
 
     @Autowired
     public void setFirebaseService(FirebaseService firebaseService) {
@@ -226,19 +229,26 @@ public class ContractServiceImpl implements ContractService {
         Integer roomId = reqDTO.getRoomId();
         if (roomId != null) {
             reqDTO.setRoom(roomService.findById(reqDTO.getRoomId()));
-            if (!roomRepository.IsRoomExistByVendorIdAndRoomId(exModel.getVendor().getUserId(), reqDTO.getRoomId()))
+            if (!roomRepository.IsExistByVendorIdAndRoomId(exModel.getVendor().getUserId(), reqDTO.getRoomId()))
                 throw new GenericException(Room.class, "is not valid with id",
                         "roomId", String.valueOf(reqDTO.getRoomId()));
+        } else {
+            roomId = exModel.getRoom().getRoomId();
         }
+        int groupId = groupRepository.getGroupIdByRoomId(roomId);
         //TODO: valid groupService
-        if (reqDTO.getGroupServiceIds() != null && !reqDTO.getGroupServiceIds().isEmpty()) {
+            if (reqDTO.getGroupServiceIds() != null && !reqDTO.getGroupServiceIds().isEmpty()) {
             reqDTO.setGroupServices(reqDTO.getGroupServiceIds()
                     .stream()
                     .map(dto -> {
-//                        if (groupServiceRepository.IsGroupServiceExistByVendorAndGroup(exModel.getVendor().getUserId(), ))
-                        return groupServiceService.findById(dto.getGroupServiceId());
+                        if (groupServiceRepository.IsGroupServiceExistByVendorAndGroup(exModel.getVendor().getUserId(), groupId, dto.getGroupServiceId()))
+                            return groupServiceService.findById(dto.getGroupServiceId());
+                        else {
+                            throw new GenericException(GroupService.class, "is not valid with id",
+                                    "groupServiceId", String.valueOf(dto.getGroupServiceId()));
+                        }
                     })
-                    .collect(Collectors.toList()));
+                    .collect(Collectors.toSet()));
         }
         modelMapper.map(reqDTO, exModel);
 

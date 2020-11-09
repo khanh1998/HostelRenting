@@ -11,6 +11,7 @@ import org.avengers.capstone.hostelrenting.model.Room;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -63,10 +64,10 @@ public class ContractDTOUpdate implements Serializable {
     @Getter @Setter
     @NotNull(message = "List of agreement services is mandatory!")
     @JsonProperty(value = "groupServiceIds")
-    private Collection<GroupServiceDTOForContract> groupServiceIds;
+    private Set<GroupServiceDTOForContract> groupServiceIds;
 
     @Getter @Setter
     @JsonIgnore
-    private Collection<GroupService> groupServices;
+    private Set<GroupService> groupServices;
 
 }
