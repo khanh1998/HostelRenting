@@ -21,10 +21,10 @@ public class GroupService {
     @Column(nullable = false)
     private Float price;
 
-    @Transient
+    @Column(nullable = false, columnDefinition = "varchar(10) default 'nghìn'")
     private String priceUnit;
 
-    @Transient
+    @Column(nullable = false, columnDefinition = "varchar(10) default 'tháng'")
     private String timeUnit;
 
     @Column(nullable = false, columnDefinition = "varchar(10) default 'phòng'")
@@ -50,13 +50,4 @@ public class GroupService {
     @ManyToMany(mappedBy = "groupServices", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<Contract> contracts;
 
-    public String getPriceUnit() {
-        //TODO: get from properties file
-        return "nghìn";
-    }
-
-    public String getTimeUnit() {
-        //TODO: get from properties file
-        return "tháng";
-    }
 }
