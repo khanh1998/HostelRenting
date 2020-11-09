@@ -125,11 +125,11 @@ public class TypeServiceImpl implements TypeService {
         /* Get surrounding based on long and lat */
         if (latitude != null && longitude != null) {
             locTypes = typeRepository.getSurroundings(latitude, longitude, distance);
-            locTypes = handleAfterRetrieve(locTypes);
         } else {
             //TODO: implement get default
             locTypes = typeRepository.findTopOrderByScore(size, (page-1)*size);
         }
+            locTypes = handleAfterRetrieve(locTypes);
 
         /* list of return types */
         Collection<Type> result = new ArrayList<>(locTypes);
