@@ -67,6 +67,9 @@ public class Contract {
     @JoinColumn(name = "renter_id", nullable = false)
     private Renter renter;
 
+    @OneToMany(mappedBy = "contract", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Collection<ContractImage> contractImages;
+
     /**
      * contract duration
      */

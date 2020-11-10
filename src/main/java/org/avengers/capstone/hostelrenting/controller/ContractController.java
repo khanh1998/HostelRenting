@@ -1,10 +1,7 @@
 package org.avengers.capstone.hostelrenting.controller;
 
 import org.avengers.capstone.hostelrenting.dto.booking.BookingDTOCreate;
-import org.avengers.capstone.hostelrenting.dto.contract.ContractDTOConfirm;
-import org.avengers.capstone.hostelrenting.dto.contract.ContractDTOCreate;
-import org.avengers.capstone.hostelrenting.dto.contract.ContractDTOResponse;
-import org.avengers.capstone.hostelrenting.dto.contract.ContractDTOUpdate;
+import org.avengers.capstone.hostelrenting.dto.contract.*;
 import org.avengers.capstone.hostelrenting.dto.deal.DealDTOShort;
 import org.avengers.capstone.hostelrenting.dto.group.GroupDTOResponse;
 import org.avengers.capstone.hostelrenting.dto.response.ApiSuccess;
@@ -22,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -116,7 +114,7 @@ public class ContractController {
 
     @PutMapping("/contracts/confirm/{contractId}")
     public ResponseEntity<?> confirmContractById(@PathVariable Integer contractId,
-                                             @RequestBody @Valid ContractDTOConfirm reqDTO) {
+                                                 @RequestBody @Valid ContractDTOConfirm reqDTO) {
         Contract exModel = contractService.findById(contractId);
         Contract resModel = contractService.confirm(exModel, reqDTO);
         ContractDTOResponse resDTO = modelMapper.map(resModel, ContractDTOResponse.class);
@@ -142,10 +140,10 @@ public class ContractController {
 
     @GetMapping("/renters/{renterId}/contracts")
     public ResponseEntity<?> getContractsByRenterId(@PathVariable Long renterId,
-                                           @RequestParam(required = false, defaultValue = "createdAt") String sortBy,
-                                           @RequestParam(required = false, defaultValue = "false") Boolean asc,
-                                           @RequestParam(required = false, defaultValue = DEFAULT_SIZE) Integer size,
-                                           @RequestParam(required = false, defaultValue = DEFAULT_PAGE) Integer page) throws EntityNotFoundException {
+                                                    @RequestParam(required = false, defaultValue = "createdAt") String sortBy,
+                                                    @RequestParam(required = false, defaultValue = "false") Boolean asc,
+                                                    @RequestParam(required = false, defaultValue = DEFAULT_SIZE) Integer size,
+                                                    @RequestParam(required = false, defaultValue = DEFAULT_PAGE) Integer page) throws EntityNotFoundException {
         String resMsg = "Your contract(s) has been retrieved successfully!";
 
         List<ContractDTOResponse> resDTOs = contractService.findByRenterId(renterId, page, size, sortBy, asc)
@@ -169,10 +167,10 @@ public class ContractController {
 
     @GetMapping("/vendors/{vendorId}/contracts")
     public ResponseEntity<?> getContractsByVendorId(@PathVariable Long vendorId,
-                                           @RequestParam(required = false, defaultValue = "createdAt") String sortBy,
-                                           @RequestParam(required = false, defaultValue = "false") Boolean asc,
-                                           @RequestParam(required = false, defaultValue = DEFAULT_SIZE) Integer size,
-                                           @RequestParam(required = false, defaultValue = DEFAULT_PAGE) Integer page) throws EntityNotFoundException {
+                                                    @RequestParam(required = false, defaultValue = "createdAt") String sortBy,
+                                                    @RequestParam(required = false, defaultValue = "false") Boolean asc,
+                                                    @RequestParam(required = false, defaultValue = DEFAULT_SIZE) Integer size,
+                                                    @RequestParam(required = false, defaultValue = DEFAULT_PAGE) Integer page) throws EntityNotFoundException {
         String resMsg = "Your contract(s) has been retrieved successfully!";
 
         List<ContractDTOResponse> resDTOs = contractService.findByVendorId(vendorId, page, size, sortBy, asc)

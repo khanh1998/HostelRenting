@@ -52,6 +52,7 @@ public class TypeDTOCreate {
     @Getter
     @Setter
     private Integer[] facilityIds;
+
     @Getter
     @Setter
     private String[] imageUrls;

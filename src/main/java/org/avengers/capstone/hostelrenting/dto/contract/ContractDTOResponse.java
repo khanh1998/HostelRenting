@@ -13,6 +13,7 @@ import org.avengers.capstone.hostelrenting.dto.type.TypeDTOResponse;
 import org.avengers.capstone.hostelrenting.dto.renter.RenterDTOResponse;
 import org.avengers.capstone.hostelrenting.dto.vendor.VendorDTOResponse;
 import org.avengers.capstone.hostelrenting.model.Contract;
+import org.avengers.capstone.hostelrenting.model.ContractImage;
 
 import java.util.Collection;
 import java.util.UUID;
@@ -36,12 +37,13 @@ public class ContractDTOResponse {
     private String appendixContract;
     private long startTime;
     private Float duration;
-    private String evidenceImgUrl;
     private String contractUrl;
     private UUID qrCode;
     private Contract.STATUS status;
     @JsonProperty(value = "agreementServices")
     private Collection<GroupServiceDTOResponse> groupServices;
+    @JsonProperty(value = "images")
+    private Collection<ContractImageDTOResponse> contractImages;
 
     private Long createdAt;
     private Long updatedAt;
