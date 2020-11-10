@@ -66,6 +66,11 @@ public class ContractDTOUpdate implements Serializable {
     @JsonProperty(value = "groupServiceIds")
     private Set<GroupServiceDTOForContract> groupServiceIds;
 
+    @Getter
+    @Setter
+    @JsonProperty(value = "images")
+    private Set<ContractImageDTOCreate> contractImages;
+
     @Getter @Setter
     @JsonIgnore
     private Set<GroupService> groupServices;

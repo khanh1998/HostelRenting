@@ -7,6 +7,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.avengers.capstone.hostelrenting.Constant;
 import org.avengers.capstone.hostelrenting.dto.contract.ContractDTOConfirm;
 import org.avengers.capstone.hostelrenting.dto.contract.ContractDTOUpdate;
+import org.avengers.capstone.hostelrenting.dto.contract.ContractImageDTOCreate;
 import org.avengers.capstone.hostelrenting.dto.notification.NotificationContent;
 import org.avengers.capstone.hostelrenting.dto.notification.NotificationRequest;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
@@ -186,6 +187,9 @@ public class ContractServiceImpl implements ContractService {
         reqModel.setGroupServices(validServices);
         /* Set room for contract model */
         reqModel.setRoom(roomService.updateStatus(reqModel.getRoom().getRoomId(), false));
+        for (ContractImage image : reqModel.getContractImages()) {
+            image.setContract(reqModel);
+        }
         Contract resModel = contractRepository.save(reqModel);
         // send notification
         sendNotification(resModel,
@@ -204,7 +208,6 @@ public class ContractServiceImpl implements ContractService {
         if (exModel.getStatus() == Contract.STATUS.ACTIVATED) {
             throw new GenericException(Contract.class, "cannot be updated", "contractId", String.valueOf(exModel.getContractId()), "status", exModel.getStatus().toString());
         }
-        boolean isValid = true;
         Integer roomId = reqDTO.getRoomId();
         if (roomId != null) {
             reqDTO.setRoom(roomService.findById(reqDTO.getRoomId()));

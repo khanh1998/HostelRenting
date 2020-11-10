@@ -17,7 +17,9 @@ public class ContractDTOCreate {
         this.status = Contract.STATUS.INACTIVE;
         this.createdAt = System.currentTimeMillis();
     }
-    @Getter @Setter
+
+    @Getter
+    @Setter
     @JsonIgnore
     private Integer contractId;
 
@@ -25,34 +27,38 @@ public class ContractDTOCreate {
     @Setter
     private String appendixContract;
 
-    @Getter @Setter
+    @Getter
+    @Setter
     @NotNull(message = "Room id is mandatory!")
     private Integer roomId;
 
-    @Getter @Setter
+    @Getter
+    @Setter
     @NotNull(message = "Vendor id is mandatory!")
     private Long vendorId;
 
-    @Getter @Setter
+    @Getter
+    @Setter
     @NotNull(message = "Renter id is mandatory!")
     private Long renterId;
 
-    @Getter @Setter
+    @Getter
+    @Setter
     private Integer dealId;
 
-    @Getter @Setter
+    @Getter
+    @Setter
     private Integer bookingId;
 
-    @Getter @Setter
+    @Getter
+    @Setter
     @NotNull(message = "Start time is mandatory!")
     private Long startTime;
 
-    @Getter @Setter
+    @Getter
+    @Setter
     @NotNull(message = "Contract duration is mandatory!")
     private float duration;
-
-    @Getter @Setter
-    private String evidenceImgUrl;
 
     @JsonIgnore
     @Getter
@@ -66,9 +72,15 @@ public class ContractDTOCreate {
     @JsonIgnore
     private UUID qrCode;
 
-    @Getter @Setter
+    @Getter
+    @Setter
     @NotNull(message = "List of agreement services is mandatory!")
     @JsonProperty(value = "groupServiceIds")
     private Collection<GroupServiceDTOForContract> groupServices;
+
+    @Getter
+    @Setter
+    @JsonProperty(value = "images")
+    private Collection<ContractImageDTOCreate> contractImages;
 
 }

@@ -10,6 +10,5 @@ import java.io.Serializable;
 @Setter
 public class TypeImageDTO implements Serializable {
     private int imageId;
-    private int typeId;
     private String resourceUrl;
 }
