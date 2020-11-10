@@ -153,6 +153,7 @@ public class TypeController {
         String message = "Hostel types has been retrieved successfully!";
         List<TypeDTOResponse> resDTOs = typeService.findByHostelGroupId(groupId).stream()
                 .map(hostelType -> {
+                    typeService.countAvailableRoomAndCurrentBooking(hostelType);
                     logger.info("RETRIEVED Type with id: " + hostelType.getTypeId());
                     return modelMapper.map(hostelType, TypeDTOResponse.class);
                 })
