@@ -6,6 +6,7 @@ import lombok.Setter;
 import org.avengers.capstone.hostelrenting.dto.image.ImageDTOResponse;
 import org.avengers.capstone.hostelrenting.dto.facility.FacilityDTOResponse;
 import org.avengers.capstone.hostelrenting.dto.room.RoomDTOCreate;
+import org.avengers.capstone.hostelrenting.dto.room.RoomDTOResponse;
 
 import java.util.Collection;
 
@@ -15,7 +16,7 @@ public class TypeDTOResponse extends TypeDTO {
 
     @Getter
     @Setter
-    private Collection<RoomDTOCreate> rooms;
+    private Collection<RoomDTOResponse> rooms;
 
     @Getter
     @Setter
