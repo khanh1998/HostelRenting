@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
+import org.avengers.capstone.hostelrenting.dto.image.ImageDTOCreate;
 import org.avengers.capstone.hostelrenting.model.Contract;
 
 import javax.validation.constraints.NotNull;
@@ -81,6 +82,6 @@ public class ContractDTOCreate {
     @Getter
     @Setter
     @JsonProperty(value = "images")
-    private Collection<ContractImageDTOCreate> contractImages;
+    private Collection<ImageDTOCreate> contractImages;
 
 }

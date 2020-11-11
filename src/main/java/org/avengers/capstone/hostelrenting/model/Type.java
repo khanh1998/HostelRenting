@@ -18,6 +18,7 @@ import java.util.Comparator;
 @Entity
 @Table(name = "type_hostel")
 public class Type {
+    public enum STATUS{AVAILABLE, ONLY_EXTENSION, NOT_AVAILABLE}
 
     @Id
     @Column(name = "type_id")
@@ -48,7 +49,10 @@ public class Type {
 
     // unit: month
     @Column(nullable = false)
-    private int deposit;
+    private int depositTime;
+
+    @Column(columnDefinition = "varchar(20) default 'tháng'")
+    private String depositTimeUnit;
 
     @Transient
     private int schoolmate;
@@ -69,9 +73,9 @@ public class Type {
     @JoinColumn(name = "group_id")
     private Group group;
 
-    @ManyToOne
-    @JoinColumn(name = "status_id")
-    private TypeStatus typeStatus;
+    @Column(columnDefinition = "varchar(20) default 'AVAILABLE'")
+    @Enumerated(EnumType.STRING)
+    private STATUS status;
 
     @OneToMany(mappedBy = "type", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Collection<Room> rooms;

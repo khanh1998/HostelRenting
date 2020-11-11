@@ -1,6 +1,6 @@
 package org.avengers.capstone.hostelrenting.service;
 
-import org.avengers.capstone.hostelrenting.dto.FacilityDTO;
+import org.avengers.capstone.hostelrenting.dto.facility.FacilityDTO;
 import org.avengers.capstone.hostelrenting.model.Facility;
 
 import java.util.List;

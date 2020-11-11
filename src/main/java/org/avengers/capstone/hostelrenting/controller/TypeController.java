@@ -1,11 +1,10 @@
 package org.avengers.capstone.hostelrenting.controller;
 
-import com.sun.mail.iap.Response;
 import org.avengers.capstone.hostelrenting.dto.combination.TypeAndGroupDTO;
 import org.avengers.capstone.hostelrenting.dto.combination.TypesAndGroupsDTO;
-import org.avengers.capstone.hostelrenting.dto.feedback.FeedbackDTOResponse;
 import org.avengers.capstone.hostelrenting.dto.group.GroupDTOResponse;
 import org.avengers.capstone.hostelrenting.dto.response.ApiSuccess;
+import org.avengers.capstone.hostelrenting.dto.type.FacilityDTOCreateForType;
 import org.avengers.capstone.hostelrenting.dto.type.TypeDTOCreate;
 import org.avengers.capstone.hostelrenting.dto.type.TypeDTOResponse;
 import org.avengers.capstone.hostelrenting.dto.type.TypeDTOUpdate;
@@ -38,26 +37,8 @@ public class TypeController {
 
     private TypeService typeService;
     private GroupService groupService;
-    private CategoryService categoryService;
-    private TypeStatusService typeStatusService;
-    private FacilityService facilityService;
-    private FeedbackService feedbackService;
+    private  FacilityService facilityService;
     private ModelMapper modelMapper;
-
-    @Autowired
-    public void setFeedbackService(FeedbackService feedbackService) {
-        this.feedbackService = feedbackService;
-    }
-
-    @Autowired
-    public void setCategoryService(CategoryService categoryService) {
-        this.categoryService = categoryService;
-    }
-
-    @Autowired
-    public void setTypeStatusService(TypeStatusService typeStatusService) {
-        this.typeStatusService = typeStatusService;
-    }
 
     @Autowired
     public void setFacilityService(FacilityService facilityService) {
@@ -93,45 +74,7 @@ public class TypeController {
         // Log start
         logger.info("START - Creating Type");
 
-        List<TypeDTOResponse> resDTOs = new ArrayList<>();
-        // handle each of request DTO
-        reqDTOs.forEach(reqDTO -> {
-            Type reqModel = modelMapper.map(reqDTO, Type.class);
-            // set hostel group
-            Group group = groupService.findById(groupId);
-
-            // set status of type
-            TypeStatus typeStatus = typeStatusService.findById(reqDTO.getStatusId());
-            // set facilities
-            Collection<Facility> facilities = Arrays.stream(reqDTO.getFacilityIds()).map(id -> facilityService.findById(id)).collect(Collectors.toList());
-            // set images
-            Collection<TypeImage> images = Arrays.stream(reqDTO.getImageUrls()).map(imgUrl -> {
-                TypeImage imgModel = TypeImage.builder().resourceUrl(imgUrl).build();
-                imgModel.setType(reqModel);
-                return imgModel;
-            }).collect(Collectors.toList());
-            // set rooms
-            Collection<Room> rooms = Arrays.stream(reqDTO.getRoomNames()).map(room -> {
-                Room roomModel = Room.builder().roomName(room).isAvailable(true).build();
-                roomModel.setType(reqModel);
-                return roomModel;
-            }).collect(Collectors.toList());
-            // set data for model
-            reqModel.setRooms(rooms);
-            reqModel.setTypeStatus(typeStatus);
-            reqModel.setGroup(group);
-            reqModel.setFacilities(facilities);
-            reqModel.setTypeImages(images);
-            // create model
-            Type resModel = typeService.create(reqModel);
-            // log created type
-            if (resModel != null) {
-                logger.info("CREATED Type with id: " + reqModel.getTypeId());
-            }
-            // mapping to response
-            TypeDTOResponse resDTO = modelMapper.map(resModel, TypeDTOResponse.class);
-            resDTOs.add(resDTO);
-        });
+        Collection<TypeDTOResponse> resDTOs = createType(reqDTOs, groupId);
 
         // log success creating
         logger.info("SUCCESSFULL - Creating type");
@@ -343,5 +286,48 @@ public class TypeController {
         return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
     }
 
+    private Collection<TypeDTOResponse> createType(Collection<TypeDTOCreate> reqDTOs, Integer groupId){
+        // check existed Group
+        Group exGroup = groupService.findById(groupId);
 
+        //map dto -> model
+        Collection<Type> reqModels = reqDTOs
+                .stream()
+                .map(reqDTO -> modelMapper.map(reqDTO, Type.class))
+                .collect(Collectors.toList());
+
+        return reqModels
+                .stream()
+                .map(reqModel ->{
+                    //prepare object
+                    reqModel.setGroup(exGroup);
+                    setTypeForNewRoom(reqModel.getRooms(), reqModel);
+                    setTypeForNewImage(reqModel.getTypeImages(), reqModel);
+                    reqModel.setFacilities(getFacilities(reqModel.getFacilities()));
+
+                    Type resModel = typeService.create(reqModel);
+
+                    return modelMapper.map(resModel, TypeDTOResponse.class);
+                })
+                .collect(Collectors.toList());
+    }
+
+    private void setTypeForNewRoom(Collection<Room> rooms, Type type){
+        rooms.forEach(room -> {
+            room.setType(type);
+        });
+    }
+
+    private void setTypeForNewImage(Collection<TypeImage> images, Type type){
+        images.forEach(typeImage -> {
+            typeImage.setType(type);
+        });
+    }
+
+    private Collection<Facility> getFacilities(Collection<Facility> facilities){
+        return facilities
+                .stream()
+                .map(dto-> facilityService.findById(dto.getFacilityId()))
+                .collect(Collectors.toList());
+    }
 }

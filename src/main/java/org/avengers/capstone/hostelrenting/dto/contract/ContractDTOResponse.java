@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 import org.avengers.capstone.hostelrenting.dto.group.GroupDTOResponse;
+import org.avengers.capstone.hostelrenting.dto.image.ImageDTOResponse;
 import org.avengers.capstone.hostelrenting.dto.room.RoomDTO;
 import org.avengers.capstone.hostelrenting.dto.booking.BookingDTOCreate;
 import org.avengers.capstone.hostelrenting.dto.deal.DealDTOShort;
@@ -42,7 +43,7 @@ public class ContractDTOResponse {
     @JsonProperty(value = "agreementServices")
     private Collection<GroupServiceDTOResponse> groupServices;
     @JsonProperty(value = "images")
-    private Collection<ContractImageDTOResponse> contractImages;
+    private Collection<ImageDTOResponse> contractImages;
 
     private Long createdAt;
     private Long updatedAt;
