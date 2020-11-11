@@ -23,8 +23,7 @@ public class TypeDTO{
     private Float superficiality;
     private Integer capacity;
     private Integer view;
-    private Integer depositTime;
-    private String depositTimeUnit;
+    private Integer deposit;
     @JsonIgnore
     private boolean isDeleted;
 

@@ -49,10 +49,7 @@ public class Type {
 
     // unit: month
     @Column(nullable = false)
-    private int depositTime;
-
-    @Column(columnDefinition = "varchar(20) default 'tháng'")
-    private String depositTimeUnit;
+    private int deposit;
 
     @Transient
     private int schoolmate;
