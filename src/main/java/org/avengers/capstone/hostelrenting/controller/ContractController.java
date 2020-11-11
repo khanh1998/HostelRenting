@@ -226,7 +226,7 @@ public class ContractController {
     }
 
     private void getTypeAndGroupForDTO(ContractDTOResponse resDTO) {
-        Type exType = typeService.findById(resDTO.getRoom().getTypeId());
+        Type exType = typeService.findById(resDTO.getType().getTypeId());
         resDTO.setType(modelMapper.map(exType, TypeDTOResponse.class));
         resDTO.setGroup(modelMapper.map(groupService.findById(exType.getGroup().getGroupId()), GroupDTOResponse.class));
     }
