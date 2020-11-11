@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 import org.avengers.capstone.hostelrenting.dto.group.GroupDTOResponse;
-import org.avengers.capstone.hostelrenting.dto.HostelRoomDTO;
+import org.avengers.capstone.hostelrenting.dto.room.RoomDTO;
 import org.avengers.capstone.hostelrenting.dto.booking.BookingDTOCreate;
 import org.avengers.capstone.hostelrenting.dto.deal.DealDTOShort;
 import org.avengers.capstone.hostelrenting.dto.group.GroupServiceDTOResponse;
@@ -13,7 +13,6 @@ import org.avengers.capstone.hostelrenting.dto.type.TypeDTOResponse;
 import org.avengers.capstone.hostelrenting.dto.renter.RenterDTOResponse;
 import org.avengers.capstone.hostelrenting.dto.vendor.VendorDTOResponse;
 import org.avengers.capstone.hostelrenting.model.Contract;
-import org.avengers.capstone.hostelrenting.model.ContractImage;
 
 import java.util.Collection;
 import java.util.UUID;
@@ -26,7 +25,7 @@ import java.util.UUID;
 @Setter
 public class ContractDTOResponse {
     private int contractId;
-    private HostelRoomDTO room;
+    private RoomDTO room;
     private TypeDTOResponse type;
     @JsonIgnoreProperties(value = "appendixContract")
     private GroupDTOResponse group;
