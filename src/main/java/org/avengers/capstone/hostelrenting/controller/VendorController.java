@@ -1,10 +1,13 @@
 package org.avengers.capstone.hostelrenting.controller;
 
+import org.avengers.capstone.hostelrenting.dto.renter.RenterDTOResponse;
 import org.avengers.capstone.hostelrenting.dto.response.ApiSuccess;
+import org.avengers.capstone.hostelrenting.dto.user.UserDTOUpdateOnlyToken;
 import org.avengers.capstone.hostelrenting.dto.vendor.VendorDTOCreate;
 import org.avengers.capstone.hostelrenting.dto.vendor.VendorDTOResponse;
 import org.avengers.capstone.hostelrenting.dto.vendor.VendorDTOUpdate;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
+import org.avengers.capstone.hostelrenting.model.Renter;
 import org.avengers.capstone.hostelrenting.model.Vendor;
 import org.avengers.capstone.hostelrenting.service.RoleService;
 import org.avengers.capstone.hostelrenting.service.VendorService;
@@ -68,6 +71,19 @@ public class VendorController {
 
         Vendor resModel = vendorService.updateInfo(exModel, reqDTO);
         VendorDTOResponse resDTO = modelMapper.map(resModel, VendorDTOResponse.class);
+        ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTO, resMsg);
+
+        return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
+    }
+
+    @PutMapping("/vendors/{vendorId}/token")
+    public ResponseEntity<?> updateTokenOnly(@PathVariable Long vendorId,
+                                             @RequestBody @Valid UserDTOUpdateOnlyToken reqDTO) throws EntityNotFoundException {
+        String resMsg = "Your token has been updated successfully!";
+        Vendor exModel = vendorService.findById(vendorId);
+        Vendor resModel = vendorService.updateToken(exModel, reqDTO);
+        VendorDTOResponse resDTO = modelMapper.map(resModel, VendorDTOResponse.class);
+
         ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTO, resMsg);
 
         return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);

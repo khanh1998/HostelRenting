@@ -5,6 +5,7 @@ import org.avengers.capstone.hostelrenting.Constant;
 import org.avengers.capstone.hostelrenting.dto.renter.RenterDTOResponse;
 import org.avengers.capstone.hostelrenting.dto.renter.RenterDTOUpdate;
 import org.avengers.capstone.hostelrenting.dto.user.UserDTOUpdate;
+import org.avengers.capstone.hostelrenting.dto.user.UserDTOUpdateOnlyToken;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
 import org.avengers.capstone.hostelrenting.model.Province;
 import org.avengers.capstone.hostelrenting.model.Renter;
@@ -70,6 +71,12 @@ public class RenterServiceIml implements RenterService {
         modelMapper.map(reqDTO, exModel);
 
 
+        return renterRepository.save(exModel);
+    }
+
+    @Override
+    public Renter updateToken(Renter exModel, UserDTOUpdateOnlyToken onlyTokenDTO) {
+        modelMapper.map(onlyTokenDTO, exModel);
         return renterRepository.save(exModel);
     }
 
