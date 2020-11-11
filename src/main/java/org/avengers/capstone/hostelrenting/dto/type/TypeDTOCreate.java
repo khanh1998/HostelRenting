@@ -15,9 +15,6 @@ public class TypeDTOCreate extends TypeDTO {
         if (getStatus() == null) {
             setStatus(Type.STATUS.AVAILABLE);
         }
-        if (getDepositTimeUnit() == null){
-            setDepositTimeUnit("tháng");
-        }
 
         setDeleted(false);
         setCreatedAt(System.currentTimeMillis());
