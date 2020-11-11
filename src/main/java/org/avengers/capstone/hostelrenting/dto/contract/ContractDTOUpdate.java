@@ -4,15 +4,14 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
+import org.avengers.capstone.hostelrenting.dto.image.ImageDTOCreate;
 import org.avengers.capstone.hostelrenting.model.Contract;
 import org.avengers.capstone.hostelrenting.model.GroupService;
 import org.avengers.capstone.hostelrenting.model.Room;
 
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
-import java.util.Collection;
 import java.util.Set;
-import java.util.UUID;
 
 /**
  * @author duattt on 11/8/20
@@ -69,7 +68,7 @@ public class ContractDTOUpdate implements Serializable {
     @Getter
     @Setter
     @JsonProperty(value = "images")
-    private Set<ContractImageDTOCreate> contractImages;
+    private Set<ImageDTOCreate> contractImages;
 
     @Getter @Setter
     @JsonIgnore

@@ -1,4 +1,4 @@
-package org.avengers.capstone.hostelrenting.dto.contract;
+package org.avengers.capstone.hostelrenting.dto.image;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
@@ -12,12 +12,9 @@ import java.io.Serializable;
  * @created 10/11/2020 - 14:36
  * @project youthhostelapp
  */
-public class ContractImageDTO implements Serializable {
-    @Getter
-    @Setter
+@Getter
+@Setter
+public class ImageDTO implements Serializable {
     private int imageId;
-
-    @Getter
-    @Setter
     private String resourceUrl;
 }

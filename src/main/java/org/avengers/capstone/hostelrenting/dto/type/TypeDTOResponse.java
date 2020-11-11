@@ -1,42 +1,28 @@
 package org.avengers.capstone.hostelrenting.dto.type;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
-import org.avengers.capstone.hostelrenting.dto.category.CategoryDTO;
-import org.avengers.capstone.hostelrenting.dto.FacilityDTO;
-import org.avengers.capstone.hostelrenting.dto.TypeStatusDTO;
+import org.avengers.capstone.hostelrenting.dto.image.ImageDTOResponse;
+import org.avengers.capstone.hostelrenting.dto.facility.FacilityDTOResponse;
+import org.avengers.capstone.hostelrenting.dto.room.RoomDTOCreate;
 
-import java.io.Serializable;
 import java.util.Collection;
 
 @Getter
 @Setter
-//@JsonInclude(JsonInclude.Include.NON_NULL)
-public class TypeDTOResponse implements Serializable {
-    private int typeId;
-    private float score;
-    private int groupId;
-    private String title;
-    private TypeStatusDTO typeStatus;
-    private float price;
-    private String priceUnit;
-    private float superficiality;
-    private int capacity;
-    private int view;
-    private float deposit;
+public class TypeDTOResponse extends TypeDTO {
 
-    /* Transient fields */
-    // the same school
-    private int schoolMate;
-    // the same hometown
-    private int compatriot;
-    private int availableRoom;
-    private int currentBooking;
-    /* End of transient fields */
+    @Getter
+    @Setter
+    private Collection<RoomDTOCreate> rooms;
 
-    private boolean isDeleted;
+    @Getter
+    @Setter
+    private Collection<FacilityDTOResponse> facilities;
 
-    private Collection<FacilityDTO> facilities;
-    private Collection<TypeImageDTO> typeImages;
-
+    @Getter
+    @Setter
+    @JsonProperty(value = "imageUrls")
+    private Collection<ImageDTOResponse> typeImages;
 }

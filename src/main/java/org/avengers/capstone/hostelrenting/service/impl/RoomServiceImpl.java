@@ -2,6 +2,7 @@ package org.avengers.capstone.hostelrenting.service.impl;
 
 import org.avengers.capstone.hostelrenting.Constant;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
+import org.avengers.capstone.hostelrenting.exception.GenericException;
 import org.avengers.capstone.hostelrenting.model.Room;
 import org.avengers.capstone.hostelrenting.repository.RoomRepository;
 import org.avengers.capstone.hostelrenting.service.RoomService;
@@ -36,7 +37,7 @@ public class RoomServiceImpl implements RoomService {
     @Override
     public Room save(Room room) {
         if (roomRepository.getByRoomName(room.getRoomName()) != null) {
-            throw new DuplicateKeyException(String.format(Constant.Message.DUPLICATED_ERROR, "hostel_room_name", room.getRoomName()));
+            throw new GenericException(Room.class,"is existed with ", "id", room.getRoomName());
         }
         return roomRepository.save(room);
     }

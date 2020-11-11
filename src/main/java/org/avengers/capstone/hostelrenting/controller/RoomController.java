@@ -78,20 +78,12 @@ public class RoomController {
     @PostMapping("types/{typeId}/rooms")
     public ResponseEntity<ApiSuccess> createRoomsByTypeId(@PathVariable Integer typeId,
                                                           @Valid @RequestBody Collection<RoomDTOCreate> reqDTOs) throws DuplicateKeyException {
-        Type exType = typeService.findById(typeId);
-        Collection<Room> reqModels = reqDTOs.stream().map(reqDTO -> modelMapper.map(reqDTO, Room.class)).collect(Collectors.toList());
-        for (Room reqModel : reqModels) {
-            reqModel.setType(exType);
+        // reqDTOs is empty
+        if (reqDTOs.isEmpty()){
+            ApiSuccess<?> apiSuccess = new ApiSuccess<>(null,"There is no created room");
+            return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
         }
-        Collection<RoomDTOResponse> resDTOs = reqModels
-                .stream()
-                .map(reqModel -> {
-                    reqModel.setType(exType);
-                    Room resModel = roomService.save(reqModel);
-                    RoomDTOResponse resDTO = modelMapper.map(resModel, RoomDTOResponse.class);
-                    return resDTO;
-                }).collect(Collectors.toList());
-
+        Collection<RoomDTOResponse> resDTOs = createRooms(typeId, reqDTOs);
         ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTOs, "Rooms has been created successfully");
 
         return ResponseEntity.status(HttpStatus.CREATED).body(apiSuccess);
@@ -116,5 +108,25 @@ public class RoomController {
                 .body(new ApiSuccess(resDTO, String.format(UPDATE_SUCCESS, Room.class.getSimpleName())));
     }
 
+
+    private Collection<RoomDTOResponse> createRooms(Integer typeId, Collection<RoomDTOCreate> reqDTOs){
+        // check existed Type
+        Type exType = typeService.findById(typeId);
+
+        // map dto -> model
+        Collection<Room> reqModels = reqDTOs.stream().map(reqDTO -> modelMapper.map(reqDTO, Room.class)).collect(Collectors.toList());
+
+        // save list of model
+        Collection<RoomDTOResponse> resDTOs = reqModels
+                .stream()
+                .map(reqModel -> {
+                    reqModel.setType(exType);
+                    Room resModel = roomService.save(reqModel);
+                    RoomDTOResponse resDTO = modelMapper.map(resModel, RoomDTOResponse.class);
+                    return resDTO;
+                }).collect(Collectors.toList());
+
+        return resDTOs;
+    }
 
 }
