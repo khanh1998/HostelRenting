@@ -4,6 +4,7 @@ import org.avengers.capstone.hostelrenting.dto.renter.RenterDTOCreate;
 import org.avengers.capstone.hostelrenting.dto.renter.RenterDTOResponse;
 import org.avengers.capstone.hostelrenting.dto.renter.RenterDTOUpdate;
 import org.avengers.capstone.hostelrenting.dto.response.ApiSuccess;
+import org.avengers.capstone.hostelrenting.dto.user.UserDTOUpdateOnlyToken;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
 import org.avengers.capstone.hostelrenting.model.Renter;
 import org.avengers.capstone.hostelrenting.service.RenterService;
@@ -50,7 +51,7 @@ public class RenterController {
 
 
     @PostMapping("/renters/register")
-    public ResponseEntity<?> create(@Valid @RequestBody RenterDTOCreate reqDTO) {
+    public ResponseEntity<?> registerRenter(@Valid @RequestBody RenterDTOCreate reqDTO) {
         Renter reqModel = modelMapper.map(reqDTO, Renter.class);
         // set critical data for model: role, school, province
         reqModel.setPassword(passwordEncoder.encode(reqDTO.getPassword()));
@@ -64,11 +65,24 @@ public class RenterController {
     }
 
     @PutMapping("/renters/{renterId}")
-    public ResponseEntity<?> update(@PathVariable Long renterId,
+    public ResponseEntity<?> updateInfo(@PathVariable Long renterId,
                                     @RequestBody @Valid RenterDTOUpdate reqDTO) throws EntityNotFoundException {
         String resMsg = "Your information has been updated successfully!";
         Renter exModel = renterService.findById(renterId);
         Renter resModel = renterService.updateInfo(exModel, reqDTO);
+        RenterDTOResponse resDTO = modelMapper.map(resModel, RenterDTOResponse.class);
+
+        ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTO, resMsg);
+
+        return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
+    }
+
+    @PutMapping("/renters/{renterId}/token")
+    public ResponseEntity<?> updateTokenOnly(@PathVariable Long renterId,
+                                    @RequestBody @Valid UserDTOUpdateOnlyToken reqDTO) throws EntityNotFoundException {
+        String resMsg = "Your token has been updated successfully!";
+        Renter exModel = renterService.findById(renterId);
+        Renter resModel = renterService.updateToken(exModel, reqDTO);
         RenterDTOResponse resDTO = modelMapper.map(resModel, RenterDTOResponse.class);
 
         ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTO, resMsg);

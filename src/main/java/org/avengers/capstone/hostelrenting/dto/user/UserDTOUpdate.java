@@ -74,10 +74,6 @@ public class UserDTOUpdate implements Serializable {
     private String avatar;
 
     @Getter
-    @Setter
-    private String firebaseToken;
-
-    @Getter
     @JsonIgnore
     private Long updatedAt;
 }

@@ -1,6 +1,7 @@
 package org.avengers.capstone.hostelrenting.service.impl;
 
 import org.avengers.capstone.hostelrenting.dto.user.UserDTOUpdate;
+import org.avengers.capstone.hostelrenting.dto.user.UserDTOUpdateOnlyToken;
 import org.avengers.capstone.hostelrenting.dto.vendor.VendorDTOUpdate;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
 import org.avengers.capstone.hostelrenting.model.Vendor;
@@ -39,6 +40,12 @@ public class VendorServiceImpl implements VendorService {
     public Vendor updateInfo(Vendor exModel, VendorDTOUpdate reqDTO) {
         modelMapper.map(reqDTO, exModel);
 
+        return vendorRepository.save(exModel);
+    }
+
+    @Override
+    public Vendor updateToken(Vendor exModel, UserDTOUpdateOnlyToken onlyTokenDTO) {
+        modelMapper.map(onlyTokenDTO, exModel);
         return vendorRepository.save(exModel);
     }
 
