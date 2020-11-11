@@ -13,11 +13,9 @@ import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
 import org.avengers.capstone.hostelrenting.exception.GenericException;
 import org.avengers.capstone.hostelrenting.exception.PreCreationException;
 import org.avengers.capstone.hostelrenting.model.*;
+import org.avengers.capstone.hostelrenting.model.GroupService;
 import org.avengers.capstone.hostelrenting.repository.*;
-import org.avengers.capstone.hostelrenting.service.BookingService;
-import org.avengers.capstone.hostelrenting.service.ContractService;
-import org.avengers.capstone.hostelrenting.service.GroupServiceService;
-import org.avengers.capstone.hostelrenting.service.RoomService;
+import org.avengers.capstone.hostelrenting.service.*;
 import org.avengers.capstone.hostelrenting.util.BASE64DecodedMultipartFile;
 import org.avengers.capstone.hostelrenting.util.Utilities;
 import org.modelmapper.ModelMapper;
@@ -90,7 +88,13 @@ public class ContractServiceImpl implements ContractService {
     private GroupServiceService groupServiceService;
     private BookingService bookingService;
     private FileStorageServiceImp fileStorageService;
+    private DealService dealService;
     private FirebaseService firebaseService;
+
+    @Autowired
+    public void setDealService(DealService dealService) {
+        this.dealService = dealService;
+    }
 
     @Autowired
     public void setGroupRepository(GroupRepository groupRepository) {
@@ -158,7 +162,7 @@ public class ContractServiceImpl implements ContractService {
     public Contract findById(Integer id) {
         checkExist(id);
 
-        return contractRepository.getOne(id);
+        return fillInContractObject(contractRepository.getOne(id));
     }
 
     @Override
@@ -184,10 +188,20 @@ public class ContractServiceImpl implements ContractService {
         reqModel.setGroupServices(validServices);
         /* Set room for contract model */
         reqModel.setRoom(roomService.updateStatus(reqModel.getRoom().getRoomId(), false));
+
+
+
         for (ContractImage image : reqModel.getContractImages()) {
             image.setContract(reqModel);
         }
         Contract resModel = contractRepository.save(reqModel);
+
+        // upload pdf and save the url
+        String contractHtml = generateContractHTML(resModel);
+        String contractUrl = uploadPDF(contractHtml, String.valueOf(resModel.getContractId()));
+        resModel.setContractUrl(contractUrl);
+        resModel = contractRepository.save(resModel);
+
         // send notification
         sendNotification(resModel,
                 Constant.Notification.NEW_CONTRACT,
@@ -195,9 +209,9 @@ public class ContractServiceImpl implements ContractService {
                 resModel.getRenter().getFirebaseToken());
 
         // process business after create contract
-        resModel = processAfterCreate(resModel);
+        processAfterCreate(resModel);
 
-        return resModel;
+        return fillInContractObject(resModel);
     }
 
     @Override
@@ -238,7 +252,7 @@ public class ContractServiceImpl implements ContractService {
                 Constant.Notification.STATIC_UPDATE_CONTRACT_MESSAGE,
                 resModel.getRenter().getFirebaseToken());
 
-        return resModel;
+        return fillInContractObject(resModel);
     }
 
     @Override
@@ -250,22 +264,23 @@ public class ContractServiceImpl implements ContractService {
             modelMapper.map(reqDTO, exModel);
             //send mail
             String contractHtml = generateContractHTML(exModel);
-            String contractUrl = uploadPDF(contractHtml, String.valueOf(exModel.getContractId()));
+//            String contractUrl = uploadPDF(contractHtml, String.valueOf(exModel.getContractId()));
+//            exModel.setContractUrl(contractUrl);
             sendMailWithEmbed(contractHtml, exModel.getRenter().getEmail());
             sendMailWithEmbed(contractHtml, exModel.getVendor().getEmail());
-            exModel.setContractUrl(contractUrl);
             Contract resModel = contractRepository.save(exModel);
 
             /* Set contract id of booking when create corresponding contract */
             Booking exBooking = bookingService.findById(resModel.getBookingId());
             exBooking.setContractId(resModel.getContractId());
             bookingRepository.save(exBooking);
+
             // send notification
             sendNotification(resModel,
                     Constant.Notification.CONFIRM_CONTRACT,
                     Constant.Notification.STATIC_CONFIRM_CONTRACT_MESSAGE,
                     resModel.getVendor().getFirebaseToken());
-            return resModel;
+            return fillInContractObject(resModel);
         }
         throw new GenericException(Contract.class, "qrCode not matched", "contractId", String.valueOf(exModel.getContractId()), "qrCode", exModel.getQrCode().toString());
     }
@@ -275,14 +290,14 @@ public class ContractServiceImpl implements ContractService {
     public List<Contract> findByRenterId(Long renterId, int page, int size, String sortBy, boolean asc) {
         Sort sort = Sort.by(asc == true ? Sort.Direction.ASC : Sort.Direction.DESC, sortBy);
         Pageable pageable = PageRequest.of(page - 1, size, sort);
-        return contractRepository.findByRenter_UserId(renterId, pageable);
+        return contractRepository.findByRenter_UserId(renterId, pageable).stream().map(this::fillInContractObject).collect(Collectors.toList());
     }
 
     @Override
     public List<Contract> findByVendorId(Long vendorId, int page, int size, String sortBy, boolean asc) {
         Sort sort = Sort.by(asc == true ? Sort.Direction.ASC : Sort.Direction.DESC, sortBy);
         Pageable pageable = PageRequest.of(page - 1, size, sort);
-        return contractRepository.findByVendor_UserId(vendorId, pageable);
+        return contractRepository.findByVendor_UserId(vendorId, pageable).stream().map(this::fillInContractObject).collect(Collectors.toList());
     }
 
     /* Sub function for handling business */
@@ -328,15 +343,13 @@ public class ContractServiceImpl implements ContractService {
             throw new PreCreationException(errMsg);
     }
 
-    private Contract processAfterCreate(Contract resModel) {
+    private void processAfterCreate(Contract resModel) {
         /* Cancel all booking if the type out of room after create contract */
         int remainRoom = roomRepository.countByType_TypeIdAndIsAvailableIsTrue(resModel.getRoom().getType().getTypeId());
         if (remainRoom == 0) {
             Collection<Booking> incomingBookings = bookingRepository.findByType_TypeIdAndStatusIs(resModel.getRoom().getType().getTypeId(), Booking.STATUS.INCOMING);
             bookingService.cancelBookings(incomingBookings.stream().map(Booking::getBookingId).collect(Collectors.toList()));
         }
-
-        return resModel;
     }
 
     private String uploadPDF(String contractHtml, String contractId) {
@@ -465,5 +478,15 @@ public class ContractServiceImpl implements ContractService {
                 .build();
 
         firebaseService.sendPnsToDevice(notificationRequest);
+    }
+
+    private Contract fillInContractObject(Contract model){
+        model.setType(model.getRoom().getType());
+        model.setGroup(model.getRoom().getType().getGroup());
+        if (model.getDealId() != null)
+            model.setDeal(dealService.findById(model.getDealId()));
+        if (model.getBookingId()!=null)
+            model.setBooking(bookingService.findById(model.getBookingId()));
+        return model;
     }
 }
