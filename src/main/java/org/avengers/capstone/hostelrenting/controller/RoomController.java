@@ -49,9 +49,9 @@ public class RoomController {
     @GetMapping("/types/{typeId}/rooms")
     public ResponseEntity<ApiSuccess> getRoomsByTypeId(@PathVariable Integer typeId) throws EntityNotFoundException {
         Type existedType = typeService.findById(typeId);
-        List<RoomDTOCreate> rooms = existedType.getRooms()
+        List<RoomDTOResponse> rooms = existedType.getRooms()
                 .stream()
-                .map(hostelRoom -> modelMapper.map(hostelRoom, RoomDTOCreate.class))
+                .map(hostelRoom -> modelMapper.map(hostelRoom, RoomDTOResponse.class))
                 .collect(Collectors.toList());
 
         return ResponseEntity
