@@ -195,7 +195,7 @@ public class ContractController {
     @GetMapping("/contracts/{contractId}")
     public ResponseEntity<?> getContractById(@PathVariable Integer contractId) {
         Contract model = contractService.findById(contractId);
-        ContractDTOResponse resDTO = modelMapper.map(model, ContractDTOResponse.class);
+        ContractDTOResponseFull resDTO = modelMapper.map(model, ContractDTOResponseFull.class);
 //        getFullAttributesForDTO(resDTO);
         // Response entity
         ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTO, "Your contract has been retrieved successfully");
