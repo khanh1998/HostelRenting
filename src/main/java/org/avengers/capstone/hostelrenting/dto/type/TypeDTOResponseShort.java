@@ -9,6 +9,7 @@ import org.avengers.capstone.hostelrenting.dto.TypeStatusDTO;
 import org.avengers.capstone.hostelrenting.dto.facility.FacilityDTOResponse;
 import org.avengers.capstone.hostelrenting.dto.image.ImageDTOResponse;
 import org.avengers.capstone.hostelrenting.dto.room.RoomDTOCreate;
+import org.avengers.capstone.hostelrenting.dto.room.RoomDTOResponse;
 
 import java.util.Collection;
 import java.util.stream.Collectors;
@@ -38,7 +39,7 @@ public class TypeDTOResponseShort extends TypeDTOResponse {
     }
 
     @Override @JsonIgnore
-    public Collection<RoomDTOCreate> getRooms() {
+    public Collection<RoomDTOResponse> getRooms() {
         return super.getRooms();
     }
 
@@ -48,7 +49,7 @@ public class TypeDTOResponseShort extends TypeDTOResponse {
     }
 
     @Override @JsonIgnore
-    public void setRooms(Collection<RoomDTOCreate> rooms) {
+    public void setRooms(Collection<RoomDTOResponse> rooms) {
         super.setRooms(rooms);
     }
 
