@@ -102,7 +102,7 @@ public class ContractController {
         ContractDTOResponse resDTO = modelMapper.map(resModel, ContractDTOResponse.class);
 
         // get deal, booking, group and type
-        getFullAttributesForDTO(resDTO);
+//        getFullAttributesForDTO(resDTO);
 
         String msg = String.format("Your contract has been created with status: %s", resModel.getStatus());
         logger.info(msg);
@@ -119,7 +119,7 @@ public class ContractController {
         Contract resModel = contractService.confirm(exModel, reqDTO);
         ContractDTOResponse resDTO = modelMapper.map(resModel, ContractDTOResponse.class);
 
-        getFullAttributesForDTO(resDTO);
+//        getFullAttributesForDTO(resDTO);
         ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTO, String.format("Your contract has been updated with status: %s", resModel.getStatus()));
 
         return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
@@ -132,7 +132,7 @@ public class ContractController {
         Contract resModel = contractService.updateInactiveContract(exModel, reqDTO);
         ContractDTOResponse resDTO = modelMapper.map(resModel, ContractDTOResponse.class);
 
-        getFullAttributesForDTO(resDTO);
+//        getFullAttributesForDTO(resDTO);
         ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTO, String.format("Your contract has been updated with status: %s", resModel.getStatus()));
 
         return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
@@ -155,7 +155,7 @@ public class ContractController {
             resMsg = "There is no contract";
 
         // get deal, booking, group and type
-        resDTOs.forEach(this::getFullAttributesForDTO);
+//        resDTOs.forEach(this::getFullAttributesForDTO);
 
         // Response entity
         ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTOs, resMsg);
@@ -182,7 +182,7 @@ public class ContractController {
             resMsg = "There is no contract";
 
         // get deal, booking, group and type
-        resDTOs.forEach(this::getFullAttributesForDTO);
+//        resDTOs.forEach(this::getFullAttributesForDTO);
 
         // Response entity
         ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTOs, resMsg);
@@ -194,40 +194,14 @@ public class ContractController {
 
     @GetMapping("/contracts/{contractId}")
     public ResponseEntity<?> getContractById(@PathVariable Integer contractId) {
-        ContractDTOResponse resDTO = modelMapper.map(contractService.findById(contractId), ContractDTOResponse.class);
-        getFullAttributesForDTO(resDTO);
+        Contract model = contractService.findById(contractId);
+        ContractDTOResponse resDTO = modelMapper.map(model, ContractDTOResponse.class);
+//        getFullAttributesForDTO(resDTO);
         // Response entity
         ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTO, "Your contract has been retrieved successfully");
 
         return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
     }
 
-    private void getFullAttributesForDTO(ContractDTOResponse resDTO) {
-        //get deal
-        if (resDTO.getDeal() != null)
-            getDealForDTO(resDTO);
 
-        //get booking
-        if (resDTO.getBooking() != null)
-            getBookingForDTO(resDTO);
-
-        //get type & group
-        getTypeAndGroupForDTO(resDTO);
-    }
-
-    private void getDealForDTO(ContractDTOResponse resDTO) {
-        Deal exDeal = dealService.findById(resDTO.getDeal().getDealId());
-        resDTO.setDeal(modelMapper.map(exDeal, DealDTOShort.class));
-    }
-
-    private void getBookingForDTO(ContractDTOResponse resDTO) {
-        Booking exBooking = bookingService.findById(resDTO.getBooking().getBookingId());
-        resDTO.setBooking(modelMapper.map(exBooking, BookingDTOCreate.class));
-    }
-
-    private void getTypeAndGroupForDTO(ContractDTOResponse resDTO) {
-        Type exType = typeService.findById(resDTO.getType().getTypeId());
-        resDTO.setType(modelMapper.map(exType, TypeDTOResponse.class));
-        resDTO.setGroup(modelMapper.map(groupService.findById(exType.getGroup().getGroupId()), GroupDTOResponse.class));
-    }
 }
