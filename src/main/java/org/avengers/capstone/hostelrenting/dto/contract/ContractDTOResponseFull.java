@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.avengers.capstone.hostelrenting.dto.booking.BookingDTOCreate;
 import org.avengers.capstone.hostelrenting.dto.booking.BookingDTOResponse;
+import org.avengers.capstone.hostelrenting.dto.booking.BookingDTOResponseShort;
 import org.avengers.capstone.hostelrenting.dto.deal.DealDTOFull;
 import org.avengers.capstone.hostelrenting.dto.deal.DealDTOShort;
 import org.avengers.capstone.hostelrenting.dto.group.GroupDTOResponse;
@@ -40,7 +41,7 @@ public class ContractDTOResponseFull {
     private VendorDTOResponse vendor;
     private RenterDTOResponse renter;
     private DealDTOShort deal;
-    private BookingDTOCreate booking;
+    private BookingDTOResponseShort booking;
     private String appendixContract;
     private long startTime;
     private Float duration;

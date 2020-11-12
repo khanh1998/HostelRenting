@@ -12,5 +12,6 @@ import java.util.Optional;
 public interface BookingRepository extends JpaRepository<Booking, Integer> {
     Optional<Booking> findFirstByRenter_UserIdAndType_TypeIdAndStatusOrderByCreatedAtDesc(Long renterId, Integer typeId, Booking.STATUS status);
     Collection<Booking> findByType_TypeIdAndStatusIs(Integer typeId, Booking.STATUS status);
+    Optional<Booking> findByBookingIdAndContractIdIsNotNull(Integer bookingId);
 }
 
