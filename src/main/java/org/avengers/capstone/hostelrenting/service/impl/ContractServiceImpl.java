@@ -189,8 +189,6 @@ public class ContractServiceImpl implements ContractService {
         /* Set room for contract model */
         reqModel.setRoom(roomService.updateStatus(reqModel.getRoom().getRoomId(), false));
 
-
-
         for (ContractImage image : reqModel.getContractImages()) {
             image.setContract(reqModel);
         }
@@ -285,17 +283,16 @@ public class ContractServiceImpl implements ContractService {
         throw new GenericException(Contract.class, "qrCode not matched", "contractId", String.valueOf(exModel.getContractId()), "qrCode", exModel.getQrCode().toString());
     }
 
-
     @Override
     public List<Contract> findByRenterId(Long renterId, int page, int size, String sortBy, boolean asc) {
-        Sort sort = Sort.by(asc == true ? Sort.Direction.ASC : Sort.Direction.DESC, sortBy);
+        Sort sort = Sort.by(asc ? Sort.Direction.ASC : Sort.Direction.DESC, sortBy);
         Pageable pageable = PageRequest.of(page - 1, size, sort);
         return contractRepository.findByRenter_UserId(renterId, pageable).stream().map(this::fillInContractObject).collect(Collectors.toList());
     }
 
     @Override
     public List<Contract> findByVendorId(Long vendorId, int page, int size, String sortBy, boolean asc) {
-        Sort sort = Sort.by(asc == true ? Sort.Direction.ASC : Sort.Direction.DESC, sortBy);
+        Sort sort = Sort.by(asc ? Sort.Direction.ASC : Sort.Direction.DESC, sortBy);
         Pageable pageable = PageRequest.of(page - 1, size, sort);
         return contractRepository.findByVendor_UserId(vendorId, pageable).stream().map(this::fillInContractObject).collect(Collectors.toList());
     }
@@ -339,6 +336,12 @@ public class ContractServiceImpl implements ContractService {
             isViolated = true;
         }
 
+        /* Check whether given booking id belong to any contract or not? */
+        if (bookingRepository.findByBookingIdAndContractIdIsNotNull(model.getBookingId()).isPresent()){
+            errMsg = String.format("Only create 1 contract from 1 booking. Booking {id=%s} has been linked with another contract", model.getBookingId());
+            isViolated = true;
+        }
+
         if (isViolated)
             throw new PreCreationException(errMsg);
     }
@@ -349,6 +352,11 @@ public class ContractServiceImpl implements ContractService {
         if (remainRoom == 0) {
             Collection<Booking> incomingBookings = bookingRepository.findByType_TypeIdAndStatusIs(resModel.getRoom().getType().getTypeId(), Booking.STATUS.INCOMING);
             bookingService.cancelBookings(incomingBookings.stream().map(Booking::getBookingId).collect(Collectors.toList()));
+        }
+        if (resModel.getBookingId()!= null){
+            Booking exBooking = bookingService.findById(resModel.getBookingId());
+            exBooking.setContractId(resModel.getContractId());
+            bookingRepository.save(exBooking);
         }
     }
 
@@ -489,4 +497,5 @@ public class ContractServiceImpl implements ContractService {
             model.setBooking(bookingService.findById(model.getBookingId()));
         return model;
     }
+
 }
