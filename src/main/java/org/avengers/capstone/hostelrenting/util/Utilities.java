@@ -12,14 +12,18 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
+import org.thymeleaf.templateresolver.StringTemplateResolver;
+import org.thymeleaf.templateresolver.UrlTemplateResolver;
 import org.xhtmlrenderer.pdf.ITextRenderer;
 
 import java.io.*;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Calendar;
 import java.util.Map;
+import java.util.Scanner;
 
 /**
  * @author duattt on 9/16/20
@@ -71,18 +75,17 @@ public class Utilities {
                 originalFileName, contentType, content);
     }
 
-    public static String parseThymeleafTemplate(String templateName, Map<String, String> contractInfo) {
-        ClassLoaderTemplateResolver templateResolver = new ClassLoaderTemplateResolver();
-        templateResolver.setSuffix(Constant.Extension.HTML);
+    public static String parseThymeleafTemplate(String template, Map<String, String> contractInfo) {
+        StringTemplateResolver templateResolver = new StringTemplateResolver();
         templateResolver.setTemplateMode(TemplateMode.HTML);
-
         TemplateEngine templateEngine = new TemplateEngine();
         templateEngine.setTemplateResolver(templateResolver);
 
         Context context = new Context();
         contractInfo.forEach(context::setVariable);
 
-        return templateEngine.process(templateName, context);
+        String output = templateEngine.process(template, context);
+        return output;
     }
 
     public static byte[] generatePdfFromHtml(String html, String fontPath) throws IOException, DocumentException {
@@ -104,7 +107,7 @@ public class Utilities {
         calendar.setTimeInMillis(millisecond);
 
         int mYear = calendar.get(Calendar.YEAR);
-        int mMonth = calendar.get(Calendar.MONTH) +1;
+        int mMonth = calendar.get(Calendar.MONTH) + 1;
         int mDay = calendar.get(Calendar.DAY_OF_MONTH);
 
         return String.format(Constant.Contract.DATE_TIME_STRING_PATTERN, mDay, mMonth, mYear);
