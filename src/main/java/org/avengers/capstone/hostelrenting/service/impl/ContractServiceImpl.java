@@ -36,6 +36,8 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.transaction.Transactional;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -46,6 +48,9 @@ import java.util.stream.Collectors;
 public class ContractServiceImpl implements ContractService {
 
     private static final Logger logger = LoggerFactory.getLogger(ContractServiceImpl.class);
+    @Value("${azure.storage.contract-template}")
+    private String templateUrl;
+
     @Value("${azure.storage.contract-font}")
     private String fontPath;
 
@@ -415,8 +420,14 @@ public class ContractServiceImpl implements ContractService {
         String provinceName = group.getAddress().getProvinceName();
         contractInfo.put(Constant.Contract.ADDRESS, String.format("%s, %s, %s, %s, %s", buildingNo, streetName, wardName, districtName, provinceName));
 
-//        String templateName = Utilities.getFileNameWithoutExtensionFromPath(contractTemplatePath);
-        String contractHtml = Utilities.parseThymeleafTemplate(Constant.Contract.TEMPLATE_NAME, contractInfo);
+        String templateContent = null;
+        try {
+            templateContent = new Scanner(new URL(templateUrl).openStream(), "UTF-8").useDelimiter("\\A").next();
+        } catch (IOException e) {
+            logger.error(e.getMessage(), e);
+            throw new GenericException(Contract.class, "fail to confirm", "contractId",String.valueOf(model.getContractId()));
+        }
+        String contractHtml = Utilities.parseThymeleafTemplate(templateContent, contractInfo);
 
         return contractHtml;
     }
