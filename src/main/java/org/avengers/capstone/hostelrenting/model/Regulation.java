@@ -33,6 +33,9 @@ public class Regulation {
     @Column(nullable = false)
     private String regulationName;
 
+    @Column(columnDefinition = "boolean default false",nullable = false)
+    private boolean isApproved;
+
     /**
      * list of group_schedules
      */

@@ -4,6 +4,7 @@ import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
 import org.avengers.capstone.hostelrenting.model.Booking;
 import org.avengers.capstone.hostelrenting.model.Room;
 import org.avengers.capstone.hostelrenting.model.Type;
+import org.avengers.capstone.hostelrenting.repository.TypeFacilityRepository;
 import org.avengers.capstone.hostelrenting.repository.TypeRepository;
 import org.avengers.capstone.hostelrenting.service.GroupService;
 import org.avengers.capstone.hostelrenting.service.ProvinceService;
@@ -25,9 +26,16 @@ import java.util.stream.Stream;
 @Service
 public class TypeServiceImpl implements TypeService {
     private TypeRepository typeRepository;
+    private TypeFacilityRepository typeFacilityRepository;
     private GroupService groupService;
     private ProvinceService provinceService;
     private SchoolService schoolService;
+
+    @Autowired
+    public void setTypeFacilityRepository(TypeFacilityRepository typeFacilityRepository) {
+        this.typeFacilityRepository = typeFacilityRepository;
+    }
+
 
     @Autowired
     public void setProvinceService(ProvinceService provinceService) {
@@ -61,8 +69,10 @@ public class TypeServiceImpl implements TypeService {
     @Override
     public Type findById(Integer id) {
         checkExist(id);
+        Type resModel = typeRepository.getOne(id);
+//        handleTypeForEndUser(resModel);
 
-        return typeRepository.getOne(id);
+        return resModel;
     }
 
     @Override
@@ -127,9 +137,9 @@ public class TypeServiceImpl implements TypeService {
             locTypes = typeRepository.getSurroundings(latitude, longitude, distance);
         } else {
             //TODO: implement get default
-            locTypes = typeRepository.findTopOrderByScore(size, (page-1)*size);
+            locTypes = typeRepository.findTopOrderByScore(size, (page - 1) * size);
         }
-            locTypes = handleAfterRetrieve(locTypes);
+        locTypes = handleAfterRetrieve(locTypes);
 
         /* list of return types */
         Collection<Type> result = new ArrayList<>(locTypes);
@@ -172,7 +182,7 @@ public class TypeServiceImpl implements TypeService {
         return result;
     }
 
-    private Collection<Type> generateResult(Collection<Type> result, Collection<Type> schoolMateTypesOnly, Collection<Type> compatriotTypesOnly){
+    private Collection<Type> generateResult(Collection<Type> result, Collection<Type> schoolMateTypesOnly, Collection<Type> compatriotTypesOnly) {
         return Stream.concat(result.stream(), Stream.concat(schoolMateTypesOnly.stream(), compatriotTypesOnly.stream()))
                 // sort - the order is reversed
                 .sorted((o1, o2) -> {
@@ -242,5 +252,9 @@ public class TypeServiceImpl implements TypeService {
                 }).collect(Collectors.toList());
 
         return types;
+    }
+
+    private void handleTypeForEndUser(Type model){
+        model.setTypeFacilities(typeFacilityRepository.findByType_TypeIdAndFacility_IsApproved(model.getTypeId(), true));
     }
 }

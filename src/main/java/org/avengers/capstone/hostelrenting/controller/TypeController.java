@@ -4,7 +4,6 @@ import org.avengers.capstone.hostelrenting.dto.combination.TypeAndGroupDTO;
 import org.avengers.capstone.hostelrenting.dto.combination.TypesAndGroupsDTO;
 import org.avengers.capstone.hostelrenting.dto.group.GroupDTOResponse;
 import org.avengers.capstone.hostelrenting.dto.response.ApiSuccess;
-import org.avengers.capstone.hostelrenting.dto.type.FacilityDTOCreateForType;
 import org.avengers.capstone.hostelrenting.dto.type.TypeDTOCreate;
 import org.avengers.capstone.hostelrenting.dto.type.TypeDTOResponse;
 import org.avengers.capstone.hostelrenting.dto.type.TypeDTOUpdate;
@@ -208,11 +207,11 @@ public class TypeController {
                     return true;
                 }).filter(hostelType -> {
                     if (facilityIds != null && facilityIds.length > 0)
-                        return hostelType.getFacilities()
+                        return hostelType.getTypeFacilities()
                                 .stream()
-                                .anyMatch(facility -> Arrays
+                                .anyMatch(typeFacility -> Arrays
                                         .stream(facilityIds)
-                                        .anyMatch(id -> id == facility.getFacilityId()));
+                                        .anyMatch(id -> id == typeFacility.getFacility().getFacilityId()));
                     return true;
                 }).filter(hostelType -> {
                     if (serviceIds != null && serviceIds.length > 0)
@@ -303,7 +302,7 @@ public class TypeController {
                     reqModel.setGroup(exGroup);
                     setTypeForNewRoom(reqModel.getRooms(), reqModel);
                     setTypeForNewImage(reqModel.getTypeImages(), reqModel);
-                    reqModel.setFacilities(getFacilities(reqModel.getFacilities()));
+                    setTypeFacilities(reqModel.getTypeFacilities(), reqModel);
 
                     Type resModel = typeService.create(reqModel);
 
@@ -324,10 +323,10 @@ public class TypeController {
         });
     }
 
-    private Collection<Facility> getFacilities(Collection<Facility> facilities){
-        return facilities
-                .stream()
-                .map(dto-> facilityService.findById(dto.getFacilityId()))
-                .collect(Collectors.toList());
+    private void setTypeFacilities(Collection<TypeFacility> facilities, Type type){
+        facilities.forEach(typeFacility -> {
+            typeFacility.setType(type);
+            typeFacility.setFacility(facilityService.findById(typeFacility.getFacility().getFacilityId()));
+        });
     }
 }

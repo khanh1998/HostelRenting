@@ -26,7 +26,8 @@ public class TypeDTOCreate extends TypeDTO {
 
     @Getter
     @Setter
-    private Collection<FacilityDTOCreateForType> facilities;
+//    private Collection<FacilityDTOCreateForType> facilities;
+    private Collection<TypeFacilityDTOCreate> facilities;
 
     @Getter
     @Setter

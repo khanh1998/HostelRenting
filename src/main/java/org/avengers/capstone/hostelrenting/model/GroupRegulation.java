@@ -38,4 +38,6 @@ public class GroupRegulation {
     @ManyToOne
     @JoinColumn(name = "regulation_id", nullable = false)
     private Regulation regulation;
+
+
 }
