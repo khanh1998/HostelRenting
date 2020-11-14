@@ -13,6 +13,7 @@ import java.util.Collection;
 
 @Entity
 @Table(name = "service")
+@Builder(toBuilder = true)
 public class Service {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

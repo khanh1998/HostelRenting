@@ -10,4 +10,5 @@ import java.io.Serializable;
 public class FacilityDTO implements Serializable {
     private int facilityId;
     private String facilityName;
+    private boolean isApproved;
 }

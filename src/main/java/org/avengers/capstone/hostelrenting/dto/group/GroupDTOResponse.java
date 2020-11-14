@@ -4,17 +4,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 import org.avengers.capstone.hostelrenting.dto.category.CategoryDTO;
-import org.avengers.capstone.hostelrenting.dto.type.TypeDTOResponse;
-import org.avengers.capstone.hostelrenting.model.GroupSchedule;
+import org.avengers.capstone.hostelrenting.dto.groupRegulation.GroupRegulationDTOResponse;
+import org.avengers.capstone.hostelrenting.dto.groupService.GroupServiceDTOResponse;
 import org.avengers.capstone.hostelrenting.model.serialized.AddressFull;
-import org.avengers.capstone.hostelrenting.model.serialized.ServiceFull;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Comparator;
-import java.util.function.BinaryOperator;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Getter

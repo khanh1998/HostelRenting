@@ -3,6 +3,8 @@ package org.avengers.capstone.hostelrenting.controller;
 import org.avengers.capstone.hostelrenting.dto.group.GroupDTOResponse;
 import org.avengers.capstone.hostelrenting.dto.group.GroupDTOCreate;
 import org.avengers.capstone.hostelrenting.dto.group.GroupDTOUpdate;
+import org.avengers.capstone.hostelrenting.dto.groupRegulation.GroupRegulationDTOCreateForGroup;
+import org.avengers.capstone.hostelrenting.dto.groupService.GroupServiceDTOCreateForGroup;
 import org.avengers.capstone.hostelrenting.dto.response.ApiSuccess;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
 import org.avengers.capstone.hostelrenting.model.*;
@@ -132,6 +134,8 @@ public class GroupController {
             if (reqModel.getManagerPhone() == null) {
                 reqModel.setManagerPhone(vendor.getPhone());
             }
+
+            createRefObj(reqDTO);
 
             /* set services */
             if (reqDTO.getServices() != null) {
@@ -278,5 +282,26 @@ public class GroupController {
         return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
     }
 
+    private void createRefObj(GroupDTOCreate groupDTO) {
+        if (groupDTO.getNewRegulations() != null && !groupDTO.getNewRegulations().isEmpty()){
+            groupDTO.getNewRegulations().stream().forEach(dto -> {
+                Regulation reqModel = modelMapper.map(dto, Regulation.class);
+                Regulation resModel = regulationService.createNew(reqModel);
+                List<GroupRegulationDTOCreateForGroup> regulations= groupDTO.getRegulations();
+                GroupRegulationDTOCreateForGroup regulationDTO = new GroupRegulationDTOCreateForGroup(resModel.getRegulationId());
+                regulations.add(regulationDTO);
+            });
+        }
 
+        if (groupDTO.getNewServices() != null && !groupDTO.getNewServices().isEmpty()){
+            groupDTO.getNewServices().stream().forEach(dto -> {
+                Service reqNewService = Service.builder().serviceName(dto.getServiceName()).build();
+                Service resNewService = serviceService.createNew(reqNewService);
+                List<GroupServiceDTOCreateForGroup> groupServices= groupDTO.getServices();
+                GroupServiceDTOCreateForGroup groupServiceDTO = modelMapper.map(dto, GroupServiceDTOCreateForGroup.class);
+                groupServiceDTO.setServiceId(resNewService.getServiceId());
+                groupServices.add(groupServiceDTO);
+            });
+        }
+    }
 }

@@ -1,6 +1,7 @@
 package org.avengers.capstone.hostelrenting.service.impl;
 
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
+import org.avengers.capstone.hostelrenting.exception.GenericException;
 import org.avengers.capstone.hostelrenting.model.GroupRegulation;
 import org.avengers.capstone.hostelrenting.model.Regulation;
 import org.avengers.capstone.hostelrenting.model.Schedule;
@@ -25,6 +26,15 @@ public class RegulationServiceImpl implements RegulationService {
     @Autowired
     public void setRegulationRepository(RegulationRepository regulationRepository) {
         this.regulationRepository = regulationRepository;
+    }
+
+    @Override
+    public Regulation createNew(Regulation regulation) {
+        Optional<Regulation> exModel = regulationRepository.findByRegulationName(regulation.getRegulationName());
+        if (exModel.isPresent())
+            throw new GenericException(Regulation.class, "is existed with", "id", String.valueOf(exModel.get().getRegulationId()));
+        else
+            return regulationRepository.save(regulation);
     }
 
     @Override

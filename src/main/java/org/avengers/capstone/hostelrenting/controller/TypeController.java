@@ -2,11 +2,13 @@ package org.avengers.capstone.hostelrenting.controller;
 
 import org.avengers.capstone.hostelrenting.dto.combination.TypeAndGroupDTO;
 import org.avengers.capstone.hostelrenting.dto.combination.TypesAndGroupsDTO;
+import org.avengers.capstone.hostelrenting.dto.facility.FacilityDTOCreate;
 import org.avengers.capstone.hostelrenting.dto.group.GroupDTOResponse;
 import org.avengers.capstone.hostelrenting.dto.response.ApiSuccess;
 import org.avengers.capstone.hostelrenting.dto.type.TypeDTOCreate;
 import org.avengers.capstone.hostelrenting.dto.type.TypeDTOResponse;
 import org.avengers.capstone.hostelrenting.dto.type.TypeDTOUpdate;
+import org.avengers.capstone.hostelrenting.dto.type.TypeFacilityDTOCreate;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
 import org.avengers.capstone.hostelrenting.model.*;
 import org.avengers.capstone.hostelrenting.service.*;
@@ -292,7 +294,13 @@ public class TypeController {
         //map dto -> model
         Collection<Type> reqModels = reqDTOs
                 .stream()
-                .map(reqDTO -> modelMapper.map(reqDTO, Type.class))
+                .map(reqDTO -> {
+                    // create new ref obj
+                    createRefObj(reqDTO);
+
+                    Type model = modelMapper.map(reqDTO, Type.class);
+                    return model;
+                })
                 .collect(Collectors.toList());
 
         return reqModels
@@ -328,5 +336,18 @@ public class TypeController {
             typeFacility.setType(type);
             typeFacility.setFacility(facilityService.findById(typeFacility.getFacility().getFacilityId()));
         });
+    }
+
+    private void createRefObj(TypeDTOCreate typeDTO){
+        if (typeDTO.getNewFacilities()!= null && !typeDTO.getNewFacilities().isEmpty()){
+            typeDTO.getNewFacilities().stream().forEach(facilityDTO -> {
+                Facility reqModel = modelMapper.map(facilityDTO, Facility.class);
+                Facility newModel = facilityService.createNew(reqModel);
+                Collection<TypeFacilityDTOCreate> facilities = typeDTO.getFacilities();
+                TypeFacilityDTOCreate typeFacility = new TypeFacilityDTOCreate();
+                typeFacility.setFacilityId(newModel.getFacilityId());
+                facilities.add(typeFacility);
+            });
+        }
     }
 }
