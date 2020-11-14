@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
+import org.avengers.capstone.hostelrenting.dto.facility.FacilityDTO;
+import org.avengers.capstone.hostelrenting.dto.facility.FacilityDTOCreate;
 import org.avengers.capstone.hostelrenting.dto.image.ImageDTOCreate;
 import org.avengers.capstone.hostelrenting.dto.room.RoomDTOCreate;
 import org.avengers.capstone.hostelrenting.model.Type;
@@ -33,6 +35,10 @@ public class TypeDTOCreate extends TypeDTO {
     @Setter
     @JsonProperty(value = "imageUrls")
     private Collection<ImageDTOCreate> typeImages;
+
+    @Getter
+    @Setter
+    private Collection<FacilityDTOCreate> newFacilities;
 
     /* Disable unnecessary attributes */
     @Override

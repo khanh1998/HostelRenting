@@ -2,6 +2,8 @@ package org.avengers.capstone.hostelrenting.service.impl;
 
 import org.avengers.capstone.hostelrenting.dto.ServiceDTO;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
+import org.avengers.capstone.hostelrenting.exception.GenericException;
+import org.avengers.capstone.hostelrenting.model.Regulation;
 import org.avengers.capstone.hostelrenting.model.Service;
 import org.avengers.capstone.hostelrenting.repository.ServiceRepository;
 import org.avengers.capstone.hostelrenting.service.ServiceService;
@@ -38,6 +40,15 @@ public class ServiceServiceImpl implements ServiceService {
         Optional<Service> model = serviceRepository.findById(id);
         if (model.isEmpty())
             throw new EntityNotFoundException(Service.class, "id", id.toString());
+    }
+
+    @Override
+    public Service createNew(Service service) {
+        Optional<Service> exModel = serviceRepository.findByServiceName(service.getServiceName());
+        if (exModel.isPresent())
+            throw new GenericException(Service.class, "is existed with", "id", String.valueOf(exModel.get().getServiceId()));
+        else
+            return serviceRepository.save(service);
     }
 
     /**

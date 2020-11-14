@@ -13,6 +13,8 @@ import java.util.Collection;
  * @project youthhostelapp
  */
 public interface RegulationService {
+
+    Regulation createNew(Regulation regulation);
     /**
      * Find facility by given id
      *

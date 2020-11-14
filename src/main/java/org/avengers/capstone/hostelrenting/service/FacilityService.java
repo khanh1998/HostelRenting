@@ -13,6 +13,8 @@ public interface FacilityService {
      */
     void checkNotFound(Integer id);
 
+    Facility createNew(Facility facility);
+
     /**
      * Get all facilities
      *

@@ -13,6 +13,8 @@ public interface ServiceService {
      */
     void checkNotFound(Integer id);
 
+    Service createNew(Service service);
+
     /**
      * Get all services
      *

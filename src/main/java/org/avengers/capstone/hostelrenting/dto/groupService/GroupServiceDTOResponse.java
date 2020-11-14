@@ -1,4 +1,4 @@
-package org.avengers.capstone.hostelrenting.dto.group;
+package org.avengers.capstone.hostelrenting.dto.groupService;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;

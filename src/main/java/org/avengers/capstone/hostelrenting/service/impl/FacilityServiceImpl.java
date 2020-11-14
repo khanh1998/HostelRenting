@@ -2,7 +2,9 @@ package org.avengers.capstone.hostelrenting.service.impl;
 
 import org.avengers.capstone.hostelrenting.dto.facility.FacilityDTO;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
+import org.avengers.capstone.hostelrenting.exception.GenericException;
 import org.avengers.capstone.hostelrenting.model.Facility;
+import org.avengers.capstone.hostelrenting.model.Regulation;
 import org.avengers.capstone.hostelrenting.repository.FacilityRepository;
 import org.avengers.capstone.hostelrenting.service.FacilityService;
 import org.modelmapper.ModelMapper;
@@ -38,6 +40,15 @@ public class FacilityServiceImpl implements FacilityService {
         Optional<Facility> model = facilityRepository.findById(id);
         if (model.isEmpty())
             throw new EntityNotFoundException(Facility.class, "id", id.toString());
+    }
+
+    @Override
+    public Facility createNew(Facility facility) {
+        Optional<Facility> exModel = facilityRepository.findByFacilityName(facility.getFacilityName());
+        if (exModel.isPresent())
+            throw new GenericException(Facility.class, "is existed with", "id", String.valueOf(exModel.get().getFacilityId()));
+        else
+            return facilityRepository.save(facility);
     }
 
     /**
