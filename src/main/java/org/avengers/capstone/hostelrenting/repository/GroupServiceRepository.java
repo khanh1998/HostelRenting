@@ -1,5 +1,6 @@
 package org.avengers.capstone.hostelrenting.repository;
 
+import org.avengers.capstone.hostelrenting.model.Group;
 import org.avengers.capstone.hostelrenting.model.GroupService;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -20,4 +21,6 @@ public interface GroupServiceRepository extends JpaRepository<GroupService, Inte
             "from GroupService gs " +
             "where gs.group.vendor.userId= :vendorId and gs.group.groupId= :groupId and gs.groupServiceId= :groupServiceId")
     boolean IsGroupServiceExistByVendorAndGroup(Long vendorId, int groupId, int groupServiceId);
+
+    Collection<GroupService> findByGroup_GroupIdAndService_IsApproved(Integer groupId, boolean isApproved);
 }

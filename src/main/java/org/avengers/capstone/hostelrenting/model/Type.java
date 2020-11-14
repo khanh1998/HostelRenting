@@ -89,14 +89,8 @@ public class Type {
     @OneToMany(mappedBy = "type", fetch = FetchType.LAZY)
     private Collection<Feedback> feedbacks;
 
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @EqualsAndHashCode.Exclude
-    @ToString.Exclude
-    @JoinTable(name = "type_facility",
-            joinColumns = @JoinColumn(name = "type_id"),
-            inverseJoinColumns = @JoinColumn(name = "facility_id")
-    )
-    private Collection<Facility> facilities;
+    @OneToMany(mappedBy = "type", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Collection<TypeFacility> typeFacilities;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private Long createdAt;

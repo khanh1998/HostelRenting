@@ -19,8 +19,10 @@ public class Service {
     private Integer serviceId;
 
     @Column(nullable = false)
-    @NotBlank(message = "Service name is mandatory")
     private String serviceName;
+
+    @Column(columnDefinition = "boolean default false",nullable = false)
+    private boolean isApproved;
 
     @OneToMany(mappedBy = "service", fetch = FetchType.LAZY)
     private Collection<GroupService> groupServices;

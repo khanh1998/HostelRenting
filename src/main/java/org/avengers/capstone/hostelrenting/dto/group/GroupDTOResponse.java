@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 import org.avengers.capstone.hostelrenting.dto.category.CategoryDTO;
+import org.avengers.capstone.hostelrenting.dto.type.TypeDTOResponse;
 import org.avengers.capstone.hostelrenting.model.GroupSchedule;
 import org.avengers.capstone.hostelrenting.model.serialized.AddressFull;
 import org.avengers.capstone.hostelrenting.model.serialized.ServiceFull;
@@ -89,7 +90,8 @@ public class GroupDTOResponse implements Serializable {
                                         return timeRange;
                                     })
                                     .flatMap(Collection::stream)
-                                    .collect(Collectors.toList())).build()).collect(Collectors.toList());
+                                    .collect(Collectors.toList())).build())
+                    .collect(Collectors.toList());
         return null;
     }
 }
