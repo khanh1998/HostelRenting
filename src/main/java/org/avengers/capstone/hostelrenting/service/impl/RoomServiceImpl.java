@@ -36,7 +36,7 @@ public class RoomServiceImpl implements RoomService {
 
     @Override
     public Room save(Room room) {
-        if (roomRepository.getByRoomName(room.getRoomName()) != null) {
+        if (roomRepository.getByRoomNameAndType_TypeId(room.getRoomName(), room.getType().getTypeId()) != null) {
             throw new GenericException(Room.class,"is existed with ", "id", room.getRoomName());
         }
         return roomRepository.save(room);

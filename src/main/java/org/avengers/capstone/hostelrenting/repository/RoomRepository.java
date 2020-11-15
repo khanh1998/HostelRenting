@@ -9,7 +9,7 @@ import java.util.Optional;
 
 @Repository
 public interface RoomRepository extends JpaRepository<Room, Integer> {
-    Room getByRoomName(String hostelRoomName);
+    Room getByRoomNameAndType_TypeId(String hostelRoomName, Integer typeId);
     Optional<Room> findByRoomIdAndType_TypeId(Integer hostelRoomId, Integer hostelTypeId);
     int countByType_TypeIdAndIsAvailableIsTrue(Integer typeId);
     @Query("select case when count (r) > 0 then true else false end from Room r where r.type.group.vendor.userId= :vendorId and r.roomId= :roomId")
