@@ -21,13 +21,13 @@ public class GroupService {
     @Column(nullable = false)
     private Float price;
 
-    @Column(nullable = false, columnDefinition = "varchar(10) default 'nghìn'")
+    @Column(columnDefinition = "varchar(10) default 'nghìn'")
     private String priceUnit;
 
     @Column(nullable = false, columnDefinition = "varchar(10) default 'tháng'")
     private String timeUnit;
 
-    @Column(nullable = false, columnDefinition = "varchar(10) default 'phòng'")
+    @Column(columnDefinition = "varchar(10) default 'phòng'")
     private String userUnit;
 
     @Column(nullable = false, columnDefinition = "bool default true")

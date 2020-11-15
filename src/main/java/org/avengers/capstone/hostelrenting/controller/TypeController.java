@@ -22,6 +22,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.transaction.Transactional;
 import javax.validation.Valid;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -31,6 +32,7 @@ import static org.avengers.capstone.hostelrenting.Constant.Pagination.DEFAULT_SI
 
 @Validated
 @RestController
+@Transactional
 @RequestMapping("/api/v1")
 public class TypeController {
 
