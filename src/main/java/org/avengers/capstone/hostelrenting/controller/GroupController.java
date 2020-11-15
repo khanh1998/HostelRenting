@@ -19,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.transaction.Transactional;
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import java.util.ArrayList;
@@ -31,6 +32,7 @@ import static org.avengers.capstone.hostelrenting.Constant.Pagination.DEFAULT_SI
 
 @Validated
 @RestController
+@Transactional
 @RequestMapping("/api/v1")
 public class GroupController {
     private static final Logger logger = LoggerFactory.getLogger(GroupController.class);
