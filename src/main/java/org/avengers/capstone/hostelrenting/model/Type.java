@@ -63,14 +63,14 @@ public class Type {
     @Transient
     private int currentBooking;
 
-    @Column(columnDefinition = "boolean default false")
+    @Column(columnDefinition = "boolean default false", nullable = false)
     private boolean isDeleted;
 
     @ManyToOne
     @JoinColumn(name = "group_id")
     private Group group;
 
-    @Column(columnDefinition = "varchar(20) default 'AVAILABLE'")
+    @Column(columnDefinition = "varchar(20) default 'AVAILABLE'", nullable = false)
     @Enumerated(EnumType.STRING)
     private STATUS status;
 
