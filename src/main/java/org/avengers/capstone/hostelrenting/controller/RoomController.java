@@ -5,8 +5,10 @@ import org.avengers.capstone.hostelrenting.dto.room.RoomDTOResponse;
 import org.avengers.capstone.hostelrenting.dto.type.TypeDTOResponse;
 import org.avengers.capstone.hostelrenting.dto.response.ApiSuccess;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
+import org.avengers.capstone.hostelrenting.exception.GenericException;
 import org.avengers.capstone.hostelrenting.model.Room;
 import org.avengers.capstone.hostelrenting.model.Type;
+import org.avengers.capstone.hostelrenting.repository.RoomRepository;
 import org.avengers.capstone.hostelrenting.service.RoomService;
 import org.avengers.capstone.hostelrenting.service.TypeService;
 import org.modelmapper.ModelMapper;
@@ -114,13 +116,22 @@ public class RoomController {
         Type exType = typeService.findById(typeId);
 
         // map dto -> model
-        Collection<Room> reqModels = reqDTOs.stream().map(reqDTO -> modelMapper.map(reqDTO, Room.class)).collect(Collectors.toList());
+        Collection<Room> reqModels = reqDTOs.stream().map(reqDTO -> {
+            Room reqModel = modelMapper.map(reqDTO, Room.class);
+            reqModel.setType(exType);
+            return reqModel;
+        }).collect(Collectors.toList());
+
+        // check all rooms not exist
+        Room violatedRoom = roomService.getExistedRoomInList(reqModels);
+        if (violatedRoom!= null){
+            throw new GenericException(Room.class, "is existed with", "roomName", violatedRoom.getRoomName());
+        }
 
         // save list of model
         Collection<RoomDTOResponse> resDTOs = reqModels
                 .stream()
                 .map(reqModel -> {
-                    reqModel.setType(exType);
                     Room resModel = roomService.save(reqModel);
                     RoomDTOResponse resDTO = modelMapper.map(resModel, RoomDTOResponse.class);
                     return resDTO;

@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -37,7 +38,7 @@ public class RoomServiceImpl implements RoomService {
     @Override
     public Room save(Room room) {
         if (roomRepository.getByRoomNameAndType_TypeId(room.getRoomName(), room.getType().getTypeId()) != null) {
-            throw new GenericException(Room.class,"is existed with ", "id", room.getRoomName());
+            throw new GenericException(Room.class, "is existed with ", "id", room.getRoomName());
         }
         return roomRepository.save(room);
     }
@@ -57,6 +58,16 @@ public class RoomServiceImpl implements RoomService {
     @Override
     public Room updateStatus(Integer id, boolean isAvailable) {
         return roomRepository.save(findById(id).toBuilder().isAvailable(isAvailable).build());
+    }
+
+    @Override
+    public Room getExistedRoomInList(Collection<Room> rooms) {
+        for (Room room : rooms) {
+            Room exRoom = roomRepository.getByRoomNameAndType_TypeId(room.getRoomName(), room.getType().getTypeId());
+            if (exRoom != null)
+                return exRoom;
+        }
+        return null;
     }
 
     @Override
