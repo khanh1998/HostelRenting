@@ -23,4 +23,5 @@ public class GroupDTOResponseShort {
     private String imgUrl;
     @JsonProperty("address")
     private AddressFull addressFull;
+    private String appendixContract;
 }
