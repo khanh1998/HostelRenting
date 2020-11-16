@@ -14,12 +14,11 @@ public class WebConfiguation implements WebMvcConfigurer {
         registry.addMapping("/**")
                 .allowedOrigins(
                         "http://localhost:8080",
-                        "https://hostel-renting.netlify.app",
+                        "https://purple-ocean-00a0c8300.azurestaticapps.net",
                         "https://td-vue-firestore-chat.web.app",
                         "https://nhatro.sac.vn",
-                        "https://hotel-renting-develop.netlify.app",
+                        "https://phongtro.sac.vn",
                         "http://127.0.0.1:8080",
-                        "https://hostel-renting.azurewebsites.net",
                         "https://blue-stone-032f5e600.azurestaticapps.net"
                 ).allowedMethods("POST", "GET", "PUT", "OPTIONS", "DELETE")
                 .allowedHeaders("Content-Type", "Origin", "Authorization");
