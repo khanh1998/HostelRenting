@@ -35,5 +35,5 @@ public class District {
 
     @JsonIgnore
     @OneToMany(mappedBy = "district", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<University> universities;
+    private List<School> schools;
 }

@@ -15,7 +15,7 @@ import java.util.List;
 public class School {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int schoolId;
+    private int schoolId; 
 
     @Column(nullable = false)
     private String schoolName;
