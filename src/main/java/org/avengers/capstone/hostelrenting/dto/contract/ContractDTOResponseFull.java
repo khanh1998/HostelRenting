@@ -29,7 +29,7 @@ public class ContractDTOResponseFull {
     private int contractId;
     private RoomDTO room;
     private TypeDTOResponse type;
-    @JsonIgnoreProperties(value = "appendixContract")
+//    @JsonIgnoreProperties(value = "appendixContract")
     private GroupDTOResponse group;
     private VendorDTOResponse vendor;
     private RenterDTOResponse renter;
