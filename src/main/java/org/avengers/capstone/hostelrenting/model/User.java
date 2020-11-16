@@ -30,7 +30,6 @@ public class User {
 
     private String avatar;
 
-    @Column(nullable = false)
     private String firebaseToken;
 
     private Integer yearOfBirth;
@@ -53,10 +52,10 @@ public class User {
     @JoinColumn(name = "role_id", nullable = false)
     private Role role;
 
-    @Column(columnDefinition = "boolean default false")
+    @Column(columnDefinition = "boolean default false", nullable = false)
     private boolean isBlocked;
 
-    @Column(columnDefinition = "boolean default false")
+    @Column(columnDefinition = "boolean default false", nullable = false)
     private boolean isCensored;
 
     /**
