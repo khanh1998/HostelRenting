@@ -1,6 +1,7 @@
 package org.avengers.capstone.hostelrenting.dto.hostelRequest;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.avengers.capstone.hostelrenting.model.HostelRequest;
 
 import javax.validation.constraints.NotNull;
 
@@ -12,6 +13,7 @@ import javax.validation.constraints.NotNull;
 public class HostelRequestDTOCreate extends HostelRequestDTO{
     public HostelRequestDTOCreate() {
         this.setCreatedAt(System.currentTimeMillis());
+        this.setStatus(HostelRequest.STATUS.CREATED);
         if (getMaxDistance() == null){
             setMaxDistance(5);
         }
@@ -58,5 +60,11 @@ public class HostelRequestDTOCreate extends HostelRequestDTO{
     @JsonIgnore
     public long getRenterId() {
         return super.getRenterId();
+    }
+
+    @Override
+    @JsonIgnore
+    public HostelRequest.STATUS getStatus() {
+        return super.getStatus();
     }
 }

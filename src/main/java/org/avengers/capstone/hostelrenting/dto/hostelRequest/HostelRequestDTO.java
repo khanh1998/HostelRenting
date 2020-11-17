@@ -2,6 +2,7 @@ package org.avengers.capstone.hostelrenting.dto.hostelRequest;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.avengers.capstone.hostelrenting.model.HostelRequest;
 
 /**
  * @author duattt on 11/16/20
@@ -12,13 +13,14 @@ import lombok.Setter;
 @Setter
 public class HostelRequestDTO {
     private int requestId;
-    private Float price;
-    private Float superficiality;
+    private Float maxPrice;
+    private Float minSuperficiality;
     private Double latitude;
     private Double longitude;
     private Integer maxDistance;
     private Long dueDate;
     private long renterId;
+    private HostelRequest.STATUS status;
     private long createdAt;
     private Long updatedAt;
 }

@@ -2,7 +2,10 @@ package org.avengers.capstone.hostelrenting.repository;
 
 import org.avengers.capstone.hostelrenting.model.HostelRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+
+import java.util.Collection;
 
 /**
  * @author duattt on 11/16/20
@@ -11,4 +14,8 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface HostelRequestRepository extends JpaRepository<HostelRequest, Integer> {
+    Collection<HostelRequest> findByRenter_UserIdAndAndDueDateIsGreaterThanOrderByDueDate(Long renterId, long dueDate);
+
+    @Query(value = "select r.* from hostel_request as r where to_timestamp(r.due_date/ 1000) < current_date", nativeQuery = true)
+    Collection<HostelRequest> findExpiredRequests();
 }

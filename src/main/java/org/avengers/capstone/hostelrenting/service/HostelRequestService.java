@@ -2,6 +2,7 @@ package org.avengers.capstone.hostelrenting.service;
 
 import org.avengers.capstone.hostelrenting.model.HostelRequest;
 
+import java.util.Collection;
 import java.util.Optional;
 
 /**
@@ -13,4 +14,5 @@ public interface HostelRequestService {
     void checkExist(Integer requestId);
     HostelRequest createNew(HostelRequest request);
     HostelRequest findById(Integer requestId);
+    Collection<HostelRequest> findByRenterId(Long renterId);
 }

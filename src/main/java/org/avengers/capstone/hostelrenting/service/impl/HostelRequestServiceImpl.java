@@ -5,9 +5,11 @@ import org.avengers.capstone.hostelrenting.model.Group;
 import org.avengers.capstone.hostelrenting.model.HostelRequest;
 import org.avengers.capstone.hostelrenting.repository.HostelRequestRepository;
 import org.avengers.capstone.hostelrenting.service.HostelRequestService;
+import org.avengers.capstone.hostelrenting.service.RenterService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
 import java.util.Optional;
 
 /**
@@ -18,6 +20,12 @@ import java.util.Optional;
 @Service
 public class HostelRequestServiceImpl implements HostelRequestService {
     private HostelRequestRepository hostelRequestRepository;
+    private RenterService renterService;
+
+    @Autowired
+    public void setRenterService(RenterService renterService) {
+        this.renterService = renterService;
+    }
 
     @Autowired
     public void setHostelRequestRepository(HostelRequestRepository hostelRequestRepository) {
@@ -40,9 +48,15 @@ public class HostelRequestServiceImpl implements HostelRequestService {
     @Override
     public HostelRequest findById(Integer requestId) {
         checkExist((requestId));
-        HostelRequest resModel = hostelRequestRepository.getOne(requestId);
 
-        return resModel;
+        return hostelRequestRepository.getOne(requestId);
+    }
+
+    @Override
+    public Collection<HostelRequest> findByRenterId(Long renterId) {
+        renterService.findById(renterId);
+
+        return hostelRequestRepository.findByRenter_UserIdAndAndDueDateIsGreaterThanOrderByDueDate(renterId, System.currentTimeMillis());
     }
 
 }
