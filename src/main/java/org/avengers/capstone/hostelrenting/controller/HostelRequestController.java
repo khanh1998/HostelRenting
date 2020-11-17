@@ -69,7 +69,7 @@ public class HostelRequestController {
         Collection<HostelRequestDTOResponse> resDTOs = resModels
                 .stream().map(request -> modelMapper.map(request, HostelRequestDTOResponse.class))
                 .collect(Collectors.toList());
-        ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTOs, "Your request has been submitted successfully!");
+        ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTOs, "Your request has been retrieved successfully!");
         apiSuccess.setTotal(resDTOs.size());
 
         return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);

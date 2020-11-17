@@ -1,5 +1,7 @@
 package org.avengers.capstone.hostelrenting.repository;
 
+import org.avengers.capstone.hostelrenting.model.Contract;
+import org.avengers.capstone.hostelrenting.model.HostelRequest;
 import org.avengers.capstone.hostelrenting.model.Type;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -35,4 +37,7 @@ public interface TypeRepository extends JpaRepository<Type, Integer> {
 
     @Query(value = "SELECT * FROM type_hostel AS t ORDER BY t.score DESC LIMIT ?1 OFFSET ?2", nativeQuery = true)
     Collection<Type> findTopOrderByScore(int size, int offset);
+
+    @Query(value = "SELECT * FROM get_type_by_request_due_time(?1, ?2)", nativeQuery = true)
+    Collection<Type> findByRequestDueTime(Integer requestId, String status);
 }

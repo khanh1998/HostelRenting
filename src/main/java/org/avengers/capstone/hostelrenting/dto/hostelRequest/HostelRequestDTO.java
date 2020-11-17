@@ -18,7 +18,7 @@ public class HostelRequestDTO {
     private Double latitude;
     private Double longitude;
     private Integer maxDistance;
-    private Long dueDate;
+    private Long dueTime;
     private long renterId;
     private HostelRequest.STATUS status;
     private long createdAt;
