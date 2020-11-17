@@ -56,7 +56,7 @@ public class HostelRequestServiceImpl implements HostelRequestService {
     public Collection<HostelRequest> findByRenterId(Long renterId) {
         renterService.findById(renterId);
 
-        return hostelRequestRepository.findByRenter_UserIdAndAndDueDateIsGreaterThanOrderByDueDate(renterId, System.currentTimeMillis());
+        return hostelRequestRepository.findByRenter_UserIdAndDueTimeIsGreaterThan(renterId, System.currentTimeMillis());
     }
 
 }

@@ -39,9 +39,9 @@ public class HostelRequestDTOCreate extends HostelRequestDTO{
     }
 
     @Override
-    @NotNull(message = "Due date is mandatory")
-    public Long getDueDate() {
-        return super.getDueDate();
+    @NotNull(message = "Due time is mandatory")
+    public Long getDueTime() {
+        return super.getDueTime();
     }
 
     @Override

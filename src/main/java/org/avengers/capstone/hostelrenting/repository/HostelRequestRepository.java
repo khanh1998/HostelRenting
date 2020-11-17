@@ -14,8 +14,9 @@ import java.util.Collection;
  */
 @Repository
 public interface HostelRequestRepository extends JpaRepository<HostelRequest, Integer> {
-    Collection<HostelRequest> findByRenter_UserIdAndAndDueDateIsGreaterThanOrderByDueDate(Long renterId, long dueDate);
+    Collection<HostelRequest> findByRenter_UserIdAndDueTimeIsGreaterThan(Long renterId, long dueDate);
 
-    @Query(value = "select r.* from hostel_request as r where to_timestamp(r.due_date/ 1000) < current_date", nativeQuery = true)
+    @Query(value = "select r.* from hostel_request as r where to_timestamp(r.due_time/ 1000) < current_date", nativeQuery = true)
     Collection<HostelRequest> findExpiredRequests();
+
 }

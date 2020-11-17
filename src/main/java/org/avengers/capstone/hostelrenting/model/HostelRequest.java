@@ -37,7 +37,7 @@ public class HostelRequest {
     private Double maxDistance;
 
     @Column(nullable = false)
-    private long dueDate;
+    private long dueTime;
 
     @Column(columnDefinition = "varchar(10) default 'CREATED'", nullable = false)
     @Enumerated(EnumType.STRING)

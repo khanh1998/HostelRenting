@@ -1,13 +1,12 @@
 package org.avengers.capstone.hostelrenting.service.impl;
 
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
-import org.avengers.capstone.hostelrenting.model.Booking;
-import org.avengers.capstone.hostelrenting.model.HostelRequest;
-import org.avengers.capstone.hostelrenting.model.Room;
-import org.avengers.capstone.hostelrenting.model.Type;
+import org.avengers.capstone.hostelrenting.model.*;
 import org.avengers.capstone.hostelrenting.repository.TypeFacilityRepository;
 import org.avengers.capstone.hostelrenting.repository.TypeRepository;
 import org.avengers.capstone.hostelrenting.service.*;
+import org.avengers.capstone.hostelrenting.service.GroupService;
+import org.avengers.capstone.hostelrenting.util.Utilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -189,8 +188,8 @@ public class TypeServiceImpl implements TypeService {
     @Override
     public Collection<Type> filtering(Collection<Type> types, Integer requestId, Integer schoolId, Integer provinceId, Integer categoryId, Float minPrice, Float maxPrice, Float minSuperficiality, Float maxSuperficiality, Integer minCapacity, Integer maxCapacity, Integer[] facilityIds, Integer[] serviceIds, Integer[] regulationIds) {
         HostelRequest exRequest = null;
-        if (requestId != null){
-         exRequest = hostelRequestService.findById(requestId);
+        if (requestId != null) {
+            exRequest = hostelRequestService.findById(requestId);
         }
         HostelRequest finalExRequest = exRequest;
         return types.stream().filter(type -> {
@@ -210,7 +209,7 @@ public class TypeServiceImpl implements TypeService {
         }).filter(hostelType -> {
             if (minSuperficiality != null)
                 return hostelType.getSuperficiality() >= minSuperficiality;
-            else if (finalExRequest != null && finalExRequest.getMinSuperficiality() != null){
+            else if (finalExRequest != null && finalExRequest.getMinSuperficiality() != null) {
                 return hostelType.getSuperficiality() >= finalExRequest.getMinSuperficiality();
             }
             return true;
@@ -346,16 +345,28 @@ public class TypeServiceImpl implements TypeService {
         if (byRequest || byLocation) {
             if (byRequest) {
                 HostelRequest exRequest = hostelRequestService.findById(requestId);
-                mainLong = exRequest.getLongitude();
-                mainLat = exRequest.getLatitude();
-                mainDistance = exRequest.getMaxDistance();
+                types = typeRepository.getSurroundings(exRequest.getLatitude(), exRequest.getLongitude(), exRequest.getMaxDistance());
+                types = getTypeByRequestDueTime(types, exRequest, distance);
             } else {
-                mainLong = longitude;
-                mainLat = latitude;
-                mainDistance = distance;
+                types = typeRepository.getSurroundings(latitude, longitude, distance);
             }
-            types = typeRepository.getSurroundings(mainLat, mainLong, mainDistance);
         }
+        return types;
+    }
+
+    private Collection<Type> getTypeByRequestDueTime(Collection<Type> types, HostelRequest exRequest, Double distance) {
+        Collection<Type> typesByDueTime_activated = typeRepository.findByRequestDueTime(exRequest.getRequestId(), Contract.STATUS.ACTIVATED.toString());
+        typesByDueTime_activated = typesByDueTime_activated.stream().filter(type -> {
+            return Utilities.calculateDistance(type.getGroup().getLatitude(), type.getGroup().getLongitude(), exRequest.getLatitude(), exRequest.getLongitude()) <= distance;
+        }).collect(Collectors.toList());
+
+        Collection<Type> typesByDueTime_reversed = typeRepository.findByRequestDueTime(exRequest.getRequestId(), Contract.STATUS.REVERSED.toString());
+        typesByDueTime_reversed = typesByDueTime_reversed.stream().filter(type -> {
+            return Utilities.calculateDistance(type.getGroup().getLatitude(), type.getGroup().getLongitude(), exRequest.getLatitude(), exRequest.getLongitude()) <= distance;
+        }).collect(Collectors.toList());
+
+        types = Stream.concat(types.stream(), Stream.concat(typesByDueTime_activated.stream(), typesByDueTime_reversed.stream()))
+                .collect(Collectors.toSet());
         return types;
     }
 }
