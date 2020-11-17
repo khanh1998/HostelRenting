@@ -65,8 +65,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         httpSecurity
                 .addFilterBefore(firebaseFilter, UsernamePasswordAuthenticationFilter.class)
                 .csrf().disable()
-//                .cors()
-//                .and()
+                .cors()
+                .and()
 //                .authorizeRequests().antMatchers("/api/v1/").hasRole("RENTER")
                 // dont authenticate this particular request
                 .authorizeRequests().antMatchers("/api/v1/login").permitAll().
