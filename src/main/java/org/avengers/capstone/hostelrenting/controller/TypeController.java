@@ -166,8 +166,8 @@ public class TypeController {
             // handle hostel type and corresponding hostel group
             Type model = typeService.findById(typeId);
             model = typeService.countAvailableRoomAndCurrentBooking(model);
-            if (model.isDeleted()){
-                message = "Type was not found!";
+            if (model.isDeleted()) {
+                message = String.format("Type with {id=%s} was not found!", typeId);
                 ApiSuccess<?> apiSuccess = new ApiSuccess<>(null, message);
                 return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
             }
@@ -183,7 +183,7 @@ public class TypeController {
         }
 
         Collection<Type> types = typeService.searchWithMainFactors(latitude, longitude, distance, schoolId, provinceId, requestId, sortBy, asc, size, page);
-        types = typeService.filtering(types, schoolId, provinceId, categoryId, minPrice, maxPrice, minSuperficiality, maxSuperficiality, minCapacity, maxCapacity, facilityIds, serviceIds, regulationIds);
+        types = typeService.filtering(types, requestId, schoolId, provinceId, categoryId, minPrice, maxPrice, minSuperficiality, maxSuperficiality, minCapacity, maxCapacity, facilityIds, serviceIds, regulationIds);
         List<TypeDTOResponse> typeDTOs = types
                 .stream()
                 .map(type -> modelMapper.map(type, TypeDTOResponse.class))
@@ -194,23 +194,23 @@ public class TypeController {
         else
             message = "Hostel type(s) has been retrieved successfully!";
 
-        Set<GroupDTOResponse> groupDTOs = typeDTOs.stream()
-                .map(typeDTO -> modelMapper
-                        .map(groupService.findById(typeDTO.getGroupId()), GroupDTOResponse.class))
+        Set<Group> groups = typeDTOs.stream()
+                .map(typeDTO -> groupService.findById(typeDTO.getGroupId()))
+                .collect(Collectors.toSet());
+//                .collect(Collectors.groupingBy(GroupDTOResponse::getGroupId))
+//                .values().stream().flatMap(List::stream).collect(Collectors.toSet());
+        Set<GroupDTOResponse> groupDTOs = groups.stream()
+                .map(group -> modelMapper.map(group, GroupDTOResponse.class))
                 .collect(Collectors.toSet());
 
         int totalType = typeDTOs.size();
         int totalGroup = groupDTOs.size();
 
-        Set<GroupDTOResponse> resGroups = typeDTOs.stream()
-                .map(typeDTO -> modelMapper.map(groupService.findById(typeDTO.getGroupId()), GroupDTOResponse.class))
-                .collect(Collectors.toSet());
-
         // DTO contains list of Types and groups follow that type
         TypesAndGroupsDTO resDTO = TypesAndGroupsDTO
                 .builder()
                 .types(typeDTOs)
-                .groups(resGroups)
+                .groups(groupDTOs)
                 .totalType(totalType)
                 .totalGroup(totalGroup)
                 .build();

@@ -137,7 +137,7 @@ public class TypeServiceImpl implements TypeService {
         boolean basicSearch = true;
 
         /* Get surrounding based on long and lat */
-        if (latitude != null && longitude != null) {
+        if ((latitude != null && longitude != null) || requestId != null) {
             locTypes = getSurrouding(longitude, latitude, distance, requestId);
         } else {
             //TODO: implement get default
@@ -187,7 +187,8 @@ public class TypeServiceImpl implements TypeService {
     }
 
     @Override
-    public Collection<Type> filtering(Collection<Type> types, Integer schoolId, Integer provinceId, Integer categoryId, Float minPrice, Float maxPrice, Float minSuperficiality, Float maxSuperficiality, Integer minCapacity, Integer maxCapacity, Integer[] facilityIds, Integer[] serviceIds, Integer[] regulationIds) {
+    public Collection<Type> filtering(Collection<Type> types, Integer requestId, Integer schoolId, Integer provinceId, Integer categoryId, Float minPrice, Float maxPrice, Float minSuperficiality, Float maxSuperficiality, Integer minCapacity, Integer maxCapacity, Integer[] facilityIds, Integer[] serviceIds, Integer[] regulationIds) {
+        HostelRequest exRequest = hostelRequestService.findById(requestId);
         return types.stream().filter(type -> {
             if (categoryId != null)
                 return type.getGroup().getCategory().getCategoryId() == categoryId;
@@ -199,10 +200,15 @@ public class TypeServiceImpl implements TypeService {
         }).filter(hostelType -> {
             if (maxPrice != null)
                 return hostelType.getPrice() <= maxPrice;
+            else if (exRequest.getMaxPrice() != null)
+                return hostelType.getPrice() <= exRequest.getMaxPrice();
             return true;
         }).filter(hostelType -> {
             if (minSuperficiality != null)
                 return hostelType.getSuperficiality() >= minSuperficiality;
+            else if (exRequest.getMinSuperficiality() != null){
+                return hostelType.getSuperficiality() >= exRequest.getMinSuperficiality();
+            }
             return true;
         }).filter(hostelType -> {
             if (maxSuperficiality != null)

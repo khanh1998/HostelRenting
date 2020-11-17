@@ -37,7 +37,8 @@ public interface TypeService {
                                            String sortBy, Boolean asc, int size,
                                            int page);
 
-    Collection<Type> filtering(Collection<Type> types, Integer schoolId, Integer provinceId,
+    Collection<Type> filtering(Collection<Type> types, Integer requestId,
+                               Integer schoolId, Integer provinceId,
                                Integer categoryId, Float minPrice,
                                Float maxPrice, Float minSuperficiality,
                                Float maxSuperficiality, Integer minCapacity,

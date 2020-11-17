@@ -15,6 +15,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.Collection;
+import java.util.stream.Collectors;
 
 /**
  * @author duattt on 11/16/20
@@ -57,5 +59,19 @@ public class HostelRequestController {
         ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTO, "Your request has been submitted successfully!");
 
         return ResponseEntity.status(HttpStatus.CREATED).body(apiSuccess);
+    }
+
+    @GetMapping("renters/{renterId}/requests")
+    public ResponseEntity<?> getRequestsByRenterId(@PathVariable Long renterId) {
+        // prepare ref object
+
+        Collection<HostelRequest> resModels = hostelRequestService.findByRenterId(renterId);
+        Collection<HostelRequestDTOResponse> resDTOs = resModels
+                .stream().map(request -> modelMapper.map(request, HostelRequestDTOResponse.class))
+                .collect(Collectors.toList());
+        ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTOs, "Your request has been submitted successfully!");
+        apiSuccess.setTotal(resDTOs.size());
+
+        return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
     }
 }

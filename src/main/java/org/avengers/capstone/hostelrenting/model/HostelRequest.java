@@ -17,13 +17,15 @@ import javax.persistence.*;
 @Entity
 @Table(name = "hostel_request")
 public class HostelRequest {
+
+    public enum STATUS{CREATED, DONE, EXPIRED}
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int requestId;
 
-    private Float price;
+    private Float maxPrice;
 
-    private Float superficiality;
+    private Float minSuperficiality;
 
     @Column(nullable = false)
     private double latitude;
@@ -36,6 +38,10 @@ public class HostelRequest {
 
     @Column(nullable = false)
     private long dueDate;
+
+    @Column(columnDefinition = "varchar(10) default 'CREATED'", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private HostelRequest.STATUS status;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private Long createdAt;
