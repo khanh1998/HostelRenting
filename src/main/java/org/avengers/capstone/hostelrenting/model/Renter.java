@@ -31,4 +31,7 @@ public class Renter extends User{
 
     @OneToMany(mappedBy = "renter", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Booking> bookings;
+
+    @OneToMany(mappedBy = "renter", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<HostelRequest> requests;
 }

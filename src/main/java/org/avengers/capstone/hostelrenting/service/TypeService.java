@@ -30,5 +30,5 @@ public interface TypeService {
      * @param page page of the result
      * @return corresponding hostel types with factors
      */
-    Collection<Type> searchWithMainFactors(Double latitude, Double longitude, Double distance, Integer schoolId, Integer districtId, String sortBy, Boolean asc, int size, int page);
+    Collection<Type> searchWithMainFactors(Double latitude, Double longitude, Double distance, Integer schoolId, Integer provinceId, Integer requestId, String sortBy, Boolean asc, int size, int page);
 }
