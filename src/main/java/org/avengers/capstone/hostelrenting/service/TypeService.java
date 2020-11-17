@@ -17,6 +17,7 @@ public interface TypeService {
     Collection<Type> handleAfterRetrieve(Collection<Type> types);
     Type countAvailableRoomAndCurrentBooking(Type type);
 
+
     /**
      * Get hostel types based on input factors
      * In case all factor are present, descending priority factors are: long, lat, distance; school; hometown
@@ -30,5 +31,16 @@ public interface TypeService {
      * @param page page of the result
      * @return corresponding hostel types with factors
      */
-    Collection<Type> searchWithMainFactors(Double latitude, Double longitude, Double distance, Integer schoolId, Integer provinceId, Integer requestId, String sortBy, Boolean asc, int size, int page);
+    Collection<Type> searchWithMainFactors(Double latitude, Double longitude,
+                                           Double distance, Integer schoolId,
+                                           Integer provinceId, Integer requestId,
+                                           String sortBy, Boolean asc, int size,
+                                           int page);
+
+    Collection<Type> filtering(Collection<Type> types, Integer schoolId, Integer provinceId,
+                               Integer categoryId, Float minPrice,
+                               Float maxPrice, Float minSuperficiality,
+                               Float maxSuperficiality, Integer minCapacity,
+                               Integer maxCapacity, Integer[] facilityIds,
+                               Integer[] serviceIds, Integer[] regulationIds);
 }

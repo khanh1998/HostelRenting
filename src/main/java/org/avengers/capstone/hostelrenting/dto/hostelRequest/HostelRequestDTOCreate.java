@@ -12,8 +12,8 @@ import javax.validation.constraints.NotNull;
 public class HostelRequestDTOCreate extends HostelRequestDTO{
     public HostelRequestDTOCreate() {
         this.setCreatedAt(System.currentTimeMillis());
-        if (getMaxRadius() == null){
-            setMaxRadius(5);
+        if (getMaxDistance() == null){
+            setMaxDistance(5);
         }
     }
 

@@ -32,7 +32,7 @@ public class HostelRequest {
     private double longitude;
 
     @Column(columnDefinition = "integer default 5", nullable = false)
-    private int maxRadius;
+    private Double maxDistance;
 
     @Column(nullable = false)
     private long dueDate;
