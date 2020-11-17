@@ -1,5 +1,6 @@
 package org.avengers.capstone.hostelrenting.dto.type;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,6 +14,12 @@ import java.util.Collection;
 @Getter
 @Setter
 public class TypeDTOResponse extends TypeDTO {
+
+    @Override
+    @JsonIgnore
+    public boolean isDeleted() {
+        return super.isDeleted();
+    }
 
     @Getter
     @Setter

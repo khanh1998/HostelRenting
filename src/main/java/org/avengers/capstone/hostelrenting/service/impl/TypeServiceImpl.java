@@ -2,14 +2,12 @@ package org.avengers.capstone.hostelrenting.service.impl;
 
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
 import org.avengers.capstone.hostelrenting.model.Booking;
+import org.avengers.capstone.hostelrenting.model.HostelRequest;
 import org.avengers.capstone.hostelrenting.model.Room;
 import org.avengers.capstone.hostelrenting.model.Type;
 import org.avengers.capstone.hostelrenting.repository.TypeFacilityRepository;
 import org.avengers.capstone.hostelrenting.repository.TypeRepository;
-import org.avengers.capstone.hostelrenting.service.GroupService;
-import org.avengers.capstone.hostelrenting.service.ProvinceService;
-import org.avengers.capstone.hostelrenting.service.SchoolService;
-import org.avengers.capstone.hostelrenting.service.TypeService;
+import org.avengers.capstone.hostelrenting.service.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +28,12 @@ public class TypeServiceImpl implements TypeService {
     private GroupService groupService;
     private ProvinceService provinceService;
     private SchoolService schoolService;
+    private HostelRequestService hostelRequestService;
+
+    @Autowired
+    public void setHostelRequestService(HostelRequestService hostelRequestService) {
+        this.hostelRequestService = hostelRequestService;
+    }
 
     @Autowired
     public void setTypeFacilityRepository(TypeFacilityRepository typeFacilityRepository) {
@@ -134,7 +138,7 @@ public class TypeServiceImpl implements TypeService {
 
         /* Get surrounding based on long and lat */
         if (latitude != null && longitude != null) {
-            locTypes = typeRepository.getSurroundings(latitude, longitude, distance);
+            locTypes = getSurrouding(longitude, latitude, distance, requestId);
         } else {
             //TODO: implement get default
             locTypes = typeRepository.findTopOrderByScore(size, (page - 1) * size);
@@ -182,6 +186,63 @@ public class TypeServiceImpl implements TypeService {
         return result;
     }
 
+    @Override
+    public Collection<Type> filtering(Collection<Type> types, Integer schoolId, Integer provinceId, Integer categoryId, Float minPrice, Float maxPrice, Float minSuperficiality, Float maxSuperficiality, Integer minCapacity, Integer maxCapacity, Integer[] facilityIds, Integer[] serviceIds, Integer[] regulationIds) {
+        return types.stream().filter(type -> {
+            if (categoryId != null)
+                return type.getGroup().getCategory().getCategoryId() == categoryId;
+            return true;
+        }).filter(hostelType -> {
+            if (minPrice != null)
+                return hostelType.getPrice() >= minPrice;
+            return true;
+        }).filter(hostelType -> {
+            if (maxPrice != null)
+                return hostelType.getPrice() <= maxPrice;
+            return true;
+        }).filter(hostelType -> {
+            if (minSuperficiality != null)
+                return hostelType.getSuperficiality() >= minSuperficiality;
+            return true;
+        }).filter(hostelType -> {
+            if (maxSuperficiality != null)
+                return hostelType.getSuperficiality() <= maxSuperficiality;
+            return true;
+        }).filter(hostelType -> {
+            if (minCapacity != null)
+                return hostelType.getCapacity() >= minCapacity;
+            return true;
+        }).filter(hostelType -> {
+            if (maxCapacity != null)
+                return hostelType.getCapacity() <= maxCapacity;
+            return true;
+        }).filter(hostelType -> {
+            if (facilityIds != null && facilityIds.length > 0)
+                return hostelType.getTypeFacilities()
+                        .stream()
+                        .anyMatch(typeFacility -> Arrays
+                                .stream(facilityIds)
+                                .anyMatch(id -> id == typeFacility.getFacility().getFacilityId()));
+            return true;
+        }).filter(hostelType -> {
+            if (serviceIds != null && serviceIds.length > 0)
+                return hostelType.getGroup().getGroupServices()
+                        .stream()
+                        .anyMatch(serviceDetail -> Arrays
+                                .stream(serviceIds)
+                                .anyMatch(id -> id.equals(serviceDetail.getGroupServiceId())));
+            return true;
+        }).filter(hostelType -> {
+            if (regulationIds != null && regulationIds.length > 0)
+                return hostelType.getGroup().getGroupRegulations()
+                        .stream()
+                        .anyMatch(regulation -> Arrays
+                                .stream(regulationIds)
+                                .anyMatch(id -> id == regulation.getRegulation().getRegulationId()));
+            return true;
+        }).collect(Collectors.toList());
+    }
+
     private Collection<Type> generateResult(Collection<Type> result, Collection<Type> schoolMateTypesOnly, Collection<Type> compatriotTypesOnly) {
         return Stream.concat(result.stream(), Stream.concat(schoolMateTypesOnly.stream(), compatriotTypesOnly.stream()))
                 // sort - the order is reversed
@@ -206,18 +267,25 @@ public class TypeServiceImpl implements TypeService {
                 .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
-    /* 1. Retrieving available rooms
+    /* Handling necessary business after retrieving data
+     * 1. Retrieving available rooms
      * 2. Retrieving current bookings
      * 3. Filter the type has available room > 0
      */
     @Override
     public Collection<Type> handleAfterRetrieve(Collection<Type> types) {
         return types.stream().map(this::countAvailableRoomAndCurrentBooking)
-                .filter(type -> type.getAvailableRoom() > 0)
+                .filter(type -> type.getAvailableRoom() > 0 && !type.isDeleted())
                 .sorted(Comparator.comparing(Type::getScore).reversed())
                 .collect(Collectors.toList());
     }
 
+    /**
+     * counting available room and current booking of 1 type
+     *
+     * @param type
+     * @return
+     */
     public Type countAvailableRoomAndCurrentBooking(Type type) {
         long availableRoom = type.getRooms().stream().filter(Room::isAvailable).count();
         type.setAvailableRoom((int) availableRoom);
@@ -254,7 +322,30 @@ public class TypeServiceImpl implements TypeService {
         return types;
     }
 
-    private void handleTypeForEndUser(Type model){
-        model.setTypeFacilities(typeFacilityRepository.findByType_TypeIdAndFacility_IsApproved(model.getTypeId(), true));
+//    private void handleTypeForEndUser(Type model){
+//        model.setTypeFacilities(typeFacilityRepository.findByType_TypeIdAndFacility_IsApproved(model.getTypeId(), true));
+//    }
+
+    private Collection<Type> getSurrouding(Double longitude, Double latitude, Double distance, Integer requestId) {
+        boolean byRequest = requestId != null;
+        boolean byLocation = longitude != null && latitude != null;
+        double mainLong;
+        double mainLat;
+        Double mainDistance;
+        Collection<Type> types = null;
+        if (byRequest || byLocation) {
+            if (byRequest) {
+                HostelRequest exRequest = hostelRequestService.findById(requestId);
+                mainLong = exRequest.getLongitude();
+                mainLat = exRequest.getLatitude();
+                mainDistance = exRequest.getMaxDistance();
+            } else {
+                mainLong = longitude;
+                mainLat = latitude;
+                mainDistance = distance;
+            }
+            types = typeRepository.getSurroundings(mainLat, mainLong, mainDistance);
+        }
+        return types;
     }
 }

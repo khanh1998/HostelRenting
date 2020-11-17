@@ -5,10 +5,7 @@ import org.avengers.capstone.hostelrenting.dto.combination.TypesAndGroupsDTO;
 import org.avengers.capstone.hostelrenting.dto.facility.FacilityDTOCreate;
 import org.avengers.capstone.hostelrenting.dto.group.GroupDTOResponse;
 import org.avengers.capstone.hostelrenting.dto.response.ApiSuccess;
-import org.avengers.capstone.hostelrenting.dto.type.TypeDTOCreate;
-import org.avengers.capstone.hostelrenting.dto.type.TypeDTOResponse;
-import org.avengers.capstone.hostelrenting.dto.type.TypeDTOUpdate;
-import org.avengers.capstone.hostelrenting.dto.type.TypeFacilityDTOCreate;
+import org.avengers.capstone.hostelrenting.dto.type.*;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
 import org.avengers.capstone.hostelrenting.model.*;
 import org.avengers.capstone.hostelrenting.service.*;
@@ -40,7 +37,7 @@ public class TypeController {
 
     private TypeService typeService;
     private GroupService groupService;
-    private  FacilityService facilityService;
+    private FacilityService facilityService;
     private ModelMapper modelMapper;
 
     @Autowired
@@ -169,6 +166,11 @@ public class TypeController {
             // handle hostel type and corresponding hostel group
             Type model = typeService.findById(typeId);
             model = typeService.countAvailableRoomAndCurrentBooking(model);
+            if (model.isDeleted()){
+                message = "Type was not found!";
+                ApiSuccess<?> apiSuccess = new ApiSuccess<>(null, message);
+                return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
+            }
             TypeDTOResponse typeDTOResponse = modelMapper.map(model, TypeDTOResponse.class);
             GroupDTOResponse resGroupDTO = modelMapper.map(groupService.findById(typeDTOResponse.getGroupId()), GroupDTOResponse.class);
             TypeAndGroupDTO resDTO = TypeAndGroupDTO.builder().group(resGroupDTO).type(typeDTOResponse).build();
@@ -180,63 +182,11 @@ public class TypeController {
             return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
         }
 
-        List<TypeDTOResponse> typeDTOs = typeService.searchWithMainFactors(latitude, longitude, distance, schoolId, provinceId, requestId, sortBy, asc, size, page).stream()
-                .filter(hostelType -> {
-                    if (categoryId != null)
-                        return hostelType.getGroup().getCategory().getCategoryId() == categoryId;
-                    return true;
-                })
-                .filter(hostelType -> {
-                    if (minPrice != null)
-                        return hostelType.getPrice() >= minPrice;
-                    return true;
-                }).filter(hostelType -> {
-                    if (maxPrice != null)
-                        return hostelType.getPrice() <= maxPrice;
-                    return true;
-                }).filter(hostelType -> {
-                    if (minSuperficiality != null)
-                        return hostelType.getSuperficiality() >= minSuperficiality;
-                    return true;
-                }).filter(hostelType -> {
-                    if (maxSuperficiality != null)
-                        return hostelType.getSuperficiality() <= maxSuperficiality;
-                    return true;
-                }).filter(hostelType -> {
-                    if (minCapacity != null)
-                        return hostelType.getCapacity() >= minCapacity;
-                    return true;
-                }).filter(hostelType -> {
-                    if (maxCapacity != null)
-                        return hostelType.getCapacity() <= maxCapacity;
-                    return true;
-                }).filter(hostelType -> {
-                    if (facilityIds != null && facilityIds.length > 0)
-                        return hostelType.getTypeFacilities()
-                                .stream()
-                                .anyMatch(typeFacility -> Arrays
-                                        .stream(facilityIds)
-                                        .anyMatch(id -> id == typeFacility.getFacility().getFacilityId()));
-                    return true;
-                }).filter(hostelType -> {
-                    if (serviceIds != null && serviceIds.length > 0)
-                        return hostelType.getGroup().getGroupServices()
-                                .stream()
-                                .anyMatch(serviceDetail -> Arrays
-                                        .stream(serviceIds)
-                                        .anyMatch(id -> id.equals(serviceDetail.getGroupServiceId())));
-                    return true;
-                }).filter(hostelType -> {
-                    if (regulationIds != null && regulationIds.length > 0)
-                        return hostelType.getGroup().getGroupRegulations()
-                                .stream()
-                                .anyMatch(regulation -> Arrays
-                                        .stream(regulationIds)
-                                        .anyMatch(id -> id == regulation.getRegulation().getRegulationId()));
-                    return true;
-                })
-                .map(hostelType -> modelMapper.map(hostelType, TypeDTOResponse.class)
-                )
+        Collection<Type> types = typeService.searchWithMainFactors(latitude, longitude, distance, schoolId, provinceId, requestId, sortBy, asc, size, page);
+        types = typeService.filtering(types, schoolId, provinceId, categoryId, minPrice, maxPrice, minSuperficiality, maxSuperficiality, minCapacity, maxCapacity, facilityIds, serviceIds, regulationIds);
+        List<TypeDTOResponse> typeDTOs = types
+                .stream()
+                .map(type -> modelMapper.map(type, TypeDTOResponse.class))
                 .collect(Collectors.toList());
 
         if (typeDTOs.isEmpty())
@@ -273,7 +223,7 @@ public class TypeController {
 
     @PutMapping("types/{typeId}")
     public ResponseEntity<?> updateType(@Valid @RequestBody TypeDTOUpdate reqDTO,
-                                         @PathVariable Integer typeId) {
+                                        @PathVariable Integer typeId) {
         // log start update
         logger.info("START - updating type");
         Type existedModel = typeService.findById(typeId);
@@ -290,7 +240,7 @@ public class TypeController {
         return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
     }
 
-    private Collection<TypeDTOResponse> createType(Collection<TypeDTOCreate> reqDTOs, Integer groupId){
+    private Collection<TypeDTOResponse> createType(Collection<TypeDTOCreate> reqDTOs, Integer groupId) {
         // check existed Group
         Group exGroup = groupService.findById(groupId);
 
@@ -308,7 +258,7 @@ public class TypeController {
 
         return reqModels
                 .stream()
-                .map(reqModel ->{
+                .map(reqModel -> {
                     //prepare object
                     reqModel.setGroup(exGroup);
                     setTypeForNewRoom(reqModel.getRooms(), reqModel);
@@ -322,27 +272,27 @@ public class TypeController {
                 .collect(Collectors.toList());
     }
 
-    private void setTypeForNewRoom(Collection<Room> rooms, Type type){
+    private void setTypeForNewRoom(Collection<Room> rooms, Type type) {
         rooms.forEach(room -> {
             room.setType(type);
         });
     }
 
-    private void setTypeForNewImage(Collection<TypeImage> images, Type type){
+    private void setTypeForNewImage(Collection<TypeImage> images, Type type) {
         images.forEach(typeImage -> {
             typeImage.setType(type);
         });
     }
 
-    private void setTypeFacilities(Collection<TypeFacility> facilities, Type type){
+    private void setTypeFacilities(Collection<TypeFacility> facilities, Type type) {
         facilities.forEach(typeFacility -> {
             typeFacility.setType(type);
             typeFacility.setFacility(facilityService.findById(typeFacility.getFacility().getFacilityId()));
         });
     }
 
-    private void createRefObj(TypeDTOCreate typeDTO){
-        if (typeDTO.getNewFacilities()!= null && !typeDTO.getNewFacilities().isEmpty()){
+    private void createRefObj(TypeDTOCreate typeDTO) {
+        if (typeDTO.getNewFacilities() != null && !typeDTO.getNewFacilities().isEmpty()) {
             typeDTO.getNewFacilities().stream().forEach(facilityDTO -> {
                 Facility reqModel = modelMapper.map(facilityDTO, Facility.class);
                 Facility newModel = facilityService.createNew(reqModel);
