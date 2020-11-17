@@ -8,7 +8,7 @@ import static com.google.api.client.http.HttpMethods.POST;
 
 @Configuration
 @EnableWebMvc
-public class WebConfiguation implements WebMvcConfigurer {
+public class WebConfiguration implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
