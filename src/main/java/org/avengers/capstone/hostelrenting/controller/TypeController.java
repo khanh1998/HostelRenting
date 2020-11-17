@@ -156,6 +156,7 @@ public class TypeController {
                                       @RequestParam(required = false) Integer[] facilityIds,
                                       @RequestParam(required = false) Integer[] serviceIds,
                                       @RequestParam(required = false) Integer[] regulationIds,
+                                      @RequestParam(required = false) Integer requestId,
                                       @RequestParam(required = false, defaultValue = "score") String sortBy,
                                       @RequestParam(required = false, defaultValue = "false") Boolean asc,
                                       @RequestParam(required = false, defaultValue = DEFAULT_SIZE) Integer size,
@@ -179,7 +180,7 @@ public class TypeController {
             return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
         }
 
-        List<TypeDTOResponse> typeDTOs = typeService.searchWithMainFactors(latitude, longitude, distance, schoolId, provinceId, sortBy, asc, size, page).stream()
+        List<TypeDTOResponse> typeDTOs = typeService.searchWithMainFactors(latitude, longitude, distance, schoolId, provinceId, requestId, sortBy, asc, size, page).stream()
                 .filter(hostelType -> {
                     if (categoryId != null)
                         return hostelType.getGroup().getCategory().getCategoryId() == categoryId;

@@ -124,7 +124,7 @@ public class TypeServiceImpl implements TypeService {
      * @return
      */
     @Override
-    public Collection<Type> searchWithMainFactors(Double latitude, Double longitude, Double distance, Integer schoolId, Integer provinceId, String sortBy, Boolean asc, int size, int page) {
+    public Collection<Type> searchWithMainFactors(Double latitude, Double longitude, Double distance, Integer schoolId, Integer provinceId, Integer requestId, String sortBy, Boolean asc, int size, int page) {
         Sort sort = Sort.by(asc ? Sort.Direction.ASC : Sort.Direction.DESC, sortBy);
         Pageable pageable = PageRequest.of(page - 1, size, sort);
         Collection<Type> locTypes;
