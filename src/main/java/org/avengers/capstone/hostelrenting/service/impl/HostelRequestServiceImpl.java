@@ -7,6 +7,9 @@ import org.avengers.capstone.hostelrenting.repository.HostelRequestRepository;
 import org.avengers.capstone.hostelrenting.service.HostelRequestService;
 import org.avengers.capstone.hostelrenting.service.RenterService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
@@ -53,10 +56,11 @@ public class HostelRequestServiceImpl implements HostelRequestService {
     }
 
     @Override
-    public Collection<HostelRequest> findByRenterId(Long renterId) {
+    public Collection<HostelRequest> findByRenterId(Long renterId, int page, int size) {
         renterService.findById(renterId);
+        Sort sort = Sort.by("dueTime");
+        Pageable pageable = PageRequest.of(page - 1, size, sort);
 
-        return hostelRequestRepository.findByRenter_UserIdAndDueTimeIsGreaterThan(renterId, System.currentTimeMillis());
+        return hostelRequestRepository.findByRenter_UserId(renterId, pageable);
     }
-
 }
