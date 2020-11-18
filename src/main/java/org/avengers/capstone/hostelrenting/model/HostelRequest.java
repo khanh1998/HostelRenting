@@ -27,6 +27,8 @@ public class HostelRequest {
 
     private Float minSuperficiality;
 
+    private String address;
+
     @Column(nullable = false)
     private double latitude;
 

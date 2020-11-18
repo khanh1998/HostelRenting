@@ -1,7 +1,8 @@
 package org.avengers.capstone.hostelrenting.controller;
 
-import org.avengers.capstone.hostelrenting.dto.province.ProvinceDTOFull;
-import org.avengers.capstone.hostelrenting.dto.province.ProvinceDTOShort;
+import org.avengers.capstone.hostelrenting.dto.province.ProvinceDTO;
+import org.avengers.capstone.hostelrenting.dto.province.ProvinceDTOCreate;
+import org.avengers.capstone.hostelrenting.dto.province.ProvinceDTOResponse;
 import org.avengers.capstone.hostelrenting.dto.response.ApiSuccess;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
 import org.avengers.capstone.hostelrenting.model.Province;
@@ -14,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -40,12 +42,14 @@ public class ProvinceController {
      * @return province object has been created
      */
     @PostMapping("/provinces")
-    public ResponseEntity<?> create(@Validated @RequestBody ProvinceDTOShort reqDTO) throws DuplicateKeyException {
-        Province reqModel = modelMapper.map(reqDTO, Province.class);
-        Province resModel = provinceService.save(reqModel);
-        ProvinceDTOShort resDTO = modelMapper.map(resModel, ProvinceDTOShort.class);
+    public ResponseEntity<?> createNewProvinces(@Validated @RequestBody Collection<ProvinceDTOCreate> reqDTOs) throws DuplicateKeyException {
+        Collection<Province> reqModels = reqDTOs.stream().map(provinceDTOShort -> modelMapper.map(provinceDTOShort, Province.class)).collect(Collectors.toList());
+        Collection<ProvinceDTOResponse> resDTOs = reqModels.stream().map(reqModel -> {
+            Province resModel = provinceService.create(reqModel);
+            return modelMapper.map(resModel, ProvinceDTOResponse.class);
+        }).collect(Collectors.toList());
 
-        ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTO, "Province has been created successfully!");
+        ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTOs, "Provinces has been created successfully!");
 
         return ResponseEntity.status(HttpStatus.CREATED).body(apiSuccess);
     }
@@ -58,13 +62,13 @@ public class ProvinceController {
     @GetMapping("/provinces")
     public ResponseEntity<?> getAllProvinces(@RequestParam(defaultValue = "false") boolean truncated) {
         String resMsg = "Province(s) has been retrieved successfully!";
-        List<ProvinceDTOShort> resDTOs = provinceService.getAll()
+        List<ProvinceDTO> resDTOs = provinceService.getAll()
                 .stream()
                 .map(province -> {
                     if (truncated)
-                        return modelMapper.map(province, ProvinceDTOShort.class);
+                        return modelMapper.map(province, ProvinceDTO.class);
                     else
-                        return modelMapper.map(province, ProvinceDTOFull.class);
+                        return modelMapper.map(province, ProvinceDTOResponse.class);
                 })
                 .collect(Collectors.toList());
         if (resDTOs.isEmpty())
@@ -87,7 +91,7 @@ public class ProvinceController {
         String resMsg = "Province has been retrieved successfully!";
 
         Province existedModel = provinceService.findById(provinceId);
-        ProvinceDTOFull resDTO = modelMapper.map(existedModel, ProvinceDTOFull.class);
+        ProvinceDTOResponse resDTO = modelMapper.map(existedModel, ProvinceDTOResponse.class);
 
         ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTO, resMsg);
 

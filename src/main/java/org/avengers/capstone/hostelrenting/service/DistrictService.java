@@ -8,7 +8,7 @@ public interface DistrictService {
     void checkExist(Integer id);
     District findById(Integer id);
     List<District> findAll();
-    District save(District district);
+    District create(District district);
 
     District findByIdAndProvinceId(Integer districtId, Integer provinceId);
 }
