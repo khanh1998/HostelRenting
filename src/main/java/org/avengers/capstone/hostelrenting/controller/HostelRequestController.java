@@ -18,6 +18,9 @@ import javax.validation.Valid;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
+import static org.avengers.capstone.hostelrenting.Constant.Pagination.DEFAULT_PAGE;
+import static org.avengers.capstone.hostelrenting.Constant.Pagination.DEFAULT_SIZE;
+
 /**
  * @author duattt on 11/16/20
  * @created 16/11/2020 - 17:20
@@ -62,10 +65,12 @@ public class HostelRequestController {
     }
 
     @GetMapping("renters/{renterId}/requests")
-    public ResponseEntity<?> getRequestsByRenterId(@PathVariable Long renterId) {
+    public ResponseEntity<?> getRequestsByRenterId(@PathVariable Long renterId,
+                                                   @RequestParam(required = false, defaultValue = DEFAULT_SIZE) Integer size,
+                                                   @RequestParam(required = false, defaultValue = DEFAULT_PAGE) Integer page) {
         // prepare ref object
 
-        Collection<HostelRequest> resModels = hostelRequestService.findByRenterId(renterId);
+        Collection<HostelRequest> resModels = hostelRequestService.findByRenterId(renterId, page, size);
         Collection<HostelRequestDTOResponse> resDTOs = resModels
                 .stream().map(request -> modelMapper.map(request, HostelRequestDTOResponse.class))
                 .collect(Collectors.toList());

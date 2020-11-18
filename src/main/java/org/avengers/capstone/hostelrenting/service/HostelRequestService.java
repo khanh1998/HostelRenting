@@ -14,5 +14,5 @@ public interface HostelRequestService {
     void checkExist(Integer requestId);
     HostelRequest createNew(HostelRequest request);
     HostelRequest findById(Integer requestId);
-    Collection<HostelRequest> findByRenterId(Long renterId);
+    Collection<HostelRequest> findByRenterId(Long renterId, int page, int size);
 }
