@@ -8,8 +8,7 @@ import java.io.Serializable;
 
 @Getter
 @Setter
-public class ProvinceDTOShort implements Serializable {
+public class ProvinceDTO implements Serializable {
     private Integer provinceId;
-
     private String provinceName;
 }

@@ -10,8 +10,6 @@ import java.util.List;
 
 @Getter
 @Setter
-public class DistrictDTOFull implements Serializable {
-    private int districtId;
-    private String districtName;
+public class DistrictDTOResponse extends DistrictDTO {
     private List<WardDTOFull> wards;
 }

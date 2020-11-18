@@ -1,6 +1,7 @@
 package org.avengers.capstone.hostelrenting.service.impl;
 
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
+import org.avengers.capstone.hostelrenting.exception.GenericException;
 import org.avengers.capstone.hostelrenting.model.Province;
 import org.avengers.capstone.hostelrenting.repository.ProvinceRepository;
 import org.avengers.capstone.hostelrenting.service.ProvinceService;
@@ -27,51 +28,34 @@ public class ProvinceServiceImpl implements ProvinceService {
         this.provinceRepository = provinceRepository;
     }
 
-    /**
-     * Check that given id is existed or not
-     *
-     * @param id the given id
-     */
     @Override
-    public void checkNotFound(Integer id) {
-        Optional<Province> model = provinceRepository.findById(id);
+    public void checkExist(Integer provinceId) {
+        Optional<Province> model = provinceRepository.findById(provinceId);
         if (model.isEmpty())
-            throw new EntityNotFoundException(Province.class, "id", id.toString());
+            throw new EntityNotFoundException(Province.class, "id", provinceId.toString());
     }
 
-    /**
-     * Create new if not present, otherwise update
-     *
-     * @param reqModel request model
-     * @return response model
-     */
     @Override
-    public Province save(Province reqModel) {
+    public Province create(Province reqModel) {
+        Optional<Province> exModel = provinceRepository.getByProvinceName(reqModel.getProvinceName());
+        if (exModel.isPresent())
+            throw new GenericException(Province.class, "is duplicated",
+                    "name", exModel.get().getProvinceName(),
+                    "id", String.valueOf(exModel.get().getProvinceId()));
 
         return provinceRepository.save(reqModel);
     }
 
 
-    /**
-     * Get all provinces
-     *
-     * @return list of models
-     */
     @Override
     public List<Province> getAll() {
         return provinceRepository.findAll();
     }
 
 
-    /**
-     * Find province by given id
-     *
-     * @param id the given id
-     * @return province model
-     */
     @Override
     public Province findById(Integer id) {
-        checkNotFound(id);
+        checkExist(id);
 
         return provinceRepository.getOne(id);
     }

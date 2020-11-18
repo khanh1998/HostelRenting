@@ -17,6 +17,7 @@ public class HostelRequestDTO {
     private Float minSuperficiality;
     private Double latitude;
     private Double longitude;
+    private String address;
     private Integer maxDistance;
     private Long dueTime;
     private long renterId;

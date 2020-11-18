@@ -1,7 +1,6 @@
 package org.avengers.capstone.hostelrenting.controller;
 
 import org.avengers.capstone.hostelrenting.dto.SchoolDTOFull;
-import org.avengers.capstone.hostelrenting.dto.province.ProvinceDTOFull;
 import org.avengers.capstone.hostelrenting.dto.response.ApiSuccess;
 import org.avengers.capstone.hostelrenting.service.SchoolService;
 import org.modelmapper.ModelMapper;

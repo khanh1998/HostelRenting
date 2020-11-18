@@ -355,16 +355,19 @@ public class TypeServiceImpl implements TypeService {
     }
 
     private Collection<Type> getTypeByRequestDueTime(Collection<Type> types, HostelRequest exRequest, Double distance) {
+        // type with status ACTIVATED
         Collection<Type> typesByDueTime_activated = typeRepository.findByRequestDueTime(exRequest.getRequestId(), Contract.STATUS.ACTIVATED.toString());
         typesByDueTime_activated = typesByDueTime_activated.stream().filter(type -> {
             return Utilities.calculateDistance(type.getGroup().getLatitude(), type.getGroup().getLongitude(), exRequest.getLatitude(), exRequest.getLongitude()) <= distance;
         }).collect(Collectors.toList());
 
+        // type with status REVERSED
         Collection<Type> typesByDueTime_reversed = typeRepository.findByRequestDueTime(exRequest.getRequestId(), Contract.STATUS.REVERSED.toString());
         typesByDueTime_reversed = typesByDueTime_reversed.stream().filter(type -> {
             return Utilities.calculateDistance(type.getGroup().getLatitude(), type.getGroup().getLongitude(), exRequest.getLatitude(), exRequest.getLongitude()) <= distance;
         }).collect(Collectors.toList());
 
+        // mix with the old types
         types = Stream.concat(types.stream(), Stream.concat(typesByDueTime_activated.stream(), typesByDueTime_reversed.stream()))
                 .collect(Collectors.toSet());
         return types;
