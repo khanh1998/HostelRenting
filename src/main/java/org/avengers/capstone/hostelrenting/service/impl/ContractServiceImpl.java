@@ -19,6 +19,7 @@ import org.avengers.capstone.hostelrenting.service.*;
 import org.avengers.capstone.hostelrenting.util.BASE64DecodedMultipartFile;
 import org.avengers.capstone.hostelrenting.util.Utilities;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.PropertyMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +37,6 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.transaction.Transactional;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -149,12 +149,20 @@ public class ContractServiceImpl implements ContractService {
     @Autowired
     public void setModelMapper(ModelMapper modelMapper) {
         this.modelMapper = modelMapper;
+        this.modelMapper.addMappings(skipUpdateFieldsMap);
     }
 
     @Autowired
     public void setContractRepository(ContractRepository contractRepository) {
         this.contractRepository = contractRepository;
     }
+
+    PropertyMap<ContractDTOUpdate, Contract> skipUpdateFieldsMap = new PropertyMap<ContractDTOUpdate, Contract>() {
+        protected void configure() {
+            skip().setContractImages(null);
+//            skip().setModifiedDate(null);
+        }
+    };
 
     @Override
     public void checkExist(Integer id) {
@@ -199,19 +207,16 @@ public class ContractServiceImpl implements ContractService {
         }
         Contract resModel = contractRepository.save(reqModel);
 
-        // upload pdf and save the url
+        /* upload pdf and save the url */
         String contractHtml = generateContractHTML(resModel);
         String contractUrl = uploadPDF(contractHtml, String.valueOf(resModel.getContractId()));
         resModel.setContractUrl(contractUrl);
         resModel = contractRepository.save(resModel);
 
-        // send notification
-        sendNotification(resModel,
-                Constant.Notification.NEW_CONTRACT,
-                Constant.Notification.STATIC_NEW_CONTRACT_MESSAGE,
-                resModel.getRenter().getFirebaseToken());
+        /* send notification */
+        handleNotification(resModel);
 
-        // process business after create contract
+        /* process business after create contract */
         processAfterCreate(resModel);
 
         return fillInContractObject(resModel);
@@ -219,70 +224,86 @@ public class ContractServiceImpl implements ContractService {
 
     @Override
     public Contract updateInactiveContract(Contract exModel, ContractDTOUpdate reqDTO) {
-        if (exModel.getStatus() == Contract.STATUS.ACTIVATED) {
-            throw new GenericException(Contract.class, "cannot be updated", "contractId", String.valueOf(exModel.getContractId()), "status", exModel.getStatus().toString());
-        }
+        // Unable to update ACTIVATED contract
+        basicValidContract(exModel);
+
+        // update room information
         Integer roomId = reqDTO.getRoomId();
         if (roomId != null) {
-            reqDTO.setRoom(roomService.findById(reqDTO.getRoomId()));
             if (!roomRepository.IsExistByVendorIdAndRoomId(exModel.getVendor().getUserId(), reqDTO.getRoomId()))
                 throw new GenericException(Room.class, "is not valid with id",
                         "roomId", String.valueOf(reqDTO.getRoomId()));
+            // make the old room available
+            roomService.updateStatus(exModel.getRoom().getRoomId(), true);
+            // lock the new room
+            reqDTO.setRoom(roomService.findById(roomId));
+            roomService.updateStatus(roomId, false);
         } else {
             roomId = exModel.getRoom().getRoomId();
         }
         int groupId = groupRepository.getGroupIdByRoomId(roomId);
 
-        //check whether groupService is valid or not
-        if (reqDTO.getGroupServiceIds() != null && !reqDTO.getGroupServiceIds().isEmpty()) {
-            reqDTO.setGroupServices(reqDTO.getGroupServiceIds()
-                    .stream()
-                    .map(dto -> {
-                        if (groupServiceRepository.IsGroupServiceExistByVendorAndGroup(exModel.getVendor().getUserId(), groupId, dto.getGroupServiceId()))
-                            return groupServiceService.findById(dto.getGroupServiceId());
-                        else {
-                            throw new GenericException(GroupService.class, "is not valid with id",
-                                    "groupServiceId", String.valueOf(dto.getGroupServiceId()));
-                        }
-                    })
-                    .collect(Collectors.toSet()));
+        // update images
+        if (exModel.getContractImages() != null && !exModel.getContractImages().isEmpty()) {
+            exModel.getContractImages().forEach(contractImage -> {
+                contractImage.setDeleted(true);
+            });
+            reqDTO.getContractImages().forEach(imageDTOCreate -> {
+                ContractImage imgModel = modelMapper.map(imageDTOCreate, ContractImage.class);
+                imgModel.setContract(exModel);
+                exModel.getContractImages().add(imgModel);
+            });
+
         }
+
         modelMapper.map(reqDTO, exModel);
+
+
+        // handle with corresponding kind of contract
+        if (exModel.isReversed()) {
+            handleUpdateReversed(exModel);
+        } else {
+            handleUpdateNormalContract(exModel, reqDTO, groupId);
+        }
         Contract resModel = contractRepository.save(exModel);
+
+
         //send notification
-        sendNotification(resModel,
-                Constant.Notification.UPDATE_CONTRACT,
-                Constant.Notification.STATIC_UPDATE_CONTRACT_MESSAGE,
-                resModel.getRenter().getFirebaseToken());
+        handleNotification(resModel);
 
         return fillInContractObject(resModel);
     }
 
     @Override
     public Contract confirm(Contract exModel, ContractDTOConfirm reqDTO) {
-        if (exModel.getStatus() == Contract.STATUS.ACTIVATED) {
-            throw new GenericException(Contract.class, "cannot be updated", "contractId", String.valueOf(exModel.getContractId()), "status", exModel.getStatus().toString());
-        }
+        /* Unable to update ACTIVATED contract */
+        basicValidContract(exModel);
+
         if (exModel.getQrCode().equals(reqDTO.getQrCode())) {
             modelMapper.map(reqDTO, exModel);
-            //send mail
+
+            /* set status based on isReversed */
+            if (exModel.isReversed()) {
+                exModel.setStatus(Contract.STATUS.REVERSED);
+            } else {
+                exModel.setStatus(Contract.STATUS.ACTIVATED);
+            }
+
+            /* send mail for both renter and vendor */
             String contractHtml = generateContractHTML(exModel);
-//            String contractUrl = uploadPDF(contractHtml, String.valueOf(exModel.getContractId()));
-//            exModel.setContractUrl(contractUrl);
             sendMailWithEmbed(contractHtml, exModel.getRenter().getEmail());
             sendMailWithEmbed(contractHtml, exModel.getVendor().getEmail());
             Contract resModel = contractRepository.save(exModel);
 
             /* Set contract id of booking when create corresponding contract */
-            Booking exBooking = bookingService.findById(resModel.getBookingId());
-            exBooking.setContractId(resModel.getContractId());
-            bookingRepository.save(exBooking);
+            if (resModel.getBookingId() != null) {
+                Booking exBooking = bookingService.findById(resModel.getBookingId());
+                exBooking.setContractId(resModel.getContractId());
+                bookingRepository.save(exBooking);
+            }
 
-            // send notification
-            sendNotification(resModel,
-                    Constant.Notification.CONFIRM_CONTRACT,
-                    Constant.Notification.STATIC_CONFIRM_CONTRACT_MESSAGE,
-                    resModel.getVendor().getFirebaseToken());
+            /* send notification */
+            handleNotification(resModel);
             return fillInContractObject(resModel);
         }
         throw new GenericException(Contract.class, "qrCode not matched", "contractId", String.valueOf(exModel.getContractId()), "qrCode", exModel.getQrCode().toString());
@@ -342,13 +363,20 @@ public class ContractServiceImpl implements ContractService {
         }
 
         /* Check whether given booking id belong to any contract or not? */
-        if (bookingRepository.findByBookingIdAndContractIdIsNotNull(model.getBookingId()).isPresent()){
+        if (bookingRepository.findByBookingIdAndContractIdIsNotNull(model.getBookingId()).isPresent()) {
             errMsg = String.format("Only create 1 contract from 1 booking. Booking {id=%s} has been linked with another contract", model.getBookingId());
             isViolated = true;
         }
 
+        /* Check whether isReversed and downPayment valid or not */
+        if (model.isReversed()) {
+            if (model.getDownPayment() == null) {
+                throw new GenericException(Contract.class, "down payment is required with reversed", "downPayment", String.valueOf(model.getDownPayment()));
+            }
+        }
+
         if (isViolated)
-            throw new PreCreationException(errMsg);
+            throw new GenericException(Contract.class, errMsg);
     }
 
     private void processAfterCreate(Contract resModel) {
@@ -358,7 +386,8 @@ public class ContractServiceImpl implements ContractService {
             Collection<Booking> incomingBookings = bookingRepository.findByType_TypeIdAndStatusIs(resModel.getRoom().getType().getTypeId(), Booking.STATUS.INCOMING);
             bookingService.cancelBookings(incomingBookings.stream().map(Booking::getBookingId).collect(Collectors.toList()));
         }
-        if (resModel.getBookingId()!= null){
+        // set contract id for booking
+        if (resModel.getBookingId() != null) {
             Booking exBooking = bookingService.findById(resModel.getBookingId());
             exBooking.setContractId(resModel.getContractId());
             bookingRepository.save(exBooking);
@@ -425,7 +454,7 @@ public class ContractServiceImpl implements ContractService {
             templateContent = new Scanner(new URL(templateUrl).openStream(), "UTF-8").useDelimiter("\\A").next();
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
-            throw new GenericException(Contract.class, "fail to confirm", "contractId",String.valueOf(model.getContractId()));
+            throw new GenericException(Contract.class, "fail to confirm", "contractId", String.valueOf(model.getContractId()));
         }
         String contractHtml = Utilities.parseThymeleafTemplate(templateContent, contractInfo);
 
@@ -482,7 +511,7 @@ public class ContractServiceImpl implements ContractService {
         NotificationContent content = NotificationContent.builder()
                 .id(String.valueOf(model.getContractId()))
                 .action(action)
-                .title(staticMsg + model.getRenter().getUsername())
+                .title(staticMsg)
                 .body(timestamp)
                 .icon(model.getRenter().getAvatar())
                 .clickAction("")
@@ -499,14 +528,84 @@ public class ContractServiceImpl implements ContractService {
         firebaseService.sendPnsToDevice(notificationRequest);
     }
 
-    private Contract fillInContractObject(Contract model){
+    private Contract fillInContractObject(Contract model) {
         model.setType(model.getRoom().getType());
         model.setGroup(model.getRoom().getType().getGroup());
         if (model.getDealId() != null)
             model.setDeal(dealService.findById(model.getDealId()));
-        if (model.getBookingId()!=null)
+        if (model.getBookingId() != null)
             model.setBooking(bookingService.findById(model.getBookingId()));
         return model;
     }
 
+    private void handleUpdateReversed(Contract model) {
+        model.setStartTime(model.getCreatedAt());
+    }
+
+    private void handleUpdateNormalContract(Contract exModel, ContractDTOUpdate dto, int groupId) {
+        //check whether groupService is valid or not
+        if (dto.getGroupServiceIds() != null && !dto.getGroupServiceIds().isEmpty()) {
+            dto.setGroupServices(dto.getGroupServiceIds()
+                    .stream()
+                    .map(idDto -> {
+                        if (groupServiceRepository.IsGroupServiceExistByVendorAndGroup(exModel.getVendor().getUserId(), groupId, idDto.getGroupServiceId()))
+                            return groupServiceService.findById(idDto.getGroupServiceId());
+                        else {
+                            throw new GenericException(GroupService.class, "is not valid with id",
+                                    "groupServiceId", String.valueOf(idDto.getGroupServiceId()));
+                        }
+                    })
+                    .collect(Collectors.toSet()));
+        }
+    }
+
+    private void basicValidContract(Contract model) {
+        if (model.getStatus() == Contract.STATUS.ACTIVATED) {
+            throw new GenericException(Contract.class, "cannot be updated", "contractId", String.valueOf(model.getContractId()), "status", model.getStatus().toString());
+        }
+    }
+
+    private void handleNotification(Contract model) {
+        String action = "", message = "";
+
+        ArrayList<String> destinations = new ArrayList<>();
+        switch (model.getStatus()) {
+            case INACTIVE:
+                if (model.isReversed() && model.getUpdatedAt() == null) {
+                    action = Constant.Notification.NEW_RESERVED;
+                    message = Constant.Notification.STATIC_NEW_RESERVED_MESSAGE + model.getVendor().getUsername();
+                    destinations.add(model.getRenter().getFirebaseToken());
+                } else if (!model.isReversed() && model.getUpdatedAt() == null) {
+                    action = Constant.Notification.NEW_CONTRACT;
+                    message = Constant.Notification.STATIC_NEW_CONTRACT_MESSAGE + model.getVendor().getUsername();
+                    destinations.add(model.getRenter().getFirebaseToken());
+                } else if (model.isReversed()) {
+                    action = Constant.Notification.UPDATE_CONTRACT;
+                    message = Constant.Notification.STATIC_UPDATE_CONTRACT_MESSAGE + model.getVendor().getUsername();
+                    destinations.add(model.getRenter().getFirebaseToken());
+                } else if (!model.isReversed()) {
+                    action = Constant.Notification.UPDATE_REVERSED;
+                    message = Constant.Notification.STATIC_UPDATE_REVERSED_MESSAGE + model.getVendor().getUsername();
+                    destinations.add(model.getRenter().getFirebaseToken());
+                }
+                break;
+            case REVERSED:
+            case ACTIVATED:
+                if (model.isReversed()) {
+                    action = Constant.Notification.CONFIRM_REVERSED;
+                    message = Constant.Notification.STATIC_CONFIRM_REVERSED_MESSAGE + model.getRenter().getUsername();
+                    destinations.add(model.getVendor().getFirebaseToken());
+                } else if (!model.isReversed()) {
+                    action = Constant.Notification.CONFIRM_CONTRACT;
+                    message = Constant.Notification.CONFIRM_CONTRACT + model.getRenter().getUsername();
+                    destinations.add(model.getVendor().getFirebaseToken());
+                }
+            case EXPIRED:
+                break;
+        }
+
+        for (String token : destinations) {
+            sendNotification(model, action, message, token);
+        }
+    }
 }

@@ -42,15 +42,12 @@ public class ContractDTOUpdate implements Serializable {
     private Room room;
 
     @Getter @Setter
-    @NotNull(message = "Start time is mandatory!")
+//    @NotNull(message = "Start time is mandatory!")
     private Long startTime;
 
     @Getter @Setter
     @NotNull(message = "Contract duration is mandatory!")
-    private float duration;
-
-    @Getter @Setter
-    private String evidenceImgUrl;
+    private Integer duration;
 
     @JsonIgnore
     @Getter
@@ -60,8 +57,11 @@ public class ContractDTOUpdate implements Serializable {
     @JsonIgnore
     private Contract.STATUS status;
 
+    @Getter
+    @Setter
+    private boolean isPaid;
+
     @Getter @Setter
-    @NotNull(message = "List of agreement services is mandatory!")
     @JsonProperty(value = "groupServiceIds")
     private Set<GroupServiceDTOForContract> groupServiceIds;
 

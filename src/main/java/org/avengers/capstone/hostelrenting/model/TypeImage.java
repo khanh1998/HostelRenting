@@ -24,4 +24,7 @@ public class TypeImage {
     @ManyToOne
     @JoinColumn(name = "type_id", nullable = false)
     private Type type;
+
+    @Column(columnDefinition = "boolean default false", nullable = false)
+    private boolean isDeleted;
 }

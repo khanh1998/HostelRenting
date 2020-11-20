@@ -29,4 +29,7 @@ public class ContractImage {
     @ManyToOne
     @JoinColumn(name = "contract_id", nullable = false)
     private Contract contract;
+
+    @Column(columnDefinition = "boolean default false", nullable = false)
+    private boolean isDeleted;
 }

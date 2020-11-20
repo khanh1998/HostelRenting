@@ -1,11 +1,7 @@
 package org.avengers.capstone.hostelrenting.controller;
 
-import org.avengers.capstone.hostelrenting.dto.booking.BookingDTOCreate;
 import org.avengers.capstone.hostelrenting.dto.contract.*;
-import org.avengers.capstone.hostelrenting.dto.deal.DealDTOShort;
-import org.avengers.capstone.hostelrenting.dto.group.GroupDTOResponse;
 import org.avengers.capstone.hostelrenting.dto.response.ApiSuccess;
-import org.avengers.capstone.hostelrenting.dto.type.TypeDTOResponse;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
 import org.avengers.capstone.hostelrenting.model.*;
 import org.avengers.capstone.hostelrenting.service.GroupService;
@@ -19,7 +15,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -94,8 +89,18 @@ public class ContractController {
         Vendor exVendor = vendorService.findById(reqDTO.getVendorId());
         Renter exRenter = renterService.findById(reqDTO.getRenterId());
         Room exRoom = roomService.findById(reqDTO.getRoomId());
+        Booking exBooking = null;
+        Deal exDeal = null;
+        if (reqDTO.getBookingId()!= null){
+            exBooking = bookingService.findById(reqDTO.getBookingId());
+        }
+        if (reqDTO.getDealId() != null){
+            exDeal = dealService.findById(reqDTO.getDealId());
+        }
         Contract reqModel = modelMapper.map(reqDTO, Contract.class);
-        reqModel = reqModel.toBuilder().vendor(exVendor).renter(exRenter).room(exRoom).build();
+        reqModel = reqModel.toBuilder().vendor(exVendor).renter(exRenter)
+                .room(exRoom).deal(exDeal)
+                .booking(exBooking).build();
 
         Contract resModel = contractService.create(reqModel);
 
