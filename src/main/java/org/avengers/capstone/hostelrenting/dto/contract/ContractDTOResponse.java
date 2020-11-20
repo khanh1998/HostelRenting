@@ -36,7 +36,10 @@ public class ContractDTOResponse {
     private BookingDTOResponseShort booking;
     private String appendixContract;
     private long startTime;
-    private Float duration;
+    private boolean isReversed;
+    private boolean isPaid;
+    private float downPayment;
+    private Integer duration;
     private String contractUrl;
     private UUID qrCode;
     private Contract.STATUS status;

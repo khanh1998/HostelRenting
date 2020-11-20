@@ -112,16 +112,21 @@ public class Constant {
         public final static String ACTION_FIELD_NAME = "action";
 
         public final static String NEW_BOOKING = "NEW_BOOKING";
-        public final static String STATIC_NEW_BOOKING_MESSAGE = "Bạn có lịch hẹn mới từ: ";
+        public final static String STATIC_NEW_BOOKING_MESSAGE = "Lịch hẹn mới bởi: ";
         public final static String CONFIRM_BOOKING = "CONFIRM_BOOKING";
-        public final static String STATIC_CONFIRM_BOOKING_MESSAGE = "Lịch hẹn của bạn đã được xác nhận từ: ";
+        public final static String STATIC_CONFIRM_BOOKING_MESSAGE = "Lịch hẹn được xác nhận bởi: ";
         public final static String NEW_CONTRACT = "NEW_CONTRACT";
-        public final static String STATIC_NEW_CONTRACT_MESSAGE = "Bạn có hợp đồng mới (bản nháp) từ: ";
-        public final static String CONFIRM_CONTRACT = "CONFIRM_CONTRACT";
-        public final static String STATIC_CONFIRM_CONTRACT_MESSAGE = "Hợp đồng đã được kích hoạt từ: ";
+        public final static String STATIC_NEW_CONTRACT_MESSAGE = "Hợp đồng (nháp) được tạo bởi: ";
+        public final static String NEW_RESERVED = "NEW_RESERVED";
+        public final static String STATIC_NEW_RESERVED_MESSAGE = "Thông tin cọc (nháp) được tạo bởi: ";
         public final static String UPDATE_CONTRACT = "UPDATE_CONTRACT";
-        public final static String STATIC_UPDATE_CONTRACT_MESSAGE = "Hợp đồng (bản nháp) đã được cập nhật từ: ";
-
+        public final static String STATIC_UPDATE_CONTRACT_MESSAGE = "Hợp đồng (nháp) được cập nhật bởi: ";
+        public final static String UPDATE_REVERSED = "UPDATE_REVERSED";
+        public final static String STATIC_UPDATE_REVERSED_MESSAGE = "Thông tin cọc (nháp) được cập nhật bởi: ";
+        public final static String CONFIRM_CONTRACT = "CONFIRM_CONTRACT";
+        public final static String STATIC_CONFIRM_CONTRACT_MESSAGE = "Hợp đồng được kích hoạt bởi: ";
+        public final static String CONFIRM_REVERSED = "CONFIRM_REVERSED";
+        public final static String STATIC_CONFIRM_REVERSED_MESSAGE = "Thông tin cọc được xác nhận bởi: ";
     }
 
     public static class Field{

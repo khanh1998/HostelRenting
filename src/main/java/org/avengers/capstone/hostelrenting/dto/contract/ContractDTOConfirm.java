@@ -19,7 +19,6 @@ public class ContractDTOConfirm implements Serializable {
 
     public ContractDTOConfirm() {
         this.updatedAt = System.currentTimeMillis();
-        this.status = Contract.STATUS.ACTIVATED;
     }
 
     @Getter
@@ -28,7 +27,11 @@ public class ContractDTOConfirm implements Serializable {
     private UUID qrCode;
 
     @Getter
-    private final Contract.STATUS status;
+    @Setter
+    @JsonIgnore
+    private Contract.STATUS status;
+
+
 
     @Getter
     @JsonIgnore
