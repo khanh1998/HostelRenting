@@ -90,7 +90,7 @@ public class ContractDTOCreate {
 
     @Getter
     @Setter
-    private boolean isReversed;
+    private boolean isReserved;
 
     @Getter
     @Setter

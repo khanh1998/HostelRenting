@@ -121,12 +121,12 @@ public class Constant {
         public final static String STATIC_NEW_RESERVED_MESSAGE = "Thông tin cọc (nháp) được tạo bởi: ";
         public final static String UPDATE_CONTRACT = "UPDATE_CONTRACT";
         public final static String STATIC_UPDATE_CONTRACT_MESSAGE = "Hợp đồng (nháp) được cập nhật bởi: ";
-        public final static String UPDATE_REVERSED = "UPDATE_REVERSED";
-        public final static String STATIC_UPDATE_REVERSED_MESSAGE = "Thông tin cọc (nháp) được cập nhật bởi: ";
+        public final static String UPDATE_RESERVED = "UPDATE_RESERVED";
+        public final static String STATIC_UPDATE_RESERVED_MESSAGE = "Thông tin cọc (nháp) được cập nhật bởi: ";
         public final static String CONFIRM_CONTRACT = "CONFIRM_CONTRACT";
         public final static String STATIC_CONFIRM_CONTRACT_MESSAGE = "Hợp đồng được kích hoạt bởi: ";
-        public final static String CONFIRM_REVERSED = "CONFIRM_REVERSED";
-        public final static String STATIC_CONFIRM_REVERSED_MESSAGE = "Thông tin cọc được xác nhận bởi: ";
+        public final static String CONFIRM_RESERVED = "CONFIRM_RESERVED";
+        public final static String STATIC_CONFIRM_RESERVED_MESSAGE = "Thông tin cọc được xác nhận bởi: ";
     }
 
     public static class Field{

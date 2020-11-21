@@ -36,7 +36,7 @@ public class ContractDTOResponse {
     private BookingDTOResponseShort booking;
     private String appendixContract;
     private long startTime;
-    private boolean isReversed;
+    private boolean isReserved;
     private boolean isPaid;
     private float downPayment;
     private Integer duration;

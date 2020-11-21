@@ -260,7 +260,7 @@ public class ContractServiceImpl implements ContractService {
 
 
         // handle with corresponding kind of contract
-        if (exModel.isReversed()) {
+        if (exModel.isReserved()) {
             handleUpdateReversed(exModel);
         } else {
             handleUpdateNormalContract(exModel, reqDTO, groupId);
@@ -282,9 +282,9 @@ public class ContractServiceImpl implements ContractService {
         if (exModel.getQrCode().equals(reqDTO.getQrCode())) {
             modelMapper.map(reqDTO, exModel);
 
-            /* set status based on isReversed */
-            if (exModel.isReversed()) {
-                exModel.setStatus(Contract.STATUS.REVERSED);
+            /* set status based on isReserved */
+            if (exModel.isReserved()) {
+                exModel.setStatus(Contract.STATUS.RESERVED);
             } else {
                 exModel.setStatus(Contract.STATUS.ACTIVATED);
             }
@@ -368,8 +368,8 @@ public class ContractServiceImpl implements ContractService {
             isViolated = true;
         }
 
-        /* Check whether isReversed and downPayment valid or not */
-        if (model.isReversed()) {
+        /* Check whether isReserved and downPayment valid or not */
+        if (model.isReserved()) {
             if (model.getDownPayment() == null) {
                 throw new GenericException(Contract.class, "down payment is required with reversed", "downPayment", String.valueOf(model.getDownPayment()));
             }
@@ -571,31 +571,31 @@ public class ContractServiceImpl implements ContractService {
         ArrayList<String> destinations = new ArrayList<>();
         switch (model.getStatus()) {
             case INACTIVE:
-                if (model.isReversed() && model.getUpdatedAt() == null) {
+                if (model.isReserved() && model.getUpdatedAt() == null) {
                     action = Constant.Notification.NEW_RESERVED;
                     message = Constant.Notification.STATIC_NEW_RESERVED_MESSAGE + model.getVendor().getUsername();
                     destinations.add(model.getRenter().getFirebaseToken());
-                } else if (!model.isReversed() && model.getUpdatedAt() == null) {
+                } else if (!model.isReserved() && model.getUpdatedAt() == null) {
                     action = Constant.Notification.NEW_CONTRACT;
                     message = Constant.Notification.STATIC_NEW_CONTRACT_MESSAGE + model.getVendor().getUsername();
                     destinations.add(model.getRenter().getFirebaseToken());
-                } else if (model.isReversed()) {
+                } else if (model.isReserved()) {
                     action = Constant.Notification.UPDATE_CONTRACT;
                     message = Constant.Notification.STATIC_UPDATE_CONTRACT_MESSAGE + model.getVendor().getUsername();
                     destinations.add(model.getRenter().getFirebaseToken());
-                } else if (!model.isReversed()) {
-                    action = Constant.Notification.UPDATE_REVERSED;
-                    message = Constant.Notification.STATIC_UPDATE_REVERSED_MESSAGE + model.getVendor().getUsername();
+                } else if (!model.isReserved()) {
+                    action = Constant.Notification.UPDATE_RESERVED;
+                    message = Constant.Notification.STATIC_UPDATE_RESERVED_MESSAGE + model.getVendor().getUsername();
                     destinations.add(model.getRenter().getFirebaseToken());
                 }
                 break;
-            case REVERSED:
+            case RESERVED:
             case ACTIVATED:
-                if (model.isReversed()) {
-                    action = Constant.Notification.CONFIRM_REVERSED;
-                    message = Constant.Notification.STATIC_CONFIRM_REVERSED_MESSAGE + model.getRenter().getUsername();
+                if (model.isReserved()) {
+                    action = Constant.Notification.CONFIRM_RESERVED;
+                    message = Constant.Notification.STATIC_CONFIRM_RESERVED_MESSAGE + model.getRenter().getUsername();
                     destinations.add(model.getVendor().getFirebaseToken());
-                } else if (!model.isReversed()) {
+                } else if (!model.isReserved()) {
                     action = Constant.Notification.CONFIRM_CONTRACT;
                     message = Constant.Notification.CONFIRM_CONTRACT + model.getRenter().getUsername();
                     destinations.add(model.getVendor().getFirebaseToken());
