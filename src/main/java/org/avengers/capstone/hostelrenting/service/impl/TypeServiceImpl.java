@@ -362,7 +362,7 @@ public class TypeServiceImpl implements TypeService {
         }).collect(Collectors.toList());
 
         // type with status REVERSED
-        Collection<Type> typesByDueTime_reversed = typeRepository.findByRequestDueTime(exRequest.getRequestId(), Contract.STATUS.REVERSED.toString());
+        Collection<Type> typesByDueTime_reversed = typeRepository.findByRequestDueTime(exRequest.getRequestId(), Contract.STATUS.RESERVED.toString());
         typesByDueTime_reversed = typesByDueTime_reversed.stream().filter(type -> {
             return Utilities.calculateDistance(type.getGroup().getLatitude(), type.getGroup().getLongitude(), exRequest.getLatitude(), exRequest.getLongitude()) <= distance;
         }).collect(Collectors.toList());
