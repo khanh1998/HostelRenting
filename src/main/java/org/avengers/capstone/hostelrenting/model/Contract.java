@@ -22,7 +22,7 @@ import java.util.UUID;
 @Table(name = "contract")
 public class Contract {
 
-    public enum STATUS{EXPIRED, ACTIVATED, INACTIVE, REVERSED }
+    public enum STATUS{EXPIRED, ACTIVATED, INACTIVE, RESERVED }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -68,7 +68,7 @@ public class Contract {
     private Float downPayment;
 
     @Column(columnDefinition = "boolean default false", nullable = false)
-    private boolean isReversed;
+    private boolean isReserved;
 
     @Column(columnDefinition = "boolean default false", nullable = false)
     private boolean isPaid;
