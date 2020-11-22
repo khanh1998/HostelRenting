@@ -10,7 +10,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @NoArgsConstructor
-public class WardDTOShort implements Serializable {
+public class WardDTO implements Serializable {
     private int wardId;
     private String wardName;
 }
