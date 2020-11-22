@@ -31,5 +31,8 @@ public class ContractImage {
     private Contract contract;
 
     @Column(columnDefinition = "boolean default false", nullable = false)
+    private boolean isReserved;
+
+    @Column(columnDefinition = "boolean default false", nullable = false)
     private boolean isDeleted;
 }

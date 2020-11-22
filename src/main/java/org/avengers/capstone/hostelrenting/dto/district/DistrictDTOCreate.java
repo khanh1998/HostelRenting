@@ -1,6 +1,8 @@
 package org.avengers.capstone.hostelrenting.dto.district;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Getter;
+import lombok.Setter;
 import org.avengers.capstone.hostelrenting.model.District;
 
 /**
@@ -14,4 +16,8 @@ public class DistrictDTOCreate extends DistrictDTO {
     public int getDistrictId() {
         return super.getDistrictId();
     }
+
+    @Setter
+    @Getter
+    private int provinceId;
 }

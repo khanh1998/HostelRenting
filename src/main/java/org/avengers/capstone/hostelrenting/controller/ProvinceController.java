@@ -38,7 +38,7 @@ public class ProvinceController {
     /**
      * Create a Province
      *
-     * @param reqDTO request DTO
+     * @param reqDTOs request DTO
      * @return province object has been created
      */
     @PostMapping("/provinces")
@@ -50,6 +50,7 @@ public class ProvinceController {
         }).collect(Collectors.toList());
 
         ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTOs, "Provinces has been created successfully!");
+        apiSuccess.setTotal(resDTOs.size());
 
         return ResponseEntity.status(HttpStatus.CREATED).body(apiSuccess);
     }

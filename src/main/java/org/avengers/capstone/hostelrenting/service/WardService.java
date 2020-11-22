@@ -6,4 +6,6 @@ public interface WardService {
 
     void checkExist(Integer id);
     Ward findById(Integer id);
+    Ward create(Ward ward);
+
 }

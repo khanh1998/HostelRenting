@@ -86,7 +86,7 @@ public class ContractDTOCreate {
     @Getter
     @Setter
     @JsonProperty(value = "images")
-    private Collection<ImageDTOCreate> contractImages;
+    private Collection<ContractImageDTOCreate> contractImages;
 
     @Getter
     @Setter
