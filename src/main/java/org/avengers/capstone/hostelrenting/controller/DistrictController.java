@@ -43,25 +43,28 @@ public class DistrictController {
         this.provinceService = provinceService;
     }
 
-    @PostMapping("/provinces/{provinceId}/districts")
-    public ResponseEntity<?> createNewProvinces(@Validated @RequestBody Collection<DistrictDTOCreate> reqDTOs,
-                                                @PathVariable Integer provinceId) throws DuplicateKeyException {
+    @PostMapping("/districts")
+    public ResponseEntity<?> createNewDistricts(@Validated @RequestBody Collection<DistrictDTOCreate> reqDTOs) throws DuplicateKeyException {
 
-        Province exProvince = provinceService.findById(provinceId);
-
+        // convert dto -> model
         Collection<District> reqModels = reqDTOs.stream().map(districtDTOCreate -> {
             District model = modelMapper.map(districtDTOCreate, District.class);
+            // get existed Province
+            Province exProvince = provinceService.findById(districtDTOCreate.getProvinceId());
+            // set province for district
             model.setProvince(exProvince);
             return model;
         }).collect(Collectors.toList());
 
+        // save and map to dto for responding
         Collection<DistrictDTOResponse> resDTOs = reqModels.stream().map(district -> {
                     District resModel = districtService.create(district);
-            return modelMapper.map(resModel, DistrictDTOResponse.class);
+                    return modelMapper.map(resModel, DistrictDTOResponse.class);
                 }
         ).collect(Collectors.toList());
 
         ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTOs, "Districts has been created successfully!");
+        apiSuccess.setTotal(resDTOs.size());
 
         return ResponseEntity.status(HttpStatus.CREATED).body(apiSuccess);
     }

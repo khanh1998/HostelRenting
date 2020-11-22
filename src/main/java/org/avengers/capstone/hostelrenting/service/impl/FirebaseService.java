@@ -105,7 +105,6 @@ public class FirebaseService {
                     .build();
 
             response = FirebaseMessaging.getInstance().send(message);
-            System.out.println(response);
         } catch (FirebaseMessagingException e) {
             e.printStackTrace();
         }

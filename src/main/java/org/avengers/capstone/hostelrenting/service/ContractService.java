@@ -4,7 +4,6 @@ import org.avengers.capstone.hostelrenting.dto.contract.ContractDTOConfirm;
 import org.avengers.capstone.hostelrenting.dto.contract.ContractDTOUpdate;
 import org.avengers.capstone.hostelrenting.model.Contract;
 
-import java.util.Collection;
 import java.util.List;
 
 public interface ContractService {

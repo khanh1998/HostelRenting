@@ -5,10 +5,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 import org.avengers.capstone.hostelrenting.dto.image.ImageDTOCreate;
+import org.avengers.capstone.hostelrenting.exception.GenericException;
+import org.avengers.capstone.hostelrenting.model.Booking;
 import org.avengers.capstone.hostelrenting.model.Contract;
 
 import javax.validation.constraints.NotNull;
 import java.util.Collection;
+import java.util.Objects;
 import java.util.UUID;
 
 public class ContractDTOCreate {
@@ -16,6 +19,7 @@ public class ContractDTOCreate {
     public ContractDTOCreate() {
         this.qrCode = UUID.randomUUID();
         this.status = Contract.STATUS.INACTIVE;
+        this.isPaid = false;
         this.createdAt = System.currentTimeMillis();
     }
 
@@ -59,19 +63,19 @@ public class ContractDTOCreate {
     @Getter
     @Setter
     @NotNull(message = "Contract duration is mandatory!")
-    private float duration;
+    private Integer duration;
 
     @JsonIgnore
     @Getter
-    private Long createdAt;
+    private final Long createdAt;
 
     @Getter
     @JsonIgnore
-    private Contract.STATUS status;
+    private final Contract.STATUS status;
 
     @Getter
     @JsonIgnore
-    private UUID qrCode;
+    private final UUID qrCode;
 
     @Getter
     @Setter
@@ -82,6 +86,18 @@ public class ContractDTOCreate {
     @Getter
     @Setter
     @JsonProperty(value = "images")
-    private Collection<ImageDTOCreate> contractImages;
+    private Collection<ContractImageDTOCreate> contractImages;
 
+    @Getter
+    @Setter
+    private boolean isReserved;
+
+    @Getter
+    @Setter
+    @JsonIgnore
+    private boolean isPaid;
+
+    @Getter
+    @Setter
+    private Float downPayment;
 }

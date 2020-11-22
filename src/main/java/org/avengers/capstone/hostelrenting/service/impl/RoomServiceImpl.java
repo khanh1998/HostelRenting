@@ -57,7 +57,9 @@ public class RoomServiceImpl implements RoomService {
 
     @Override
     public Room updateStatus(Integer id, boolean isAvailable) {
-        return roomRepository.save(findById(id).toBuilder().isAvailable(isAvailable).build());
+        Room exRoom = findById(id);
+        exRoom.setAvailable(isAvailable);
+        return roomRepository.save(exRoom);
     }
 
     @Override
