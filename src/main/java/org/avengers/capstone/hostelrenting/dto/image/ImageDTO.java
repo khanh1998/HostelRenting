@@ -17,4 +17,5 @@ import java.io.Serializable;
 public class ImageDTO implements Serializable {
     private int imageId;
     private String resourceUrl;
+    private boolean isDeleted;
 }

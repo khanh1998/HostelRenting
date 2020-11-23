@@ -186,9 +186,6 @@ public class ContractController {
         if (resDTOs.isEmpty())
             resMsg = "There is no contract";
 
-        // get deal, booking, group and type
-//        resDTOs.forEach(this::getFullAttributesForDTO);
-
         // Response entity
         ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTOs, resMsg);
         apiSuccess.setPage(page);
@@ -201,7 +198,6 @@ public class ContractController {
     public ResponseEntity<?> getContractById(@PathVariable Integer contractId) {
         Contract model = contractService.findById(contractId);
         ContractDTOResponseFull resDTO = modelMapper.map(model, ContractDTOResponseFull.class);
-//        getFullAttributesForDTO(resDTO);
         // Response entity
         ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTO, "Your contract has been retrieved successfully");
 
