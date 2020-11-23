@@ -1,5 +1,6 @@
 package org.avengers.capstone.hostelrenting.dto.contract;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import org.avengers.capstone.hostelrenting.dto.image.ImageDTOCreate;
@@ -13,4 +14,10 @@ public class ContractImageDTOCreate extends ImageDTOCreate {
     @Getter
     @Setter
     private boolean isReserved;
+
+    @Override
+    @JsonIgnore
+    public void setDeleted(boolean isDeleted) {
+        super.setDeleted(isDeleted);
+    }
 }
