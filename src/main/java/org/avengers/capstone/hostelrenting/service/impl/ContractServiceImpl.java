@@ -7,6 +7,8 @@ import org.apache.commons.collections.CollectionUtils;
 import org.avengers.capstone.hostelrenting.Constant;
 import org.avengers.capstone.hostelrenting.dto.contract.ContractDTOConfirm;
 import org.avengers.capstone.hostelrenting.dto.contract.ContractDTOUpdate;
+import org.avengers.capstone.hostelrenting.dto.contract.ContractImageDTOCreate;
+import org.avengers.capstone.hostelrenting.dto.contract.ContractImageDTOUpdate;
 import org.avengers.capstone.hostelrenting.dto.notification.NotificationContent;
 import org.avengers.capstone.hostelrenting.dto.notification.NotificationRequest;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
@@ -91,10 +93,16 @@ public class ContractServiceImpl implements ContractService {
     private ModelMapper modelMapper;
     private RoomService roomService;
     private GroupServiceService groupServiceService;
+    private ContractImageService contractImageService;
     private BookingService bookingService;
     private FileStorageServiceImp fileStorageService;
     private DealService dealService;
     private FirebaseService firebaseService;
+
+    @Autowired
+    public void setContractImageService(ContractImageService contractImageService) {
+        this.contractImageService = contractImageService;
+    }
 
     @Autowired
     public void setDealService(DealService dealService) {
@@ -160,7 +168,6 @@ public class ContractServiceImpl implements ContractService {
     PropertyMap<ContractDTOUpdate, Contract> skipUpdateFieldsMap = new PropertyMap<ContractDTOUpdate, Contract>() {
         protected void configure() {
             skip().setContractImages(null);
-//            skip().setModifiedDate(null);
         }
     };
 
@@ -204,6 +211,8 @@ public class ContractServiceImpl implements ContractService {
 
         for (ContractImage image : reqModel.getContractImages()) {
             image.setContract(reqModel);
+            if (reqModel.isReserved())
+                image.setReserved(true);
         }
         Contract resModel = contractRepository.save(reqModel);
 
@@ -244,16 +253,26 @@ public class ContractServiceImpl implements ContractService {
         int groupId = groupRepository.getGroupIdByRoomId(roomId);
 
         // update images
-        if (exModel.getContractImages() != null && !exModel.getContractImages().isEmpty()) {
-            exModel.getContractImages().forEach(contractImage -> {
-                contractImage.setDeleted(true);
-            });
-            reqDTO.getContractImages().forEach(imageDTOCreate -> {
-                ContractImage imgModel = modelMapper.map(imageDTOCreate, ContractImage.class);
+        if (reqDTO.getContractImages() != null) {
+            for (ContractImageDTOUpdate contractImage : reqDTO.getContractImages()) {
+                ContractImage imgModel = modelMapper.map(contractImage, ContractImage.class);
                 imgModel.setContract(exModel);
-                exModel.getContractImages().add(imgModel);
-            });
 
+                // delete image with id
+                if (contractImage.getImageId() != 0) {
+                    ContractImage exImg = contractImageService.findById(contractImage.getImageId());
+                    modelMapper.map(imgModel, exImg);
+                    contractImageService.update(exImg);
+                }
+                // create new image with resourceUrl
+                if (contractImage.getImageId() == 0) {
+                    contractImageService.create(imgModel);
+                    // set reserved for image
+                    if (exModel.isReserved()) {
+                        contractImage.setReserved(true);
+                    }
+                }
+            }
         }
 
         modelMapper.map(reqDTO, exModel);

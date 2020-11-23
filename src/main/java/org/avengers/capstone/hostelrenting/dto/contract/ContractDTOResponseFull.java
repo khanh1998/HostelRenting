@@ -47,7 +47,7 @@ public class ContractDTOResponseFull {
     @JsonProperty(value = "agreementServices")
     private Collection<GroupServiceDTOResponse> groupServices;
     @JsonProperty(value = "images")
-    private Collection<ImageDTOResponse> contractImages;
+    private Collection<ContractImageDTOResponse> contractImages;
 
     private Long createdAt;
     private Long updatedAt;
