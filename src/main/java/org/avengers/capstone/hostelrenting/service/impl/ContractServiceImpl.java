@@ -94,10 +94,16 @@ public class ContractServiceImpl implements ContractService {
     private RoomService roomService;
     private GroupServiceService groupServiceService;
     private ContractImageService contractImageService;
+    private ContractImageRepository contractImageRepository;
     private BookingService bookingService;
     private FileStorageServiceImp fileStorageService;
     private DealService dealService;
     private FirebaseService firebaseService;
+
+    @Autowired
+    public void setContractImageRepository(ContractImageRepository contractImageRepository) {
+        this.contractImageRepository = contractImageRepository;
+    }
 
     @Autowired
     public void setContractImageService(ContractImageService contractImageService) {
@@ -254,25 +260,30 @@ public class ContractServiceImpl implements ContractService {
 
         // update images
         if (reqDTO.getContractImages() != null) {
-            for (ContractImageDTOUpdate contractImage : reqDTO.getContractImages()) {
-                ContractImage imgModel = modelMapper.map(contractImage, ContractImage.class);
-                imgModel.setContract(exModel);
+            Collection<ContractImage> deletedItems = exModel.getContractImages();
+            deletedItems.removeAll(reqDTO.getContractImages()
+                    .stream()
+                    .map(contractImageDTOCreate -> {
+                        if (contractImageRepository.findByResourceUrl(contractImageDTOCreate.getResourceUrl()).isPresent())
+                            return contractImageRepository.findByResourceUrl(contractImageDTOCreate.getResourceUrl()).get();
+                        return null;
+                    }).collect(Collectors.toList()));
 
-                // delete image with id
-                if (contractImage.getImageId() != 0) {
-                    ContractImage exImg = contractImageService.findById(contractImage.getImageId());
-                    modelMapper.map(imgModel, exImg);
-                    contractImageService.update(exImg);
-                }
-                // create new image with resourceUrl
-                if (contractImage.getImageId() == 0) {
-                    contractImageService.create(imgModel);
-                    // set reserved for image
-                    if (exModel.isReserved()) {
-                        contractImage.setReserved(true);
-                    }
-                }
+            for (ContractImage deletedItem : deletedItems) {
+                deletedItem.setDeleted(true);
             }
+
+            Collection<ContractImage> newItems = reqDTO.getContractImages()
+                    .stream()
+                    .map(contractImageDTOCreate -> {
+                        if (contractImageRepository.findByResourceUrl(contractImageDTOCreate.getResourceUrl()).isEmpty()) {
+                            ContractImage img = modelMapper.map(contractImageDTOCreate, ContractImage.class);
+                            img.setContract(exModel);
+                            return img;
+                        }
+                        return null;
+                    }).collect(Collectors.toList());
+            exModel.getContractImages().addAll(newItems);
         }
 
         modelMapper.map(reqDTO, exModel);

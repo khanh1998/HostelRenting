@@ -68,7 +68,7 @@ public class ContractDTOUpdate implements Serializable {
     @Getter
     @Setter
     @JsonProperty(value = "images")
-    private Set<ContractImageDTOUpdate> contractImages;
+    private Set<ContractImageDTOCreate> contractImages;
 
     @Getter @Setter
     @JsonIgnore
