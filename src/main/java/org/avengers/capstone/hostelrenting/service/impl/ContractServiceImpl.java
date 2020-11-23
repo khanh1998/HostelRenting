@@ -217,8 +217,8 @@ public class ContractServiceImpl implements ContractService {
 
         for (ContractImage image : reqModel.getContractImages()) {
             image.setContract(reqModel);
-            if (reqModel.isReserved())
-                image.setReserved(true);
+//            if (reqModel.isReserved())
+//                image.setReserved(true);
         }
         Contract resModel = contractRepository.save(reqModel);
 
@@ -276,12 +276,16 @@ public class ContractServiceImpl implements ContractService {
             Collection<ContractImage> newItems = reqDTO.getContractImages()
                     .stream()
                     .map(contractImageDTOCreate -> {
-                        if (contractImageRepository.findByResourceUrl(contractImageDTOCreate.getResourceUrl()).isEmpty()) {
+                        Optional<ContractImage> exImg = contractImageRepository.findByResourceUrl(contractImageDTOCreate.getResourceUrl());
+                        if (exImg.isEmpty()) {
                             ContractImage img = modelMapper.map(contractImageDTOCreate, ContractImage.class);
                             img.setContract(exModel);
                             return img;
+                        }else{
+                            exImg.get().setDeleted(contractImageDTOCreate.isDeleted());
+                            exImg.get().setReserved(contractImageDTOCreate.isReserved());
+                            return exImg.get();
                         }
-                        return null;
                     }).collect(Collectors.toList());
             exModel.getContractImages().addAll(newItems);
         }
