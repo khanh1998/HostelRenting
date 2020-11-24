@@ -13,5 +13,5 @@ import java.util.Optional;
  */
 @Repository
 public interface ContractImageRepository extends JpaRepository<ContractImage, Integer> {
-    Optional<ContractImage> findByResourceUrl(String resourceUrl);
+    Optional<ContractImage> findByResourceUrlAndContract_ContractId(String resourceUrl, Integer contractId);
 }

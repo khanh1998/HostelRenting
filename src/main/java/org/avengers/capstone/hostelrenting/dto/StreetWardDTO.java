@@ -3,6 +3,7 @@ package org.avengers.capstone.hostelrenting.dto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.avengers.capstone.hostelrenting.dto.street.StreetDTO;
 import org.avengers.capstone.hostelrenting.dto.ward.WardDTO;
 
 import java.io.Serializable;

@@ -28,7 +28,6 @@ public class ContractDTOConfirm implements Serializable {
 
     @Getter
     @Setter
-    @JsonIgnore
     private Contract.STATUS status;
 
 

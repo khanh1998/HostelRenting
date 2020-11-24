@@ -22,7 +22,7 @@ import java.util.UUID;
 @Table(name = "contract")
 public class Contract {
 
-    public enum STATUS{EXPIRED, ACTIVATED, INACTIVE, RESERVED }
+    public enum STATUS{EXPIRED, ACTIVATED, INACTIVE, RESERVED, CANCELLED}
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -76,6 +76,9 @@ public class Contract {
     private UUID qrCode;
 
     private String contractUrl;
+
+    @Column(columnDefinition = "boolean default false", nullable = false)
+    private boolean isResign;
 
     @Column(columnDefinition = "varchar(15) default 'INACTIVE'")
     @Enumerated(EnumType.STRING)
