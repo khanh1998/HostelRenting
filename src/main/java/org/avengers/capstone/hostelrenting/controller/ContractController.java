@@ -106,9 +106,6 @@ public class ContractController {
 
         ContractDTOResponse resDTO = modelMapper.map(resModel, ContractDTOResponse.class);
 
-        // get deal, booking, group and type
-//        getFullAttributesForDTO(resDTO);
-
         String msg = String.format("Your contract has been created with status: %s", resModel.getStatus());
         logger.info(msg);
         ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTO, msg);
@@ -124,7 +121,6 @@ public class ContractController {
         Contract resModel = contractService.confirm(exModel, reqDTO);
         ContractDTOResponse resDTO = modelMapper.map(resModel, ContractDTOResponse.class);
 
-//        getFullAttributesForDTO(resDTO);
         ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTO, String.format("Your contract has been updated with status: %s", resModel.getStatus()));
 
         return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
@@ -137,7 +133,6 @@ public class ContractController {
         Contract resModel = contractService.updateInactiveContract(exModel, reqDTO);
         ContractDTOResponse resDTO = modelMapper.map(resModel, ContractDTOResponse.class);
 
-//        getFullAttributesForDTO(resDTO);
         ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTO, String.format("Your contract has been updated with status: %s", resModel.getStatus()));
 
         return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
@@ -158,9 +153,6 @@ public class ContractController {
 
         if (resDTOs.isEmpty())
             resMsg = "There is no contract";
-
-        // get deal, booking, group and type
-//        resDTOs.forEach(this::getFullAttributesForDTO);
 
         // Response entity
         ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTOs, resMsg);
@@ -203,6 +195,4 @@ public class ContractController {
 
         return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
     }
-
-
 }

@@ -127,6 +127,8 @@ public class Constant {
         public final static String STATIC_CONFIRM_CONTRACT_MESSAGE = "Hợp đồng được kích hoạt bởi: ";
         public final static String CONFIRM_RESERVED = "CONFIRM_RESERVED";
         public final static String STATIC_CONFIRM_RESERVED_MESSAGE = "Thông tin cọc được xác nhận bởi: ";
+        public final static String CANCELLED_CONTRACT = "CANCELLED_CONTRACT";
+        public final static String STATIC_CANCELLED_CONTRACT_MESSAGE = "Hợp đồng bị chấm dứt bởi: ";
     }
 
     public static class Field{
