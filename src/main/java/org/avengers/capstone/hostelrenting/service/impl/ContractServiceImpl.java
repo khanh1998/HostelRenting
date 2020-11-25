@@ -302,10 +302,6 @@ public class ContractServiceImpl implements ContractService {
         }
         Contract resModel = contractRepository.save(exModel);
 
-
-        //send notification
-//        handleNotification(resModel);
-
         return fillInContractObject(resModel);
     }
 
@@ -357,9 +353,6 @@ public class ContractServiceImpl implements ContractService {
                 bookingRepository.save(exBooking);
             }
 
-            /* send notification */
-//            if (!resModel.getStatus().equals(Contract.STATUS.CANCELLED))
-//                handleNotification(resModel);
             return fillInContractObject(resModel);
         }
         throw new GenericException(Contract.class, "qrCode not matched", "contractId", String.valueOf(exModel.getContractId()), "qrCode", exModel.getQrCode().toString());
@@ -557,33 +550,6 @@ public class ContractServiceImpl implements ContractService {
         }
     }
 
-//    private void sendNotification(Contract model, String action, String staticMsg, String destination) {
-//
-//        String pattern = "dd/MM/yyyy hh:mm:ss";
-//        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
-//        String timestamp = simpleDateFormat.format(new Date());
-//
-//
-//        NotificationContent content = NotificationContent.builder()
-//                .id(String.valueOf(model.getContractId()))
-//                .action(action)
-//                .title(staticMsg)
-//                .body(timestamp)
-//                .icon(model.getRenter().getAvatar())
-//                .clickAction("")
-//                .build();
-//
-//        ObjectMapper objMapper = new ObjectMapper();
-//        Map<String, String> data = objMapper.convertValue(content, Map.class);
-//
-//        NotificationRequest notificationRequest = NotificationRequest.builder()
-//                .destination(destination)
-//                .data(data)
-//                .build();
-//
-//        firebaseService.sendPnsToDevice(notificationRequest);
-//    }
-
     private Contract fillInContractObject(Contract model) {
         model.setType(model.getRoom().getType());
         model.setGroup(model.getRoom().getType().getGroup());
@@ -620,53 +586,4 @@ public class ContractServiceImpl implements ContractService {
             throw new GenericException(Contract.class, "cannot be updated", "contractId", String.valueOf(model.getContractId()), "status", model.getStatus().toString());
         }
     }
-
-//    private void handleNotification(Contract model) {
-//        String action = "", message = "";
-//
-//        ArrayList<String> destinations = new ArrayList<>();
-//        switch (model.getStatus()) {
-//            case INACTIVE:
-//                if (model.isReserved() && model.getUpdatedAt() == null) {
-//                    action = Constant.Notification.NEW_RESERVED;
-//                    message = Constant.Notification.STATIC_NEW_RESERVED_MESSAGE + model.getVendor().getUsername();
-//                    destinations.add(model.getRenter().getFirebaseToken());
-//                } else if (!model.isReserved() && model.getUpdatedAt() == null) {
-//                    action = Constant.Notification.NEW_CONTRACT;
-//                    message = Constant.Notification.STATIC_NEW_CONTRACT_MESSAGE + model.getVendor().getUsername();
-//                    destinations.add(model.getRenter().getFirebaseToken());
-//                } else if (model.isReserved()) {
-//                    action = Constant.Notification.UPDATE_CONTRACT;
-//                    message = Constant.Notification.STATIC_UPDATE_CONTRACT_MESSAGE + model.getVendor().getUsername();
-//                    destinations.add(model.getRenter().getFirebaseToken());
-//                } else if (!model.isReserved()) {
-//                    action = Constant.Notification.UPDATE_RESERVED;
-//                    message = Constant.Notification.STATIC_UPDATE_RESERVED_MESSAGE + model.getVendor().getUsername();
-//                    destinations.add(model.getRenter().getFirebaseToken());
-//                }
-//                break;
-//            case RESERVED:
-//            case ACTIVATED:
-//                if (model.isReserved()) {
-//                    action = Constant.Notification.CONFIRMAC;
-//                    message = Constant.Notification.STATIC_CONFIRM_RESERVED_MESSAGE + model.getRenter().getUsername();
-//                    destinations.add(model.getVendor().getFirebaseToken());
-//                } else if (!model.isReserved()) {
-//                    action = Constant.Notification.CONFIRM_CONTRACT;
-//                    message = Constant.Notification.CONFIRM_CONTRACT + model.getRenter().getUsername();
-//                    destinations.add(model.getVendor().getFirebaseToken());
-//                }
-//            case EXPIRED:
-//            case CANCELLED:
-//                action = Constant.Notification.CANCELLED_CONTRACT;
-//                message = Constant.Notification.STATIC_CANCELLED_CONTRACT_MESSAGE;
-//                destinations.add(model.getVendor().getFirebaseToken());
-//                destinations.add(model.getRenter().getFirebaseToken());
-//                break;
-//        }
-//
-//        for (String token : destinations) {
-//            sendNotification(model, action, message, token);
-//        }
-//    }
 }
