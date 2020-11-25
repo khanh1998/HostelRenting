@@ -239,7 +239,7 @@ public class ContractServiceImpl implements ContractService {
     @Override
     public Contract updateInactiveContract(Contract exModel, ContractDTOUpdate reqDTO) {
         // Only update INACTIVE contract
-        if (!exModel.getStatus().equals(Contract.STATUS.INACTIVE)) {
+        if (!exModel.getStatus().equals(Contract.STATUS.INACTIVE) && !exModel.getStatus().equals(Contract.STATUS.ACCEPTED)) {
             throw new GenericException(Contract.class, "only update with INACTIVE contract", "contractId", String.valueOf(exModel.getContractId()), "status", exModel.getStatus().toString());
         }
 
