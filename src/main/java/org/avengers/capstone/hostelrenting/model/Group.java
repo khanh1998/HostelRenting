@@ -50,7 +50,7 @@ public class Group {
     /**
      * building number
      */
-    @Column(name = "building_no", nullable = false)
+    @Column(name = "building_no")
     private String buildingNo;
 
     /**

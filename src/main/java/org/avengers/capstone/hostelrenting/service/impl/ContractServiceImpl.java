@@ -7,6 +7,8 @@ import org.apache.commons.collections.CollectionUtils;
 import org.avengers.capstone.hostelrenting.Constant;
 import org.avengers.capstone.hostelrenting.dto.contract.ContractDTOConfirm;
 import org.avengers.capstone.hostelrenting.dto.contract.ContractDTOUpdate;
+import org.avengers.capstone.hostelrenting.dto.contract.ContractImageDTOCreate;
+import org.avengers.capstone.hostelrenting.dto.contract.ContractImageDTOUpdate;
 import org.avengers.capstone.hostelrenting.dto.notification.NotificationContent;
 import org.avengers.capstone.hostelrenting.dto.notification.NotificationRequest;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
@@ -37,6 +39,7 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.transaction.Transactional;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -91,10 +94,22 @@ public class ContractServiceImpl implements ContractService {
     private ModelMapper modelMapper;
     private RoomService roomService;
     private GroupServiceService groupServiceService;
+    private ContractImageService contractImageService;
+    private ContractImageRepository contractImageRepository;
     private BookingService bookingService;
     private FileStorageServiceImp fileStorageService;
     private DealService dealService;
     private FirebaseService firebaseService;
+
+    @Autowired
+    public void setContractImageRepository(ContractImageRepository contractImageRepository) {
+        this.contractImageRepository = contractImageRepository;
+    }
+
+    @Autowired
+    public void setContractImageService(ContractImageService contractImageService) {
+        this.contractImageService = contractImageService;
+    }
 
     @Autowired
     public void setDealService(DealService dealService) {
@@ -160,7 +175,6 @@ public class ContractServiceImpl implements ContractService {
     PropertyMap<ContractDTOUpdate, Contract> skipUpdateFieldsMap = new PropertyMap<ContractDTOUpdate, Contract>() {
         protected void configure() {
             skip().setContractImages(null);
-//            skip().setModifiedDate(null);
         }
     };
 
@@ -225,7 +239,7 @@ public class ContractServiceImpl implements ContractService {
     @Override
     public Contract updateInactiveContract(Contract exModel, ContractDTOUpdate reqDTO) {
         // Unable to update ACTIVATED contract
-        basicValidContract(exModel);
+        basicValidContract(exModel, reqDTO.getStatus());
 
         // update room information
         Integer roomId = reqDTO.getRoomId();
@@ -244,16 +258,35 @@ public class ContractServiceImpl implements ContractService {
         int groupId = groupRepository.getGroupIdByRoomId(roomId);
 
         // update images
-        if (exModel.getContractImages() != null && !exModel.getContractImages().isEmpty()) {
-            exModel.getContractImages().forEach(contractImage -> {
-                contractImage.setDeleted(true);
-            });
-            reqDTO.getContractImages().forEach(imageDTOCreate -> {
-                ContractImage imgModel = modelMapper.map(imageDTOCreate, ContractImage.class);
-                imgModel.setContract(exModel);
-                exModel.getContractImages().add(imgModel);
-            });
+        if (reqDTO.getContractImages() != null) {
+            Collection<ContractImage> deletedItems = exModel.getContractImages();
+            deletedItems.removeAll(reqDTO.getContractImages()
+                    .stream()
+                    .map(contractImageDTOCreate -> {
+                        if (contractImageRepository.findByResourceUrlAndContract_ContractId(contractImageDTOCreate.getResourceUrl(), exModel.getContractId()).isPresent())
+                            return contractImageRepository.findByResourceUrlAndContract_ContractId(contractImageDTOCreate.getResourceUrl(), exModel.getContractId()).get();
+                        return null;
+                    }).collect(Collectors.toList()));
 
+            for (ContractImage deletedItem : deletedItems) {
+                deletedItem.setDeleted(true);
+            }
+
+            Collection<ContractImage> newItems = reqDTO.getContractImages()
+                    .stream()
+                    .map(contractImageDTOCreate -> {
+                        Optional<ContractImage> exImg = contractImageRepository.findByResourceUrlAndContract_ContractId(contractImageDTOCreate.getResourceUrl(), exModel.getContractId());
+                        if (exImg.isEmpty()) {
+                            ContractImage img = modelMapper.map(contractImageDTOCreate, ContractImage.class);
+                            img.setContract(exModel);
+                            return img;
+                        } else {
+                            exImg.get().setDeleted(contractImageDTOCreate.isDeleted());
+                            exImg.get().setReserved(contractImageDTOCreate.isReserved());
+                            return exImg.get();
+                        }
+                    }).collect(Collectors.toList());
+            exModel.getContractImages().addAll(newItems);
         }
 
         modelMapper.map(reqDTO, exModel);
@@ -277,15 +310,17 @@ public class ContractServiceImpl implements ContractService {
     @Override
     public Contract confirm(Contract exModel, ContractDTOConfirm reqDTO) {
         /* Unable to update ACTIVATED contract */
-        basicValidContract(exModel);
+        basicValidContract(exModel, reqDTO.getStatus());
 
         if (exModel.getQrCode().equals(reqDTO.getQrCode())) {
             modelMapper.map(reqDTO, exModel);
 
             /* set status based on isReserved */
-            if (exModel.isReserved()) {
+            if (reqDTO.getStatus().equals(Contract.STATUS.CANCELLED)) {
+                exModel.setStatus(Contract.STATUS.CANCELLED);
+            } else if (reqDTO.getStatus().equals(Contract.STATUS.RESERVED)) {
                 exModel.setStatus(Contract.STATUS.RESERVED);
-            } else {
+            } else if (reqDTO.getStatus().equals(Contract.STATUS.ACTIVATED)) {
                 exModel.setStatus(Contract.STATUS.ACTIVATED);
             }
 
@@ -293,6 +328,10 @@ public class ContractServiceImpl implements ContractService {
             String contractHtml = generateContractHTML(exModel);
             sendMailWithEmbed(contractHtml, exModel.getRenter().getEmail());
             sendMailWithEmbed(contractHtml, exModel.getVendor().getEmail());
+
+            // change qrCode after confirm success
+            exModel.setQrCode(UUID.randomUUID());
+
             Contract resModel = contractRepository.save(exModel);
 
             /* Set contract id of booking when create corresponding contract */
@@ -303,7 +342,8 @@ public class ContractServiceImpl implements ContractService {
             }
 
             /* send notification */
-            handleNotification(resModel);
+            if (!resModel.getStatus().equals(Contract.STATUS.CANCELLED))
+                handleNotification(resModel);
             return fillInContractObject(resModel);
         }
         throw new GenericException(Contract.class, "qrCode not matched", "contractId", String.valueOf(exModel.getContractId()), "qrCode", exModel.getQrCode().toString());
@@ -559,8 +599,8 @@ public class ContractServiceImpl implements ContractService {
         }
     }
 
-    private void basicValidContract(Contract model) {
-        if (model.getStatus() == Contract.STATUS.ACTIVATED) {
+    private void basicValidContract(Contract model, Contract.STATUS status) {
+        if ((model.getStatus() == Contract.STATUS.ACTIVATED && !status.equals(Contract.STATUS.CANCELLED)) || model.getStatus().equals(Contract.STATUS.CANCELLED)) {
             throw new GenericException(Contract.class, "cannot be updated", "contractId", String.valueOf(model.getContractId()), "status", model.getStatus().toString());
         }
     }
@@ -591,17 +631,22 @@ public class ContractServiceImpl implements ContractService {
                 break;
             case RESERVED:
             case ACTIVATED:
-                if (model.isReserved()) {
-                    action = Constant.Notification.CONFIRM_RESERVED;
-                    message = Constant.Notification.STATIC_CONFIRM_RESERVED_MESSAGE + model.getRenter().getUsername();
-                    destinations.add(model.getVendor().getFirebaseToken());
-                } else if (!model.isReserved()) {
-                    action = Constant.Notification.CONFIRM_CONTRACT;
-                    message = Constant.Notification.CONFIRM_CONTRACT + model.getRenter().getUsername();
-                    destinations.add(model.getVendor().getFirebaseToken());
-                }
+//                if (model.isReserved()) {
+//                    action = Constant.Notification.CONFIRMAC;
+//                    message = Constant.Notification.STATIC_CONFIRM_RESERVED_MESSAGE + model.getRenter().getUsername();
+//                    destinations.add(model.getVendor().getFirebaseToken());
+//                } else if (!model.isReserved()) {
+//                    action = Constant.Notification.CONFIRM_CONTRACT;
+//                    message = Constant.Notification.CONFIRM_CONTRACT + model.getRenter().getUsername();
+//                    destinations.add(model.getVendor().getFirebaseToken());
+//                }
             case EXPIRED:
-                break;
+//            case CANCELLED:
+//                action = Constant.Notification.CANCELLED_CONTRACT;
+//                message = Constant.Notification.STATIC_CANCELLED_CONTRACT_MESSAGE;
+//                destinations.add(model.getVendor().getFirebaseToken());
+//                destinations.add(model.getRenter().getFirebaseToken());
+//                break;
         }
 
         for (String token : destinations) {

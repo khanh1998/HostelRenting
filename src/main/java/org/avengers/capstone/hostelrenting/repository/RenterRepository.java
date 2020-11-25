@@ -8,5 +8,6 @@ import java.util.Optional;
 
 public interface RenterRepository extends JpaRepository<Renter, Long> {
     Optional<Renter> findByPhone(String phone);
+    int countByPhone(String phone);
     Collection<Renter> findByUserIdIn(Collection<Long> ids);
 }

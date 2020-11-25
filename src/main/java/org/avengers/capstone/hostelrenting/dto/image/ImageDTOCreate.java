@@ -13,4 +13,9 @@ public class ImageDTOCreate extends ImageDTO {
     public void setImageId(int imageId) {
         super.setImageId(imageId);
     }
+
+    @Override
+    public void setDeleted(boolean isDeleted) {
+        super.setDeleted(false);
+    }
 }

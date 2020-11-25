@@ -34,7 +34,6 @@ public class ContractDTOUpdate implements Serializable {
     private String appendixContract;
 
     @Getter @Setter
-    @NotNull(message = "Room id is mandatory!")
     private Integer roomId;
 
     @Getter @Setter
@@ -42,11 +41,9 @@ public class ContractDTOUpdate implements Serializable {
     private Room room;
 
     @Getter @Setter
-//    @NotNull(message = "Start time is mandatory!")
     private Long startTime;
 
     @Getter @Setter
-    @NotNull(message = "Contract duration is mandatory!")
     private Integer duration;
 
     @JsonIgnore
@@ -68,7 +65,7 @@ public class ContractDTOUpdate implements Serializable {
     @Getter
     @Setter
     @JsonProperty(value = "images")
-    private Set<ImageDTOCreate> contractImages;
+    private Set<ContractImageDTOCreate> contractImages;
 
     @Getter @Setter
     @JsonIgnore

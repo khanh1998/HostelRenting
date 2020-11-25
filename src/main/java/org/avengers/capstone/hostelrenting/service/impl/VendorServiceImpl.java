@@ -4,8 +4,10 @@ import org.avengers.capstone.hostelrenting.dto.user.UserDTOUpdate;
 import org.avengers.capstone.hostelrenting.dto.user.UserDTOUpdateOnlyToken;
 import org.avengers.capstone.hostelrenting.dto.vendor.VendorDTOUpdate;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
+import org.avengers.capstone.hostelrenting.exception.GenericException;
 import org.avengers.capstone.hostelrenting.model.Vendor;
 import org.avengers.capstone.hostelrenting.repository.VendorRepository;
+import org.avengers.capstone.hostelrenting.service.UserService;
 import org.avengers.capstone.hostelrenting.service.VendorService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +19,13 @@ import java.util.Optional;
 public class VendorServiceImpl implements VendorService {
 
     private VendorRepository vendorRepository;
+    private UserService userService;
     private ModelMapper modelMapper;
+
+    @Autowired
+    public void setUserService(UserService userService) {
+        this.userService = userService;
+    }
 
     @Autowired
     public void setModelMapper(ModelMapper modelMapper) {
@@ -58,6 +66,8 @@ public class VendorServiceImpl implements VendorService {
 
     @Override
     public Vendor create(Vendor vendor) {
+        // check duplicate phone
+        userService.checkDuplicatePhone(vendor.getPhone());
         return vendorRepository.save(vendor);
     }
 

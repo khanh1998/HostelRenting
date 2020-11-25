@@ -1,4 +1,4 @@
-package org.avengers.capstone.hostelrenting.dto;
+package org.avengers.capstone.hostelrenting.dto.street;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

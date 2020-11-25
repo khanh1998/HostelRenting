@@ -50,7 +50,7 @@ public class WardController {
     }
 
     @PostMapping("/wards")
-    public ResponseEntity<?> createNewWards(@Validated @RequestBody Collection<WardDTOCreate> reqDTOs) throws DuplicateKeyException {
+    public ResponseEntity<?> createNewWards(@Validated @RequestBody Collection<WardDTOCreate> reqDTOs) {
 
         // convert dto -> model
         Collection<Ward> reqModels = reqDTOs.stream().map(wardDTOCreate -> {
