@@ -7,14 +7,14 @@ import org.avengers.capstone.hostelrenting.dto.renter.RenterDTOUpdate;
 import org.avengers.capstone.hostelrenting.dto.user.UserDTOUpdate;
 import org.avengers.capstone.hostelrenting.dto.user.UserDTOUpdateOnlyToken;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
-import org.avengers.capstone.hostelrenting.model.Province;
-import org.avengers.capstone.hostelrenting.model.Renter;
-import org.avengers.capstone.hostelrenting.model.School;
-import org.avengers.capstone.hostelrenting.model.User;
+import org.avengers.capstone.hostelrenting.exception.GenericException;
+import org.avengers.capstone.hostelrenting.model.*;
 import org.avengers.capstone.hostelrenting.repository.RenterRepository;
+import org.avengers.capstone.hostelrenting.repository.VendorRepository;
 import org.avengers.capstone.hostelrenting.service.ProvinceService;
 import org.avengers.capstone.hostelrenting.service.RenterService;
 import org.avengers.capstone.hostelrenting.service.SchoolService;
+import org.avengers.capstone.hostelrenting.service.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
@@ -27,9 +27,15 @@ import java.util.Optional;
 @Service
 public class RenterServiceIml implements RenterService {
     private RenterRepository renterRepository;
+    private UserService userService;
     private ModelMapper modelMapper;
     private ProvinceService provinceService;
     private SchoolService schoolService;
+
+    @Autowired
+    public void setUserService(UserService userService) {
+        this.userService = userService;
+    }
 
     @Autowired
     public void setProvinceService(ProvinceService provinceService) {
@@ -100,7 +106,7 @@ public class RenterServiceIml implements RenterService {
         if (renter.getProvince() != null){
             renter.setProvince(provinceService.findById(renter.getProvince().getProvinceId()));
         }
-
+        userService.checkDuplicatePhone(renter.getPhone());
         return renterRepository.save(renter);
     }
 
