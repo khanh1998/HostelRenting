@@ -15,4 +15,5 @@ public class UserDTOResponseShort {
     private String username;
     private String avatar;
     private RoleDTO role;
+    private String phone;
 }
