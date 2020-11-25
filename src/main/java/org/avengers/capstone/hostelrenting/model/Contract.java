@@ -22,7 +22,7 @@ import java.util.UUID;
 @Table(name = "contract")
 public class Contract {
 
-    public enum STATUS{EXPIRED, ACTIVATED, INACTIVE, RESERVED, CANCELLED}
+    public enum STATUS{EXPIRED, ACTIVATED, INACTIVE, RESERVED, CANCELLED, ACCEPTED}
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -228,7 +228,7 @@ public class ContractServiceImpl implements ContractService {
         resModel = contractRepository.save(resModel);
 
         /* send notification */
-        handleNotification(resModel);
+//        handleNotification(resModel);
 
         /* process business after create contract */
         processAfterCreate(resModel);
@@ -238,8 +238,10 @@ public class ContractServiceImpl implements ContractService {
 
     @Override
     public Contract updateInactiveContract(Contract exModel, ContractDTOUpdate reqDTO) {
-        // Unable to update ACTIVATED contract
-        basicValidContract(exModel, reqDTO.getStatus());
+        // Only update INACTIVE contract
+        if (!exModel.getStatus().equals(Contract.STATUS.INACTIVE)) {
+            throw new GenericException(Contract.class, "only update with INACTIVE contract", "contractId", String.valueOf(exModel.getContractId()), "status", exModel.getStatus().toString());
+        }
 
         // update room information
         Integer roomId = reqDTO.getRoomId();
@@ -302,7 +304,7 @@ public class ContractServiceImpl implements ContractService {
 
 
         //send notification
-        handleNotification(resModel);
+//        handleNotification(resModel);
 
         return fillInContractObject(resModel);
     }
@@ -310,26 +312,40 @@ public class ContractServiceImpl implements ContractService {
     @Override
     public Contract confirm(Contract exModel, ContractDTOConfirm reqDTO) {
         /* Unable to update ACTIVATED contract */
-        basicValidContract(exModel, reqDTO.getStatus());
+        if ((exModel.getStatus() == Contract.STATUS.ACTIVATED && !reqDTO.getStatus().equals(Contract.STATUS.CANCELLED)) || exModel.getStatus().equals(Contract.STATUS.CANCELLED)) {
+            throw new GenericException(Contract.class, "status cannot be updated", "contractId", String.valueOf(exModel.getContractId()), "status", exModel.getStatus().toString());
+        }
+        Contract.STATUS exStatus = exModel.getStatus();
 
         if (exModel.getQrCode().equals(reqDTO.getQrCode())) {
             modelMapper.map(reqDTO, exModel);
 
             /* set status based on isReserved */
+            // change to CANCELLED from all status
             if (reqDTO.getStatus().equals(Contract.STATUS.CANCELLED)) {
                 exModel.setStatus(Contract.STATUS.CANCELLED);
-            } else if (reqDTO.getStatus().equals(Contract.STATUS.RESERVED)) {
+                // update room status when cancelled
+                roomService.updateStatus(exModel.getRoom().getRoomId(), true);
+            }// change to RESERVED only from ACCEPTED
+            else if (reqDTO.getStatus().equals(Contract.STATUS.RESERVED) && exStatus.equals(Contract.STATUS.ACCEPTED)) {
                 exModel.setStatus(Contract.STATUS.RESERVED);
-            } else if (reqDTO.getStatus().equals(Contract.STATUS.ACTIVATED)) {
+            }// change to ACTIVATED only from INACTIVE
+            else if (reqDTO.getStatus().equals(Contract.STATUS.ACTIVATED) && (exStatus.equals(Contract.STATUS.INACTIVE) || exStatus.equals(Contract.STATUS.RESERVED))) {
                 exModel.setStatus(Contract.STATUS.ACTIVATED);
+                /* send mail for both renter and vendor when active contract */
+                String contractHtml = generateContractHTML(exModel);
+                sendMailWithEmbed(contractHtml, exModel.getRenter().getEmail());
+                sendMailWithEmbed(contractHtml, exModel.getVendor().getEmail());
+
+            }// change to ACCEPTED only from INACTIVE
+            else if (reqDTO.getStatus().equals(Contract.STATUS.ACCEPTED) && exStatus.equals(Contract.STATUS.INACTIVE)) {
+                exModel.setStatus((Contract.STATUS.ACCEPTED));
+            } else {
+                throw new GenericException(Contract.class, "Invalid status for updating", "from", String.valueOf(exStatus), "to", String.valueOf(reqDTO.getStatus()));
             }
 
-            /* send mail for both renter and vendor */
-            String contractHtml = generateContractHTML(exModel);
-            sendMailWithEmbed(contractHtml, exModel.getRenter().getEmail());
-            sendMailWithEmbed(contractHtml, exModel.getVendor().getEmail());
-
             // change qrCode after confirm success
+            //TODO: change after getting qrCode 60s
             exModel.setQrCode(UUID.randomUUID());
 
             Contract resModel = contractRepository.save(exModel);
@@ -342,8 +358,8 @@ public class ContractServiceImpl implements ContractService {
             }
 
             /* send notification */
-            if (!resModel.getStatus().equals(Contract.STATUS.CANCELLED))
-                handleNotification(resModel);
+//            if (!resModel.getStatus().equals(Contract.STATUS.CANCELLED))
+//                handleNotification(resModel);
             return fillInContractObject(resModel);
         }
         throw new GenericException(Contract.class, "qrCode not matched", "contractId", String.valueOf(exModel.getContractId()), "qrCode", exModel.getQrCode().toString());
@@ -541,32 +557,32 @@ public class ContractServiceImpl implements ContractService {
         }
     }
 
-    private void sendNotification(Contract model, String action, String staticMsg, String destination) {
-
-        String pattern = "dd/MM/yyyy hh:mm:ss";
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
-        String timestamp = simpleDateFormat.format(new Date());
-
-
-        NotificationContent content = NotificationContent.builder()
-                .id(String.valueOf(model.getContractId()))
-                .action(action)
-                .title(staticMsg)
-                .body(timestamp)
-                .icon(model.getRenter().getAvatar())
-                .clickAction("")
-                .build();
-
-        ObjectMapper objMapper = new ObjectMapper();
-        Map<String, String> data = objMapper.convertValue(content, Map.class);
-
-        NotificationRequest notificationRequest = NotificationRequest.builder()
-                .destination(destination)
-                .data(data)
-                .build();
-
-        firebaseService.sendPnsToDevice(notificationRequest);
-    }
+//    private void sendNotification(Contract model, String action, String staticMsg, String destination) {
+//
+//        String pattern = "dd/MM/yyyy hh:mm:ss";
+//        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+//        String timestamp = simpleDateFormat.format(new Date());
+//
+//
+//        NotificationContent content = NotificationContent.builder()
+//                .id(String.valueOf(model.getContractId()))
+//                .action(action)
+//                .title(staticMsg)
+//                .body(timestamp)
+//                .icon(model.getRenter().getAvatar())
+//                .clickAction("")
+//                .build();
+//
+//        ObjectMapper objMapper = new ObjectMapper();
+//        Map<String, String> data = objMapper.convertValue(content, Map.class);
+//
+//        NotificationRequest notificationRequest = NotificationRequest.builder()
+//                .destination(destination)
+//                .data(data)
+//                .build();
+//
+//        firebaseService.sendPnsToDevice(notificationRequest);
+//    }
 
     private Contract fillInContractObject(Contract model) {
         model.setType(model.getRoom().getType());
@@ -605,32 +621,32 @@ public class ContractServiceImpl implements ContractService {
         }
     }
 
-    private void handleNotification(Contract model) {
-        String action = "", message = "";
-
-        ArrayList<String> destinations = new ArrayList<>();
-        switch (model.getStatus()) {
-            case INACTIVE:
-                if (model.isReserved() && model.getUpdatedAt() == null) {
-                    action = Constant.Notification.NEW_RESERVED;
-                    message = Constant.Notification.STATIC_NEW_RESERVED_MESSAGE + model.getVendor().getUsername();
-                    destinations.add(model.getRenter().getFirebaseToken());
-                } else if (!model.isReserved() && model.getUpdatedAt() == null) {
-                    action = Constant.Notification.NEW_CONTRACT;
-                    message = Constant.Notification.STATIC_NEW_CONTRACT_MESSAGE + model.getVendor().getUsername();
-                    destinations.add(model.getRenter().getFirebaseToken());
-                } else if (model.isReserved()) {
-                    action = Constant.Notification.UPDATE_CONTRACT;
-                    message = Constant.Notification.STATIC_UPDATE_CONTRACT_MESSAGE + model.getVendor().getUsername();
-                    destinations.add(model.getRenter().getFirebaseToken());
-                } else if (!model.isReserved()) {
-                    action = Constant.Notification.UPDATE_RESERVED;
-                    message = Constant.Notification.STATIC_UPDATE_RESERVED_MESSAGE + model.getVendor().getUsername();
-                    destinations.add(model.getRenter().getFirebaseToken());
-                }
-                break;
-            case RESERVED:
-            case ACTIVATED:
+//    private void handleNotification(Contract model) {
+//        String action = "", message = "";
+//
+//        ArrayList<String> destinations = new ArrayList<>();
+//        switch (model.getStatus()) {
+//            case INACTIVE:
+//                if (model.isReserved() && model.getUpdatedAt() == null) {
+//                    action = Constant.Notification.NEW_RESERVED;
+//                    message = Constant.Notification.STATIC_NEW_RESERVED_MESSAGE + model.getVendor().getUsername();
+//                    destinations.add(model.getRenter().getFirebaseToken());
+//                } else if (!model.isReserved() && model.getUpdatedAt() == null) {
+//                    action = Constant.Notification.NEW_CONTRACT;
+//                    message = Constant.Notification.STATIC_NEW_CONTRACT_MESSAGE + model.getVendor().getUsername();
+//                    destinations.add(model.getRenter().getFirebaseToken());
+//                } else if (model.isReserved()) {
+//                    action = Constant.Notification.UPDATE_CONTRACT;
+//                    message = Constant.Notification.STATIC_UPDATE_CONTRACT_MESSAGE + model.getVendor().getUsername();
+//                    destinations.add(model.getRenter().getFirebaseToken());
+//                } else if (!model.isReserved()) {
+//                    action = Constant.Notification.UPDATE_RESERVED;
+//                    message = Constant.Notification.STATIC_UPDATE_RESERVED_MESSAGE + model.getVendor().getUsername();
+//                    destinations.add(model.getRenter().getFirebaseToken());
+//                }
+//                break;
+//            case RESERVED:
+//            case ACTIVATED:
 //                if (model.isReserved()) {
 //                    action = Constant.Notification.CONFIRMAC;
 //                    message = Constant.Notification.STATIC_CONFIRM_RESERVED_MESSAGE + model.getRenter().getUsername();
@@ -640,17 +656,17 @@ public class ContractServiceImpl implements ContractService {
 //                    message = Constant.Notification.CONFIRM_CONTRACT + model.getRenter().getUsername();
 //                    destinations.add(model.getVendor().getFirebaseToken());
 //                }
-            case EXPIRED:
+//            case EXPIRED:
 //            case CANCELLED:
 //                action = Constant.Notification.CANCELLED_CONTRACT;
 //                message = Constant.Notification.STATIC_CANCELLED_CONTRACT_MESSAGE;
 //                destinations.add(model.getVendor().getFirebaseToken());
 //                destinations.add(model.getRenter().getFirebaseToken());
 //                break;
-        }
-
-        for (String token : destinations) {
-            sendNotification(model, action, message, token);
-        }
-    }
+//        }
+//
+//        for (String token : destinations) {
+//            sendNotification(model, action, message, token);
+//        }
+//    }
 }
