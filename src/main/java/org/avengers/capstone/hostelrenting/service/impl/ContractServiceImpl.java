@@ -242,6 +242,7 @@ public class ContractServiceImpl implements ContractService {
 
         if (checkStatuses(exModel, Contract.STATUS.ACCEPTED, Contract.STATUS.INACTIVE)) {
             updateContractImages(exModel, reqDTO);
+            exModel.setPaid(reqDTO.isPaid());
         }
 
 
