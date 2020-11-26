@@ -73,12 +73,12 @@ public class Contract {
     @Column(columnDefinition = "boolean default false", nullable = false)
     private boolean isPaid;
 
+    @Column(columnDefinition = "boolean default false", nullable = false)
+    private boolean isResign;
+
     private UUID qrCode;
 
     private String contractUrl;
-
-    @Column(columnDefinition = "boolean default false", nullable = false)
-    private boolean isResign;
 
     @Column(columnDefinition = "varchar(15) default 'INACTIVE'")
     @Enumerated(EnumType.STRING)

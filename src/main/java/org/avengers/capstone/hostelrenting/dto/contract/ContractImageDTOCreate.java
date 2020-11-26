@@ -4,6 +4,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import org.avengers.capstone.hostelrenting.dto.image.ImageDTOCreate;
+import org.avengers.capstone.hostelrenting.model.ContractImage;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * @author duattt on 22/11/2020
@@ -13,7 +16,8 @@ import org.avengers.capstone.hostelrenting.dto.image.ImageDTOCreate;
 public class ContractImageDTOCreate extends ImageDTOCreate {
     @Getter
     @Setter
-    private boolean isReserved;
+    @NotNull(message = "Type of image is mandatory")
+    private ContractImage.TYPE type;
 
     @Override
     @JsonIgnore

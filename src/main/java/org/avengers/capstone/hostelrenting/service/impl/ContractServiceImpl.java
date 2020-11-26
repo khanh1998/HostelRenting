@@ -35,6 +35,7 @@ import javax.mail.internet.MimeMessage;
 import javax.transaction.Transactional;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -87,21 +88,14 @@ public class ContractServiceImpl implements ContractService {
     private ModelMapper modelMapper;
     private RoomService roomService;
     private GroupServiceService groupServiceService;
-    private ContractImageService contractImageService;
     private ContractImageRepository contractImageRepository;
     private BookingService bookingService;
     private FileStorageServiceImp fileStorageService;
     private DealService dealService;
-    private FirebaseService firebaseService;
 
     @Autowired
     public void setContractImageRepository(ContractImageRepository contractImageRepository) {
         this.contractImageRepository = contractImageRepository;
-    }
-
-    @Autowired
-    public void setContractImageService(ContractImageService contractImageService) {
-        this.contractImageService = contractImageService;
     }
 
     @Autowired
@@ -112,11 +106,6 @@ public class ContractServiceImpl implements ContractService {
     @Autowired
     public void setGroupRepository(GroupRepository groupRepository) {
         this.groupRepository = groupRepository;
-    }
-
-    @Autowired
-    public void setFirebaseService(FirebaseService firebaseService) {
-        this.firebaseService = firebaseService;
     }
 
     @Autowired
@@ -166,7 +155,7 @@ public class ContractServiceImpl implements ContractService {
         this.contractRepository = contractRepository;
     }
 
-    PropertyMap<ContractDTOUpdate, Contract> skipUpdateFieldsMap = new PropertyMap<ContractDTOUpdate, Contract>() {
+    PropertyMap<ContractDTOUpdate, Contract> skipUpdateFieldsMap = new PropertyMap<>() {
         protected void configure() {
             skip().setContractImages(null);
         }
@@ -242,7 +231,7 @@ public class ContractServiceImpl implements ContractService {
         }
 
         //update only images and isPaid with ACCEPTED
-        if (checkStatuses(exModel, Contract.STATUS.ACCEPTED)) {
+        if (checkStatuses(exModel, Contract.STATUS.ACCEPTED, Contract.STATUS.INACTIVE)) {
             updateContractImages(exModel, reqDTO);
             exModel.setPaid(reqDTO.isPaid());
         }
@@ -272,6 +261,8 @@ public class ContractServiceImpl implements ContractService {
             }// change to RESERVED only from ACCEPTED
             else if (reqDTO.getStatus().equals(Contract.STATUS.RESERVED) && exStatus.equals(Contract.STATUS.ACCEPTED)) {
                 exModel.setStatus(Contract.STATUS.RESERVED);
+                // isPaid false for reusing when do the rest payment
+                exModel.setPaid(false);
                 // start time begin when vendor accept with payment information
                 exModel.setStartTime(System.currentTimeMillis());
             }// change to ACTIVATED only from INACTIVE
@@ -349,7 +340,7 @@ public class ContractServiceImpl implements ContractService {
                             return img;
                         } else {
                             exImg.get().setDeleted(contractImageDTOCreate.isDeleted());
-                            exImg.get().setReserved(contractImageDTOCreate.isReserved());
+                            exImg.get().setType(contractImageDTOCreate.getType());
                             return exImg.get();
                         }
                     }).collect(Collectors.toList());
@@ -514,24 +505,18 @@ public class ContractServiceImpl implements ContractService {
         String provinceName = group.getAddress().getProvinceName();
         contractInfo.put(Constant.Contract.ADDRESS, String.format("%s, %s, %s, %s, %s", buildingNo, streetName, wardName, districtName, provinceName));
 
-        String templateContent = null;
+        String templateContent;
         try {
-            templateContent = new Scanner(new URL(templateUrl).openStream(), "UTF-8").useDelimiter("\\A").next();
+            templateContent = new Scanner(new URL(templateUrl).openStream(), StandardCharsets.UTF_8).useDelimiter("\\A").next();
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
             throw new GenericException(Contract.class, "fail to confirm", "contractId", String.valueOf(model.getContractId()));
         }
-        String contractHtml = Utilities.parseThymeleafTemplate(templateContent, contractInfo);
 
-        return contractHtml;
+        return Utilities.parseThymeleafTemplate(templateContent, contractInfo);
     }
 
     public void sendMailWithEmbed(String contractHtml, String receivedMail) {
-
-        // Sender's email ID needs to be mentioned
-        String from = "avenger.youthhostel@gmail.com";
-        final String username = "avenger.youthhostel@gmail.com";
-        final String password = "KieuTrongKhanh!$&1";
 
         Properties props = new Properties();
         props.put(Constant.Mail.MAIL_SMTP_AUTH, mailAuth);
@@ -574,10 +559,6 @@ public class ContractServiceImpl implements ContractService {
         if (model.getBookingId() != null)
             model.setBooking(bookingService.findById(model.getBookingId()));
         return model;
-    }
-
-    private void handleUpdateNormalContract(Contract exModel, ContractDTOUpdate dto, int groupId) {
-
     }
 
     private boolean checkStatuses(Contract model, Contract.STATUS... statuses) {
