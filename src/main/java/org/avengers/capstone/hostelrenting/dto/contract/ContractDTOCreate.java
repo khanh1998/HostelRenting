@@ -4,16 +4,12 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
-import org.avengers.capstone.hostelrenting.dto.image.ImageDTOCreate;
-import org.avengers.capstone.hostelrenting.exception.GenericException;
-import org.avengers.capstone.hostelrenting.model.Booking;
 import org.avengers.capstone.hostelrenting.model.Contract;
+import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.NotNull;
 import java.util.Collection;
-import java.util.Objects;
 import java.util.UUID;
-
 public class ContractDTOCreate {
 
     public ContractDTOCreate() {
@@ -96,6 +92,11 @@ public class ContractDTOCreate {
     @Setter
     @JsonIgnore
     private boolean isPaid;
+
+    @Getter
+    @Setter
+    @JsonIgnore
+    private boolean isResign;
 
     @Getter
     @Setter

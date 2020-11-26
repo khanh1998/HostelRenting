@@ -50,10 +50,6 @@ public class ContractDTOUpdate implements Serializable {
     private Long updatedAt;
 
     @Getter
-    @JsonIgnore
-    private Contract.STATUS status;
-
-    @Getter
     @Setter
     private boolean isPaid;
 
@@ -69,5 +65,4 @@ public class ContractDTOUpdate implements Serializable {
     @Getter @Setter
     @JsonIgnore
     private Set<GroupService> groupServices;
-
 }
