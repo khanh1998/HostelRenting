@@ -235,16 +235,17 @@ public class ContractServiceImpl implements ContractService {
             throw new GenericException(Contract.class, "only update with INACTIVE contract", "contractId", String.valueOf(exModel.getContractId()), "status", exModel.getStatus().toString());
         }
 
+        // update all basic info with INACTIVE
         if (checkStatuses(exModel, Contract.STATUS.INACTIVE)) {
             updateContractBasicInfo(exModel, reqDTO);
             modelMapper.map(reqDTO, exModel);
         }
 
-        if (checkStatuses(exModel, Contract.STATUS.ACCEPTED, Contract.STATUS.INACTIVE)) {
+        //update only images and isPaid with ACCEPTED
+        if (checkStatuses(exModel, Contract.STATUS.ACCEPTED)) {
             updateContractImages(exModel, reqDTO);
             exModel.setPaid(reqDTO.isPaid());
         }
-
 
         Contract resModel = contractRepository.save(exModel);
 
