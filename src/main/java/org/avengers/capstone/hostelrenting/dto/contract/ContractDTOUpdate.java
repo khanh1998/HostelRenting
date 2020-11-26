@@ -21,7 +21,6 @@ import java.util.Set;
 public class ContractDTOUpdate implements Serializable {
 
     public ContractDTOUpdate() {
-        this.status = Contract.STATUS.INACTIVE;
         this.updatedAt = System.currentTimeMillis();
     }
     @Getter

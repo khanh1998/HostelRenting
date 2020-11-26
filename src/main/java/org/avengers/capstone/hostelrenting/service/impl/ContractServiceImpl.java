@@ -1,21 +1,16 @@
 package org.avengers.capstone.hostelrenting.service.impl;
 
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lowagie.text.DocumentException;
 import org.apache.commons.collections.CollectionUtils;
 import org.avengers.capstone.hostelrenting.Constant;
 import org.avengers.capstone.hostelrenting.dto.contract.ContractDTOConfirm;
 import org.avengers.capstone.hostelrenting.dto.contract.ContractDTOUpdate;
-import org.avengers.capstone.hostelrenting.dto.contract.ContractImageDTOCreate;
-import org.avengers.capstone.hostelrenting.dto.contract.ContractImageDTOUpdate;
-import org.avengers.capstone.hostelrenting.dto.notification.NotificationContent;
-import org.avengers.capstone.hostelrenting.dto.notification.NotificationRequest;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
 import org.avengers.capstone.hostelrenting.exception.GenericException;
 import org.avengers.capstone.hostelrenting.exception.PreCreationException;
-import org.avengers.capstone.hostelrenting.model.*;
 import org.avengers.capstone.hostelrenting.model.GroupService;
+import org.avengers.capstone.hostelrenting.model.*;
 import org.avengers.capstone.hostelrenting.repository.*;
 import org.avengers.capstone.hostelrenting.service.*;
 import org.avengers.capstone.hostelrenting.util.BASE64DecodedMultipartFile;
@@ -39,9 +34,7 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.transaction.Transactional;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -164,6 +157,7 @@ public class ContractServiceImpl implements ContractService {
     @Autowired
     public void setModelMapper(ModelMapper modelMapper) {
         this.modelMapper = modelMapper;
+        // cannot mapping image -> handle manually
         this.modelMapper.addMappings(skipUpdateFieldsMap);
     }
 
@@ -227,9 +221,6 @@ public class ContractServiceImpl implements ContractService {
         resModel.setContractUrl(contractUrl);
         resModel = contractRepository.save(resModel);
 
-        /* send notification */
-//        handleNotification(resModel);
-
         /* process business after create contract */
         processAfterCreate(resModel);
 
@@ -239,67 +230,21 @@ public class ContractServiceImpl implements ContractService {
     @Override
     public Contract updateInactiveContract(Contract exModel, ContractDTOUpdate reqDTO) {
         // Only update INACTIVE contract
+        //TODO: only update image with ACCEPTED. Update full info with INACTIVE
         if (!exModel.getStatus().equals(Contract.STATUS.INACTIVE) && !exModel.getStatus().equals(Contract.STATUS.ACCEPTED)) {
             throw new GenericException(Contract.class, "only update with INACTIVE contract", "contractId", String.valueOf(exModel.getContractId()), "status", exModel.getStatus().toString());
         }
 
-        // update room information
-        Integer roomId = reqDTO.getRoomId();
-        if (roomId != null) {
-            if (!roomRepository.IsExistByVendorIdAndRoomId(exModel.getVendor().getUserId(), reqDTO.getRoomId()))
-                throw new GenericException(Room.class, "is not valid with id",
-                        "roomId", String.valueOf(reqDTO.getRoomId()));
-            // make the old room available
-            roomService.updateStatus(exModel.getRoom().getRoomId(), true);
-            // lock the new room
-            reqDTO.setRoom(roomService.findById(roomId));
-            roomService.updateStatus(roomId, false);
-        } else {
-            roomId = exModel.getRoom().getRoomId();
-        }
-        int groupId = groupRepository.getGroupIdByRoomId(roomId);
-
-        // update images
-        if (reqDTO.getContractImages() != null) {
-            Collection<ContractImage> deletedItems = exModel.getContractImages();
-            deletedItems.removeAll(reqDTO.getContractImages()
-                    .stream()
-                    .map(contractImageDTOCreate -> {
-                        if (contractImageRepository.findByResourceUrlAndContract_ContractId(contractImageDTOCreate.getResourceUrl(), exModel.getContractId()).isPresent())
-                            return contractImageRepository.findByResourceUrlAndContract_ContractId(contractImageDTOCreate.getResourceUrl(), exModel.getContractId()).get();
-                        return null;
-                    }).collect(Collectors.toList()));
-
-            for (ContractImage deletedItem : deletedItems) {
-                deletedItem.setDeleted(true);
-            }
-
-            Collection<ContractImage> newItems = reqDTO.getContractImages()
-                    .stream()
-                    .map(contractImageDTOCreate -> {
-                        Optional<ContractImage> exImg = contractImageRepository.findByResourceUrlAndContract_ContractId(contractImageDTOCreate.getResourceUrl(), exModel.getContractId());
-                        if (exImg.isEmpty()) {
-                            ContractImage img = modelMapper.map(contractImageDTOCreate, ContractImage.class);
-                            img.setContract(exModel);
-                            return img;
-                        } else {
-                            exImg.get().setDeleted(contractImageDTOCreate.isDeleted());
-                            exImg.get().setReserved(contractImageDTOCreate.isReserved());
-                            return exImg.get();
-                        }
-                    }).collect(Collectors.toList());
-            exModel.getContractImages().addAll(newItems);
+        if (checkStatuses(exModel, Contract.STATUS.INACTIVE)) {
+            updateContractBasicInfo(exModel, reqDTO);
+            modelMapper.map(reqDTO, exModel);
         }
 
-        modelMapper.map(reqDTO, exModel);
-
-
-        // handle with corresponding kind of contract
-        if (exModel.isReserved()) {
-            handleUpdateReversed(exModel);
-        } else {
-            handleUpdateNormalContract(exModel, reqDTO, groupId);
+        if (checkStatuses(exModel, Contract.STATUS.ACCEPTED, Contract.STATUS.INACTIVE)) {
+            updateContractImages(exModel, reqDTO);
         }
+
+
         Contract resModel = contractRepository.save(exModel);
 
         return fillInContractObject(resModel);
@@ -325,6 +270,8 @@ public class ContractServiceImpl implements ContractService {
             }// change to RESERVED only from ACCEPTED
             else if (reqDTO.getStatus().equals(Contract.STATUS.RESERVED) && exStatus.equals(Contract.STATUS.ACCEPTED)) {
                 exModel.setStatus(Contract.STATUS.RESERVED);
+                // start time begin when vendor accept with payment information
+                exModel.setStartTime(System.currentTimeMillis());
             }// change to ACTIVATED only from INACTIVE
             else if (reqDTO.getStatus().equals(Contract.STATUS.ACTIVATED) && (exStatus.equals(Contract.STATUS.INACTIVE) || exStatus.equals(Contract.STATUS.RESERVED))) {
                 exModel.setStatus(Contract.STATUS.ACTIVATED);
@@ -373,6 +320,73 @@ public class ContractServiceImpl implements ContractService {
     }
 
     /* Sub function for handling business */
+
+    private void updateContractImages(Contract exModel, ContractDTOUpdate reqDTO) {
+        // update images
+        if (reqDTO.getContractImages() != null) {
+            Collection<ContractImage> deletedItems = exModel.getContractImages();
+            deletedItems.removeAll(reqDTO.getContractImages()
+                    .stream()
+                    .map(contractImageDTOCreate -> {
+                        if (contractImageRepository.findByResourceUrlAndContract_ContractId(contractImageDTOCreate.getResourceUrl(), exModel.getContractId()).isPresent())
+                            return contractImageRepository.findByResourceUrlAndContract_ContractId(contractImageDTOCreate.getResourceUrl(), exModel.getContractId()).get();
+                        return null;
+                    }).collect(Collectors.toList()));
+
+            for (ContractImage deletedItem : deletedItems) {
+                deletedItem.setDeleted(true);
+            }
+
+            Collection<ContractImage> newItems = reqDTO.getContractImages()
+                    .stream()
+                    .map(contractImageDTOCreate -> {
+                        Optional<ContractImage> exImg = contractImageRepository.findByResourceUrlAndContract_ContractId(contractImageDTOCreate.getResourceUrl(), exModel.getContractId());
+                        if (exImg.isEmpty()) {
+                            ContractImage img = modelMapper.map(contractImageDTOCreate, ContractImage.class);
+                            img.setContract(exModel);
+                            return img;
+                        } else {
+                            exImg.get().setDeleted(contractImageDTOCreate.isDeleted());
+                            exImg.get().setReserved(contractImageDTOCreate.isReserved());
+                            return exImg.get();
+                        }
+                    }).collect(Collectors.toList());
+            exModel.getContractImages().addAll(newItems);
+        }
+    }
+
+    private void updateContractBasicInfo(Contract exModel, ContractDTOUpdate reqDTO) {
+        // update room information
+        Integer roomId = reqDTO.getRoomId();
+        if (roomId != null) {
+            if (!roomRepository.IsExistByVendorIdAndRoomId(exModel.getVendor().getUserId(), reqDTO.getRoomId()))
+                throw new GenericException(Room.class, "is not valid with id",
+                        "roomId", String.valueOf(reqDTO.getRoomId()));
+            // make the old room available
+            roomService.updateStatus(exModel.getRoom().getRoomId(), true);
+            // lock the new room
+            reqDTO.setRoom(roomService.findById(roomId));
+            roomService.updateStatus(roomId, false);
+        } else {
+            roomId = exModel.getRoom().getRoomId();
+        }
+        int groupId = groupRepository.getGroupIdByRoomId(roomId);
+
+        //check whether groupService is valid or not
+        if (reqDTO.getGroupServiceIds() != null && !reqDTO.getGroupServiceIds().isEmpty()) {
+            reqDTO.setGroupServices(reqDTO.getGroupServiceIds()
+                    .stream()
+                    .map(idDto -> {
+                        if (groupServiceRepository.IsGroupServiceExistByVendorAndGroup(exModel.getVendor().getUserId(), groupId, idDto.getGroupServiceId()))
+                            return groupServiceService.findById(idDto.getGroupServiceId());
+                        else {
+                            throw new GenericException(GroupService.class, "is not valid with id",
+                                    "groupServiceId", String.valueOf(idDto.getGroupServiceId()));
+                        }
+                    })
+                    .collect(Collectors.toSet()));
+        }
+    }
 
     /**
      * @param model contract model
@@ -560,30 +574,15 @@ public class ContractServiceImpl implements ContractService {
         return model;
     }
 
-    private void handleUpdateReversed(Contract model) {
-        model.setStartTime(model.getCreatedAt());
-    }
-
     private void handleUpdateNormalContract(Contract exModel, ContractDTOUpdate dto, int groupId) {
-        //check whether groupService is valid or not
-        if (dto.getGroupServiceIds() != null && !dto.getGroupServiceIds().isEmpty()) {
-            dto.setGroupServices(dto.getGroupServiceIds()
-                    .stream()
-                    .map(idDto -> {
-                        if (groupServiceRepository.IsGroupServiceExistByVendorAndGroup(exModel.getVendor().getUserId(), groupId, idDto.getGroupServiceId()))
-                            return groupServiceService.findById(idDto.getGroupServiceId());
-                        else {
-                            throw new GenericException(GroupService.class, "is not valid with id",
-                                    "groupServiceId", String.valueOf(idDto.getGroupServiceId()));
-                        }
-                    })
-                    .collect(Collectors.toSet()));
-        }
+
     }
 
-    private void basicValidContract(Contract model, Contract.STATUS status) {
-        if ((model.getStatus() == Contract.STATUS.ACTIVATED && !status.equals(Contract.STATUS.CANCELLED)) || model.getStatus().equals(Contract.STATUS.CANCELLED)) {
-            throw new GenericException(Contract.class, "cannot be updated", "contractId", String.valueOf(model.getContractId()), "status", model.getStatus().toString());
+    private boolean checkStatuses(Contract model, Contract.STATUS... statuses) {
+        for (Contract.STATUS status : statuses) {
+            if (model.getStatus().equals(status))
+                return true;
         }
+        return false;
     }
 }
