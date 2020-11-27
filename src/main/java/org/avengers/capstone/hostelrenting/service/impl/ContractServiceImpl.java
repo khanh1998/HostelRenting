@@ -220,20 +220,25 @@ public class ContractServiceImpl implements ContractService {
     public Contract updateInactiveContract(Contract exModel, ContractDTOUpdate reqDTO) {
         // Only update INACTIVE contract
         //TODO: only update image with ACCEPTED. Update full info with INACTIVE
-        if (!exModel.getStatus().equals(Contract.STATUS.INACTIVE) && !exModel.getStatus().equals(Contract.STATUS.ACCEPTED)) {
-            throw new GenericException(Contract.class, "only update with INACTIVE contract", "contractId", String.valueOf(exModel.getContractId()), "status", exModel.getStatus().toString());
+        if (!includeStatuses(exModel, Contract.STATUS.INACTIVE, Contract.STATUS.ACCEPTED, Contract.STATUS.RESERVED)) {
+            throw new GenericException(Contract.class, "only update with",
+                    "status_1", String.valueOf(Contract.STATUS.INACTIVE),
+                    "status_2", String.valueOf(Contract.STATUS.ACCEPTED),
+                    "status_3", String.valueOf(Contract.STATUS.RESERVED));
         }
 
         // update all basic info with INACTIVE
-        if (checkStatuses(exModel, Contract.STATUS.INACTIVE)) {
+        if (includeStatuses(exModel, Contract.STATUS.INACTIVE)) {
             updateContractBasicInfo(exModel, reqDTO);
             modelMapper.map(reqDTO, exModel);
         }
 
         //update payment image info and isPaid
-        if (checkStatuses(exModel, Contract.STATUS.ACCEPTED, Contract.STATUS.INACTIVE, Contract.STATUS.RESERVED)) {
+        if (includeStatuses(exModel, Contract.STATUS.ACCEPTED, Contract.STATUS.INACTIVE, Contract.STATUS.RESERVED)) {
             updateContractImages(exModel, reqDTO);
             exModel.setPaid(reqDTO.isPaid());
+            exModel.setUpdatedAt(reqDTO.getUpdatedAt());
+            exModel.setStartTime(reqDTO.getStartTime());
         }
 
         Contract resModel = contractRepository.save(exModel);
@@ -561,7 +566,7 @@ public class ContractServiceImpl implements ContractService {
         return model;
     }
 
-    private boolean checkStatuses(Contract model, Contract.STATUS... statuses) {
+    private boolean includeStatuses(Contract model, Contract.STATUS... statuses) {
         for (Contract.STATUS status : statuses) {
             if (model.getStatus().equals(status))
                 return true;
