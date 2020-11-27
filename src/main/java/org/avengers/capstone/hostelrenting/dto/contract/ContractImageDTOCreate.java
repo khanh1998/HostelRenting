@@ -2,8 +2,11 @@ package org.avengers.capstone.hostelrenting.dto.contract;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.Setter;
 import org.avengers.capstone.hostelrenting.dto.image.ImageDTOCreate;
+import org.avengers.capstone.hostelrenting.exception.GenericException;
+import org.avengers.capstone.hostelrenting.model.Contract;
 import org.avengers.capstone.hostelrenting.model.ContractImage;
 
 import javax.validation.constraints.NotNull;
@@ -16,7 +19,7 @@ import javax.validation.constraints.NotNull;
 public class ContractImageDTOCreate extends ImageDTOCreate {
     @Getter
     @Setter
-    @NotNull(message = "Type of image is mandatory")
+    @NotNull(message = "Type of contract image is mandatory")
     private ContractImage.TYPE type;
 
     @Override

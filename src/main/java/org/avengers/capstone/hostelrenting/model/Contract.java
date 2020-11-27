@@ -4,6 +4,9 @@ package org.avengers.capstone.hostelrenting.model;
 import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.Size;
 import java.util.Collection;
 import java.util.UUID;
 
@@ -55,7 +58,6 @@ public class Contract {
     @OneToMany(mappedBy = "contract", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Collection<ContractImage> contractImages;
 
-
     @Column(nullable = false)
     private Integer duration;
 
@@ -79,6 +81,11 @@ public class Contract {
     private UUID qrCode;
 
     private String contractUrl;
+
+    @Column(nullable = false)
+    @Min(1)
+    @Max(31)
+    private Integer paymentDayInMonth;
 
     @Column(columnDefinition = "varchar(15) default 'INACTIVE'")
     @Enumerated(EnumType.STRING)

@@ -45,6 +45,10 @@ public class ContractDTOUpdate implements Serializable {
     @Getter @Setter
     private Integer duration;
 
+    @Getter
+    @Setter
+    private Integer paymentDayInMonth;
+
     @JsonIgnore
     @Getter
     private Long updatedAt;

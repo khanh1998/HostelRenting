@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 import org.avengers.capstone.hostelrenting.model.Contract;
+import org.springframework.lang.NonNull;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.NotNull;
@@ -101,4 +102,9 @@ public class ContractDTOCreate {
     @Getter
     @Setter
     private Float downPayment;
+
+    @Getter
+    @Setter
+    @NotNull(message = "Payment day in month is mandatory")
+    private Integer paymentDayInMonth;
 }

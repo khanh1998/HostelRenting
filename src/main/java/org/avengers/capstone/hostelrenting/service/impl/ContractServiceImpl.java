@@ -36,6 +36,8 @@ import javax.transaction.Transactional;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -500,11 +502,46 @@ public class ContractServiceImpl implements ContractService {
 
         contractInfo.put(Constant.Contract.DURATION, String.valueOf(model.getDuration()));
         Calendar calendar = Calendar.getInstance();
+        // get current time (miliseconds)
+        calendar.getTimeInMillis();
+        contractInfo.put(Constant.Contract.CURRENT_DAY, String.valueOf(calendar.get(Calendar.DAY_OF_MONTH)));
+        contractInfo.put(Constant.Contract.CURRENT_MONTH, String.valueOf(calendar.get(Calendar.MONTH) + 1));
+        contractInfo.put(Constant.Contract.CURRENT_YEAR, String.valueOf(calendar.get(Calendar.YEAR)));
+
+        // get start time in contract (miliseconds)
         calendar.setTimeInMillis(model.getStartTime());
         contractInfo.put(Constant.Contract.START_DAY, String.valueOf(calendar.get(Calendar.DAY_OF_MONTH)));
         contractInfo.put(Constant.Contract.START_MONTH, String.valueOf(calendar.get(Calendar.MONTH) + 1));
         contractInfo.put(Constant.Contract.START_YEAR, String.valueOf(calendar.get(Calendar.YEAR)));
 
+        // end time of contract
+        calendar.add(Calendar.MONTH, model.getDuration());
+        contractInfo.put(Constant.Contract.END_DAY, String.valueOf(calendar.get(Calendar.DAY_OF_MONTH)));
+        contractInfo.put(Constant.Contract.END_MONTH, String.valueOf(calendar.get(Calendar.MONTH) + 1));
+        contractInfo.put(Constant.Contract.END_YEAR, String.valueOf(calendar.get(Calendar.YEAR)));
+
+        // room number
+        contractInfo.put(Constant.Contract.ROOM_NUMBER, model.getRoom().getRoomName());
+
+        // superficiality
+        contractInfo.put(Constant.Contract.GROUP_SUPERFICIALITY, String.valueOf(model.getRoom().getType().getSuperficiality()));
+
+        // type deposit
+        NumberFormat nf = NumberFormat.getNumberInstance();
+        nf.setMaximumFractionDigits(0);
+        contractInfo.put(Constant.Contract.TYPE_DEPOSIT, nf.format(model.getRoom().getType().getDeposit() * model.getRoom().getType().getPrice() * 1000000));
+
+        // renting price
+        contractInfo.put(Constant.Contract.RENTING_PRICE, nf.format(model.getRoom().getType().getPrice() * 1000000));
+
+        // appendix contract
+        contractInfo.put(Constant.Contract.APPENDIX_CONTRACT, model.getAppendixContract());
+
+        // appendix contract
+        contractInfo.put(Constant.Contract.PAYMENT_DAY_IN_MONTH, String.valueOf(model.getPaymentDayInMonth()));
+
+
+        // Get full address
         Group group = model.getRoom().getType().getGroup();
         String buildingNo = group.getBuildingNo();
         String streetName = group.getAddress().getStreetName();

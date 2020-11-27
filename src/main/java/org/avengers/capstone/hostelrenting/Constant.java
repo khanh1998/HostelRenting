@@ -73,6 +73,24 @@ public class Constant {
         public final static String START_MONTH = "contractStartMonth";
         public final static String START_YEAR = "contractStartYear";
 
+        public final static String END_DAY = "contractEndDay";
+        public final static String END_MONTH = "contractEndMonth";
+        public final static String END_YEAR = "contractEndYear";
+
+        public final static String CURRENT_DAY = "currentDay";
+        public final static String CURRENT_MONTH = "currentMonth";
+        public final static String CURRENT_YEAR = "currentYear";
+
+        public final static String ROOM_NUMBER = "roomNumber";
+        public final static String GROUP_SUPERFICIALITY = "groupSuperficiality";
+        public final static String RENTING_PRICE = "rentingPrice";
+        public final static String TYPE_DEPOSIT = "typeDeposit";
+
+        public final static String APPENDIX_CONTRACT = "appendixContract";
+        public final static String PAYMENT_DAY_IN_MONTH = "paymentDayInMonth";
+
+
+
         /* GROUP INFORMATION */
         public final static String ADDRESS = "groupAddress";
 
@@ -93,17 +111,17 @@ public class Constant {
     }
 
     public static class Mail {
-        public final static String MAIL_SMTP_AUTH="mail.smtp.auth";
-        public final static String MAIL_SMTP_STARTTLS_ENABLE="mail.smtp.starttls.enable";
-        public final static String MAIL_SMTP_HOST="mail.smtp.host";
-        public final static String MAIL_SMTP_PORT="mail.smtp.port";
-        public final static String MAIL_SMTP_DEBUG="mail.smtp.debug";
-        public final static String MAIL_SMTP_SOCKET_FACTORY_PORT="mail.smtp.socketFactory.port";
-        public final static String MAIL_SMTP_SOCKET_FACTORY_CLASS="mail.smtp.socketFactory.class";
-        public final static String MAIL_SMTP_SOCKET_FACTORY_FALLBACK="mail.smtp.socketFactory.fallback";
+        public final static String MAIL_SMTP_AUTH = "mail.smtp.auth";
+        public final static String MAIL_SMTP_STARTTLS_ENABLE = "mail.smtp.starttls.enable";
+        public final static String MAIL_SMTP_HOST = "mail.smtp.host";
+        public final static String MAIL_SMTP_PORT = "mail.smtp.port";
+        public final static String MAIL_SMTP_DEBUG = "mail.smtp.debug";
+        public final static String MAIL_SMTP_SOCKET_FACTORY_PORT = "mail.smtp.socketFactory.port";
+        public final static String MAIL_SMTP_SOCKET_FACTORY_CLASS = "mail.smtp.socketFactory.class";
+        public final static String MAIL_SMTP_SOCKET_FACTORY_FALLBACK = "mail.smtp.socketFactory.fallback";
     }
 
-    public static class Notification{
+    public static class Notification {
         public final static String ID_FIELD_NAME = "id";
         public final static String BODY_FIELD_NAME = "body";
         public final static String CLICK_ACTION_FIELD_NAME = "clickAction";
@@ -131,9 +149,9 @@ public class Constant {
         public final static String STATIC_CANCELLED_CONTRACT_MESSAGE = "Hợp đồng bị chấm dứt bởi: ";
     }
 
-    public static class Field{
+    public static class Field {
         public final static String BOOKING_ID = "bookingId";
-        public final static String CONTRACT_ID= "contractId";
+        public final static String CONTRACT_ID = "contractId";
 
     }
 }
