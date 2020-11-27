@@ -90,6 +90,8 @@ public class Contract {
     @Column(name = "updated_at")
     private Long updatedAt;
 
+    private Long lastPayAt;
+
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinTable(name = "group_service_contract",
             joinColumns = @JoinColumn(name = "contract_id"),
