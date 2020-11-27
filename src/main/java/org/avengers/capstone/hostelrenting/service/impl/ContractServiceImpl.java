@@ -230,8 +230,8 @@ public class ContractServiceImpl implements ContractService {
             modelMapper.map(reqDTO, exModel);
         }
 
-        //update only images and isPaid with ACCEPTED
-        if (checkStatuses(exModel, Contract.STATUS.ACCEPTED, Contract.STATUS.INACTIVE)) {
+        //update payment image info and isPaid
+        if (checkStatuses(exModel, Contract.STATUS.ACCEPTED, Contract.STATUS.INACTIVE, Contract.STATUS.RESERVED)) {
             updateContractImages(exModel, reqDTO);
             exModel.setPaid(reqDTO.isPaid());
         }
