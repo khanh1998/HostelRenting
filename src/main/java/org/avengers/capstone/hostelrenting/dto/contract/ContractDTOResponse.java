@@ -51,4 +51,5 @@ public class ContractDTOResponse {
 
     private Long createdAt;
     private Long updatedAt;
+    private Long lastPayAt;
 }

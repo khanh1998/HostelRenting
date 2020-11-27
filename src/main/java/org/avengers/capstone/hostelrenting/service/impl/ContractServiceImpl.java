@@ -236,9 +236,12 @@ public class ContractServiceImpl implements ContractService {
         //update payment image info and isPaid
         if (includeStatuses(exModel, Contract.STATUS.ACCEPTED, Contract.STATUS.INACTIVE, Contract.STATUS.RESERVED)) {
             updateContractImages(exModel, reqDTO);
-            exModel.setPaid(reqDTO.isPaid());
+            // if isPaid -> update isPaid and lastPayAt
+            if (reqDTO.isPaid()) {
+                exModel.setPaid(reqDTO.isPaid());
+                exModel.setLastPayAt(reqDTO.getUpdatedAt());
+            }
             exModel.setUpdatedAt(reqDTO.getUpdatedAt());
-            exModel.setStartTime(reqDTO.getStartTime());
         }
 
         Contract resModel = contractRepository.save(exModel);
@@ -266,7 +269,7 @@ public class ContractServiceImpl implements ContractService {
             }// change to RESERVED only from ACCEPTED
             else if (reqDTO.getStatus().equals(Contract.STATUS.RESERVED) && exStatus.equals(Contract.STATUS.ACCEPTED)) {
                 exModel.setStatus(Contract.STATUS.RESERVED);
-                // isPaid false for reusing when do the rest payment
+                // isPaid false for reuse when do the rest payment
                 exModel.setPaid(false);
                 // start time begin when vendor accept with payment information
                 exModel.setStartTime(System.currentTimeMillis());
