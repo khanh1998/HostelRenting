@@ -15,6 +15,7 @@ import org.avengers.capstone.hostelrenting.dto.type.TypeDTOResponseShort;
 import org.avengers.capstone.hostelrenting.dto.vendor.VendorDTOResponseShort;
 import org.avengers.capstone.hostelrenting.model.Contract;
 
+import javax.validation.constraints.NotNull;
 import java.util.Collection;
 import java.util.UUID;
 
@@ -42,6 +43,7 @@ public class ContractDTOResponse {
     private float downPayment;
     private Integer duration;
     private String contractUrl;
+    private Integer paymentDayInMonth;
     private UUID qrCode;
     private Contract.STATUS status;
     @JsonProperty(value = "agreementServices")

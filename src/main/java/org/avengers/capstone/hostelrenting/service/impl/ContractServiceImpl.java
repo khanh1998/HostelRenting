@@ -36,6 +36,8 @@ import javax.transaction.Transactional;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -258,36 +260,38 @@ public class ContractServiceImpl implements ContractService {
         Contract.STATUS exStatus = exModel.getStatus();
 
         if (exModel.getQrCode().equals(reqDTO.getQrCode())) {
-            modelMapper.map(reqDTO, exModel);
-
             /* set status based on isReserved */
             // change to CANCELLED from all status
             if (reqDTO.getStatus().equals(Contract.STATUS.CANCELLED)) {
                 exModel.setStatus(Contract.STATUS.CANCELLED);
                 // update room status when cancelled
                 roomService.updateStatus(exModel.getRoom().getRoomId(), true);
-            }// change to RESERVED only from ACCEPTED
-            else if (reqDTO.getStatus().equals(Contract.STATUS.RESERVED) && exStatus.equals(Contract.STATUS.ACCEPTED)) {
+            }
+            // change to RESERVED only from ACCEPTED
+            else if (reqDTO.getStatus().equals(Contract.STATUS.RESERVED) && includeStatuses(exModel,Contract.STATUS.ACCEPTED)) {
                 exModel.setStatus(Contract.STATUS.RESERVED);
                 // isPaid false for reuse when do the rest payment
                 exModel.setPaid(false);
                 // start time begin when vendor accept with payment information
                 exModel.setStartTime(System.currentTimeMillis());
-            }// change to ACTIVATED only from INACTIVE
-            else if (reqDTO.getStatus().equals(Contract.STATUS.ACTIVATED) && (exStatus.equals(Contract.STATUS.INACTIVE) || exStatus.equals(Contract.STATUS.RESERVED))) {
+            }
+            // change to ACTIVATED only from INACTIVE
+            else if (reqDTO.getStatus().equals(Contract.STATUS.ACTIVATED) && (includeStatuses(exModel, Contract.STATUS.ACCEPTED, Contract.STATUS.RESERVED))) {
                 exModel.setStatus(Contract.STATUS.ACTIVATED);
                 /* send mail for both renter and vendor when active contract */
                 String contractHtml = generateContractHTML(exModel);
                 sendMailWithEmbed(contractHtml, exModel.getRenter().getEmail());
                 sendMailWithEmbed(contractHtml, exModel.getVendor().getEmail());
 
-            }// change to ACCEPTED only from INACTIVE
-            else if (reqDTO.getStatus().equals(Contract.STATUS.ACCEPTED) && exStatus.equals(Contract.STATUS.INACTIVE)) {
+            }
+            // change to ACCEPTED only from INACTIVE
+            else if (reqDTO.getStatus().equals(Contract.STATUS.ACCEPTED) && includeStatuses(exModel, Contract.STATUS.INACTIVE)) {
                 exModel.setStatus((Contract.STATUS.ACCEPTED));
             } else {
-                throw new GenericException(Contract.class, "Invalid status for updating", "from", String.valueOf(exStatus), "to", String.valueOf(reqDTO.getStatus()));
+                throw new GenericException(Contract.class, "Invalid status for updating", "from", String.valueOf(exModel.getStatus()), "to", String.valueOf(reqDTO.getStatus()));
             }
 
+            modelMapper.map(reqDTO, exModel);
             // change qrCode after confirm success
             //TODO: change after getting qrCode 60s
             exModel.setQrCode(UUID.randomUUID());
@@ -500,11 +504,46 @@ public class ContractServiceImpl implements ContractService {
 
         contractInfo.put(Constant.Contract.DURATION, String.valueOf(model.getDuration()));
         Calendar calendar = Calendar.getInstance();
+        // get current time (miliseconds)
+        calendar.getTimeInMillis();
+        contractInfo.put(Constant.Contract.CURRENT_DAY, String.valueOf(calendar.get(Calendar.DAY_OF_MONTH)));
+        contractInfo.put(Constant.Contract.CURRENT_MONTH, String.valueOf(calendar.get(Calendar.MONTH) + 1));
+        contractInfo.put(Constant.Contract.CURRENT_YEAR, String.valueOf(calendar.get(Calendar.YEAR)));
+
+        // get start time in contract (miliseconds)
         calendar.setTimeInMillis(model.getStartTime());
         contractInfo.put(Constant.Contract.START_DAY, String.valueOf(calendar.get(Calendar.DAY_OF_MONTH)));
         contractInfo.put(Constant.Contract.START_MONTH, String.valueOf(calendar.get(Calendar.MONTH) + 1));
         contractInfo.put(Constant.Contract.START_YEAR, String.valueOf(calendar.get(Calendar.YEAR)));
 
+        // end time of contract
+        calendar.add(Calendar.MONTH, model.getDuration());
+        contractInfo.put(Constant.Contract.END_DAY, String.valueOf(calendar.get(Calendar.DAY_OF_MONTH)));
+        contractInfo.put(Constant.Contract.END_MONTH, String.valueOf(calendar.get(Calendar.MONTH) + 1));
+        contractInfo.put(Constant.Contract.END_YEAR, String.valueOf(calendar.get(Calendar.YEAR)));
+
+        // room number
+        contractInfo.put(Constant.Contract.ROOM_NUMBER, model.getRoom().getRoomName());
+
+        // superficiality
+        contractInfo.put(Constant.Contract.GROUP_SUPERFICIALITY, String.valueOf(model.getRoom().getType().getSuperficiality()));
+
+        // type deposit
+        NumberFormat nf = NumberFormat.getNumberInstance();
+        nf.setMaximumFractionDigits(0);
+        contractInfo.put(Constant.Contract.TYPE_DEPOSIT, nf.format(model.getRoom().getType().getDeposit() * model.getRoom().getType().getPrice() * 1000000));
+
+        // renting price
+        contractInfo.put(Constant.Contract.RENTING_PRICE, nf.format(model.getRoom().getType().getPrice() * 1000000));
+
+        // appendix contract
+        contractInfo.put(Constant.Contract.APPENDIX_CONTRACT, model.getAppendixContract());
+
+        // appendix contract
+        contractInfo.put(Constant.Contract.PAYMENT_DAY_IN_MONTH, String.valueOf(model.getPaymentDayInMonth()));
+
+
+        // Get full address
         Group group = model.getRoom().getType().getGroup();
         String buildingNo = group.getBuildingNo();
         String streetName = group.getAddress().getStreetName();
