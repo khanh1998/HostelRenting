@@ -31,7 +31,7 @@ public class Contract {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int contractId;
 
-    @Column(length = 5000)
+    @Column(length = 6000)
     private String appendixContract;
 
     @ManyToOne

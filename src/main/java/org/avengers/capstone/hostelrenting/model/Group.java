@@ -50,7 +50,7 @@ public class Group {
     /**
      * building number
      */
-    @Column(name = "building_no")
+    @Column(name = "building_no", length = 30)
     private String buildingNo;
 
     /**
@@ -68,11 +68,13 @@ public class Group {
     /**
      * manager name of this group
      */
+    @Column(length = 50)
     private String managerName;
 
     /**
      * manager phone number of this group
      */
+    @Column(length = 15)
     private String managerPhone;
 
     /**
@@ -83,6 +85,7 @@ public class Group {
     /**
      * curfew time range. Ex: 23:00 - 05:00
      */
+    @Column(length = 15)
     private String curfewTime;
 
     /**

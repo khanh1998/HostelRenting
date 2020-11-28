@@ -16,6 +16,7 @@ public class Utility {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int utilityId;
 
+    @Column(length = 100)
     private String name;
 
     private Double longitude;

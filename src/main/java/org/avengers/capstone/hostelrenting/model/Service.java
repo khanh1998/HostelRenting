@@ -19,7 +19,7 @@ public class Service {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer serviceId;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 30)
     private String serviceName;
 
     @Column(columnDefinition = "boolean default false",nullable = false)

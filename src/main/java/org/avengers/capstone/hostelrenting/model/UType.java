@@ -17,6 +17,7 @@ public class UType{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer uTypeId;
 
+    @Column(length = 50)
     private String name;
 
     @ManyToOne
