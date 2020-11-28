@@ -260,36 +260,38 @@ public class ContractServiceImpl implements ContractService {
         Contract.STATUS exStatus = exModel.getStatus();
 
         if (exModel.getQrCode().equals(reqDTO.getQrCode())) {
-            modelMapper.map(reqDTO, exModel);
-
             /* set status based on isReserved */
             // change to CANCELLED from all status
             if (reqDTO.getStatus().equals(Contract.STATUS.CANCELLED)) {
                 exModel.setStatus(Contract.STATUS.CANCELLED);
                 // update room status when cancelled
                 roomService.updateStatus(exModel.getRoom().getRoomId(), true);
-            }// change to RESERVED only from ACCEPTED
-            else if (reqDTO.getStatus().equals(Contract.STATUS.RESERVED) && exStatus.equals(Contract.STATUS.ACCEPTED)) {
+            }
+            // change to RESERVED only from ACCEPTED
+            else if (reqDTO.getStatus().equals(Contract.STATUS.RESERVED) && includeStatuses(exModel,Contract.STATUS.ACCEPTED)) {
                 exModel.setStatus(Contract.STATUS.RESERVED);
                 // isPaid false for reuse when do the rest payment
                 exModel.setPaid(false);
                 // start time begin when vendor accept with payment information
                 exModel.setStartTime(System.currentTimeMillis());
-            }// change to ACTIVATED only from INACTIVE
-            else if (reqDTO.getStatus().equals(Contract.STATUS.ACTIVATED) && (exStatus.equals(Contract.STATUS.INACTIVE) || exStatus.equals(Contract.STATUS.RESERVED))) {
+            }
+            // change to ACTIVATED only from INACTIVE
+            else if (reqDTO.getStatus().equals(Contract.STATUS.ACTIVATED) && (includeStatuses(exModel, Contract.STATUS.ACCEPTED, Contract.STATUS.RESERVED))) {
                 exModel.setStatus(Contract.STATUS.ACTIVATED);
                 /* send mail for both renter and vendor when active contract */
                 String contractHtml = generateContractHTML(exModel);
                 sendMailWithEmbed(contractHtml, exModel.getRenter().getEmail());
                 sendMailWithEmbed(contractHtml, exModel.getVendor().getEmail());
 
-            }// change to ACCEPTED only from INACTIVE
-            else if (reqDTO.getStatus().equals(Contract.STATUS.ACCEPTED) && exStatus.equals(Contract.STATUS.INACTIVE)) {
+            }
+            // change to ACCEPTED only from INACTIVE
+            else if (reqDTO.getStatus().equals(Contract.STATUS.ACCEPTED) && includeStatuses(exModel, Contract.STATUS.INACTIVE)) {
                 exModel.setStatus((Contract.STATUS.ACCEPTED));
             } else {
-                throw new GenericException(Contract.class, "Invalid status for updating", "from", String.valueOf(exStatus), "to", String.valueOf(reqDTO.getStatus()));
+                throw new GenericException(Contract.class, "Invalid status for updating", "from", String.valueOf(exModel.getStatus()), "to", String.valueOf(reqDTO.getStatus()));
             }
 
+            modelMapper.map(reqDTO, exModel);
             // change qrCode after confirm success
             //TODO: change after getting qrCode 60s
             exModel.setQrCode(UUID.randomUUID());
