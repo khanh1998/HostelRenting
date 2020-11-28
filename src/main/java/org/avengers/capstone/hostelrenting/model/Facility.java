@@ -19,7 +19,7 @@ public class Facility {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int facilityId;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false, unique = true, length = 30)
     @NotBlank(message = "Facility name is mandatory")
     private String facilityName;
 

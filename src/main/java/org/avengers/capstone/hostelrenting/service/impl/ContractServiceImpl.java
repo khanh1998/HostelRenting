@@ -222,7 +222,7 @@ public class ContractServiceImpl implements ContractService {
     public Contract updateInactiveContract(Contract exModel, ContractDTOUpdate reqDTO) {
         // Only update INACTIVE contract
         //TODO: only update image with ACCEPTED. Update full info with INACTIVE
-        if (!includeStatuses(exModel, Contract.STATUS.INACTIVE, Contract.STATUS.ACCEPTED, Contract.STATUS.RESERVED)) {
+        if (!includeStatuses(exModel, Contract.STATUS.INACTIVE, Contract.STATUS.ACCEPTED, Contract.STATUS.RESERVED, Contract.STATUS.ACTIVATED)) {
             throw new GenericException(Contract.class, "only update with",
                     "status_1", String.valueOf(Contract.STATUS.INACTIVE),
                     "status_2", String.valueOf(Contract.STATUS.ACCEPTED),
@@ -244,6 +244,10 @@ public class ContractServiceImpl implements ContractService {
                 exModel.setLastPayAt(reqDTO.getUpdatedAt());
             }
             exModel.setUpdatedAt(reqDTO.getUpdatedAt());
+        }
+
+        if (includeStatuses(exModel, Contract.STATUS.ACTIVATED)){
+            exModel.setResign(reqDTO.isPaid());
         }
 
         Contract resModel = contractRepository.save(exModel);

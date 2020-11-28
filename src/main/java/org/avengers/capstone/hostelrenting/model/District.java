@@ -21,7 +21,7 @@ public class District {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int districtId;
 
-    @Column(name = "district_name", nullable = false)
+    @Column(name = "district_name", nullable = false, length = 50)
     @NotBlank(message = "District name is mandatory")
     private String districtName;
 

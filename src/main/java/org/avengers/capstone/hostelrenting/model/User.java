@@ -17,7 +17,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 50)
     private String username;
 
     private String password;
@@ -25,7 +25,7 @@ public class User {
     @Column(unique = true)
     private String email;
 
-    @Column(unique = true)
+    @Column(unique = true, length = 10)
     private String phone;
 
     private String avatar;
@@ -34,14 +34,18 @@ public class User {
 
     private Integer yearOfBirth;
 
+    @Column(length = 100)
     private String idIssuedLocation;
 
     private Long idIssuedDate;
 
+    @Column(length = 150)
     private String householdAddress;
 
+    @Column(length = 150)
     private String currentAddress;
 
+    @Column(length = 30)
     private String citizenIdNum;
 
     private String citizenIdFrontImg;

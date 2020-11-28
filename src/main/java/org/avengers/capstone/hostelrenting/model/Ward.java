@@ -23,7 +23,7 @@ public class Ward {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int wardId;
 
-    @Column(name = "ward_name", nullable = false)
+    @Column(name = "ward_name", nullable = false, length = 50)
     @NotBlank(message = "Ward name is mandatory")
     private String wardName;
 

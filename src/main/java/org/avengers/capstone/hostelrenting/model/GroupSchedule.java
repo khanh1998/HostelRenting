@@ -26,11 +26,11 @@ public class GroupSchedule {
     @JoinColumn(name = "group_id", nullable = false)
     private Group group;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 5)
     @NotBlank(message = "Start time is mandatory")
     private String startTime;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 5)
     @NotBlank(message = "End time is mandatory")
     private String endTime;
 
