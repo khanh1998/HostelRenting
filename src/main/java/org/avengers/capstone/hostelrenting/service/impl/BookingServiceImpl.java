@@ -108,7 +108,6 @@ public class BookingServiceImpl implements BookingService {
         }
 
         Booking resModel = bookingRepository.save(reqModel);
-        sendNotification(resModel, Constant.Notification.NEW_BOOKING, Constant.Notification.STATIC_NEW_BOOKING_MESSAGE);
 
         return resModel;
     }
@@ -123,7 +122,6 @@ public class BookingServiceImpl implements BookingService {
         if (exModel.getQrCode().equals(reqDTO.getQrCode())) {
             modelMapper.map(reqDTO, exModel);
             Booking resModel = bookingRepository.save(exModel);
-            sendNotification(resModel, Constant.Notification.CONFIRM_BOOKING, Constant.Notification.STATIC_CONFIRM_BOOKING_MESSAGE);
             return resModel;
         }
         throw new GenericException(Booking.class, "qrCode not matched", "bookingId", String.valueOf(exModel.getBookingId()), "qrCode", exModel.getQrCode().toString());
@@ -168,37 +166,7 @@ public class BookingServiceImpl implements BookingService {
         });
         return true;
     }
-
-
-    /**
-     * sending notification after handling
-     *
-     * @param model for sending notification
-     */
-    private void sendNotification(Booking model, String action, String staticMsg) {
-        String pattern = "dd/MM/yyyy hh:mm:ss";
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
-        String timestamp = simpleDateFormat.format(new Date());
-
-        NotificationContent content = NotificationContent.builder()
-                .id(String.valueOf(model.getBookingId()))
-                .action(action)
-                .title(staticMsg + model.getRenter().getUsername())
-                .body(timestamp)
-                .icon(model.getRenter().getAvatar())
-                .clickAction("")
-                .build();
-
-        ObjectMapper objMapper = new ObjectMapper();
-        Map<String, String> data = objMapper.convertValue(content, Map.class);
-
-        NotificationRequest notificationRequest = NotificationRequest.builder()
-                .destination(model.getVendor().getFirebaseToken())
-                .data(data)
-                .build();
-
-        firebaseService.sendPnsToDevice(notificationRequest);
-    }
+    
 
     private void handlePreCreate(Booking model) {
         // 1 renter only have 1 incoming booking for 1 type
