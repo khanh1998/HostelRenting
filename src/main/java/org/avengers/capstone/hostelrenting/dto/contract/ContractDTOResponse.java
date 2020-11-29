@@ -39,7 +39,7 @@ public class ContractDTOResponse {
     private long startTime;
     private boolean isReserved;
     private boolean isPaid;
-    private boolean isResign;
+    private Contract.RESIGN resign;
     private float downPayment;
     private Integer duration;
     private String contractUrl;

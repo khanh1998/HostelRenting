@@ -57,6 +57,10 @@ public class ContractDTOUpdate implements Serializable {
     @Setter
     private boolean isPaid;
 
+    @Getter
+    @Setter
+    private Contract.RESIGN resign;
+
     @Getter @Setter
     @JsonProperty(value = "groupServiceIds")
     private Set<GroupServiceDTOForContract> groupServiceIds;

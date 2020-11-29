@@ -26,6 +26,7 @@ import java.util.UUID;
 public class Contract {
 
     public enum STATUS{EXPIRED, ACTIVATED, INACTIVE, RESERVED, CANCELLED, ACCEPTED}
+    public enum RESIGN{REQUEST, AGREE, REJECT}
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -75,8 +76,9 @@ public class Contract {
     @Column(columnDefinition = "boolean default false", nullable = false)
     private boolean isPaid;
 
-    @Column(columnDefinition = "boolean default false", nullable = false)
-    private boolean isResign;
+    @Enumerated(EnumType.STRING)
+    @Column(length = 15)
+    private Contract.RESIGN resign;
 
     private UUID qrCode;
 

@@ -96,11 +96,6 @@ public class ContractDTOCreate {
 
     @Getter
     @Setter
-    @JsonIgnore
-    private boolean isResign;
-
-    @Getter
-    @Setter
     private Float downPayment;
 
     @Getter
