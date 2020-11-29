@@ -247,7 +247,7 @@ public class ContractServiceImpl implements ContractService {
         }
 
         if (includeStatuses(exModel, Contract.STATUS.ACTIVATED)){
-            exModel.setResign(reqDTO.isPaid());
+            exModel.setResign(reqDTO.getResign());
         }
 
         Contract resModel = contractRepository.save(exModel);
