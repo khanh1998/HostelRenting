@@ -12,6 +12,7 @@ import javax.validation.constraints.NotBlank;
 
 @MappedSuperclass
 public class User {
+    public enum ROLE{RENTER, VENDOR}
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -52,9 +53,8 @@ public class User {
 
     private String citizenIdBackImg;
 
-    @ManyToOne
-    @JoinColumn(name = "role_id", nullable = false)
-    private Role role;
+    @Transient
+    private ROLE role;
 
     @Column(columnDefinition = "boolean default false", nullable = false)
     private boolean isBlocked;

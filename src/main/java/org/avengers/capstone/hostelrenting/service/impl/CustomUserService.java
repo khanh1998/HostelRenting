@@ -47,10 +47,14 @@ public class CustomUserService implements UserDetailsService {
     public org.avengers.capstone.hostelrenting.model.User findByPhone(String phone){
         Optional<Vendor> existedVendor = vendorRepository.findByPhone(phone);
         Optional<Renter> existedRenter = renterRepository.findByPhone(phone);
-        if (existedRenter.isPresent())
+        if (existedRenter.isPresent()) {
+            existedRenter.get().setRole(org.avengers.capstone.hostelrenting.model.User.ROLE.RENTER);
             return existedRenter.get();
-        else if (existedVendor.isPresent())
+        }
+        else if (existedVendor.isPresent()){
+            existedVendor.get().setRole(org.avengers.capstone.hostelrenting.model.User.ROLE.VENDOR);
             return existedVendor.get();
+        }
         return null;
     }
 }

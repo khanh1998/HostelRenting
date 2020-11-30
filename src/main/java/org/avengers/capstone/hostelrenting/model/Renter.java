@@ -34,4 +34,9 @@ public class Renter extends User{
 
     @OneToMany(mappedBy = "renter", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<HostelRequest> requests;
+
+    @Override
+    public ROLE getRole() {
+        return ROLE.RENTER;
+    }
 }
