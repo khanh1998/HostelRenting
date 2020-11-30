@@ -73,10 +73,10 @@ public class ScheduledTasks {
 //    @Scheduled(cron = "0 0 0 * * ?")
     @Scheduled(cron = "*/5 * * ? * *")
     public void cleanUp() {
-//        cleanUpExpiredDeals();
-//        cleanUpExpiredBookings();
+        cleanUpExpiredDeals();
+        cleanUpExpiredBookings();
         cleanUpExpiredContracts();
-//        cleanUpExpiredRequests();
+        cleanUpExpiredRequests();
     }
 
     /**
