@@ -243,13 +243,14 @@ public class ContractServiceImpl implements ContractService {
                 exModel.setPaid(reqDTO.isPaid());
                 exModel.setLastPayAt(reqDTO.getUpdatedAt());
             }
-            exModel.setUpdatedAt(reqDTO.getUpdatedAt());
         }
 
         if (includeStatuses(exModel, Contract.STATUS.ACTIVATED)){
             exModel.setResign(reqDTO.getResign());
         }
 
+        // common update for all cases
+        exModel.setUpdatedAt(reqDTO.getUpdatedAt());
         Contract resModel = contractRepository.save(exModel);
 
         return fillInContractObject(resModel);
