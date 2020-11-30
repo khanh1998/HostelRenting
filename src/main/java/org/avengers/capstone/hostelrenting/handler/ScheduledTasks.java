@@ -42,8 +42,8 @@ public class ScheduledTasks {
     @Value("${contract.inactive.expiring.day}")
     private String inactiveContractExpiringDay;
 
-    @Value("${deal.delete.day}")
-    private String dealDeleteDay;
+//    @Value("${deal.delete.day}")
+//    private String dealDeleteDay;
 
 
 
