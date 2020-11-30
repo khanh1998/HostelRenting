@@ -1,6 +1,6 @@
 package org.avengers.capstone.hostelrenting.service;
 
-import org.avengers.capstone.hostelrenting.dto.deal.DealDTOShort;
+import org.avengers.capstone.hostelrenting.dto.deal.DealDTOCreate;
 import org.avengers.capstone.hostelrenting.model.Deal;
 
 import java.util.List;
@@ -8,8 +8,8 @@ import java.util.List;
 public interface DealService {
     void checkActive(Integer id);
     Deal findById(Integer id);
-    Deal create(DealDTOShort reqDTO);
-    Deal update(DealDTOShort reqDTO);
+    Deal create(DealDTOCreate reqDTO);
+    Deal update(DealDTOCreate reqDTO);
     List<Deal> findByRenterId(Long renterId);
     List<Deal> findByVendorId(Long vendorId);
 

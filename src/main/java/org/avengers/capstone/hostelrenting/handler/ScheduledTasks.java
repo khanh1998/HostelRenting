@@ -36,13 +36,19 @@ public class ScheduledTasks {
         this.dealRepository = dealRepository;
     }
 
-    @Scheduled(cron = "0 0 0 * * ?")
-//    @Scheduled(cron = "*/5 * * ? * *")
+    /**
+     * Run scheduled tasks every 00:00 each day
+     */
+//    @Scheduled(cron = "0 0 0 * * ?")
+    @Scheduled(cron = "*/5 * * ? * *")
     public void cleanUp() {
         cleanUpExpiredDeals();
-        cleanUpExpiredRequests();
+//        cleanUpExpiredRequests();
     }
 
+    /**
+     * Clean up all expired deal (deal without reference - STATUS!=DONE & STATUS!=CANCELLED)
+     */
     private void cleanUpExpiredDeals() {
         Collection<Deal> expiredDeals = dealRepository.findExpiredDealsByDayRange(String.valueOf(3));
         if (expiredDeals.isEmpty()) {

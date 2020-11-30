@@ -1,5 +1,6 @@
 package org.avengers.capstone.hostelrenting.dto.group;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import lombok.Getter;
@@ -19,6 +20,7 @@ public class GroupDTOResponseShort {
     private String groupName;
     private String buildingNo;
     @JsonUnwrapped
+    @JsonIgnoreProperties("displayOrder")
     private CategoryDTO category;
     private String imgUrl;
     @JsonProperty("address")
