@@ -8,7 +8,6 @@ import org.avengers.capstone.hostelrenting.dto.user.UserDTOUpdateOnlyToken;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
 import org.avengers.capstone.hostelrenting.model.Renter;
 import org.avengers.capstone.hostelrenting.service.RenterService;
-import org.avengers.capstone.hostelrenting.service.RoleService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -26,17 +25,11 @@ import java.util.stream.Collectors;
 public class RenterController {
     private ModelMapper modelMapper;
     private RenterService renterService;
-    private RoleService roleService;
     private PasswordEncoder passwordEncoder;
 
     @Autowired
     public void setPasswordEncoder(PasswordEncoder passwordEncoder) {
         this.passwordEncoder = passwordEncoder;
-    }
-
-    @Autowired
-    public void setRoleService(RoleService roleService) {
-        this.roleService = roleService;
     }
 
     @Autowired
@@ -55,7 +48,7 @@ public class RenterController {
         Renter reqModel = modelMapper.map(reqDTO, Renter.class);
         // set critical data for model: role, school, province
         reqModel.setPassword(passwordEncoder.encode(reqDTO.getPassword()));
-        reqModel.setRole(roleService.findById(2));
+//        reqModel.setRole(roleService.findById(2));
         Renter createdModel = renterService.create(reqModel);
 
         RenterDTOResponse resDTO = modelMapper.map(createdModel, RenterDTOResponse.class);

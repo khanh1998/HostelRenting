@@ -1,16 +1,15 @@
 package org.avengers.capstone.hostelrenting.controller;
 
 import org.avengers.capstone.hostelrenting.dto.booking.BookingDTOUpdate;
+import org.avengers.capstone.hostelrenting.dto.deal.DealDTOCreate;
 import org.avengers.capstone.hostelrenting.dto.group.GroupDTOResponse;
 import org.avengers.capstone.hostelrenting.dto.booking.BookingDTOResponse;
 import org.avengers.capstone.hostelrenting.dto.booking.BookingDTOCreate;
-import org.avengers.capstone.hostelrenting.dto.deal.DealDTOShort;
 import org.avengers.capstone.hostelrenting.dto.response.ApiSuccess;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
 import org.avengers.capstone.hostelrenting.model.*;
 import org.avengers.capstone.hostelrenting.service.*;
 import org.avengers.capstone.hostelrenting.service.GroupService;
-import org.avengers.capstone.hostelrenting.service.impl.FirebaseService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -173,7 +172,7 @@ public class BookingController {
         resDTOs.forEach(dto -> {
             if (dto.getDeal() != null) {
                 Deal existedDeal = dealService.findById(dto.getDeal().getDealId());
-                dto.setDeal(modelMapper.map(existedDeal, DealDTOShort.class));
+                dto.setDeal(modelMapper.map(existedDeal, DealDTOCreate.class));
             }
         });
     }
@@ -198,7 +197,7 @@ public class BookingController {
     private void getDealForDTO(BookingDTOResponse resDTO) {
         if (resDTO.getDeal() != null) {
             Deal existedDeal = dealService.findById(resDTO.getDeal().getDealId());
-            resDTO.setDeal(modelMapper.map(existedDeal, DealDTOShort.class));
+            resDTO.setDeal(modelMapper.map(existedDeal, DealDTOCreate.class));
         }
     }
 }

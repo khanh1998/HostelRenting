@@ -223,7 +223,7 @@ public class ContractServiceImpl implements ContractService {
         // Only update INACTIVE contract
         //TODO: only update image with ACCEPTED. Update full info with INACTIVE
         if (!includeStatuses(exModel, Contract.STATUS.INACTIVE, Contract.STATUS.ACCEPTED, Contract.STATUS.RESERVED, Contract.STATUS.ACTIVATED)) {
-            throw new GenericException(Contract.class, "only update with",
+            throw new GenericException(Contract.class, "cannot update with {status=" + exModel.getStatus() + "}. Only update with",
                     "status_1", String.valueOf(Contract.STATUS.INACTIVE),
                     "status_2", String.valueOf(Contract.STATUS.ACCEPTED),
                     "status_3", String.valueOf(Contract.STATUS.RESERVED));
@@ -258,8 +258,8 @@ public class ContractServiceImpl implements ContractService {
 
     @Override
     public Contract confirm(Contract exModel, ContractDTOConfirm reqDTO) {
-        /* Unable to update ACTIVATED contract */
-        if ((exModel.getStatus() == Contract.STATUS.ACTIVATED && !reqDTO.getStatus().equals(Contract.STATUS.CANCELLED)) || exModel.getStatus().equals(Contract.STATUS.CANCELLED)) {
+        if ((exModel.getStatus() == Contract.STATUS.ACTIVATED && !reqDTO.getStatus().equals(Contract.STATUS.CANCELLED))
+                || includeStatuses(exModel, Contract.STATUS.CANCELLED, Contract.STATUS.EXPIRED)) {
             throw new GenericException(Contract.class, "status cannot be updated", "contractId", String.valueOf(exModel.getContractId()), "status", exModel.getStatus().toString());
         }
         Contract.STATUS exStatus = exModel.getStatus();

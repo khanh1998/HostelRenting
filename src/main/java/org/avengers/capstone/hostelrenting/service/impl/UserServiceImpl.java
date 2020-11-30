@@ -28,20 +28,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User login(String phone, String password) {
-        Optional<Vendor> existedVendor = vendorRepository.findByPhone(phone);
-        Optional<Renter> existedRenter = renterRepository.findByPhone(phone);
-        if (existedRenter.isPresent()){
-            if (existedRenter.get().getPassword().equals(password))
-                return existedRenter.get();
-        }else if(existedVendor.isPresent()){
-            if (existedVendor.get().getPassword().equals(password))
-                return existedVendor.get();
-        }
-        return null;
-    }
-
-    @Override
     public void checkDuplicatePhone(String phone) {
         // check duplicate phone
         if (renterRepository.countByPhone(phone) > 0 || vendorRepository.countByPhone(phone) > 0){

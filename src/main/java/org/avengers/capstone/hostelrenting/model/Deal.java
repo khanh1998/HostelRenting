@@ -14,7 +14,7 @@ import javax.validation.constraints.NotNull;
 @Entity
 @Table(name = "deal")
 public class Deal {
-    public enum STATUS{CREATED, DONE, CANCELLED}
+    public enum STATUS {CREATED, DONE, CANCELLED}
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,6 +27,8 @@ public class Deal {
     @ManyToOne
     @JoinColumn(name = "type_id", nullable = false)
     private Type type;
+    @Transient
+    private Group group;
 
     @ManyToOne
     @JoinColumn(name = "vendor_id", nullable = false)
@@ -46,4 +48,12 @@ public class Deal {
     @Column(name = "updated_at")
     private Long updatedAt;
 
+    @Column(columnDefinition = "bool default false")
+    private boolean isDeleted;
+
+    public Group getGroup() {
+        if (type != null)
+            return type.getGroup();
+        return null;
+    }
 }

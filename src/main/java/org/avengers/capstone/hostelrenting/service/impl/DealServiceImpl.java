@@ -1,6 +1,7 @@
 package org.avengers.capstone.hostelrenting.service.impl;
 
-import org.avengers.capstone.hostelrenting.dto.deal.DealDTOShort;
+import org.avengers.capstone.hostelrenting.dto.deal.DealDTOCreate;
+import org.avengers.capstone.hostelrenting.dto.deal.DealDTOUpdate;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
 import org.avengers.capstone.hostelrenting.model.Deal;
 import org.avengers.capstone.hostelrenting.model.Type;
@@ -53,6 +54,7 @@ public class DealServiceImpl implements DealService {
 
     /**
      * Check that object with given id is active or not
+     *
      * @param id input id
      */
     @Override
@@ -77,7 +79,7 @@ public class DealServiceImpl implements DealService {
     @Override
     public Deal changeStatus(Integer id, Deal.STATUS status) {
         Optional<Deal> existed = dealRepository.findById(id);
-        if (existed.isPresent() && existed.get().getStatus().equals(Deal.STATUS.CREATED)){
+        if (existed.isPresent() && existed.get().getStatus().equals(Deal.STATUS.CREATED)) {
             existed.get().setStatus(status);
             setUpdatedTime(existed.get());
         }
@@ -85,28 +87,33 @@ public class DealServiceImpl implements DealService {
     }
 
     @Override
-    public Deal create(DealDTOShort reqDTO) {
+    public Deal create(DealDTOCreate reqDTO) {
         Optional<Deal> exDeal = dealRepository.findByRenter_UserIdAndType_TypeIdAndStatusIs(reqDTO.getRenterId(), reqDTO.getTypeId(), Deal.STATUS.CREATED);
-        if (exDeal.isPresent()){
-            exDeal.get().setStatus(Deal.STATUS.CANCELLED);
+        if (exDeal.isPresent()) {
+            DealDTOUpdate updateDTO = modelMapper.map(reqDTO, DealDTOUpdate.class);
+            updateDTO.setDealId(exDeal.get().getDealId());
+            modelMapper.map(updateDTO, exDeal.get());
+//            exDeal.get().setUpdatedAt(System.currentTimeMillis());
             dealRepository.save(exDeal.get());
+        } else {
+            Vendor existedVendor = vendorService.findById(reqDTO.getVendorId());
+            Renter existedRenter = renterService.findById(reqDTO.getRenterId());
+            Type existedType = typeService.findById(reqDTO.getTypeId());
+
+            Deal reqModel = modelMapper.map(reqDTO, Deal.class);
+            reqModel.setVendor(existedVendor);
+            reqModel.setRenter(existedRenter);
+            reqModel.setType(existedType);
+            reqModel.setStatus(Deal.STATUS.CREATED);
+            reqModel.setCreatedAt(System.currentTimeMillis());
+
+            return dealRepository.save(reqModel);
         }
-        Vendor existedVendor = vendorService.findById(reqDTO.getVendorId());
-        Renter existedRenter = renterService.findById(reqDTO.getRenterId());
-        Type existedType = typeService.findById(reqDTO.getTypeId());
-
-        Deal reqModel = modelMapper.map(reqDTO, Deal.class);
-        reqModel.setVendor(existedVendor);
-        reqModel.setRenter(existedRenter);
-        reqModel.setType(existedType);
-        reqModel.setStatus(Deal.STATUS.CREATED);
-        reqModel.setCreatedAt(System.currentTimeMillis());
-
-        return dealRepository.save(reqModel);
+        return exDeal.get();
     }
 
     @Override
-    public Deal update(DealDTOShort reqDTO) {
+    public Deal update(DealDTOCreate reqDTO) {
         checkActive(reqDTO.getDealId());
 
 
@@ -135,7 +142,7 @@ public class DealServiceImpl implements DealService {
         return vendorService.findById(vendorId).getDeals();
     }
 
-    private void setUpdatedTime(Deal exModel){
+    private void setUpdatedTime(Deal exModel) {
         exModel.setUpdatedAt(System.currentTimeMillis());
     }
 }

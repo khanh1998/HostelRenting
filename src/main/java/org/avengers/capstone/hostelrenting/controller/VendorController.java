@@ -9,7 +9,6 @@ import org.avengers.capstone.hostelrenting.dto.vendor.VendorDTOUpdate;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
 import org.avengers.capstone.hostelrenting.model.Renter;
 import org.avengers.capstone.hostelrenting.model.Vendor;
-import org.avengers.capstone.hostelrenting.service.RoleService;
 import org.avengers.capstone.hostelrenting.service.VendorService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,17 +25,11 @@ public class VendorController {
 
     private ModelMapper modelMapper;
     private VendorService vendorService;
-    private RoleService roleService;
     private PasswordEncoder passwordEncoder;
 
     @Autowired
     public void setPasswordEncoder(PasswordEncoder passwordEncoder) {
         this.passwordEncoder = passwordEncoder;
-    }
-
-    @Autowired
-    public void setRoleService(RoleService roleService) {
-        this.roleService = roleService;
     }
 
     @Autowired
@@ -53,7 +46,7 @@ public class VendorController {
     public ResponseEntity<?> create(@Valid @RequestBody VendorDTOCreate reqDTO) throws EntityNotFoundException {
         Vendor rqModel = modelMapper.map(reqDTO, Vendor.class);
         rqModel.setPassword(passwordEncoder.encode(reqDTO.getPassword()));
-        rqModel.setRole(roleService.findById(1));
+//        rqModel.setRole(roleService.findById(1));
         Vendor createdModel = vendorService.create(rqModel);
 
         VendorDTOResponse resDTO = modelMapper.map(createdModel, VendorDTOResponse.class);
