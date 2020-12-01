@@ -191,8 +191,6 @@ public class ContractServiceImpl implements ContractService {
                     "vendorId", String.valueOf(tempContract.get().getVendor().getUserId()),
                     "status", String.valueOf(tempContract.get().getStatus()));
 
-        isResign(reqModel);
-
         int groupId = reqModel.getRoom().getType().getGroup().getGroupId();
         Collection<Integer> reqServiceIds = reqModel.getGroupServices().stream().map(GroupService::getGroupServiceId).collect(Collectors.toList());
         Collection<GroupService> availableServices = groupServiceRepository.findByGroup_GroupIdAndIsActiveIsTrue(groupId);
@@ -412,7 +410,8 @@ public class ContractServiceImpl implements ContractService {
         boolean isViolated = false;
         String errMsg = null;
 
-        /* Violate if room id is not available for create contract */
+        /* Violate if room id is not available for create new contract (differ renter)*/
+        /* Violate if the new contract has startTime invalid (newContractStartTime < oldContractEndTime) */
         checkRoom(reqModel);
 
         /* Violate if any of request services not present in required services */
