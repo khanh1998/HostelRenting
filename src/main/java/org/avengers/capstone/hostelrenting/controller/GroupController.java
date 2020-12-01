@@ -130,12 +130,12 @@ public class GroupController {
             StreetWard address = streetWardService.findByStreetIdAndWardId(streetService.createIfNotExist(street).getStreetId(), reqDTO.getAddressFull().getWardId());
             reqModel.setAddress(address);
             // set manager info
-            if (reqModel.getManagerName() == null) {
-                reqModel.setManagerName(vendor.getUsername());
-            }
-            if (reqModel.getManagerPhone() == null) {
-                reqModel.setManagerPhone(vendor.getPhone());
-            }
+//            if (reqModel.getManagerName() == null) {
+//                reqModel.setManagerName(vendor.getUsername());
+//            }
+//            if (reqModel.getManagerPhone() == null) {
+//                reqModel.setManagerPhone(vendor.getPhone());
+//            }
 
             createRefObj(reqDTO);
 

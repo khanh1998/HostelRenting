@@ -108,4 +108,6 @@ public class Contract {
     )
     private Collection<GroupService> groupServices;
 
+//    @OneToMany(mappedBy = "contract", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+//    private Collection<GroupServiceContract> groupServiceContracts;
 }
