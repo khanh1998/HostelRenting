@@ -179,15 +179,19 @@ public class ContractServiceImpl implements ContractService {
 
     @Override
     public Contract create(Contract reqModel) throws PreCreationException {
-        Optional<Contract> tempContract = contractRepository.findByVendor_UserIdAndRenter_UserIdAndRoom_RoomId(
+        Optional<Contract> tempContract = contractRepository.findByVendor_UserIdAndRenter_UserIdAndRoom_RoomIdAndStatus(
                 reqModel.getVendor().getUserId(),
                 reqModel.getRenter().getUserId(),
-                reqModel.getRoom().getRoomId());
+                reqModel.getRoom().getRoomId(),
+                Contract.STATUS.INACTIVE);
         if (tempContract.isPresent())
             throw new GenericException(Contract.class, "Contract has already with ",
                     "contractId", String.valueOf(tempContract.get().getContractId()),
                     "renterId", String.valueOf(tempContract.get().getRenter().getUserId()),
-                    "vendorId", String.valueOf(tempContract.get().getVendor().getUserId()));
+                    "vendorId", String.valueOf(tempContract.get().getVendor().getUserId()),
+                    "status", String.valueOf(tempContract.get().getStatus()));
+
+        isResign(reqModel);
 
         int groupId = reqModel.getRoom().getType().getGroup().getGroupId();
         Collection<Integer> reqServiceIds = reqModel.getGroupServices().stream().map(GroupService::getGroupServiceId).collect(Collectors.toList());
@@ -220,7 +224,6 @@ public class ContractServiceImpl implements ContractService {
 
     @Override
     public Contract updateInactiveContract(Contract exModel, ContractDTOUpdate reqDTO) {
-        // Only update INACTIVE contract
         //TODO: only update image with ACCEPTED. Update full info with INACTIVE
         if (!includeStatuses(exModel, Contract.STATUS.INACTIVE, Contract.STATUS.ACCEPTED, Contract.STATUS.RESERVED, Contract.STATUS.ACTIVATED)) {
             throw new GenericException(Contract.class, "cannot update with {status=" + exModel.getStatus() + "}. Only update with",
@@ -235,7 +238,7 @@ public class ContractServiceImpl implements ContractService {
             modelMapper.map(reqDTO, exModel);
         }
 
-        //update payment image info and isPaid
+        //update payment image info and isPaid - ACCEPTED, INACTIVE, RESERVED
         if (includeStatuses(exModel, Contract.STATUS.ACCEPTED, Contract.STATUS.INACTIVE, Contract.STATUS.RESERVED)) {
             updateContractImages(exModel, reqDTO);
             // if isPaid -> update isPaid and lastPayAt
@@ -245,7 +248,8 @@ public class ContractServiceImpl implements ContractService {
             }
         }
 
-        if (includeStatuses(exModel, Contract.STATUS.ACTIVATED)){
+        // update resign - ACTIVATED
+        if (includeStatuses(exModel, Contract.STATUS.ACTIVATED)) {
             exModel.setResign(reqDTO.getResign());
         }
 
@@ -273,7 +277,7 @@ public class ContractServiceImpl implements ContractService {
                 roomService.updateStatus(exModel.getRoom().getRoomId(), true);
             }
             // change to RESERVED only from ACCEPTED
-            else if (reqDTO.getStatus().equals(Contract.STATUS.RESERVED) && includeStatuses(exModel,Contract.STATUS.ACCEPTED)) {
+            else if (reqDTO.getStatus().equals(Contract.STATUS.RESERVED) && includeStatuses(exModel, Contract.STATUS.ACCEPTED)) {
                 exModel.setStatus(Contract.STATUS.RESERVED);
                 // isPaid false for reuse when do the rest payment
                 exModel.setPaid(false);
@@ -328,6 +332,7 @@ public class ContractServiceImpl implements ContractService {
         Pageable pageable = PageRequest.of(page - 1, size, sort);
         return contractRepository.findByVendor_UserId(vendorId, pageable).stream().map(this::fillInContractObject).collect(Collectors.toList());
     }
+
 
     /* Sub function for handling business */
 
@@ -399,19 +404,16 @@ public class ContractServiceImpl implements ContractService {
     }
 
     /**
-     * @param model contract model
+     * @param reqModel contract model
      */
-    private void validatePreCreate(Contract model, Collection<Integer> reqServiceIds, Collection<GroupService> availableServices) throws PreCreationException {
-        int groupId = model.getRoom().getType().getGroup().getGroupId();
-        int roomId = model.getRoom().getRoomId();
+    private void validatePreCreate(Contract reqModel, Collection<Integer> reqServiceIds, Collection<GroupService> availableServices) throws PreCreationException {
+        int groupId = reqModel.getRoom().getType().getGroup().getGroupId();
+        int roomId = reqModel.getRoom().getRoomId();
         boolean isViolated = false;
         String errMsg = null;
 
         /* Violate if room id is not available for create contract */
-        if (!roomService.checkAvailableById(roomId)) {
-            errMsg = String.format("Room id={%s} is not available!", roomId);
-            isViolated = true;
-        }
+        checkRoom(reqModel);
 
         /* Violate if any of request services not present in required services */
         Collection<GroupService> requiredViolated = groupServiceRepository.findByGroup_GroupIdAndIsActiveIsTrueAndIsRequiredIsTrueAndGroupServiceIdNotIn(groupId, reqServiceIds);
@@ -436,15 +438,15 @@ public class ContractServiceImpl implements ContractService {
         }
 
         /* Check whether given booking id belong to any contract or not? */
-        if (bookingRepository.findByBookingIdAndContractIdIsNotNull(model.getBookingId()).isPresent()) {
-            errMsg = String.format("Only create 1 contract from 1 booking. Booking {id=%s} has been linked with another contract", model.getBookingId());
+        if (bookingRepository.findByBookingIdAndContractIdIsNotNull(reqModel.getBookingId()).isPresent()) {
+            errMsg = String.format("Only create 1 contract from 1 booking. Booking {id=%s} has been linked with another contract", reqModel.getBookingId());
             isViolated = true;
         }
 
         /* Check whether isReserved and downPayment valid or not */
-        if (model.isReserved()) {
-            if (model.getDownPayment() == null) {
-                throw new GenericException(Contract.class, "down payment is required with reversed", "downPayment", String.valueOf(model.getDownPayment()));
+        if (reqModel.isReserved()) {
+            if (reqModel.getDownPayment() == null) {
+                throw new GenericException(Contract.class, "down payment is required with reversed", "downPayment", String.valueOf(reqModel.getDownPayment()));
             }
         }
 
@@ -619,5 +621,30 @@ public class ContractServiceImpl implements ContractService {
                 return true;
         }
         return false;
+    }
+
+    private void checkRoom(Contract reqModel) {
+        int roomId = reqModel.getRoom().getRoomId();
+        Long startTime = reqModel.getStartTime();
+        Long reqRenterId = reqModel.getRenter().getUserId();
+        Long reqVendorId = reqModel.getVendor().getUserId();
+
+        //find the contract with renterId, roomID and ACTIVATED status
+        Optional<Contract> exContract = contractRepository.findByVendor_UserIdAndRenter_UserIdAndRoom_RoomIdAndStatus(reqVendorId, reqRenterId, roomId, Contract.STATUS.ACTIVATED);
+        if (exContract.isPresent()) {
+            // Calculate the expired time of the ex contract
+            Calendar cal = Calendar.getInstance();
+            cal.setTimeInMillis(exContract.get().getStartTime());
+            cal.add(Calendar.MONTH, exContract.get().getDuration());
+            Long endTime = cal.getTimeInMillis();
+            // case: startTime before endTime
+            if (reqModel.getStartTime()<endTime){
+                throw new GenericException(Contract.class, "has invalid startTime, the old contract has not expired yet",
+                        "Old contract end time", String.valueOf(endTime),
+                        "Your start time", String.valueOf(reqModel.getStartTime()));
+            }
+        }else{
+            throw new GenericException(Room.class, "is not available", "roomId", String.valueOf(roomId));
+        }
     }
 }
