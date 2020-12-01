@@ -26,10 +26,7 @@ public class TypeDTOResponseShort extends TypeDTOResponse {
 
     @Override
     public Collection<ImageDTOResponse> getTypeImages() {
-        if (getTypeImages() != null) {
-            return super.getTypeImages().stream().limit(1).collect(Collectors.toList());
-        }
-        return new ArrayList<>();
+        return super.getTypeImages().stream().limit(1).collect(Collectors.toList());
     }
 
     @Override

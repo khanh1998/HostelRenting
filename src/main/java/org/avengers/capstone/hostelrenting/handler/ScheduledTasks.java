@@ -70,8 +70,8 @@ public class ScheduledTasks {
     /**
      * Run scheduled tasks every 00:00 each day
      */
-//    @Scheduled(cron = "0 0 0 * * ?")
-    @Scheduled(cron = "*/5 * * ? * *")
+    @Scheduled(cron = "0 0 0 * * ?") // execute every 00:00 of day
+//    @Scheduled(cron = "*/5 * * ? * *") // execute every 5 seconds
     public void cleanUp() {
         cleanUpExpiredDeals();
         cleanUpExpiredBookings();
