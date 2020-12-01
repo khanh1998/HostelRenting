@@ -643,7 +643,8 @@ public class ContractServiceImpl implements ContractService {
                         "Your start time", String.valueOf(reqModel.getStartTime()));
             }
         }else{
-            throw new GenericException(Room.class, "is not available", "roomId", String.valueOf(roomId));
+            if (!roomService.checkAvailableById(roomId))
+                throw new GenericException(Room.class, "is not available", "roomId", String.valueOf(roomId));
         }
     }
 }
