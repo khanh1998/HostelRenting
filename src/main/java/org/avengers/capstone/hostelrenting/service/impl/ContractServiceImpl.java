@@ -242,7 +242,7 @@ public class ContractServiceImpl implements ContractService {
             // if isPaid -> update isPaid and lastPayAt
             if (reqDTO.isPaid()) {
                 exModel.setPaid(reqDTO.isPaid());
-                exModel.setLastPayAt(reqDTO.getUpdatedAt());
+                exModel.setLastPayAt(System.currentTimeMillis());
             }
         }
 
@@ -252,7 +252,7 @@ public class ContractServiceImpl implements ContractService {
         }
 
         // common update for all cases
-        exModel.setUpdatedAt(reqDTO.getUpdatedAt());
+//        exModel.setUpdatedAt(reqDTO.getUpdatedAt());
         Contract resModel = contractRepository.save(exModel);
 
         return fillInContractObject(resModel);

@@ -21,7 +21,7 @@ import java.util.Set;
 public class ContractDTOUpdate implements Serializable {
 
     public ContractDTOUpdate() {
-        this.updatedAt = System.currentTimeMillis();
+//        this.updatedAt = System.currentTimeMillis();
     }
     @Getter
     @Setter
@@ -48,10 +48,6 @@ public class ContractDTOUpdate implements Serializable {
     @Getter
     @Setter
     private Integer paymentDayInMonth;
-
-    @JsonIgnore
-    @Getter
-    private Long updatedAt;
 
     @Getter
     @Setter

@@ -2,6 +2,9 @@ package org.avengers.capstone.hostelrenting.model;
 
 
 import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import javax.validation.constraints.Max;
@@ -22,6 +25,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder(toBuilder = true)
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 @Table(name = "contract")
 public class Contract {
 
@@ -94,9 +98,11 @@ public class Contract {
     private Contract.STATUS status;
 
     @Column(name = "created_at", nullable = false, updatable = false)
+    @CreatedDate
     private Long createdAt;
 
     @Column(name = "updated_at")
+    @LastModifiedDate
     private Long updatedAt;
 
     private Long lastPayAt;
