@@ -17,7 +17,6 @@ public class ContractDTOCreate {
         this.qrCode = UUID.randomUUID();
         this.status = Contract.STATUS.INACTIVE;
         this.isPaid = false;
-        this.createdAt = System.currentTimeMillis();
     }
 
     @Getter
@@ -61,10 +60,6 @@ public class ContractDTOCreate {
     @Setter
     @NotNull(message = "Contract duration is mandatory!")
     private Integer duration;
-
-    @JsonIgnore
-    @Getter
-    private final Long createdAt;
 
     @Getter
     @JsonIgnore
