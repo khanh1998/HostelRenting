@@ -46,7 +46,7 @@ public class DealController {
     @PostMapping("/deals")
     public ResponseEntity<?> createDeal(@RequestBody @Valid DealDTOCreate reqDTO) {
         Deal resModel = dealService.create(reqDTO);
-        DealDTOCreate resDTO = modelMapper.map(resModel, DealDTOCreate.class);
+        DealDTOResponse resDTO = modelMapper.map(resModel, DealDTOResponse.class);
 
         // Response entity
         ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTO,
