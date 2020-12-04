@@ -1,4 +1,4 @@
-package org.avengers.capstone.hostelrenting.jwt;
+package org.avengers.capstone.hostelrenting.handler;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;

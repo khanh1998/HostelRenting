@@ -1,7 +1,6 @@
 package org.avengers.capstone.hostelrenting.configuration;
 
-import org.avengers.capstone.hostelrenting.jwt.JwtAuthenticationEntryPoint;
-import org.avengers.capstone.hostelrenting.jwt.FirebaseFilter;
+import org.avengers.capstone.hostelrenting.handler.FirebaseFilter;
 import org.avengers.capstone.hostelrenting.service.impl.CustomUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
