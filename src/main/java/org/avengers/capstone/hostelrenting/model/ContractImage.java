@@ -32,7 +32,7 @@ public class ContractImage {
     @JoinColumn(name = "contract_id", nullable = false)
     private Contract contract;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 20)
     @Enumerated(EnumType.STRING)
     private TYPE type;
 

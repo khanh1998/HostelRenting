@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @RestController
@@ -122,7 +123,7 @@ public class BookingController {
     }
 
     @GetMapping("/renters/{renterId}/bookings")
-    public ResponseEntity<?> getBookingsByRenterId(@PathVariable Long renterId) throws EntityNotFoundException {
+    public ResponseEntity<?> getBookingsByRenterId(@PathVariable UUID renterId) throws EntityNotFoundException {
         String resMsg = "Your booking(s) has been retrieved successfully!";
 
         List<BookingDTOResponse> resDTOs = bookingService.findByRenterId(renterId)
@@ -143,7 +144,7 @@ public class BookingController {
     }
 
     @GetMapping("/vendors/{vendorId}/bookings")
-    public ResponseEntity<?> getBookingsByVendorId(@PathVariable Long vendorId) throws EntityNotFoundException {
+    public ResponseEntity<?> getBookingsByVendorId(@PathVariable UUID vendorId) throws EntityNotFoundException {
         String resMsg = "Your booking(s) has been retrieved successfully!";
 
         List<BookingDTOResponse> resDTOs = bookingService.findByVendorId(vendorId)

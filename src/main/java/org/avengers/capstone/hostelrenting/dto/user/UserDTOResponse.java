@@ -7,12 +7,13 @@ import lombok.ToString;
 import org.avengers.capstone.hostelrenting.model.User;
 
 import java.io.Serializable;
+import java.util.UUID;
 
 @Getter
 @Setter
 
 public class UserDTOResponse implements Serializable {
-    private Long userId;
+    private UUID userId;
     private String username;
     @JsonIgnore
     @ToString.Exclude

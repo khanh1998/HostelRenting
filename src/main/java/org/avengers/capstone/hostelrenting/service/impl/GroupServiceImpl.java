@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -77,7 +78,7 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
-    public Collection<Group> getByVendorId(Long vendorId, int size, int page) {
+    public Collection<Group> getByVendorId(UUID vendorId, int size, int page) {
         Vendor existedModel = vendorService.findById(vendorId);
         return existedModel.getGroups()
                 .stream()

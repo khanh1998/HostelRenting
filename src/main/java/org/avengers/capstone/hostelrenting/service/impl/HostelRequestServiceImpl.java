@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * @author duattt on 11/16/20
@@ -56,7 +57,7 @@ public class HostelRequestServiceImpl implements HostelRequestService {
     }
 
     @Override
-    public Collection<HostelRequest> findByRenterId(Long renterId, int page, int size) {
+    public Collection<HostelRequest> findByRenterId(UUID renterId, int page, int size) {
         renterService.findById(renterId);
         Sort sort = Sort.by("dueTime");
         Pageable pageable = PageRequest.of(page - 1, size, sort);

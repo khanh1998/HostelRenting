@@ -25,6 +25,7 @@ import javax.validation.constraints.NotEmpty;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static org.avengers.capstone.hostelrenting.Constant.Pagination.DEFAULT_PAGE;
@@ -130,12 +131,12 @@ public class GroupController {
             StreetWard address = streetWardService.findByStreetIdAndWardId(streetService.createIfNotExist(street).getStreetId(), reqDTO.getAddressFull().getWardId());
             reqModel.setAddress(address);
             // set manager info
-            if (reqModel.getManagerName() == null) {
-                reqModel.setManagerName(vendor.getUsername());
-            }
-            if (reqModel.getManagerPhone() == null) {
-                reqModel.setManagerPhone(vendor.getPhone());
-            }
+//            if (reqModel.getManagerName() == null) {
+//                reqModel.setManagerName(vendor.getUsername());
+//            }
+//            if (reqModel.getManagerPhone() == null) {
+//                reqModel.setManagerPhone(vendor.getPhone());
+//            }
 
             createRefObj(reqDTO);
 
@@ -269,7 +270,7 @@ public class GroupController {
      * @throws EntityNotFoundException when object is not found
      */
     @GetMapping("/vendors/{vendorId}/groups")
-    public ResponseEntity<?> getGroupsByVendorId(@PathVariable Long vendorId,
+    public ResponseEntity<?> getGroupsByVendorId(@PathVariable UUID vendorId,
                                                  @RequestParam(required = false, defaultValue = DEFAULT_SIZE) Integer size,
                                                  @RequestParam(required = false, defaultValue = DEFAULT_PAGE) Integer page) {
         //log start

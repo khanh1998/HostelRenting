@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import lombok.*;
 
 import java.util.Map;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -12,8 +13,8 @@ import java.util.Map;
 @AllArgsConstructor
 @NoArgsConstructor
 public class NotificationRequest {
-    private Long vendorId;
-    private Long renterId;
+    private UUID vendorId;
+    private UUID renterId;
     private String destination;
     private Map<String, String> data;
 }

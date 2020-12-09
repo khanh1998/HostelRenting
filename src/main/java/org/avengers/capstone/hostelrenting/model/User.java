@@ -1,22 +1,26 @@
 package org.avengers.capstone.hostelrenting.model;
 
 import lombok.*;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import java.util.UUID;
 
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
 
 @MappedSuperclass
 public class User {
     public enum ROLE{RENTER, VENDOR}
 
+    public User() {
+        this.userId = UUID.randomUUID();
+    }
+
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long userId;
+    private UUID userId;
 
     @Column(nullable = false, length = 50)
     private String username;

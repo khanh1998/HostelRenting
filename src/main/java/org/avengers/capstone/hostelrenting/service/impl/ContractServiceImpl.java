@@ -607,10 +607,15 @@ public class ContractServiceImpl implements ContractService {
     private Contract fillInContractObject(Contract model) {
         model.setType(model.getRoom().getType());
         model.setGroup(model.getRoom().getType().getGroup());
-        if (model.getDealId() != null)
-            model.setDeal(dealService.findById(model.getDealId()));
-        if (model.getBookingId() != null)
-            model.setBooking(bookingService.findById(model.getBookingId()));
+        Integer dealId = model.getDealId();
+        Integer bookingId = model.getBookingId();
+        if (dealId != null)
+            model.setDeal(dealService.findById(dealId));
+        if (bookingId != null) {
+            model.setBooking(bookingService.findById(bookingId));
+            if (bookingService.findById(model.getBookingId()).getDealId()!= null)
+                model.setDeal(dealService.findById(bookingService.findById(bookingId).getDealId()));
+        }
         return model;
     }
 
@@ -625,8 +630,8 @@ public class ContractServiceImpl implements ContractService {
     private void checkRoom(Contract reqModel) {
         int roomId = reqModel.getRoom().getRoomId();
         Long startTime = reqModel.getStartTime();
-        Long reqRenterId = reqModel.getRenter().getUserId();
-        Long reqVendorId = reqModel.getVendor().getUserId();
+        UUID reqRenterId = reqModel.getRenter().getUserId();
+        UUID reqVendorId = reqModel.getVendor().getUserId();
 
         //find the contract with renterId, roomID and ACTIVATED status
         Optional<Contract> exContract = contractRepository.findByVendor_UserIdAndRenter_UserIdAndRoom_RoomIdAndStatus(reqVendorId, reqRenterId, roomId, Contract.STATUS.ACTIVATED);
