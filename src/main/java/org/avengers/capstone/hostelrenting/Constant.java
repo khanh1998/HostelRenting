@@ -121,37 +121,7 @@ public class Constant {
         public final static String MAIL_SMTP_SOCKET_FACTORY_FALLBACK = "mail.smtp.socketFactory.fallback";
     }
 
-    public static class Notification {
-        public final static String ID_FIELD_NAME = "id";
-        public final static String BODY_FIELD_NAME = "body";
-        public final static String CLICK_ACTION_FIELD_NAME = "clickAction";
-        public final static String ICON_FIELD_NAME = "icon";
-        public final static String TITLE_FIELD_NAME = "title";
-        public final static String ACTION_FIELD_NAME = "action";
-
-        public final static String NEW_BOOKING = "NEW_BOOKING";
-        public final static String STATIC_NEW_BOOKING_MESSAGE = "Lịch hẹn mới bởi: ";
-        public final static String CONFIRM_BOOKING = "CONFIRM_BOOKING";
-        public final static String STATIC_CONFIRM_BOOKING_MESSAGE = "Lịch hẹn được xác nhận bởi: ";
-        public final static String NEW_CONTRACT = "NEW_CONTRACT";
-        public final static String STATIC_NEW_CONTRACT_MESSAGE = "Hợp đồng (nháp) được tạo bởi: ";
-        public final static String NEW_RESERVED = "NEW_RESERVED";
-        public final static String STATIC_NEW_RESERVED_MESSAGE = "Thông tin cọc (nháp) được tạo bởi: ";
-        public final static String UPDATE_CONTRACT = "UPDATE_CONTRACT";
-        public final static String STATIC_UPDATE_CONTRACT_MESSAGE = "Hợp đồng (nháp) được cập nhật bởi: ";
-        public final static String UPDATE_RESERVED = "UPDATE_RESERVED";
-        public final static String STATIC_UPDATE_RESERVED_MESSAGE = "Thông tin cọc (nháp) được cập nhật bởi: ";
-        public final static String CONFIRM_CONTRACT = "CONFIRM_CONTRACT";
-        public final static String STATIC_CONFIRM_CONTRACT_MESSAGE = "Hợp đồng được kích hoạt bởi: ";
-        public final static String CONFIRM_RESERVED = "CONFIRM_RESERVED";
-        public final static String STATIC_CONFIRM_RESERVED_MESSAGE = "Thông tin cọc được xác nhận bởi: ";
-        public final static String CANCELLED_CONTRACT = "CANCELLED_CONTRACT";
-        public final static String STATIC_CANCELLED_CONTRACT_MESSAGE = "Hợp đồng bị chấm dứt bởi: ";
-    }
-
-    public static class Field {
-        public final static String BOOKING_ID = "bookingId";
-        public final static String CONTRACT_ID = "contractId";
-
+    public static class Format{
+        public final static String DATE_TIME_DEFAULT = "yyyy/MM/dd HH:mm:ss";
     }
 }
