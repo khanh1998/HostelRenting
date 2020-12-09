@@ -27,7 +27,7 @@ public class FeedbackDTOCreate {
 
     @Getter @Setter
     @NotNull(message = "Renter id is mandatory!")
-    private Long renterId;
+    private UUID renterId;
 
     @Getter @Setter
     @NotNull(message = "Type id is mandatory!")

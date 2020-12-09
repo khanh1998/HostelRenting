@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class RenterServiceIml implements RenterService {
@@ -58,7 +59,7 @@ public class RenterServiceIml implements RenterService {
     }
 
     @Override
-    public void checkExist(Long id) {
+    public void checkExist(UUID id) {
         Optional<Renter> model = renterRepository.findById(id);
         if (model.isEmpty())
             throw new EntityNotFoundException(Renter.class, "id", id.toString());
@@ -87,14 +88,14 @@ public class RenterServiceIml implements RenterService {
     }
 
     @Override
-    public Renter findById(Long id) {
+    public Renter findById(UUID id) {
         checkExist(id);
 
         return renterRepository.getOne(id);
     }
 
     @Override
-    public Collection<Renter> findByIds(Collection<Long> ids) {
+    public Collection<Renter> findByIds(Collection<UUID> ids) {
         return renterRepository.findByUserIdIn(ids);
     }
 

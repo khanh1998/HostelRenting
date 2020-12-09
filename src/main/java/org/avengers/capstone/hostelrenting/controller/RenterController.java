@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.Arrays;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @RestController
@@ -58,7 +59,7 @@ public class RenterController {
     }
 
     @PutMapping("/renters/{renterId}")
-    public ResponseEntity<?> updateInfo(@PathVariable Long renterId,
+    public ResponseEntity<?> updateInfo(@PathVariable UUID renterId,
                                     @RequestBody @Valid RenterDTOUpdate reqDTO) throws EntityNotFoundException {
         String resMsg = "Your information has been updated successfully!";
         Renter exModel = renterService.findById(renterId);
@@ -71,7 +72,7 @@ public class RenterController {
     }
 
     @PutMapping("/renters/{renterId}/token")
-    public ResponseEntity<?> updateTokenOnly(@PathVariable Long renterId,
+    public ResponseEntity<?> updateTokenOnly(@PathVariable UUID renterId,
                                     @RequestBody @Valid UserDTOUpdateOnlyToken reqDTO) throws EntityNotFoundException {
         String resMsg = "Your token has been updated successfully!";
         Renter exModel = renterService.findById(renterId);
@@ -84,7 +85,7 @@ public class RenterController {
     }
 
     @GetMapping("/renters/{renterId}")
-    public ResponseEntity<?> getById(@PathVariable Long renterId) throws EntityNotFoundException {
+    public ResponseEntity<?> getById(@PathVariable UUID renterId) throws EntityNotFoundException {
         Renter existedModel = renterService.findById(renterId);
         RenterDTOResponse resDTO = modelMapper.map(existedModel, RenterDTOResponse.class);
 
@@ -94,7 +95,7 @@ public class RenterController {
     }
 
     @GetMapping("/renters")
-    public ResponseEntity<?> getRenterByIds(@RequestParam Long[] renterIds) {
+    public ResponseEntity<?> getRenterByIds(@RequestParam UUID[] renterIds) {
         Set<RenterDTOResponse> resDTOs = renterService.findByIds(Arrays.stream(renterIds).collect(Collectors.toSet())).stream()
                 .map(renter -> modelMapper.map(renter, RenterDTOResponse.class)).collect(Collectors.toSet());
 

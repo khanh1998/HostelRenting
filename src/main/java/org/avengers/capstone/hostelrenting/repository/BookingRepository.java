@@ -8,10 +8,11 @@ import org.springframework.stereotype.Repository;
 import javax.swing.text.html.Option;
 import java.util.Collection;
 import java.util.Optional;
+import java.util.UUID;
 
 @Repository
 public interface BookingRepository extends JpaRepository<Booking, Integer> {
-    Optional<Booking> findFirstByRenter_UserIdAndType_TypeIdAndStatusOrderByCreatedAtDesc(Long renterId, Integer typeId, Booking.STATUS status);
+    Optional<Booking> findFirstByRenter_UserIdAndType_TypeIdAndStatusOrderByCreatedAtDesc(UUID renterId, Integer typeId, Booking.STATUS status);
     Collection<Booking> findByType_TypeIdAndStatusIs(Integer typeId, Booking.STATUS status);
     Optional<Booking> findByBookingIdAndContractIdIsNotNull(Integer bookingId);
 

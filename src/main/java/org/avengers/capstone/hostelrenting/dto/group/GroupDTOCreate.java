@@ -13,6 +13,7 @@ import org.avengers.capstone.hostelrenting.model.serialized.AddressFull;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.List;
+import java.util.UUID;
 
 
 public class GroupDTOCreate implements Serializable {
@@ -36,7 +37,7 @@ public class GroupDTOCreate implements Serializable {
     @NotNull(message = "vendorId is mandatory!")
     @Getter
     @Setter
-    private Long vendorId;
+    private UUID vendorId;
 
     @NotNull(message = "categoryId is mandatory!")
     @Getter

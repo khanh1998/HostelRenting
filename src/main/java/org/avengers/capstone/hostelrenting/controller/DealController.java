@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @RestController
@@ -87,7 +88,7 @@ public class DealController {
     }
 
     @GetMapping("/renters/{renterId}/deals")
-    public ResponseEntity<?> getDealsByRenterId(@PathVariable Long renterId) throws EntityNotFoundException {
+    public ResponseEntity<?> getDealsByRenterId(@PathVariable UUID renterId) throws EntityNotFoundException {
         List<DealDTOResponse> resDeals = dealService.findByRenterId(renterId)
                 .stream()
                 .map(deal -> modelMapper.map(deal, DealDTOResponse.class))
@@ -101,7 +102,7 @@ public class DealController {
     }
 
     @GetMapping("/vendors/{vendorId}/deals")
-    public ResponseEntity<?> getDealsByVendorId(@PathVariable Long vendorId) throws EntityNotFoundException {
+    public ResponseEntity<?> getDealsByVendorId(@PathVariable UUID vendorId) throws EntityNotFoundException {
         List<DealDTOResponse> resDeals = dealService.findByVendorId(vendorId)
                 .stream()
                 .map(deal -> modelMapper.map(deal, DealDTOResponse.class))

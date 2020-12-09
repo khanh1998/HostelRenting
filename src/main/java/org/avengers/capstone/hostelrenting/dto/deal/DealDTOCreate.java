@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.avengers.capstone.hostelrenting.model.Deal;
 
+import java.util.UUID;
+
 
 public class DealDTOCreate {
     @Getter
@@ -20,10 +22,10 @@ public class DealDTOCreate {
     private int typeId;
     @Getter
     @Setter
-    private Long renterId;
+    private UUID renterId;
     @Getter
     @Setter
-    private Long vendorId;
+    private UUID vendorId;
     @Getter
     @Setter
     private float offeredPrice;

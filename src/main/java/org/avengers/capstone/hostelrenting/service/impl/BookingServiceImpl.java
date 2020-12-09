@@ -136,7 +136,7 @@ public class BookingServiceImpl implements BookingService {
      * @return list of booking models
      */
     @Override
-    public List<Booking> findByRenterId(Long renterId) {
+    public List<Booking> findByRenterId(UUID renterId) {
         renterService.checkExist(renterId);
 
         return renterService.findById(renterId).getBookings();
@@ -149,7 +149,7 @@ public class BookingServiceImpl implements BookingService {
      * @return list of booking models
      */
     @Override
-    public List<Booking> findByVendorId(Long vendorId) {
+    public List<Booking> findByVendorId(UUID vendorId) {
         vendorService.checkExist(vendorId);
 
         return vendorService.findById(vendorId).getBookings();

@@ -8,13 +8,14 @@ import org.avengers.capstone.hostelrenting.model.Renter;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 
 public interface RenterService {
-    void checkExist(Long id);
+    void checkExist(UUID id);
     Renter updateInfo(Renter exModel, RenterDTOUpdate reqDTO);
     Renter updateToken(Renter exModel, UserDTOUpdateOnlyToken onlyTokenDTO);
 
-    Renter findById(Long id);
-    Collection<Renter> findByIds(Collection<Long> ids);
+    Renter findById(UUID id);
+    Collection<Renter> findByIds(Collection<UUID> ids);
     Renter create(Renter renter);
 }

@@ -4,6 +4,7 @@ import org.avengers.capstone.hostelrenting.model.HostelRequest;
 
 import java.util.Collection;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * @author duattt on 11/16/20
@@ -14,5 +15,5 @@ public interface HostelRequestService {
     void checkExist(Integer requestId);
     HostelRequest createNew(HostelRequest request);
     HostelRequest findById(Integer requestId);
-    Collection<HostelRequest> findByRenterId(Long renterId, int page, int size);
+    Collection<HostelRequest> findByRenterId(UUID renterId, int page, int size);
 }

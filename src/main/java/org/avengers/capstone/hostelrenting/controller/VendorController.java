@@ -18,6 +18,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -56,7 +57,7 @@ public class VendorController {
     }
 
     @PutMapping("/vendors/{vendorId}")
-    public ResponseEntity<?> update(@PathVariable Long vendorId,
+    public ResponseEntity<?> update(@PathVariable UUID vendorId,
                                     @RequestBody VendorDTOUpdate reqDTO) throws EntityNotFoundException {
         String resMsg = "Your information has been up to date!";
         Vendor exModel = vendorService.findById(vendorId);
@@ -70,7 +71,7 @@ public class VendorController {
     }
 
     @PutMapping("/vendors/{vendorId}/token")
-    public ResponseEntity<?> updateTokenOnly(@PathVariable Long vendorId,
+    public ResponseEntity<?> updateTokenOnly(@PathVariable UUID vendorId,
                                              @RequestBody @Valid UserDTOUpdateOnlyToken reqDTO) throws EntityNotFoundException {
         String resMsg = "Your token has been updated successfully!";
         Vendor exModel = vendorService.findById(vendorId);
@@ -83,7 +84,7 @@ public class VendorController {
     }
 
     @GetMapping("/vendors/{vendorId}")
-    public ResponseEntity<?> getById(@PathVariable Long vendorId) throws EntityNotFoundException {
+    public ResponseEntity<?> getById(@PathVariable UUID vendorId) throws EntityNotFoundException {
         Vendor existedModel = vendorService.findById(vendorId);
         VendorDTOResponse resDTO = modelMapper.map(existedModel, VendorDTOResponse.class);
 

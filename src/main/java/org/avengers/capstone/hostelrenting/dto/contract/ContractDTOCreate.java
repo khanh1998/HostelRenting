@@ -36,12 +36,12 @@ public class ContractDTOCreate {
     @Getter
     @Setter
     @NotNull(message = "Vendor id is mandatory!")
-    private Long vendorId;
+    private UUID vendorId;
 
     @Getter
     @Setter
     @NotNull(message = "Renter id is mandatory!")
-    private Long renterId;
+    private UUID renterId;
 
     @Getter
     @Setter
