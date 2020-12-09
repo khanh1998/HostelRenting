@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.avengers.capstone.hostelrenting.model.HostelRequest;
 
 import javax.validation.constraints.NotNull;
+import java.util.UUID;
 
 /**
  * @author duattt on 11/16/20
@@ -58,7 +59,7 @@ public class HostelRequestDTOCreate extends HostelRequestDTO{
 
     @Override
     @JsonIgnore
-    public long getRenterId() {
+    public UUID getRenterId() {
         return super.getRenterId();
     }
 
