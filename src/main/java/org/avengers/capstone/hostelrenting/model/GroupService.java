@@ -3,6 +3,7 @@ package org.avengers.capstone.hostelrenting.model;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.Collection;
 import java.util.Set;
 
 @Getter
@@ -50,4 +51,6 @@ public class GroupService {
     @ManyToMany(mappedBy = "groupServices", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<Contract> contracts;
 
+//    @OneToMany(mappedBy = "group_service_id", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+//    private Collection<GroupServiceContract> groupServiceContracts;
 }

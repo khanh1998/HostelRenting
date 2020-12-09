@@ -65,17 +65,17 @@ public class Group {
     @Column(nullable = false)
     private Double latitude;
 
-    /**
-     * manager name of this group
-     */
-    @Column(length = 50)
-    private String managerName;
-
-    /**
-     * manager phone number of this group
-     */
-    @Column(length = 15)
-    private String managerPhone;
+//    /**
+//     * manager name of this group
+//     */
+//    @Column(length = 50)
+//    private String managerName;
+//
+//    /**
+//     * manager phone number of this group
+//     */
+//    @Column(length = 15)
+//    private String managerPhone;
 
     /**
      * living in the same building with the owner or not
@@ -135,6 +135,10 @@ public class Group {
      */
     @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Collection<GroupRegulation> groupRegulations;
+
+    @OneToOne
+    @JoinColumn(name = "manager_id")
+    private Manager manager;
 
     /**
      * creating timestamp
