@@ -21,16 +21,20 @@ public class ManagerServiceImpl implements ManagerService {
     private ManagerRepository managerRepository;
 
     @Override
-    public boolean isExistByPhone(String phone) {
+    public Manager checkExistByPhone(String phone) {
         Optional<Manager> exManager = managerRepository.findByManagerPhone(phone);
-        return exManager.isPresent();
+        if (exManager.isPresent())
+            return exManager.get();
+        else
+            return null;
     }
 
     @Override
     public Manager createNewManager(Manager manager) {
-        if (!isExistByPhone(manager.getManagerPhone())){
-            return managerRepository.save(manager);
+        Manager exManager = checkExistByPhone(manager.getManagerPhone());
+        if (exManager != null) {
+            return exManager;
         }
-        throw new GenericException(Manager.class, "duplicated", "managerPhone", manager.getManagerPhone());
+        return managerRepository.save(manager);
     }
 }
