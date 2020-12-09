@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class VendorServiceImpl implements VendorService {
@@ -38,7 +39,7 @@ public class VendorServiceImpl implements VendorService {
     }
 
     @Override
-    public void checkExist(Long id) {
+    public void checkExist(UUID id) {
         Optional<Vendor> model = vendorRepository.findById(id);
         if (model.isEmpty())
             throw new EntityNotFoundException(Vendor.class, "id", id.toString());
@@ -58,7 +59,7 @@ public class VendorServiceImpl implements VendorService {
     }
 
     @Override
-    public Vendor findById(Long id) {
+    public Vendor findById(UUID id) {
         checkExist(id);
         return vendorRepository.getOne(id);
 

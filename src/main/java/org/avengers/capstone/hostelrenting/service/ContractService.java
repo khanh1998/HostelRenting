@@ -14,5 +14,4 @@ public interface ContractService {
     Contract confirm(Contract exModel, ContractDTOConfirm reqDTO);
     List<Contract> findByRenterId(Long renterId, int page, int size, String sortBy, boolean asc);
     List<Contract> findByVendorId(Long vendorId, int page, int size, String sortBy, boolean asc);
-
 }

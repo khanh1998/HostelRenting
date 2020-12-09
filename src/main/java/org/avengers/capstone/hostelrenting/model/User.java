@@ -1,23 +1,28 @@
 package org.avengers.capstone.hostelrenting.model;
 
 import lombok.*;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import java.util.UUID;
 
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
 
 @MappedSuperclass
 public class User {
+    public enum ROLE{RENTER, VENDOR}
+
+    public User() {
+        this.userId = UUID.randomUUID();
+    }
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long userId;
+    private UUID userId;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 50)
     private String username;
 
     private String password;
@@ -25,7 +30,7 @@ public class User {
     @Column(unique = true)
     private String email;
 
-    @Column(unique = true)
+    @Column(unique = true, length = 10)
     private String phone;
 
     private String avatar;
@@ -34,23 +39,26 @@ public class User {
 
     private Integer yearOfBirth;
 
+    @Column(length = 100)
     private String idIssuedLocation;
 
     private Long idIssuedDate;
 
+    @Column(length = 150)
     private String householdAddress;
 
+    @Column(length = 150)
     private String currentAddress;
 
+    @Column(length = 30)
     private String citizenIdNum;
 
     private String citizenIdFrontImg;
 
     private String citizenIdBackImg;
 
-    @ManyToOne
-    @JoinColumn(name = "role_id", nullable = false)
-    private Role role;
+    @Transient
+    private ROLE role;
 
     @Column(columnDefinition = "boolean default false", nullable = false)
     private boolean isBlocked;

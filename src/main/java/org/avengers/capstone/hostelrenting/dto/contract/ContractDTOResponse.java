@@ -1,15 +1,13 @@
 package org.avengers.capstone.hostelrenting.dto.contract;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 import org.avengers.capstone.hostelrenting.dto.booking.BookingDTOResponseShort;
 import org.avengers.capstone.hostelrenting.dto.group.GroupDTOResponseShort;
-import org.avengers.capstone.hostelrenting.dto.image.ImageDTOResponse;
 import org.avengers.capstone.hostelrenting.dto.renter.RenterDTOResponseShort;
 import org.avengers.capstone.hostelrenting.dto.room.RoomDTO;
-import org.avengers.capstone.hostelrenting.dto.deal.DealDTOShort;
+import org.avengers.capstone.hostelrenting.dto.deal.DealDTOCreate;
 import org.avengers.capstone.hostelrenting.dto.groupService.GroupServiceDTOResponse;
 import org.avengers.capstone.hostelrenting.dto.type.TypeDTOResponseShort;
 import org.avengers.capstone.hostelrenting.dto.vendor.VendorDTOResponseShort;
@@ -32,15 +30,17 @@ public class ContractDTOResponse {
     private GroupDTOResponseShort group;
     private VendorDTOResponseShort vendor;
     private RenterDTOResponseShort renter;
-    private DealDTOShort deal;
+    private DealDTOCreate deal;
     private BookingDTOResponseShort booking;
     private String appendixContract;
     private long startTime;
     private boolean isReserved;
     private boolean isPaid;
+    private Contract.RESIGN resign;
     private float downPayment;
     private Integer duration;
     private String contractUrl;
+    private Integer paymentDayInMonth;
     private UUID qrCode;
     private Contract.STATUS status;
     @JsonProperty(value = "agreementServices")
@@ -50,4 +50,5 @@ public class ContractDTOResponse {
 
     private Long createdAt;
     private Long updatedAt;
+    private Long lastPayAt;
 }

@@ -19,7 +19,7 @@ public class Province {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int provinceId;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false, unique = true, length = 50)
     @NotBlank(message = "Province name is mandatory")
     private String provinceName;
 

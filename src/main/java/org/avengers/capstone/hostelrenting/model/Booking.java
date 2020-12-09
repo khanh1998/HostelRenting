@@ -52,4 +52,7 @@ public class Booking {
 
     @Column(name = "updated_at")
     private Long updatedAt;
+
+    @Column(columnDefinition = "bool default false")
+    private boolean isDeleted;
 }

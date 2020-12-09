@@ -9,18 +9,5 @@ import org.avengers.capstone.hostelrenting.dto.renter.RenterDTOResponse;
 import org.avengers.capstone.hostelrenting.dto.vendor.VendorDTOResponse;
 import org.avengers.capstone.hostelrenting.model.Deal;
 
-@Getter
-@Setter
-@JsonInclude(JsonInclude.Include.NON_NULL)
-public class DealDTOFull {
-    private int dealId;
-    private Deal.STATUS status;
-    private TypeDTOResponse type;
-    private GroupDTOResponse group;
-    private RenterDTOResponse renter;
-    private VendorDTOResponse vendor;
-    private float offeredPrice;
-
-    private long createdAt;
-    private long updatedAt;
+public class DealDTOResponse extends DealDTO{
 }

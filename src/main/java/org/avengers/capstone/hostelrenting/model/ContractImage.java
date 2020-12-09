@@ -19,6 +19,8 @@ import javax.persistence.*;
 @Entity
 @Table(name = "contract_image")
 public class ContractImage {
+
+    public enum TYPE{PAPER, RESERVED_BILL, REST_BILL}
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int imageId;
@@ -30,8 +32,9 @@ public class ContractImage {
     @JoinColumn(name = "contract_id", nullable = false)
     private Contract contract;
 
-    @Column(columnDefinition = "boolean default false", nullable = false)
-    private boolean isReserved;
+    @Column(nullable = false, length = 20)
+    @Enumerated(EnumType.STRING)
+    private TYPE type;
 
     @Column(columnDefinition = "boolean default false", nullable = false)
     private boolean isDeleted;

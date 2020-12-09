@@ -22,7 +22,7 @@ public class Street {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int streetId;
 
-    @Column(name = "street_name", nullable = false)
+    @Column(name = "street_name", nullable = false, length = 50)
     @NotBlank(message = "Street name is mandatory")
     private String streetName;
 

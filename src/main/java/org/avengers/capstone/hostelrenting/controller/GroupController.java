@@ -25,6 +25,7 @@ import javax.validation.constraints.NotEmpty;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static org.avengers.capstone.hostelrenting.Constant.Pagination.DEFAULT_PAGE;
@@ -53,7 +54,14 @@ public class GroupController {
 
     private CategoryService categoryService;
 
+    private ManagerService managerService;
+
     private ModelMapper modelMapper;
+
+    @Autowired
+    public void setManagerService(ManagerService managerService) {
+        this.managerService = managerService;
+    }
 
     @Autowired
     public void setCategoryService(CategoryService categoryService) {
@@ -130,11 +138,12 @@ public class GroupController {
             StreetWard address = streetWardService.findByStreetIdAndWardId(streetService.createIfNotExist(street).getStreetId(), reqDTO.getAddressFull().getWardId());
             reqModel.setAddress(address);
             // set manager info
-            if (reqModel.getManagerName() == null) {
-                reqModel.setManagerName(vendor.getUsername());
-            }
-            if (reqModel.getManagerPhone() == null) {
-                reqModel.setManagerPhone(vendor.getPhone());
+            if (reqDTO.getManagerPhone()!= null){
+                Manager newManager = new Manager();
+                newManager.setManagerPhone(reqDTO.getManagerPhone());
+                Manager resManagerModel = managerService.createNewManager(newManager);
+                logger.info(String.format("Manager has been created with {name=%s}, {phone=%s} ",resManagerModel.getManagerName(), reqDTO.getManagerPhone()));
+                reqModel.setManager(resManagerModel);
             }
 
             createRefObj(reqDTO);
@@ -269,7 +278,7 @@ public class GroupController {
      * @throws EntityNotFoundException when object is not found
      */
     @GetMapping("/vendors/{vendorId}/groups")
-    public ResponseEntity<?> getGroupsByVendorId(@PathVariable Long vendorId,
+    public ResponseEntity<?> getGroupsByVendorId(@PathVariable UUID vendorId,
                                                  @RequestParam(required = false, defaultValue = DEFAULT_SIZE) Integer size,
                                                  @RequestParam(required = false, defaultValue = DEFAULT_PAGE) Integer page) {
         //log start

@@ -18,8 +18,11 @@ public class UCategory {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer uCategoryId;
 
+    @Column(length = 30)
     private String name;
 
+
+    @Column(length = 15)
     private String code;
 
     private Integer displayOrder;

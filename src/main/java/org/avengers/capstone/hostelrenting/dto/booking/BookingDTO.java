@@ -2,7 +2,7 @@ package org.avengers.capstone.hostelrenting.dto.booking;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.avengers.capstone.hostelrenting.dto.deal.DealDTOShort;
+import org.avengers.capstone.hostelrenting.dto.deal.DealDTOCreate;
 import org.avengers.capstone.hostelrenting.dto.group.GroupDTOResponse;
 import org.avengers.capstone.hostelrenting.dto.renter.RenterDTOResponse;
 import org.avengers.capstone.hostelrenting.dto.type.TypeDTOResponse;
@@ -24,7 +24,7 @@ public class BookingDTO {
     private VendorDTOResponse vendor;
     private TypeDTOResponse type;
     private GroupDTOResponse group;
-    private DealDTOShort deal;
+    private DealDTOCreate deal;
     private Integer contractId;
     private Booking.STATUS status;
     private UUID qrCode;

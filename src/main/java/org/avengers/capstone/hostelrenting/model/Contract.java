@@ -2,8 +2,14 @@ package org.avengers.capstone.hostelrenting.model;
 
 
 import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.Size;
 import java.util.Collection;
 import java.util.UUID;
 
@@ -19,16 +25,18 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder(toBuilder = true)
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 @Table(name = "contract")
 public class Contract {
 
-    public enum STATUS{EXPIRED, ACTIVATED, INACTIVE, RESERVED, CANCELLED}
+    public enum STATUS{EXPIRED, ACTIVATED, INACTIVE, RESERVED, CANCELLED, ACCEPTED}
+    public enum RESIGN{REQUEST, AGREE, REJECT}
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int contractId;
 
-    @Column(length = 5000)
+    @Column(length = 6000)
     private String appendixContract;
 
     @ManyToOne
@@ -55,7 +63,6 @@ public class Contract {
     @OneToMany(mappedBy = "contract", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Collection<ContractImage> contractImages;
 
-
     @Column(nullable = false)
     private Integer duration;
 
@@ -73,22 +80,32 @@ public class Contract {
     @Column(columnDefinition = "boolean default false", nullable = false)
     private boolean isPaid;
 
+    @Enumerated(EnumType.STRING)
+    @Column(length = 15)
+    private Contract.RESIGN resign;
+
     private UUID qrCode;
 
     private String contractUrl;
 
-    @Column(columnDefinition = "boolean default false", nullable = false)
-    private boolean isResign;
+    @Column(nullable = false)
+    @Min(1)
+    @Max(31)
+    private Integer paymentDayInMonth;
 
     @Column(columnDefinition = "varchar(15) default 'INACTIVE'")
     @Enumerated(EnumType.STRING)
     private Contract.STATUS status;
 
     @Column(name = "created_at", nullable = false, updatable = false)
+    @CreatedDate
     private Long createdAt;
 
     @Column(name = "updated_at")
+    @LastModifiedDate
     private Long updatedAt;
+
+    private Long lastPayAt;
 
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinTable(name = "group_service_contract",
@@ -97,4 +114,6 @@ public class Contract {
     )
     private Collection<GroupService> groupServices;
 
+//    @OneToMany(mappedBy = "contract", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+//    private Collection<GroupServiceContract> groupServiceContracts;
 }

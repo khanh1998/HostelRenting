@@ -1,4 +1,4 @@
-package org.avengers.capstone.hostelrenting.jwt;
+package org.avengers.capstone.hostelrenting.configuration;
 
 import java.io.IOException;
 import java.io.Serializable;

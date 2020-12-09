@@ -1,8 +1,9 @@
 package org.avengers.capstone.hostelrenting.controller;
 
 import org.avengers.capstone.hostelrenting.dto.group.GroupDTOResponse;
-import org.avengers.capstone.hostelrenting.dto.deal.DealDTOFull;
-import org.avengers.capstone.hostelrenting.dto.deal.DealDTOShort;
+import org.avengers.capstone.hostelrenting.dto.deal.DealDTOResponse;
+import org.avengers.capstone.hostelrenting.dto.deal.DealDTOCreate;
+import org.avengers.capstone.hostelrenting.dto.group.GroupDTOResponseShort;
 import org.avengers.capstone.hostelrenting.dto.response.ApiSuccess;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
 import org.avengers.capstone.hostelrenting.model.Deal;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @RestController
@@ -43,9 +45,9 @@ public class DealController {
     }
 
     @PostMapping("/deals")
-    public ResponseEntity<?> createDeal(@RequestBody @Valid DealDTOShort reqDTO) {
+    public ResponseEntity<?> createDeal(@RequestBody @Valid DealDTOCreate reqDTO) {
         Deal resModel = dealService.create(reqDTO);
-        DealDTOShort resDTO = modelMapper.map(resModel, DealDTOShort.class);
+        DealDTOResponse resDTO = modelMapper.map(resModel, DealDTOResponse.class);
 
         // Response entity
         ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTO,
@@ -54,30 +56,30 @@ public class DealController {
         return ResponseEntity.status(HttpStatus.CREATED).body(apiSuccess);
     }
 
-    @PutMapping("/deals/{dealId}")
-    public ResponseEntity<?> updateDealById(@PathVariable Integer dealId,
-                                            @Valid @RequestBody DealDTOShort reqDTO) {
-
-        String resMsg = "Your deal has been updated";
-        DealDTOShort resDTO = null;
-        reqDTO.setDealId(dealId);
-        Deal updatedModel = dealService.update(reqDTO);
-
-        if (updatedModel == null)
-            resMsg = "Your booking is up to date";
-        else
-            resDTO = modelMapper.map(updatedModel, DealDTOShort.class);
-
-        // Response entity
-        ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTO, resMsg);
-
-        return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
-    }
+//    @PutMapping("/deals/{dealId}")
+//    public ResponseEntity<?> updateDealById(@PathVariable Integer dealId,
+//                                            @Valid @RequestBody DealDTOCreate reqDTO) {
+//
+//        String resMsg = "Your deal has been updated";
+//        DealDTOCreate resDTO = null;
+//        reqDTO.setDealId(dealId);
+//        Deal updatedModel = dealService.update(reqDTO);
+//
+//        if (updatedModel == null)
+//            resMsg = "Your booking is up to date";
+//        else
+//            resDTO = modelMapper.map(updatedModel, DealDTOCreate.class);
+//
+//        // Response entity
+//        ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTO, resMsg);
+//
+//        return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
+//    }
 
     @GetMapping("/deals/{dealId}")
     public ResponseEntity<?> getDealById(@PathVariable Integer dealId) throws EntityNotFoundException {
         Deal resModel = dealService.findById(dealId);
-        DealDTOFull resDTO = modelMapper.map(resModel, DealDTOFull.class);
+        DealDTOResponse resDTO = modelMapper.map(resModel, DealDTOResponse.class);
 
         // Response entity
         ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTO, "Your deal has been retrieved successfully!");
@@ -86,44 +88,44 @@ public class DealController {
     }
 
     @GetMapping("/renters/{renterId}/deals")
-    public ResponseEntity<?> getDealsByRenterId(@PathVariable Long renterId) throws EntityNotFoundException {
-        List<DealDTOFull> resDeals = dealService.findByRenterId(renterId)
+    public ResponseEntity<?> getDealsByRenterId(@PathVariable UUID renterId) throws EntityNotFoundException {
+        List<DealDTOResponse> resDeals = dealService.findByRenterId(renterId)
                 .stream()
-                .map(deal -> modelMapper.map(deal, DealDTOFull.class))
+                .map(deal -> modelMapper.map(deal, DealDTOResponse.class))
                 .collect(Collectors.toList());
 
         // Response entity
-        ApiSuccess<?> apiSuccess = new ApiSuccess<>(getGroupForDeal(resDeals),
+        ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDeals,
                 "Your deal(s) has been retrieved successfully!");
 
         return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
     }
 
     @GetMapping("/vendors/{vendorId}/deals")
-    public ResponseEntity<?> getDealsByVendorId(@PathVariable Long vendorId) throws EntityNotFoundException {
-        List<DealDTOFull> resDeals = dealService.findByVendorId(vendorId)
+    public ResponseEntity<?> getDealsByVendorId(@PathVariable UUID vendorId) throws EntityNotFoundException {
+        List<DealDTOResponse> resDeals = dealService.findByVendorId(vendorId)
                 .stream()
-                .map(deal -> modelMapper.map(deal, DealDTOFull.class))
+                .map(deal -> modelMapper.map(deal, DealDTOResponse.class))
                 .collect(Collectors.toList());
 
         // Response entity
-        ApiSuccess<?> apiSuccess = new ApiSuccess<>(getGroupForDeal(resDeals),
+        ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDeals,
                 "Your deal(s) has been retrieved successfully!");
 
         return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
     }
 
-    /**
-     * Get corresponding {@link Group}
-     *
-     * @param deals list of {@link org.avengers.capstone.hostelrenting.model.Booking} need to fill {@link Group}
-     * @return list of {@link org.avengers.capstone.hostelrenting.model.Booking} with corresponding {@link Group}
-     */
-    private List<DealDTOFull> getGroupForDeal(List<DealDTOFull> deals) {
-        deals.forEach(deal -> {
-            Group existedGroup = groupService.findById(deal.getType().getGroupId());
-            deal.setGroup(modelMapper.map(existedGroup, GroupDTOResponse.class));
-        });
-        return deals;
-    }
+//    /**
+//     * Get corresponding {@link Group}
+//     *
+//     * @param deals list of {@link org.avengers.capstone.hostelrenting.model.Booking} need to fill {@link Group}
+//     * @return list of {@link org.avengers.capstone.hostelrenting.model.Booking} with corresponding {@link Group}
+//     */
+//    private List<DealDTOResponse> getGroupForDeal(List<DealDTOResponse> deals) {
+//        deals.forEach(deal -> {
+//            Group existedGroup = groupService.findById(deal.getType().getGroupId());
+//            deal.setGroup(modelMapper.map(existedGroup, GroupDTOResponseShort.class));
+//        });
+//        return deals;
+//    }
 }

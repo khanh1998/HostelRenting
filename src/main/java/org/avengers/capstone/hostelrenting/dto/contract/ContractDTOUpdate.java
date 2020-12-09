@@ -21,8 +21,7 @@ import java.util.Set;
 public class ContractDTOUpdate implements Serializable {
 
     public ContractDTOUpdate() {
-        this.status = Contract.STATUS.INACTIVE;
-        this.updatedAt = System.currentTimeMillis();
+//        this.updatedAt = System.currentTimeMillis();
     }
     @Getter
     @Setter
@@ -46,17 +45,17 @@ public class ContractDTOUpdate implements Serializable {
     @Getter @Setter
     private Integer duration;
 
-    @JsonIgnore
     @Getter
-    private Long updatedAt;
-
-    @Getter
-    @JsonIgnore
-    private Contract.STATUS status;
+    @Setter
+    private Integer paymentDayInMonth;
 
     @Getter
     @Setter
     private boolean isPaid;
+
+    @Getter
+    @Setter
+    private Contract.RESIGN resign;
 
     @Getter @Setter
     @JsonProperty(value = "groupServiceIds")
@@ -70,5 +69,4 @@ public class ContractDTOUpdate implements Serializable {
     @Getter @Setter
     @JsonIgnore
     private Set<GroupService> groupServices;
-
 }

@@ -4,23 +4,19 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
-import org.avengers.capstone.hostelrenting.dto.image.ImageDTOCreate;
-import org.avengers.capstone.hostelrenting.exception.GenericException;
-import org.avengers.capstone.hostelrenting.model.Booking;
 import org.avengers.capstone.hostelrenting.model.Contract;
+import org.springframework.lang.NonNull;
+import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.NotNull;
 import java.util.Collection;
-import java.util.Objects;
 import java.util.UUID;
-
 public class ContractDTOCreate {
 
     public ContractDTOCreate() {
         this.qrCode = UUID.randomUUID();
         this.status = Contract.STATUS.INACTIVE;
         this.isPaid = false;
-        this.createdAt = System.currentTimeMillis();
     }
 
     @Getter
@@ -40,12 +36,12 @@ public class ContractDTOCreate {
     @Getter
     @Setter
     @NotNull(message = "Vendor id is mandatory!")
-    private Long vendorId;
+    private UUID vendorId;
 
     @Getter
     @Setter
     @NotNull(message = "Renter id is mandatory!")
-    private Long renterId;
+    private UUID renterId;
 
     @Getter
     @Setter
@@ -64,10 +60,6 @@ public class ContractDTOCreate {
     @Setter
     @NotNull(message = "Contract duration is mandatory!")
     private Integer duration;
-
-    @JsonIgnore
-    @Getter
-    private final Long createdAt;
 
     @Getter
     @JsonIgnore
@@ -100,4 +92,9 @@ public class ContractDTOCreate {
     @Getter
     @Setter
     private Float downPayment;
+
+    @Getter
+    @Setter
+    @NotNull(message = "Payment day in month is mandatory")
+    private Integer paymentDayInMonth;
 }

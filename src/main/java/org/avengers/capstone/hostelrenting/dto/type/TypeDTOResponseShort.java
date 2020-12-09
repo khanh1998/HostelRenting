@@ -11,6 +11,7 @@ import org.avengers.capstone.hostelrenting.dto.image.ImageDTOResponse;
 import org.avengers.capstone.hostelrenting.dto.room.RoomDTOCreate;
 import org.avengers.capstone.hostelrenting.dto.room.RoomDTOResponse;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
@@ -28,87 +29,104 @@ public class TypeDTOResponseShort extends TypeDTOResponse {
         return super.getTypeImages().stream().limit(1).collect(Collectors.toList());
     }
 
-    @Override @JsonIgnore
+    @Override
+    @JsonIgnore
     public String getPriceUnit() {
         return "triệu";
     }
 
-    @Override @JsonIgnore
+    @Override
+    @JsonIgnore
     public Collection<FacilityDTOResponse> getFacilities() {
         return super.getFacilities();
     }
 
-    @Override @JsonIgnore
+    @Override
+    @JsonIgnore
     public Collection<RoomDTOResponse> getRooms() {
         return super.getRooms();
     }
 
-    @Override @JsonIgnore
+    @Override
+    @JsonIgnore
     public void setFacilities(Collection<FacilityDTOResponse> facilities) {
         super.setFacilities(facilities);
     }
 
-    @Override @JsonIgnore
+    @Override
+    @JsonIgnore
     public void setRooms(Collection<RoomDTOResponse> rooms) {
         super.setRooms(rooms);
     }
 
-    @Override @JsonIgnore
+    @Override
+    @JsonIgnore
     public Float getScore() {
         return super.getScore();
     }
 
-    @Override @JsonIgnore
+    @Override
+    @JsonIgnore
     public Float getSuperficiality() {
         return super.getSuperficiality();
     }
 
-    @Override @JsonIgnore
+    @Override
+    @JsonIgnore
     public Integer getCapacity() {
         return super.getCapacity();
     }
 
-    @Override @JsonIgnore
+    @Override
+    @JsonIgnore
     public Integer getView() {
         return super.getView();
     }
 
-    @Override @JsonIgnore
+    @Override
+    @JsonIgnore
     public Integer getDeposit() {
         return super.getDeposit();
     }
 
-    @Override @JsonIgnore
+    @Override
+    @JsonIgnore
     public boolean isDeleted() {
         return super.isDeleted();
     }
 
-    @Override @JsonIgnore
+    @Override
+    @JsonIgnore
     public int getSchoolmate() {
         return super.getSchoolmate();
     }
 
-    @Override @JsonIgnore
+    @Override
+    @JsonIgnore
     public int getCompatriot() {
         return super.getCompatriot();
     }
 
-    @Override @JsonIgnore
+    @Override
+    @JsonIgnore
     public int getAvailableRoom() {
         return super.getAvailableRoom();
     }
 
-    @Override @JsonIgnore
+    @Override
+    @JsonIgnore
     public int getCurrentBooking() {
         return super.getCurrentBooking();
     }
 
-    @Override @JsonIgnore
+    @Override
+    @JsonIgnore
     public Long getCreatedAt() {
         return super.getCreatedAt();
     }
 
-    @Override @JsonIgnore
+    @Override
+    @JsonIgnore
     public Long getUpdatedAt() {
         return super.getUpdatedAt();
     }

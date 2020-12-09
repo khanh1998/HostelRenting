@@ -9,7 +9,6 @@ import org.avengers.capstone.hostelrenting.dto.vendor.VendorDTOUpdate;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
 import org.avengers.capstone.hostelrenting.model.Renter;
 import org.avengers.capstone.hostelrenting.model.Vendor;
-import org.avengers.capstone.hostelrenting.service.RoleService;
 import org.avengers.capstone.hostelrenting.service.VendorService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +18,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -26,17 +26,11 @@ public class VendorController {
 
     private ModelMapper modelMapper;
     private VendorService vendorService;
-    private RoleService roleService;
     private PasswordEncoder passwordEncoder;
 
     @Autowired
     public void setPasswordEncoder(PasswordEncoder passwordEncoder) {
         this.passwordEncoder = passwordEncoder;
-    }
-
-    @Autowired
-    public void setRoleService(RoleService roleService) {
-        this.roleService = roleService;
     }
 
     @Autowired
@@ -53,7 +47,7 @@ public class VendorController {
     public ResponseEntity<?> create(@Valid @RequestBody VendorDTOCreate reqDTO) throws EntityNotFoundException {
         Vendor rqModel = modelMapper.map(reqDTO, Vendor.class);
         rqModel.setPassword(passwordEncoder.encode(reqDTO.getPassword()));
-        rqModel.setRole(roleService.findById(1));
+//        rqModel.setRole(roleService.findById(1));
         Vendor createdModel = vendorService.create(rqModel);
 
         VendorDTOResponse resDTO = modelMapper.map(createdModel, VendorDTOResponse.class);
@@ -63,7 +57,7 @@ public class VendorController {
     }
 
     @PutMapping("/vendors/{vendorId}")
-    public ResponseEntity<?> update(@PathVariable Long vendorId,
+    public ResponseEntity<?> update(@PathVariable UUID vendorId,
                                     @RequestBody VendorDTOUpdate reqDTO) throws EntityNotFoundException {
         String resMsg = "Your information has been up to date!";
         Vendor exModel = vendorService.findById(vendorId);
@@ -77,7 +71,7 @@ public class VendorController {
     }
 
     @PutMapping("/vendors/{vendorId}/token")
-    public ResponseEntity<?> updateTokenOnly(@PathVariable Long vendorId,
+    public ResponseEntity<?> updateTokenOnly(@PathVariable UUID vendorId,
                                              @RequestBody @Valid UserDTOUpdateOnlyToken reqDTO) throws EntityNotFoundException {
         String resMsg = "Your token has been updated successfully!";
         Vendor exModel = vendorService.findById(vendorId);
@@ -90,7 +84,7 @@ public class VendorController {
     }
 
     @GetMapping("/vendors/{vendorId}")
-    public ResponseEntity<?> getById(@PathVariable Long vendorId) throws EntityNotFoundException {
+    public ResponseEntity<?> getById(@PathVariable UUID vendorId) throws EntityNotFoundException {
         Vendor existedModel = vendorService.findById(vendorId);
         VendorDTOResponse resDTO = modelMapper.map(existedModel, VendorDTOResponse.class);
 

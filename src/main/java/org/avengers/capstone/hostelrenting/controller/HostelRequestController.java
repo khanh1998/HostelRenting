@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.Collection;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static org.avengers.capstone.hostelrenting.Constant.Pagination.DEFAULT_PAGE;
@@ -50,7 +51,7 @@ public class HostelRequestController {
 
     @PostMapping("renters/{renterId}/requests")
     public ResponseEntity<?> createHostelRequest(@RequestBody @Valid HostelRequestDTOCreate reqDTO,
-                                                 @PathVariable Long renterId) {
+                                                 @PathVariable UUID renterId) {
         // prepare ref object
         Renter exRenter =renterService.findById(renterId);
 
@@ -65,7 +66,7 @@ public class HostelRequestController {
     }
 
     @GetMapping("renters/{renterId}/requests")
-    public ResponseEntity<?> getRequestsByRenterId(@PathVariable Long renterId,
+    public ResponseEntity<?> getRequestsByRenterId(@PathVariable UUID renterId,
                                                    @RequestParam(required = false, defaultValue = DEFAULT_SIZE) Integer size,
                                                    @RequestParam(required = false, defaultValue = DEFAULT_PAGE) Integer page) {
         // prepare ref object

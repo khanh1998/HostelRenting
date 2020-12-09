@@ -1,14 +1,12 @@
 package org.avengers.capstone.hostelrenting.dto.contract;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 import org.avengers.capstone.hostelrenting.dto.booking.BookingDTOResponseShort;
-import org.avengers.capstone.hostelrenting.dto.deal.DealDTOShort;
+import org.avengers.capstone.hostelrenting.dto.deal.DealDTOCreate;
 import org.avengers.capstone.hostelrenting.dto.group.GroupDTOResponse;
 import org.avengers.capstone.hostelrenting.dto.groupService.GroupServiceDTOResponse;
-import org.avengers.capstone.hostelrenting.dto.image.ImageDTOResponse;
 import org.avengers.capstone.hostelrenting.dto.renter.RenterDTOResponse;
 import org.avengers.capstone.hostelrenting.dto.room.RoomDTO;
 import org.avengers.capstone.hostelrenting.dto.type.TypeDTOResponse;
@@ -33,15 +31,17 @@ public class ContractDTOResponseFull {
     private GroupDTOResponse group;
     private VendorDTOResponse vendor;
     private RenterDTOResponse renter;
-    private DealDTOShort deal;
+    private DealDTOCreate deal;
     private BookingDTOResponseShort booking;
     private String appendixContract;
     private long startTime;
     private boolean isReserved;
     private boolean isPaid;
+    private Contract.RESIGN resign;
     private float downPayment;
     private Integer duration;
-    private String contractUrl;
+    private String contractUrl;    
+    private Integer paymentDayInMonth;
     private UUID qrCode;
     private Contract.STATUS status;
     @JsonProperty(value = "agreementServices")
@@ -51,4 +51,5 @@ public class ContractDTOResponseFull {
 
     private Long createdAt;
     private Long updatedAt;
+    private Long lastPayAt;
 }
