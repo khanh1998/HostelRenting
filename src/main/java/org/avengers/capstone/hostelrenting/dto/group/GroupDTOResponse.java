@@ -11,6 +11,7 @@ import org.avengers.capstone.hostelrenting.model.serialized.AddressFull;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Getter
@@ -21,7 +22,7 @@ public class GroupDTOResponse implements Serializable {
     @JsonProperty("address")
     private AddressFull addressFull;
 
-    private Long vendorId;
+    private UUID vendorId;
 
     private String groupName;
 
