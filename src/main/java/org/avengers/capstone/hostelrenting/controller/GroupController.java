@@ -54,7 +54,14 @@ public class GroupController {
 
     private CategoryService categoryService;
 
+    private ManagerService managerService;
+
     private ModelMapper modelMapper;
+
+    @Autowired
+    public void setManagerService(ManagerService managerService) {
+        this.managerService = managerService;
+    }
 
     @Autowired
     public void setCategoryService(CategoryService categoryService) {
@@ -131,12 +138,13 @@ public class GroupController {
             StreetWard address = streetWardService.findByStreetIdAndWardId(streetService.createIfNotExist(street).getStreetId(), reqDTO.getAddressFull().getWardId());
             reqModel.setAddress(address);
             // set manager info
-//            if (reqModel.getManagerName() == null) {
-//                reqModel.setManagerName(vendor.getUsername());
-//            }
-//            if (reqModel.getManagerPhone() == null) {
-//                reqModel.setManagerPhone(vendor.getPhone());
-//            }
+            if (reqDTO.getManagerPhone()!= null){
+                Manager newManager = new Manager();
+                newManager.setManagerPhone(reqDTO.getManagerPhone());
+                Manager resManagerModel = managerService.createNewManager(newManager);
+                logger.info(String.format("Manager has been created with {name=%s}, {phone=%s} ",resManagerModel.getManagerName(), reqDTO.getManagerPhone()));
+                reqModel.setManager(resManagerModel);
+            }
 
             createRefObj(reqDTO);
 
