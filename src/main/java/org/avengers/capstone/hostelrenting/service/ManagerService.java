@@ -8,6 +8,6 @@ import org.avengers.capstone.hostelrenting.model.Manager;
  * @project youthhostelapp
  */
 public interface ManagerService {
-    boolean isExistByPhone(String phone);
+    Manager checkExistByPhone(String phone);
     Manager createNewManager(Manager manager);
 }
