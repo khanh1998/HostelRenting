@@ -165,6 +165,8 @@ public class TypeController {
             message = "Hostel type {id=" + typeId + "} has been retrieved successfully!";
             // handle hostel type and corresponding hostel group
             Type model = typeService.findById(typeId);
+            model.setView(model.getView()+1);
+            model = typeService.update(model);
             model = typeService.countAvailableRoomAndCurrentBooking(model);
             if (model.isDeleted()) {
                 message = String.format("Type with {id=%s} was not found!", typeId);
