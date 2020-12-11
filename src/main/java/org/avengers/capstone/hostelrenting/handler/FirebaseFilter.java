@@ -54,7 +54,7 @@ public class FirebaseFilter extends OncePerRequestFilter {
                 if (decodedToken != null)
                     phone = decodedToken.getUid();
 
-            } else {
+            } else if (requestTokenHeader != null && !requestTokenHeader.startsWith("Bearer ")){
                 logger.warn("JWT Token does not begin with Bearer String");
             }
             // Once we get the token validate it.
