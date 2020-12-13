@@ -18,8 +18,8 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
 
     @Query(value = "SELECT b.* FROM booking as b\n" +
             "WHERE \n" +
-            "(to_timestamp(b.meet_time / 1000) < current_date - interval '?1' day)\n" +
+            "b.meet_time < ?1 " +
             "and b.status = 'INCOMING';", nativeQuery = true)
-    Collection<Booking> findExpiredBookingByDayRange(String dayRange);
+    Collection<Booking> findExpiredBookingByDayRange(Long limitTime);
 }
 

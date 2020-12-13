@@ -43,6 +43,8 @@ public class Constant {
     public static final double DEFAULT_RANGE = 5;
 
     public static class Contract {
+
+        public final static String SUBJECT_CREATE_NEW = "NHATROSAC - HỢP ĐỒNG THUÊ NHÀ";
         public final static String UNICODE_TRUETYPE_SOURCE_SANS_PRO = "'Source Sans Pro'";
         public final static String TEMPLATE_NAME = "contract_template";
         /* VENDOR INFORMATION*/
@@ -124,4 +126,5 @@ public class Constant {
     public static class Format{
         public final static String DATE_TIME_DEFAULT = "yyyy/MM/dd HH:mm:ss";
     }
+    public static final String REQUEST_NOTIFICATION_SUBJECT = "DANH SÁCH PHÒNG THEO YÊU CẦU";
 }

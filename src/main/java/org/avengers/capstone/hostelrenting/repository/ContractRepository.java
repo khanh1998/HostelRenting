@@ -19,7 +19,7 @@ public interface ContractRepository extends JpaRepository<Contract, Integer> {
 
     @Query(value = "SELECT c.* FROM contract as c\n" +
             "WHERE \n" +
-            "(to_timestamp(c.created_at/1000) < current_date - interval '?1' day)\n" +
+            "(c.created_at < ?1)\n" +
             "and c.status = 'INACTIVE';", nativeQuery = true)
-    Collection<Contract> findExpiredInactiveContractByDayRange(String dayRange);
+    Collection<Contract> findExpiredInactiveContractByDayRange(Long limitTime);
 }
