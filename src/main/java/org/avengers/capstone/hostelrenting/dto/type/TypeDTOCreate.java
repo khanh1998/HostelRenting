@@ -100,4 +100,10 @@ public class TypeDTOCreate extends TypeDTO {
     public void setGroupId(int groupId) {
         super.setGroupId(groupId);
     }
+
+    @Override
+    @JsonIgnore
+    public void setActive(boolean isActive) {
+        super.setActive(isActive);
+    }
 }

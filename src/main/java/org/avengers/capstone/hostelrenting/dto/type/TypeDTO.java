@@ -33,6 +33,7 @@ public class TypeDTO{
     private int currentBooking;
     private int groupId;
     private Type.STATUS status;
+    private boolean isActive;
     private Long createdAt;
     private Long updatedAt;
 }

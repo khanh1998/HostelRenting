@@ -100,6 +100,9 @@ public class Type {
     @OneToMany(mappedBy = "type", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Collection<TypeFacility> typeFacilities;
 
+    @Column(columnDefinition = "boolean default false", nullable = false)
+    private boolean isActive;
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private Long createdAt;
 

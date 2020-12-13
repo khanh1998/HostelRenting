@@ -285,6 +285,7 @@ public class TypeServiceImpl implements TypeService {
     public Collection<Type> handleAfterRetrieve(Collection<Type> types) {
         return types.stream().map(this::countAvailableRoomAndCurrentBooking)
                 .filter(type -> type.getAvailableRoom() > 0 && !type.isDeleted())
+                .filter(type -> type.isActive()==true)
                 .sorted(Comparator.comparing(Type::getScore).reversed())
                 .collect(Collectors.toList());
     }
