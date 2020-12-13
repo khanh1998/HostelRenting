@@ -39,19 +39,19 @@ public class CustomUserService implements UserDetailsService {
         Optional<Renter> existedRenter = renterRepository.findByPhone(phone);
         if (existedRenter.isPresent()) {
             return new User(phone, existedRenter.get().getPassword(), new ArrayList<>());
-        } else {
-            throw new UsernameNotFoundException("User not found with phone: " + phone);
         }
+
+        throw new UsernameNotFoundException("User not found with phone: " + phone);
+
     }
 
-    public org.avengers.capstone.hostelrenting.model.User findByPhone(String phone){
+    public org.avengers.capstone.hostelrenting.model.User findByPhone(String phone) {
         Optional<Vendor> existedVendor = vendorRepository.findByPhone(phone);
         Optional<Renter> existedRenter = renterRepository.findByPhone(phone);
         if (existedRenter.isPresent()) {
             existedRenter.get().setRole(org.avengers.capstone.hostelrenting.model.User.ROLE.RENTER);
             return existedRenter.get();
-        }
-        else if (existedVendor.isPresent()){
+        } else if (existedVendor.isPresent()) {
             existedVendor.get().setRole(org.avengers.capstone.hostelrenting.model.User.ROLE.VENDOR);
             return existedVendor.get();
         }
