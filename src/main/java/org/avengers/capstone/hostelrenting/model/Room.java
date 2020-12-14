@@ -20,7 +20,7 @@ public class Room {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int roomId;
 
-    @Column(name = "room_name", nullable = false, length = 5)
+    @Column(name = "room_name", nullable = false, length = 20)
     @NotBlank(message = "Name is mandatory for hostel room")
     private String roomName;
 

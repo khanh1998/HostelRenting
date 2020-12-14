@@ -53,35 +53,8 @@ public class ContractServiceImpl implements ContractService {
     @Value("${azure.storage.contract-font}")
     private String fontPath;
 
-    @Value("${mail.admin.username}")
-    private String adminGmailUsername;
-    @Value("${mail.admin.password}")
-    private String adminGmailPwd;
 
-    @Value("${mail.smtp.auth}")
-    private String mailAuth;
-
-    @Value("${mail.smtp.starttls.enable}")
-    private String mailStartTlsEnable;
-
-    @Value("${mail.smtp.host}")
-    private String mailHost;
-
-    @Value("${mail.smtp.port}")
-    private String mailPort;
-
-    @Value("${mail.smtp.debug}")
-    private String mailDebug;
-
-    @Value("${mail.smtp.socketFactory.port}")
-    private String mailSocketFactoryPort;
-
-    @Value("${mail.smtp.socketFactory.class}")
-    private String mailSocketFactoryClass;
-
-    @Value("${mail.smtp.socketFactory.fallback}")
-    private String mailSocketFactoryFallback;
-
+    private Utilities utilities;
     private ContractRepository contractRepository;
     private GroupServiceRepository groupServiceRepository;
     private RoomRepository roomRepository;
@@ -94,6 +67,11 @@ public class ContractServiceImpl implements ContractService {
     private BookingService bookingService;
     private FileStorageServiceImp fileStorageService;
     private DealService dealService;
+
+    @Autowired
+    public void setUtilities(Utilities utilities) {
+        this.utilities = utilities;
+    }
 
     @Autowired
     public void setContractImageRepository(ContractImageRepository contractImageRepository) {
@@ -287,8 +265,8 @@ public class ContractServiceImpl implements ContractService {
                 exModel.setStatus(Contract.STATUS.ACTIVATED);
                 /* send mail for both renter and vendor when active contract */
                 String contractHtml = generateContractHTML(exModel);
-                sendMailWithEmbed(contractHtml, exModel.getRenter().getEmail());
-                sendMailWithEmbed(contractHtml, exModel.getVendor().getEmail());
+                utilities.sendMailWithEmbed(Constant.Contract.SUBJECT_CREATE_NEW, contractHtml, exModel.getRenter().getEmail());
+                utilities.sendMailWithEmbed(Constant.Contract.SUBJECT_CREATE_NEW, contractHtml, exModel.getVendor().getEmail());
 
             }
             // change to ACCEPTED only from INACTIVE
@@ -569,40 +547,6 @@ public class ContractServiceImpl implements ContractService {
         return Utilities.parseThymeleafTemplate(templateContent, contractInfo);
     }
 
-    public void sendMailWithEmbed(String contractHtml, String receivedMail) {
-
-        Properties props = new Properties();
-        props.put(Constant.Mail.MAIL_SMTP_AUTH, mailAuth);
-        props.put(Constant.Mail.MAIL_SMTP_STARTTLS_ENABLE, mailStartTlsEnable);
-        props.put(Constant.Mail.MAIL_SMTP_HOST, mailHost);
-        props.put(Constant.Mail.MAIL_SMTP_PORT, mailPort);
-        props.put(Constant.Mail.MAIL_SMTP_DEBUG, mailDebug);
-        props.put(Constant.Mail.MAIL_SMTP_SOCKET_FACTORY_PORT, mailSocketFactoryPort);
-        props.put(Constant.Mail.MAIL_SMTP_SOCKET_FACTORY_CLASS, mailSocketFactoryClass);
-        props.put(Constant.Mail.MAIL_SMTP_SOCKET_FACTORY_FALLBACK, mailSocketFactoryFallback);
-
-        // Get the Session object.
-        Session session = Session.getInstance(props,
-                new javax.mail.Authenticator() {
-                    protected PasswordAuthentication getPasswordAuthentication() {
-                        return new PasswordAuthentication(adminGmailUsername, adminGmailPwd);
-                    }
-                });
-
-        try {
-            Message message = new MimeMessage(session);
-            message.setFrom(new InternetAddress(adminGmailUsername));
-            message.setRecipients(Message.RecipientType.TO,
-                    InternetAddress.parse(receivedMail));
-            message.setSubject("Hợp đồng thuê nhà");
-            message.setContent(contractHtml, "text/html; charset=UTF-8");
-            // Send message
-            Transport.send(message);
-
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-        }
-    }
 
     private Contract fillInContractObject(Contract model) {
         model.setType(model.getRoom().getType());
@@ -613,7 +557,7 @@ public class ContractServiceImpl implements ContractService {
             model.setDeal(dealService.findById(dealId));
         if (bookingId != null) {
             model.setBooking(bookingService.findById(bookingId));
-            if (bookingService.findById(model.getBookingId()).getDealId()!= null)
+            if (bookingService.findById(model.getBookingId()).getDealId() != null)
                 model.setDeal(dealService.findById(bookingService.findById(bookingId).getDealId()));
         }
         return model;
@@ -642,12 +586,12 @@ public class ContractServiceImpl implements ContractService {
             cal.add(Calendar.MONTH, exContract.get().getDuration());
             Long endTime = cal.getTimeInMillis();
             // case: startTime before endTime
-            if (reqModel.getStartTime()<endTime){
+            if (reqModel.getStartTime() < endTime) {
                 throw new GenericException(Contract.class, "has invalid startTime, the old contract has not expired yet",
                         "Old contract end time", String.valueOf(endTime),
                         "Your start time", String.valueOf(reqModel.getStartTime()));
             }
-        }else{
+        } else {
             if (!roomService.checkAvailableById(roomId))
                 throw new GenericException(Room.class, "is not available", "roomId", String.valueOf(roomId));
         }

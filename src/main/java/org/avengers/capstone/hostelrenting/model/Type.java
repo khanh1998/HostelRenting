@@ -4,6 +4,8 @@ import lombok.*;
 import org.springframework.beans.factory.annotation.Value;
 
 import javax.persistence.*;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import java.util.Collection;
 import java.util.Comparator;
@@ -25,6 +27,8 @@ public class Type {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int typeId;
 
+    @Min(0)
+    @Max(10)
     private float score;
 
     @Column(name = "title", nullable = false, length = 100)
@@ -39,6 +43,8 @@ public class Type {
     private String priceUnit;
 
     @Column(nullable = false)
+    @Min(5)
+    @Max(200)
     private float superficiality;
 
     @Column(nullable = false)
@@ -50,6 +56,8 @@ public class Type {
     // unit: month
     @Column(nullable = false)
     private int deposit;
+
+    private String description;
 
     @Transient
     private int schoolmate;
@@ -91,6 +99,9 @@ public class Type {
 
     @OneToMany(mappedBy = "type", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Collection<TypeFacility> typeFacilities;
+
+    @Column(columnDefinition = "boolean default false", nullable = false)
+    private boolean isActive;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private Long createdAt;
