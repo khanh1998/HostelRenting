@@ -34,6 +34,8 @@ public class GroupDTOResponse implements Serializable {
 
     private Double latitude;
 
+    private UUID managerId;
+
     private String managerName;
 
     private String managerPhone;

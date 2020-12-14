@@ -2,6 +2,7 @@ package org.avengers.capstone.hostelrenting.dto.group;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -21,8 +22,6 @@ public class GroupDTOUpdate {
     private String curfewTime;
     private Boolean ownerJoin;
     private String imgUrl;
-    private String managerName;
-    private String managerPhone;
     private Float downPayment;
 
     @Getter
