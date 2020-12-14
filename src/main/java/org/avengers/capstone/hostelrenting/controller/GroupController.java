@@ -141,6 +141,9 @@ public class GroupController {
             if (reqDTO.getManagerPhone()!= null){
                 Manager newManager = new Manager();
                 newManager.setManagerPhone(reqDTO.getManagerPhone());
+                if (reqDTO.getManagerName()!=null){
+                    newManager.setManagerName(reqDTO.getManagerName());
+                }
                 Manager resManagerModel = managerService.createNewManager(newManager);
                 logger.info(String.format("Manager has been created with {name=%s}, {phone=%s} ",resManagerModel.getManagerName(), reqDTO.getManagerPhone()));
                 reqModel.setManager(resManagerModel);
