@@ -88,13 +88,13 @@ public class ScheduledTasks {
     /**
      * Run scheduled tasks every 00:00 each day
      */
-//    @Scheduled(cron = "0 0 0 * * ?") // execute every 00:00 of day
-    @Scheduled(cron = "*/5 * * ? * *") // execute every 5 seconds
+    @Scheduled(cron = "0 0 0 * * ?") // execute every 00:00 of day
+//    @Scheduled(cron = "*/5 * * ? * *") // execute every 5 seconds
     public void cleanUp() {
-//        cleanUpExpiredDeals();
-//        cleanUpExpiredBookings();
-//        cleanUpExpiredContracts();
-//        cleanUpExpiredRequests();
+        cleanUpExpiredDeals();
+        cleanUpExpiredBookings();
+        cleanUpExpiredContracts();
+        cleanUpExpiredRequests();
         sendRequestDueTime();
     }
 
@@ -184,11 +184,11 @@ public class ScheduledTasks {
         data.put("action", "REQUEST_HOSTEL_RESULT");
         inTimeRequests.forEach(request -> {
             firebaseService.sendPnsToDevice(NotificationRequest.builder().destination(request.getRenter().getFirebaseToken()).data(data).build());
-            String resultUrl = "Danh sách các phòng dựa trên yêu cầu của bạn: " + systemDomain + "/request/"+request.getRenter().getUserId();
+            String resultUrl = "Danh sách các phòng dựa trên yêu cầu của bạn: " + systemDomain + "/request/"+request.getRequestId();
             Calendar cal = Calendar.getInstance();
             cal.setTimeInMillis(request.getCreatedAt());
             utilities.sendMailWithEmbed(Constant.REQUEST_NOTIFICATION_SUBJECT , resultUrl, request.getRenter().getEmail());
-            logger.info(String.format("Result of request with {id=%s} has been send to renter with {id=%s}"), request.getRequestId(), request.getRenter().getUserId());
+            logger.info(String.format("Result of request with {id=%s} has been send to renter with {id=%s}",request.getRequestId(), request.getRenter().getUserId()));
         });
     }
 
