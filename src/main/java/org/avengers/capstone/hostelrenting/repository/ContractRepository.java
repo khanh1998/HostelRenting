@@ -14,8 +14,8 @@ public interface ContractRepository extends JpaRepository<Contract, Integer> {
     Optional<Contract> findByVendor_UserIdAndRenter_UserIdAndRoom_RoomIdAndStatus(UUID vendorId, UUID renterId, Integer roomId, Contract.STATUS status);
     Optional<Contract> findFirstByRenter_UserIdAndRoom_Type_TypeIdAndStatusOrRenter_UserIdAndRoom_Type_TypeIdAndStatusOrderByCreatedAt
             (UUID renterId, Integer typeId, Contract.STATUS status1,UUID renterId2, Integer typeId2, Contract.STATUS status2);
-    List<Contract> findByVendor_UserId(Long vendorId, Pageable pageable);
-    List<Contract> findByRenter_UserId(Long renterId, Pageable pageable);
+    List<Contract> findByVendor_UserId(UUID vendorId, Pageable pageable);
+    List<Contract> findByRenter_UserId(UUID renterId, Pageable pageable);
 
     @Query(value = "SELECT c.* FROM contract as c\n" +
             "WHERE \n" +

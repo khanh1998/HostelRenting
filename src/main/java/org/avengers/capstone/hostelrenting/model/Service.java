@@ -20,7 +20,7 @@ public class Service {
     private Integer serviceId;
 
     @Column(nullable = false, length = 30)
-    private String serviceName;
+        private String serviceName;
 
     @Column(columnDefinition = "boolean default false",nullable = false)
     private boolean isApproved;
