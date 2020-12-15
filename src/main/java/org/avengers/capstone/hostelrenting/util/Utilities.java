@@ -114,7 +114,7 @@ public class Utilities {
                 originalFileName, contentType, content);
     }
 
-    public static String parseThymeleafTemplate(String template, Map<String, String> contractInfo) {
+    public static String parseThymeleafTemplate(String template, Map<String, Object> contractInfo) {
         StringTemplateResolver templateResolver = new StringTemplateResolver();
         templateResolver.setTemplateMode(TemplateMode.HTML);
         TemplateEngine templateEngine = new TemplateEngine();

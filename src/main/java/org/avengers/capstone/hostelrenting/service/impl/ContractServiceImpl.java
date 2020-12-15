@@ -26,17 +26,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import javax.mail.Message;
-import javax.mail.PasswordAuthentication;
-import javax.mail.Session;
-import javax.mail.Transport;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
 import javax.transaction.Transactional;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -53,6 +46,8 @@ public class ContractServiceImpl implements ContractService {
     @Value("${azure.storage.contract-font}")
     private String fontPath;
 
+    @Value("${contract.reserved.expiring.day}")
+    private String reservedContractExpiredDayRange;
 
     private Utilities utilities;
     private ContractRepository contractRepository;
@@ -296,14 +291,14 @@ public class ContractServiceImpl implements ContractService {
     }
 
     @Override
-    public List<Contract> findByRenterId(Long renterId, int page, int size, String sortBy, boolean asc) {
+    public List<Contract> findByRenterId(UUID renterId, int page, int size, String sortBy, boolean asc) {
         Sort sort = Sort.by(asc ? Sort.Direction.ASC : Sort.Direction.DESC, sortBy);
         Pageable pageable = PageRequest.of(page - 1, size, sort);
         return contractRepository.findByRenter_UserId(renterId, pageable).stream().map(this::fillInContractObject).collect(Collectors.toList());
     }
 
     @Override
-    public List<Contract> findByVendorId(Long vendorId, int page, int size, String sortBy, boolean asc) {
+    public List<Contract> findByVendorId(UUID vendorId, int page, int size, String sortBy, boolean asc) {
         Sort sort = Sort.by(asc ? Sort.Direction.ASC : Sort.Direction.DESC, sortBy);
         Pageable pageable = PageRequest.of(page - 1, size, sort);
         return contractRepository.findByVendor_UserId(vendorId, pageable).stream().map(this::fillInContractObject).collect(Collectors.toList());
@@ -463,7 +458,7 @@ public class ContractServiceImpl implements ContractService {
     }
 
     public String generateContractHTML(Contract model) {
-        Map<String, String> contractInfo = new HashMap<>();
+        Map<String, Object> contractInfo = new HashMap<>();
         contractInfo.put(Constant.Contract.VENDOR_NAME, model.getVendor().getUsername());
         contractInfo.put(Constant.Contract.VENDOR_YEAR_OF_BIRTH, String.valueOf(model.getVendor().getYearOfBirth()));
         contractInfo.put(Constant.Contract.VENDOR_ID_NUMBER, model.getVendor().getCitizenIdNum());
@@ -525,6 +520,21 @@ public class ContractServiceImpl implements ContractService {
 
         // appendix contract
         contractInfo.put(Constant.Contract.PAYMENT_DAY_IN_MONTH, String.valueOf(model.getPaymentDayInMonth()));
+
+        // down payment
+        contractInfo.put(Constant.Contract.DOWN_PAYMENT, nf.format(model.getDownPayment()*1000000));
+
+        // reserved Contract Expired Day Range
+        contractInfo.put(Constant.Contract.RESERVED_CONTRACT_EXPIRED_DAY_RANGE, reservedContractExpiredDayRange);
+
+        model.getGroupServices().stream()
+                .forEach(groupService -> {
+                    groupService.setDisplayPrice(nf.format(Long.valueOf(Math.round(groupService.getPrice()))*1000));
+                });
+
+        contractInfo.put(Constant.Contract.SERVICES, model.getGroupServices());
+        contractInfo.put(Constant.Contract.REGULATIONS, model.getRoom().getType().getGroup().getGroupRegulations());
+        contractInfo.put(Constant.Contract.FACILITIES, model.getRoom().getType().getTypeFacilities());
 
 
         // Get full address

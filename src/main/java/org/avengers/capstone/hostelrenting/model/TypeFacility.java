@@ -3,6 +3,8 @@ package org.avengers.capstone.hostelrenting.model;
 import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 
 /**
  * @author duattt on 11/14/20
@@ -21,6 +23,12 @@ public class TypeFacility {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+
+    @Column(name = "quantity", columnDefinition = "int default 1")
+    private int quantity;
+
+    @Column(name = "unit", columnDefinition = "varchar(10) default 'cái'")
+    private String unit;
 
     @ManyToOne
     @JoinColumn(name = "type_id", nullable = false)

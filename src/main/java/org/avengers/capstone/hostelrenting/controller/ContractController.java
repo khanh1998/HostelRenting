@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static org.avengers.capstone.hostelrenting.Constant.Pagination.DEFAULT_PAGE;
@@ -141,7 +142,7 @@ public class ContractController {
     }
 
     @GetMapping("/renters/{renterId}/contracts")
-    public ResponseEntity<?> getContractsByRenterId(@PathVariable Long renterId,
+    public ResponseEntity<?> getContractsByRenterId(@PathVariable UUID renterId,
                                                     @RequestParam(required = false, defaultValue = "createdAt") String sortBy,
                                                     @RequestParam(required = false, defaultValue = "false") Boolean asc,
                                                     @RequestParam(required = false, defaultValue = DEFAULT_SIZE) Integer size,
@@ -165,7 +166,7 @@ public class ContractController {
     }
 
     @GetMapping("/vendors/{vendorId}/contracts")
-    public ResponseEntity<?> getContractsByVendorId(@PathVariable Long vendorId,
+    public ResponseEntity<?> getContractsByVendorId(@PathVariable UUID vendorId,
                                                     @RequestParam(required = false, defaultValue = "createdAt") String sortBy,
                                                     @RequestParam(required = false, defaultValue = "false") Boolean asc,
                                                     @RequestParam(required = false, defaultValue = DEFAULT_SIZE) Integer size,
