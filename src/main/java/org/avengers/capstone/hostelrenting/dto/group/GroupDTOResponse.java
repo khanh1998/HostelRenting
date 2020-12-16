@@ -93,4 +93,9 @@ public class GroupDTOResponse implements Serializable {
                     .collect(Collectors.toList());
         return null;
     }
+
+    public Collection<GroupServiceDTOResponse> getGroupServices() {
+        return groupServices.stream().filter(groupServiceDTOResponse -> groupServiceDTOResponse.isActive())
+                .collect(Collectors.toList());
+    }
 }

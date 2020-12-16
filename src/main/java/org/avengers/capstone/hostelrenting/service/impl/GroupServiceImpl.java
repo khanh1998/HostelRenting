@@ -92,9 +92,4 @@ public class GroupServiceImpl implements GroupService {
         //TODO: Implement
     }
 
-    private void handleObjForEndUser(Group model){
-        model.setGroupRegulations(groupRegulationRepository.findByGroup_GroupIdAndRegulation_IsApproved(model.getGroupId(), true));
-        model.setGroupServices(groupServiceRepository.findByGroup_GroupIdAndService_IsApproved(model.getGroupId(), true));
-    }
-
 }
