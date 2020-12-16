@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigInteger;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -198,7 +199,7 @@ public class TypeServiceImpl implements TypeService {
     }
 
     @Override
-    public Collection<Type> filtering(Collection<Type> types, Integer requestId, Integer schoolId, Integer provinceId, Integer categoryId, Float minPrice, Float maxPrice, Float minSuperficiality, Float maxSuperficiality, Integer minCapacity, Integer maxCapacity,Integer[] uCategoryIds,  Integer[] facilityIds, Integer[] serviceIds, Integer[] regulationIds) {
+    public Collection<Type> filtering(Collection<Type> types, Integer requestId, Integer schoolId, Integer provinceId, Integer categoryId, Float minPrice, Float maxPrice, Float minSuperficiality, Float maxSuperficiality, Integer minCapacity, Integer maxCapacity,Integer[] uCategoryIds,  Integer[] facilityIds, Integer[] serviceIds, Integer[] regulationIds, Integer size, Integer page) {
         HostelRequest exRequest = null;
         if (requestId != null) {
             exRequest = hostelRequestService.findById(requestId);
@@ -210,8 +211,7 @@ public class TypeServiceImpl implements TypeService {
             return true;
         }).filter(hostelType ->{
             if (uCategoryIds!=null && uCategoryIds.length>0){
-                getUtilityCategory(hostelType, uCategoryIds);
-                return true;
+                return getUtilityCategory(hostelType, uCategoryIds);
             }
             return true;
         }).filter(hostelType -> {
@@ -267,7 +267,9 @@ public class TypeServiceImpl implements TypeService {
                                 .stream(regulationIds)
                                 .anyMatch(id -> id == regulation.getRegulation().getRegulationId()));
             return true;
-        }).collect(Collectors.toList());
+        }).limit(size)
+                .skip(page*size)
+                .collect(Collectors.toList());
     }
 
     private Collection<Type> generateResult(Collection<Type> result, Collection<Type> schoolMateTypesOnly, Collection<Type> compatriotTypesOnly) {
@@ -392,10 +394,11 @@ public class TypeServiceImpl implements TypeService {
         return types;
     }
 
-    private void getUtilityCategory(Type type, Integer[] uCategoryIds){
+    private boolean getUtilityCategory(Type type, Integer[] uCategoryIds){
         Group group = type.getGroup();
         Double lat1 = group.getLatitude();
         Double lng1 = group.getLongitude();
+        AtomicBoolean flag = new AtomicBoolean(false);
 
         Arrays.stream(uCategoryIds).forEach(uCategoryId ->{
             Collection<Utility> utilities = utilityService.getUtilitiesByCategoryId(uCategoryId);
@@ -404,9 +407,11 @@ public class TypeServiceImpl implements TypeService {
                     Collection<Integer> uCategories =type.getuCategoryIds();
                     uCategories.add(uCategoryId);
                     type.setUCategoryIds(uCategories);
+                    flag.set(true);
                 }
             });
         });
 
+        return flag.get();
     }
 }

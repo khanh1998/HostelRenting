@@ -186,7 +186,7 @@ public class TypeController {
         }
 
         Collection<Type> types = typeService.searchWithMainFactors(latitude, longitude, distance, schoolId, provinceId, requestId, sortBy, asc, size, page);
-        types = typeService.filtering(types, requestId, schoolId, provinceId, categoryId, minPrice, maxPrice, minSuperficiality, maxSuperficiality, minCapacity, maxCapacity, uCategoryIds, facilityIds, serviceIds, regulationIds);
+        types = typeService.filtering(types, requestId, schoolId, provinceId, categoryId, minPrice, maxPrice, minSuperficiality, maxSuperficiality, minCapacity, maxCapacity, uCategoryIds, facilityIds, serviceIds, regulationIds, size, page-1);
         List<TypeDTOResponse> typeDTOs = types
                 .stream()
                 .map(type -> modelMapper.map(type, TypeDTOResponse.class))

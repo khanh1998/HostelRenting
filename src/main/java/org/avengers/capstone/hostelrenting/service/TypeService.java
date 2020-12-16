@@ -43,5 +43,5 @@ public interface TypeService {
                                Float maxPrice, Float minSuperficiality,
                                Float maxSuperficiality, Integer minCapacity,
                                Integer maxCapacity, Integer[] uCategoryIds, Integer[] facilityIds,
-                               Integer[] serviceIds, Integer[] regulationIds);
+                               Integer[] serviceIds, Integer[] regulationIds, Integer size, Integer page);
 }
