@@ -198,7 +198,7 @@ public class TypeServiceImpl implements TypeService {
     }
 
     @Override
-    public Collection<Type> filtering(Collection<Type> types, Integer requestId, Integer schoolId, Integer provinceId, Integer categoryId, Float minPrice, Float maxPrice, Float minSuperficiality, Float maxSuperficiality, Integer minCapacity, Integer maxCapacity,Integer[] uCategoryIds,  Integer[] facilityIds, Integer[] serviceIds, Integer[] regulationIds) {
+    public Collection<Type> filtering(Collection<Type> types, Integer requestId, Integer schoolId, Integer provinceId, Integer categoryId, Float minPrice, Float maxPrice, Float minSuperficiality, Float maxSuperficiality, Integer minCapacity, Integer maxCapacity,Integer[] uCategoryIds,  Integer[] facilityIds, Integer[] serviceIds, Integer[] regulationIds, Integer size, Integer page) {
         HostelRequest exRequest = null;
         if (requestId != null) {
             exRequest = hostelRequestService.findById(requestId);
@@ -267,7 +267,9 @@ public class TypeServiceImpl implements TypeService {
                                 .stream(regulationIds)
                                 .anyMatch(id -> id == regulation.getRegulation().getRegulationId()));
             return true;
-        }).collect(Collectors.toList());
+        }).limit(size)
+                .skip(page*size)
+                .collect(Collectors.toList());
     }
 
     private Collection<Type> generateResult(Collection<Type> result, Collection<Type> schoolMateTypesOnly, Collection<Type> compatriotTypesOnly) {
