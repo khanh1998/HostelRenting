@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigInteger;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -210,8 +211,7 @@ public class TypeServiceImpl implements TypeService {
             return true;
         }).filter(hostelType ->{
             if (uCategoryIds!=null && uCategoryIds.length>0){
-                getUtilityCategory(hostelType, uCategoryIds);
-                return true;
+                return getUtilityCategory(hostelType, uCategoryIds);
             }
             return true;
         }).filter(hostelType -> {
@@ -394,10 +394,11 @@ public class TypeServiceImpl implements TypeService {
         return types;
     }
 
-    private void getUtilityCategory(Type type, Integer[] uCategoryIds){
+    private boolean getUtilityCategory(Type type, Integer[] uCategoryIds){
         Group group = type.getGroup();
         Double lat1 = group.getLatitude();
         Double lng1 = group.getLongitude();
+        AtomicBoolean flag = new AtomicBoolean(false);
 
         Arrays.stream(uCategoryIds).forEach(uCategoryId ->{
             Collection<Utility> utilities = utilityService.getUtilitiesByCategoryId(uCategoryId);
@@ -406,9 +407,11 @@ public class TypeServiceImpl implements TypeService {
                     Collection<Integer> uCategories =type.getuCategoryIds();
                     uCategories.add(uCategoryId);
                     type.setUCategoryIds(uCategories);
+                    flag.set(true);
                 }
             });
         });
 
+        return flag.get();
     }
 }
