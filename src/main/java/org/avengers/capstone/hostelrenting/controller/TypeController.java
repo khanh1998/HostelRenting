@@ -150,6 +150,7 @@ public class TypeController {
                                       @RequestParam(required = false) Float maxSuperficiality,
                                       @RequestParam(required = false) Integer minCapacity,
                                       @RequestParam(required = false) Integer maxCapacity,
+                                      @RequestParam(required = false) Integer[] uCategoryIds,
                                       @RequestParam(required = false) Integer[] facilityIds,
                                       @RequestParam(required = false) Integer[] serviceIds,
                                       @RequestParam(required = false) Integer[] regulationIds,
@@ -165,7 +166,7 @@ public class TypeController {
             message = "Hostel type {id=" + typeId + "} has been retrieved successfully!";
             // handle hostel type and corresponding hostel group
             Type model = typeService.findById(typeId);
-            model.setView(model.getView()+1);
+            model.setView(model.getView() + 1);
             model = typeService.update(model);
             model = typeService.countAvailableRoomAndCurrentBooking(model);
             if (model.isDeleted()) {
@@ -185,7 +186,7 @@ public class TypeController {
         }
 
         Collection<Type> types = typeService.searchWithMainFactors(latitude, longitude, distance, schoolId, provinceId, requestId, sortBy, asc, size, page);
-        types = typeService.filtering(types, requestId, schoolId, provinceId, categoryId, minPrice, maxPrice, minSuperficiality, maxSuperficiality, minCapacity, maxCapacity, facilityIds, serviceIds, regulationIds);
+        types = typeService.filtering(types, requestId, schoolId, provinceId, categoryId, minPrice, maxPrice, minSuperficiality, maxSuperficiality, minCapacity, maxCapacity, uCategoryIds, facilityIds, serviceIds, regulationIds);
         List<TypeDTOResponse> typeDTOs = types
                 .stream()
                 .map(type -> modelMapper.map(type, TypeDTOResponse.class))

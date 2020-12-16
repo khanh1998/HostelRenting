@@ -7,6 +7,7 @@ import javax.persistence.*;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 
@@ -71,6 +72,9 @@ public class Type {
     @Transient
     private int currentBooking;
 
+    @Transient
+    private Collection<Integer> uCategoryIds;
+
     @Column(columnDefinition = "boolean default false", nullable = false)
     private boolean isDeleted;
 
@@ -108,4 +112,10 @@ public class Type {
 
     @Column(name = "updated_at")
     private Long updatedAt;
+
+    public Collection<Integer> getuCategoryIds() {
+        if (uCategoryIds == null)
+            return new ArrayList<>();
+        return uCategoryIds;
+    }
 }

@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.avengers.capstone.hostelrenting.model.Type;
 
+import java.util.Collection;
+
 /**
  * @author duattt on 11/11/20
  * @created 11/11/2020 - 09:48
@@ -23,6 +25,7 @@ public class TypeDTO{
     private String description;
     private Integer view;
     private Integer deposit;
+    private Collection<Integer> uCategoryIds;
     @JsonIgnore
     private boolean isDeleted;
 
