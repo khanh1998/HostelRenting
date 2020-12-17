@@ -88,8 +88,8 @@ public class ScheduledTasks {
     /**
      * Run scheduled tasks every 00:00 each day
      */
-    @Scheduled(cron = "0 0 0 * * ?") // execute every 00:00 of day
-//    @Scheduled(cron = "*/5 * * ? * *") // execute every 5 seconds
+//    @Scheduled(cron = "0 0 0 * * ?") // execute every 00:00 of day
+    @Scheduled(cron = "*/30 * * ? * *") // execute every 5 seconds
     public void cleanUp() {
         cleanUpExpiredDeals();
         cleanUpExpiredBookings();
@@ -102,7 +102,7 @@ public class ScheduledTasks {
      * Clean up all expired deal (deal without reference - STATUS!=DONE & STATUS!=CANCELLED based on updated and created time)
      */
     private void cleanUpExpiredDeals() {
-        Long limitTime = calculateLimitTime(Calendar.DAY_OF_MONTH, dealExpiringDay);
+        Long limitTime = calculateLimitTime(getCurrentTime(), Calendar.DAY_OF_MONTH, -dealExpiringDay);
         Collection<Deal> expiredDeals = dealRepository.findExpiredDealsByDayRange(limitTime);
         if (expiredDeals.isEmpty()) {
             logger.info("There is no expired DEAL");
@@ -120,7 +120,7 @@ public class ScheduledTasks {
      */
     private void cleanUpExpiredBookings() {
         // current time + 1 day + systemCorrectionTime
-        Long limitTime = calculateLimitTime(Calendar.DAY_OF_MONTH, bookingExpiringDay);
+        Long limitTime = calculateLimitTime(getCurrentTime(), Calendar.DAY_OF_MONTH, -bookingExpiringDay);
 
         Collection<Booking> expiredBookings = bookingRepository.findExpiredBookingByDayRange(limitTime);
         if (expiredBookings.isEmpty()) {
@@ -138,7 +138,7 @@ public class ScheduledTasks {
      * Clean up all expired contract (contract with INACTIVE status and start
      */
     private void cleanUpExpiredContracts() {
-        Long limitTime = calculateLimitTime(Calendar.DAY_OF_MONTH, inactiveContractExpiringDay);
+        Long limitTime = calculateLimitTime(getCurrentTime(), Calendar.DAY_OF_MONTH, -inactiveContractExpiringDay);
         Collection<Contract> expiredContracts = contractRepository.findExpiredInactiveContractByDayRange(limitTime);
         if (expiredContracts.isEmpty()) {
             logger.info("There is no expire CONTRACT");
@@ -155,17 +155,17 @@ public class ScheduledTasks {
      * Clean up all expired request (dueTime < currentTime)
      */
     private void cleanUpExpiredRequests() {
-        Long limitTime = calculateLimitTime(Calendar.DAY_OF_MONTH, 0);
-        Collection<HostelRequest> expiredRequests = hostelRequestRepository.findRequestsByLimitTime(limitTime);
+        Long limitTime = calculateLimitTime(getCurrentTime(),Calendar.DAY_OF_MONTH, 0);
+
+        Collection<HostelRequest> expiredRequests = hostelRequestRepository.findExpiredRequest(limitTime);
         if (expiredRequests.isEmpty()) {
             logger.info("There is no expired HOSTEL REQUEST");
             return;
         }
         expiredRequests.forEach(request -> {
             request.setStatus(HostelRequest.STATUS.EXPIRED);
-            logger.info(String.format("Request with {id=%s} has been changed to EXPIRED"), request.getRequestId());
+            logger.info(String.format("Request with {id=%s} has been changed to EXPIRED", request.getRequestId()));
             hostelRequestRepository.save(request);
-
         });
     }
 
@@ -173,8 +173,8 @@ public class ScheduledTasks {
      * send notification and email for request due time
      */
     private void sendRequestDueTime() {
-        Long limitTime = calculateLimitTime(Calendar.DAY_OF_MONTH, requestResponseDay);
-        Collection<HostelRequest> inTimeRequests = hostelRequestRepository.findRequestsByLimitTime(limitTime);
+        Long limitTime = calculateLimitTime(getCurrentTime(), Calendar.DAY_OF_MONTH, requestResponseDay);
+        Collection<HostelRequest> inTimeRequests = hostelRequestRepository.findValidRequest(getCurrentTime(), limitTime);
         if (inTimeRequests.isEmpty()) {
             logger.info("There is no in time REQUEST");
             return;
@@ -188,6 +188,10 @@ public class ScheduledTasks {
             Calendar cal = Calendar.getInstance();
             cal.setTimeInMillis(request.getCreatedAt());
             utilities.sendMailWithEmbed(Constant.REQUEST_NOTIFICATION_SUBJECT , resultUrl, request.getRenter().getEmail());
+
+//            request.setStatus(HostelRequest.STATUS.DONE);
+//            hostelRequestRepository.save(request);
+
             logger.info(String.format("Result of request with {id=%s} has been send to renter with {id=%s}",request.getRequestId(), request.getRenter().getUserId()));
         });
     }
@@ -199,10 +203,17 @@ public class ScheduledTasks {
      * @param timeRange time range for limitation
      * @return milliseconds
      */
-    private Long calculateLimitTime(int timeField, int timeRange) {
+    private Long calculateLimitTime(Long sourceTime, int timeField, int timeRange) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTimeInMillis(sourceTime);
+        cal.add(timeField, timeRange);
+        return cal.getTimeInMillis();
+    }
+
+
+    private Long getCurrentTime(){
         Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(System.currentTimeMillis());
-        cal.add(timeField, -timeRange);
         cal.add(Calendar.HOUR, systemCorrectionTime);
         return cal.getTimeInMillis();
     }

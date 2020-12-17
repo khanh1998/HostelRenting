@@ -1,7 +1,8 @@
 package org.avengers.capstone.hostelrenting.controller;
 
-import org.avengers.capstone.hostelrenting.dto.UCategoryDTO;
+import org.avengers.capstone.hostelrenting.dto.utility.UCategoryDTOFull;
 import org.avengers.capstone.hostelrenting.dto.response.ApiSuccess;
+import org.avengers.capstone.hostelrenting.dto.utility.UCategoryDTOShort;
 import org.avengers.capstone.hostelrenting.model.UCategory;
 import org.avengers.capstone.hostelrenting.service.UCategoryService;
 import org.avengers.capstone.hostelrenting.service.UtilityService;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -21,8 +23,13 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/v1")
 public class UtilityController {
     private UtilityService utilityService;
+    private UCategoryService uCategoryService;
     private ModelMapper modelMapper;
 
+    @Autowired
+    public void setuCategoryService(UCategoryService uCategoryService) {
+        this.uCategoryService = uCategoryService;
+    }
 
     @Autowired
     public void setUtilityService(UtilityService utilityService) {
@@ -38,10 +45,20 @@ public class UtilityController {
     public ResponseEntity<?> getNearbyUtilities(@RequestParam Double latitude,
                                              @RequestParam Double longitude,
                                              @RequestParam(defaultValue = "5.0") Double distance){
-        List<UCategoryDTO> resDTOs = utilityService.getNearbyUtilities(latitude, longitude, distance)
+        List<UCategoryDTOFull> resDTOs = utilityService.getNearbyUtilities(latitude, longitude, distance)
                 .stream()
-                .map(model -> modelMapper.map(model, UCategoryDTO.class))
-                .sorted(Comparator.comparingInt(UCategoryDTO::getDisplayOrder))
+                .map(model -> modelMapper.map(model, UCategoryDTOFull.class))
+                .sorted(Comparator.comparingInt(UCategoryDTOFull::getDisplayOrder))
+                .collect(Collectors.toList());
+        ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTOs, "Utilities has been retrieved successfully!");
+
+        return ResponseEntity.ok(apiSuccess);
+    }
+
+    @GetMapping("/ucategories")
+    public ResponseEntity<?> getAllUCategory(){
+        Collection<UCategory> resModels = uCategoryService.getAllUCategories();
+        Collection<UCategoryDTOShort> resDTOs = resModels.stream().map( uCategory -> modelMapper.map(uCategory, UCategoryDTOShort.class))
                 .collect(Collectors.toList());
         ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTOs, "Utilities has been retrieved successfully!");
 

@@ -19,9 +19,16 @@ import java.util.UUID;
 public interface HostelRequestRepository extends JpaRepository<HostelRequest, Integer> {
     List<HostelRequest> findByRenter_UserId(UUID renterId, Pageable pageable);
 
-    @Query(value = "select r.* from hostel_request as r where r.due_time < ?1 ", nativeQuery = true)
-    Collection<HostelRequest> findRequestsByLimitTime(Long limitTime);
+    @Query(value = "select r.* from hostel_request as r where r.due_time < ?1 and r.status!='EXPIRED'", nativeQuery = true)
+    Collection<HostelRequest> findExpiredRequest(Long limitTime);
 
-
+    /**
+     *
+     * @param currentTime
+     * @param activeTime the due-time minus the range for send notification (ex: duetime: 10/10/2020 -> activeTime:5/10/2020)
+     * @return
+     */
+    @Query(value = "select r.* from hostel_request as r where r.due_time > ?1 and ?2 > r.due_time", nativeQuery = true)
+    Collection<HostelRequest> findValidRequest(Long currentTime, Long activeTime);
 
 }

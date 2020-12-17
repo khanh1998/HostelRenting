@@ -91,6 +91,15 @@ public class Constant {
         public final static String APPENDIX_CONTRACT = "appendixContract";
         public final static String PAYMENT_DAY_IN_MONTH = "paymentDayInMonth";
 
+        public final static String DOWN_PAYMENT = "downPayment";
+        public final static String RESERVED_CONTRACT_EXPIRED_DAY_RANGE = "reservedContractExpiredDayRange";
+        public final static String SERVICES = "services" ;
+        public final static String REGULATIONS = "regulations" ;
+        public final static String FACILITIES = "facilities" ;
+
+
+
+
 
 
         /* GROUP INFORMATION */

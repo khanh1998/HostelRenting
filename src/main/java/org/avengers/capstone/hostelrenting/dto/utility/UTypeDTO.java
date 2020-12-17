@@ -1,10 +1,10 @@
-package org.avengers.capstone.hostelrenting.dto;
+package org.avengers.capstone.hostelrenting.dto.utility;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.avengers.capstone.hostelrenting.dto.utility.UtilityDTO;
 
 import java.io.Serializable;
 import java.util.List;

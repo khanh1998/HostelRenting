@@ -22,6 +22,9 @@ public class GroupService {
     @Column(nullable = false)
     private Float price;
 
+    @Transient
+    private String displayPrice;
+
     @Column(columnDefinition = "varchar(10) default 'nghìn'")
     private String priceUnit;
 

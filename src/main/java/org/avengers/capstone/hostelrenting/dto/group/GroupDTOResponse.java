@@ -34,6 +34,8 @@ public class GroupDTOResponse implements Serializable {
 
     private Double latitude;
 
+    private UUID managerId;
+
     private String managerName;
 
     private String managerPhone;
@@ -90,5 +92,10 @@ public class GroupDTOResponse implements Serializable {
                                     .collect(Collectors.toList())).build())
                     .collect(Collectors.toList());
         return null;
+    }
+
+    public Collection<GroupServiceDTOResponse> getGroupServices() {
+        return groupServices.stream().filter(groupServiceDTOResponse -> groupServiceDTOResponse.isActive())
+                .collect(Collectors.toList());
     }
 }
