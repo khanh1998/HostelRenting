@@ -199,7 +199,7 @@ public class TypeServiceImpl implements TypeService {
     }
 
     @Override
-    public Collection<Type> filtering(Collection<Type> types, Integer requestId, Integer schoolId, Integer provinceId, Integer categoryId, Float minPrice, Float maxPrice, Float minSuperficiality, Float maxSuperficiality, Integer minCapacity, Integer maxCapacity,Integer[] uCategoryIds,  Integer[] facilityIds, Integer[] serviceIds, Integer[] regulationIds, Integer size, Integer page) {
+    public Collection<Type> filtering(Collection<Type> types, Integer requestId, Integer schoolId, Integer provinceId, Integer categoryId, Float minPrice, Float maxPrice, Float minSuperficiality, Float maxSuperficiality, Integer minCapacity, Integer maxCapacity, Integer[] uCategoryIds, Integer[] facilityIds, Integer[] serviceIds, Integer[] regulationIds, Integer size, Integer page) {
         HostelRequest exRequest = null;
         if (requestId != null) {
             exRequest = hostelRequestService.findById(requestId);
@@ -209,8 +209,8 @@ public class TypeServiceImpl implements TypeService {
             if (categoryId != null)
                 return type.getGroup().getCategory().getCategoryId() == categoryId;
             return true;
-        }).filter(hostelType ->{
-            if (uCategoryIds!=null && uCategoryIds.length>0){
+        }).filter(hostelType -> {
+            if (uCategoryIds != null && uCategoryIds.length > 0) {
                 return getUtilityCategory(hostelType, uCategoryIds);
             }
             return true;
@@ -245,30 +245,48 @@ public class TypeServiceImpl implements TypeService {
             return true;
         }).filter(hostelType -> {
             if (facilityIds != null && facilityIds.length > 0)
-                return hostelType.getTypeFacilities()
-                        .stream()
-                        .anyMatch(typeFacility -> Arrays
-                                .stream(facilityIds)
-                                .anyMatch(id -> id == typeFacility.getFacility().getFacilityId()));
+                return Arrays
+                        .stream(facilityIds)
+                        .allMatch(id ->
+                                hostelType.getTypeFacilities()
+                                        .stream()
+                                        .anyMatch(typeFacility -> typeFacility.getFacility().getFacilityId() == id));
+//                return hostelType.getTypeFacilities()
+//                        .stream()
+//                        .allMatch(typeFacility -> Arrays
+//                                .stream(facilityIds)
+//                                .anyMatch(id -> id == typeFacility.getFacility().getFacilityId()));
             return true;
         }).filter(hostelType -> {
             if (serviceIds != null && serviceIds.length > 0)
-                return hostelType.getGroup().getGroupServices()
-                        .stream()
-                        .anyMatch(serviceDetail -> Arrays
-                                .stream(serviceIds)
-                                .anyMatch(id -> id.equals(serviceDetail.getGroupServiceId())));
+                return Arrays
+                        .stream(serviceIds)
+                        .allMatch(id ->
+                                hostelType.getGroup().getGroupServices()
+                                        .stream()
+                                        .anyMatch(serviceDetail -> serviceDetail.getService().getServiceId() == id));
+//                return hostelType.getGroup().getGroupServices()
+//                        .stream()
+//                        .anyMatch(serviceDetail -> Arrays
+//                                .stream(serviceIds)
+//                                .anyMatch(id -> id.equals(serviceDetail.getGroupServiceId())));
             return true;
         }).filter(hostelType -> {
             if (regulationIds != null && regulationIds.length > 0)
-                return hostelType.getGroup().getGroupRegulations()
-                        .stream()
-                        .anyMatch(regulation -> Arrays
-                                .stream(regulationIds)
-                                .anyMatch(id -> id == regulation.getRegulation().getRegulationId()));
+                return Arrays
+                        .stream(regulationIds)
+                        .allMatch(id ->
+                                hostelType.getGroup().getGroupRegulations()
+                                        .stream()
+                                        .anyMatch(groupRegulation -> groupRegulation.getRegulation().getRegulationId() == id));
+//                return hostelType.getGroup().getGroupRegulations()
+//                        .stream()
+//                        .anyMatch(regulation -> Arrays
+//                                .stream(regulationIds)
+//                                .anyMatch(id -> id == regulation.getRegulation().getRegulationId()));
             return true;
         }).limit(size)
-                .skip(page*size)
+                .skip(page * size)
                 .collect(Collectors.toList());
     }
 
@@ -305,7 +323,7 @@ public class TypeServiceImpl implements TypeService {
     public Collection<Type> handleAfterRetrieve(Collection<Type> types) {
         return types.stream().map(this::countAvailableRoomAndCurrentBooking)
                 .filter(type -> type.getAvailableRoom() > 0 && !type.isDeleted())
-                .filter(type -> type.isActive()==true)
+                .filter(type -> type.isActive() == true)
                 .sorted(Comparator.comparing(Type::getScore).reversed())
                 .collect(Collectors.toList());
     }
@@ -394,17 +412,17 @@ public class TypeServiceImpl implements TypeService {
         return types;
     }
 
-    private boolean getUtilityCategory(Type type, Integer[] uCategoryIds){
+    private boolean getUtilityCategory(Type type, Integer[] uCategoryIds) {
         Group group = type.getGroup();
         Double lat1 = group.getLatitude();
         Double lng1 = group.getLongitude();
         AtomicBoolean flag = new AtomicBoolean(false);
 
-        Arrays.stream(uCategoryIds).forEach(uCategoryId ->{
+        Arrays.stream(uCategoryIds).forEach(uCategoryId -> {
             Collection<Utility> utilities = utilityService.getUtilitiesByCategoryId(uCategoryId);
             utilities.forEach(utility -> {
-                if (Utilities.calculateDistance(lat1, lng1, utility.getLatitude(), utility.getLongitude()) <= 1){
-                    Collection<Integer> uCategories =type.getuCategoryIds();
+                if (Utilities.calculateDistance(lat1, lng1, utility.getLatitude(), utility.getLongitude()) <= 1) {
+                    Collection<Integer> uCategories = type.getuCategoryIds();
                     uCategories.add(uCategoryId);
                     type.setUCategoryIds(uCategories);
                     flag.set(true);

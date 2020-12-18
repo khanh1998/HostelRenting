@@ -39,15 +39,12 @@ public class User {
 
     private Integer yearOfBirth;
 
-    @Column(length = 100)
     private String idIssuedLocation;
 
     private Long idIssuedDate;
 
-    @Column(length = 150)
     private String householdAddress;
 
-    @Column(length = 150)
     private String currentAddress;
 
     @Column(length = 30)
