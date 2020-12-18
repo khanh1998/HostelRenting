@@ -3,6 +3,7 @@ package org.avengers.capstone.hostelrenting.dto.booking;
 import lombok.Getter;
 import lombok.Setter;
 import org.avengers.capstone.hostelrenting.dto.deal.DealDTOCreate;
+import org.avengers.capstone.hostelrenting.dto.deal.DealDTOResponseShort;
 import org.avengers.capstone.hostelrenting.dto.group.GroupDTOResponse;
 import org.avengers.capstone.hostelrenting.dto.type.TypeDTOResponse;
 import org.avengers.capstone.hostelrenting.dto.renter.RenterDTOResponse;
@@ -20,7 +21,7 @@ public class BookingDTOResponse implements Serializable {
     private TypeDTOResponse type;
     private GroupDTOResponse group;
     private Booking.STATUS status;
-    private DealDTOCreate deal;
+    private DealDTOResponseShort deal;
     private Integer contractId;
     private String qrCode;
     private Long meetTime;
