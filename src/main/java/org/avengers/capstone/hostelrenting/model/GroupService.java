@@ -17,7 +17,7 @@ import java.util.Set;
 public class GroupService {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer groupServiceId;
+    private int groupServiceId;
 
     @Column(nullable = false)
     private Float price;
