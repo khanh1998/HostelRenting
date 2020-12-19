@@ -513,7 +513,11 @@ public class ContractServiceImpl implements ContractService {
         contractInfo.put(Constant.Contract.TYPE_DEPOSIT, nf.format(model.getRoom().getType().getDeposit() * model.getRoom().getType().getPrice() * 1000000));
 
         // renting price
-        contractInfo.put(Constant.Contract.RENTING_PRICE, nf.format(model.getRoom().getType().getPrice() * 1000000));
+        if (model.getDealId() != null) {
+            contractInfo.put(Constant.Contract.RENTING_PRICE, nf.format(model.getDeal().getOfferedPrice() * 1000000));
+        } else {
+            contractInfo.put(Constant.Contract.RENTING_PRICE, nf.format(model.getRoom().getType().getPrice() * 1000000));
+        }
 
         // appendix contract
         contractInfo.put(Constant.Contract.APPENDIX_CONTRACT, model.getAppendixContract());
@@ -522,14 +526,14 @@ public class ContractServiceImpl implements ContractService {
         contractInfo.put(Constant.Contract.PAYMENT_DAY_IN_MONTH, String.valueOf(model.getPaymentDayInMonth()));
 
         // down payment
-        contractInfo.put(Constant.Contract.DOWN_PAYMENT, nf.format(model.getDownPayment()*1000000));
+        contractInfo.put(Constant.Contract.DOWN_PAYMENT, nf.format(model.getDownPayment() * 1000000));
 
         // reserved Contract Expired Day Range
         contractInfo.put(Constant.Contract.RESERVED_CONTRACT_EXPIRED_DAY_RANGE, reservedContractExpiredDayRange);
 
         model.getGroupServices().stream()
                 .forEach(groupService -> {
-                    groupService.setDisplayPrice(nf.format(Long.valueOf(Math.round(groupService.getPrice()))*1000));
+                    groupService.setDisplayPrice(nf.format(Long.valueOf(Math.round(groupService.getPrice())) * 1000));
                 });
 
         contractInfo.put(Constant.Contract.SERVICES, model.getGroupServices());
