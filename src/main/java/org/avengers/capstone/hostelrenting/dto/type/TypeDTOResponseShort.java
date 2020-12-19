@@ -85,12 +85,6 @@ public class TypeDTOResponseShort extends TypeDTOResponse {
 
     @Override
     @JsonIgnore
-    public Integer getDeposit() {
-        return super.getDeposit();
-    }
-
-    @Override
-    @JsonIgnore
     public boolean isDeleted() {
         return super.isDeleted();
     }
