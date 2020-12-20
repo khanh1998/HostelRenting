@@ -507,17 +507,19 @@ public class ContractServiceImpl implements ContractService {
         // superficiality
         contractInfo.put(Constant.Contract.GROUP_SUPERFICIALITY, String.valueOf(model.getRoom().getType().getSuperficiality()));
 
-        // type deposit
+        // Number format
         NumberFormat nf = NumberFormat.getNumberInstance();
         nf.setMaximumFractionDigits(0);
-        contractInfo.put(Constant.Contract.TYPE_DEPOSIT, nf.format(model.getRoom().getType().getDeposit() * model.getRoom().getType().getPrice() * 1000000));
 
-        // renting price
+        // type deposit + renting price
         if (model.getDealId() != null) {
+            contractInfo.put(Constant.Contract.TYPE_DEPOSIT, nf.format(model.getRoom().getType().getDeposit() * model.getDeal().getOfferedPrice() * 1000000));
             contractInfo.put(Constant.Contract.RENTING_PRICE, nf.format(model.getDeal().getOfferedPrice() * 1000000));
         } else {
+            contractInfo.put(Constant.Contract.TYPE_DEPOSIT, nf.format(model.getRoom().getType().getDeposit() * model.getRoom().getType().getPrice() * 1000000));
             contractInfo.put(Constant.Contract.RENTING_PRICE, nf.format(model.getRoom().getType().getPrice() * 1000000));
         }
+
 
         // appendix contract
         contractInfo.put(Constant.Contract.APPENDIX_CONTRACT, model.getAppendixContract());
