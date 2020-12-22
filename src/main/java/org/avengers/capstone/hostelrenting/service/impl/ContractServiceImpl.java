@@ -212,10 +212,9 @@ public class ContractServiceImpl implements ContractService {
         //update payment image info and isPaid - ACCEPTED, INACTIVE, RESERVED
         if (includeStatuses(exModel, Contract.STATUS.ACCEPTED, Contract.STATUS.INACTIVE, Contract.STATUS.RESERVED)) {
             updateContractImages(exModel, reqDTO);
-            // if isPaid -> update isPaid and lastPayAt
+            // if isPaid -> update isPaid
             if (reqDTO.isPaid()) {
                 exModel.setPaid(reqDTO.isPaid());
-//                exModel.setLastPayAt(utilities.getCurrentTime());
             }
         }
 
