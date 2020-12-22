@@ -215,7 +215,7 @@ public class ContractServiceImpl implements ContractService {
             // if isPaid -> update isPaid and lastPayAt
             if (reqDTO.isPaid()) {
                 exModel.setPaid(reqDTO.isPaid());
-                exModel.setLastPayAt(System.currentTimeMillis());
+                exModel.setLastPayAt(utilities.getCurrentTime());
             }
         }
 
@@ -253,7 +253,7 @@ public class ContractServiceImpl implements ContractService {
                 // isPaid false for reuse when do the rest payment
                 exModel.setPaid(false);
                 // start time begin when vendor accept with payment information
-                exModel.setStartTime(System.currentTimeMillis());
+                exModel.setStartTime(utilities.getCurrentTime());
             }
             // change to ACTIVATED only from INACTIVE
             else if (reqDTO.getStatus().equals(Contract.STATUS.ACTIVATED) && (includeStatuses(exModel, Contract.STATUS.ACCEPTED, Contract.STATUS.RESERVED))) {
@@ -267,6 +267,7 @@ public class ContractServiceImpl implements ContractService {
             // change to ACCEPTED only from INACTIVE
             else if (reqDTO.getStatus().equals(Contract.STATUS.ACCEPTED) && includeStatuses(exModel, Contract.STATUS.INACTIVE)) {
                 exModel.setStatus((Contract.STATUS.ACCEPTED));
+                exModel.setLastPayAt(utilities.getCurrentTime());
             } else {
                 throw new GenericException(Contract.class, "Invalid status for updating", "from", String.valueOf(exModel.getStatus()), "to", String.valueOf(reqDTO.getStatus()));
             }
@@ -533,9 +534,9 @@ public class ContractServiceImpl implements ContractService {
         // reserved Contract Expired Day Range
         contractInfo.put(Constant.Contract.RESERVED_CONTRACT_EXPIRED_DAY_RANGE, reservedContractExpiredDayRange);
 
-        model.getGroupServices().stream()
+        model.getGroupServices()
                 .forEach(groupService -> {
-                    groupService.setDisplayPrice(nf.format(Long.valueOf(Math.round(groupService.getPrice())) * 1000));
+                    groupService.setDisplayPrice(nf.format((long) Math.round(groupService.getPrice()) * 1000));
                 });
 
         contractInfo.put(Constant.Contract.SERVICES, model.getGroupServices());
