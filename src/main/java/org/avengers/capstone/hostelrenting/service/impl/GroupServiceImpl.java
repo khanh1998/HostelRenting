@@ -78,6 +78,11 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
+    public Group save(Group reqModel) {
+        return groupRepository.save(reqModel);
+    }
+
+    @Override
     public Collection<Group> getByVendorId(UUID vendorId, int size, int page) {
         Vendor existedModel = vendorService.findById(vendorId);
         return existedModel.getGroups()

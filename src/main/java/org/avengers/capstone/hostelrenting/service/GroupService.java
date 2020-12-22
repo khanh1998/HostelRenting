@@ -10,6 +10,7 @@ public interface GroupService {
     Group findById(Integer id);
     Group create(Group reqModel);
     Group update(Group reqModel);
+    Group save(Group reqModel);
     Collection<Group> getByVendorId(UUID vendorId, int size, int page);
     void deleteById(Integer id);
 }

@@ -1,4 +1,4 @@
-package org.avengers.capstone.hostelrenting.dto.group;
+package org.avengers.capstone.hostelrenting.dto.schedule;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
