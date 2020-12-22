@@ -8,6 +8,7 @@ import org.avengers.capstone.hostelrenting.dto.groupRegulation.GroupRegulationDT
 import org.avengers.capstone.hostelrenting.dto.groupRegulation.GroupRegulationDTOCreateForGroup;
 import org.avengers.capstone.hostelrenting.dto.groupService.GroupServiceDTOCreate;
 import org.avengers.capstone.hostelrenting.dto.groupService.GroupServiceDTOCreateForGroup;
+import org.avengers.capstone.hostelrenting.dto.schedule.GroupScheduleDTOCreate;
 import org.avengers.capstone.hostelrenting.model.serialized.AddressFull;
 
 import javax.validation.constraints.NotNull;

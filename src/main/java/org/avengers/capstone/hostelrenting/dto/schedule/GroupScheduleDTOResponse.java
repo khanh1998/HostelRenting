@@ -1,7 +1,8 @@
-package org.avengers.capstone.hostelrenting.dto.group;
+package org.avengers.capstone.hostelrenting.dto.schedule;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.*;
@@ -18,8 +19,10 @@ import java.util.List;
 @NoArgsConstructor
 @Builder(toBuilder = true)
 public class GroupScheduleDTOResponse implements Serializable {
+    private int id;
     private int scheduleId;
     @JsonUnwrapped
+    @JsonIgnoreProperties(value = "scheduleId")
     private ScheduleDTO schedule;
     @JsonIgnore
     private String startTime;

@@ -6,6 +6,7 @@ import lombok.Setter;
 import org.avengers.capstone.hostelrenting.dto.category.CategoryDTO;
 import org.avengers.capstone.hostelrenting.dto.groupRegulation.GroupRegulationDTOResponse;
 import org.avengers.capstone.hostelrenting.dto.groupService.GroupServiceDTOResponse;
+import org.avengers.capstone.hostelrenting.dto.schedule.GroupScheduleDTOResponse;
 import org.avengers.capstone.hostelrenting.model.serialized.AddressFull;
 
 import java.io.Serializable;
@@ -78,6 +79,7 @@ public class GroupDTOResponse implements Serializable {
                     .values().stream()
                     .map(scheduleDTO -> GroupScheduleDTOResponse
                             .builder().scheduleId(scheduleDTO.get(0).getScheduleId())
+                            .id(scheduleDTO.get(0).getId())
                             .schedule(scheduleDTO.get(0).getSchedule())
                             .startTime(scheduleDTO.get(0).getStartTime())
                             .endTime(scheduleDTO.get(0).getEndTime())
