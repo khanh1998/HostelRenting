@@ -322,8 +322,9 @@ public class TypeServiceImpl implements TypeService {
     @Override
     public Collection<Type> handleAfterRetrieve(Collection<Type> types) {
         return types.stream().map(this::countAvailableRoomAndCurrentBooking)
-                .filter(type -> type.getAvailableRoom() > 0 && !type.isDeleted())
-                .filter(type -> type.isActive() == true)
+                .filter(type -> type.getAvailableRoom() > 0)
+                .filter(type -> !type.isDeleted())
+                .filter(Type::isActive)
                 .sorted(Comparator.comparing(Type::getScore).reversed())
                 .collect(Collectors.toList());
     }
