@@ -41,6 +41,9 @@ import java.util.Scanner;
  */
 @Component
 public class Utilities {
+    @Value("${system.append.time.hours}")
+    private int systemCorrectionTime;
+
     @Value("${mail.admin.username}")
     private String adminGmailUsername;
     @Value("${mail.admin.password}")
@@ -190,6 +193,13 @@ public class Utilities {
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
         }
+    }
+
+    public Long getCurrentTime(){
+        Calendar cal = Calendar.getInstance();
+        cal.setTimeInMillis(System.currentTimeMillis());
+        cal.add(Calendar.HOUR, systemCorrectionTime);
+        return cal.getTimeInMillis();
     }
 
 }
