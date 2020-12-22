@@ -212,10 +212,9 @@ public class ContractServiceImpl implements ContractService {
         //update payment image info and isPaid - ACCEPTED, INACTIVE, RESERVED
         if (includeStatuses(exModel, Contract.STATUS.ACCEPTED, Contract.STATUS.INACTIVE, Contract.STATUS.RESERVED)) {
             updateContractImages(exModel, reqDTO);
-            // if isPaid -> update isPaid and lastPayAt
+            // if isPaid -> update isPaid
             if (reqDTO.isPaid()) {
                 exModel.setPaid(reqDTO.isPaid());
-                exModel.setLastPayAt(utilities.getCurrentTime());
             }
         }
 
@@ -254,6 +253,8 @@ public class ContractServiceImpl implements ContractService {
                 exModel.setPaid(false);
                 // start time begin when vendor accept with payment information
                 exModel.setStartTime(utilities.getCurrentTime());
+                // change last_pay at the time vendor confirm
+                exModel.setLastPayAt(utilities.getCurrentTime());
             }
             // change to ACTIVATED only from INACTIVE
             else if (reqDTO.getStatus().equals(Contract.STATUS.ACTIVATED) && (includeStatuses(exModel, Contract.STATUS.ACCEPTED, Contract.STATUS.RESERVED))) {
@@ -262,7 +263,8 @@ public class ContractServiceImpl implements ContractService {
                 String contractHtml = generateContractHTML(exModel);
                 utilities.sendMailWithEmbed(Constant.Contract.SUBJECT_CREATE_NEW, contractHtml, exModel.getRenter().getEmail());
                 utilities.sendMailWithEmbed(Constant.Contract.SUBJECT_CREATE_NEW, contractHtml, exModel.getVendor().getEmail());
-
+                // change last_pay at the time vendor confirm
+                exModel.setLastPayAt(utilities.getCurrentTime());
             }
             // change to ACCEPTED only from INACTIVE
             else if (reqDTO.getStatus().equals(Contract.STATUS.ACCEPTED) && includeStatuses(exModel, Contract.STATUS.INACTIVE)) {
