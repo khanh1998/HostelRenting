@@ -211,7 +211,8 @@ public class ScheduledTasks {
     private Long getCurrentTime(){
         Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(System.currentTimeMillis());
-        cal.add(Calendar.HOUR, systemCorrectionTime);
+        cal.add(Calendar.HOUR, Utilities.SYSTEM_CORRECTION);
+//        cal.add(Calendar.HOUR, systemCorrectionTime);
         return cal.getTimeInMillis();
     }
 
