@@ -189,9 +189,6 @@ public class ScheduledTasks {
             cal.setTimeInMillis(request.getCreatedAt());
             utilities.sendMailWithEmbed(Constant.REQUEST_NOTIFICATION_SUBJECT , resultUrl, request.getRenter().getEmail());
 
-//            request.setStatus(HostelRequest.STATUS.DONE);
-//            hostelRequestRepository.save(request);
-
             logger.info(String.format("Result of request with {id=%s} has been send to renter with {id=%s}",request.getRequestId(), request.getRenter().getUserId()));
         });
     }
