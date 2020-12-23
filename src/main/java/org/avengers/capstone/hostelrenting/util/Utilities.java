@@ -41,6 +41,8 @@ import java.util.Scanner;
  */
 @Component
 public class Utilities {
+
+    public static int SYSTEM_CORRECTION = 0;
     @Value("${system.append.time.hours}")
     private int systemCorrectionTime;
 

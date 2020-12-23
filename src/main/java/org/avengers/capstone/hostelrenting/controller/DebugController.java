@@ -4,6 +4,7 @@ import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.avengers.capstone.hostelrenting.Constant;
 import org.avengers.capstone.hostelrenting.handler.ScheduledTasks;
+import org.avengers.capstone.hostelrenting.util.Utilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -34,20 +35,23 @@ public class DebugController {
     public ResponseEntity<?> getAppendTime() {
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern(Constant.Format.DATE_TIME_DEFAULT);
         LocalDateTime now = LocalDateTime.now();
-        LocalDateTime newTime = now.plusHours(appendingTime);
+//        LocalDateTime newTime = now.plusHours(appendingTime);
+        LocalDateTime newTime = now.plusHours(Utilities.SYSTEM_CORRECTION);
 
         return ResponseEntity.ok("CURRENT_TIME:" + dtf.format(newTime));
     }
 
     @PostMapping("/systems/appendtime")
     public ResponseEntity<?> changeAppendTime(Integer appendTime) {
-        try {
-            PropertiesConfiguration config = new PropertiesConfiguration("application.properties");
-            config.setProperty("system.append.time.hours", appendTime);
-            config.save();
-        } catch (ConfigurationException e) {
-           logger.error(e.getLocalizedMessage());
-        }
+//        try {
+//            PropertiesConfiguration config = new PropertiesConfiguration("application.properties");
+//            config.setProperty("system.append.time.hours", appendTime);
+//            config.save();
+
+            Utilities.SYSTEM_CORRECTION += appendTime;
+//        } catch (ConfigurationException e) {
+//           logger.error(e.getLocalizedMessage());
+//        }
 
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern(Constant.Format.DATE_TIME_DEFAULT);
         LocalDateTime now = LocalDateTime.now();
