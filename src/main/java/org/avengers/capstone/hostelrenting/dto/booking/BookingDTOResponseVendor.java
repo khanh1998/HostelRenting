@@ -14,7 +14,7 @@ import java.io.Serializable;
 
 @Getter
 @Setter
-public class BookingDTOResponse implements Serializable {
+public class BookingDTOResponseVendor implements Serializable {
     private int bookingId;
     private RenterDTOResponse renter;
     private VendorDTOResponse vendor;

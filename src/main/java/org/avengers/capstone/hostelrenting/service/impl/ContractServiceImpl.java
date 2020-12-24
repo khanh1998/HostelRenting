@@ -521,18 +521,14 @@ public class ContractServiceImpl implements ContractService {
 
         // type deposit + renting price
         if (model.getDealId() != null) {
-            if (model.isReserved()) {
-                contractInfo.put(Constant.Contract.TYPE_DEPOSIT, nf.format(model.getRoom().getType().getDeposit() * model.getDeal().getOfferedPrice() * 1000000));
-            }
+            contractInfo.put(Constant.Contract.TYPE_DEPOSIT, nf.format(model.getRoom().getType().getDeposit() * model.getDeal().getOfferedPrice() * 1000000));
             contractInfo.put(Constant.Contract.RENTING_PRICE, nf.format(model.getDeal().getOfferedPrice() * 1000000));
         } else {
-            if (model.isReserved()) {
-                contractInfo.put(Constant.Contract.TYPE_DEPOSIT, nf.format(model.getRoom().getType().getDeposit() * model.getRoom().getType().getPrice() * 1000000));
-            }
+            contractInfo.put(Constant.Contract.TYPE_DEPOSIT, nf.format(model.getRoom().getType().getDeposit() * model.getRoom().getType().getPrice() * 1000000));
             contractInfo.put(Constant.Contract.RENTING_PRICE, nf.format(model.getRoom().getType().getPrice() * 1000000));
         }
 
-        if (includeStatuses(model, Contract.STATUS.ACCEPTED, Contract.STATUS.RESERVED, Contract.STATUS.ACTIVATED)){
+        if (includeStatuses(model, Contract.STATUS.ACCEPTED, Contract.STATUS.RESERVED, Contract.STATUS.ACTIVATED)) {
             contractInfo.put(Constant.Contract.RENTER_CONFIRM_TEXT, Constant.Contract.RENTER_CONFIRM_TEXT_CONTENT);
         }
 
@@ -544,7 +540,11 @@ public class ContractServiceImpl implements ContractService {
         contractInfo.put(Constant.Contract.PAYMENT_DAY_IN_MONTH, String.valueOf(model.getPaymentDayInMonth()));
 
         // down payment
-        contractInfo.put(Constant.Contract.DOWN_PAYMENT, nf.format(model.getDownPayment() * 1000000));
+        if (model.getDownPayment() == null) {
+            contractInfo.put(Constant.Contract.DOWN_PAYMENT, nf.format(0));
+        } else {
+            contractInfo.put(Constant.Contract.DOWN_PAYMENT, nf.format(model.getDownPayment() * 1000000));
+        }
 
         // reserved Contract Expired Day Range
         contractInfo.put(Constant.Contract.RESERVED_CONTRACT_EXPIRED_DAY_RANGE, reservedContractExpiredDayRange);
