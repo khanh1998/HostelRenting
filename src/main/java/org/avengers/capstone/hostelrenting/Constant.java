@@ -1,7 +1,17 @@
 package org.avengers.capstone.hostelrenting;
 
 public class Constant {
+    public static final int ONE_MILION = 1000000;
+
+    public static final int ONE_THOUSAND = 1000;
+
+    public static final int ZERO = 0;
+
+    public static final int ONE = 1;
+    public static final String EMPTY_STRING = "";
+
     public static class Message {
+
         /**
          * Example: Province has been created successfully
          */
@@ -93,13 +103,13 @@ public class Constant {
 
         public final static String DOWN_PAYMENT = "downPayment";
         public final static String RESERVED_CONTRACT_EXPIRED_DAY_RANGE = "reservedContractExpiredDayRange";
-        public final static String SERVICES = "services" ;
-        public final static String REGULATIONS = "regulations" ;
-        public final static String FACILITIES = "facilities" ;
-
-
-
-
+        public final static String SERVICES = "services";
+        public final static String REGULATIONS = "regulations";
+        public final static String FACILITIES = "facilities";
+        public final static String RENTER_CONFIRM_TEXT = "renterConfirmText";
+        public final static String RENTER_CONFIRM_TEXT_CONTENT = "ĐÃ XÁC NHẬN";
+        public final static String CONTRACT_PDF_URL = "contractPDFUrl";
+        public final static String CONTRACT_PDF_URL_CONTENT = "Link hợp đồng (PDF): ";
 
 
         /* GROUP INFORMATION */
@@ -132,8 +142,9 @@ public class Constant {
         public final static String MAIL_SMTP_SOCKET_FACTORY_FALLBACK = "mail.smtp.socketFactory.fallback";
     }
 
-    public static class Format{
+    public static class Format {
         public final static String DATE_TIME_DEFAULT = "yyyy/MM/dd HH:mm:ss";
     }
+
     public static final String REQUEST_NOTIFICATION_SUBJECT = "DANH SÁCH PHÒNG THEO YÊU CẦU";
 }

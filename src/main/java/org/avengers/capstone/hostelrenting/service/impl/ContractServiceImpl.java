@@ -182,7 +182,7 @@ public class ContractServiceImpl implements ContractService {
         Contract resModel = contractRepository.save(reqModel);
 
         /* upload pdf and save the url */
-        String contractHtml = generateContractHTML(resModel);
+        String contractHtml = generateContractHTML(resModel, false);
         String contractUrl = uploadPDF(contractHtml, String.valueOf(resModel.getContractId()));
         resModel.setContractUrl(contractUrl);
         resModel = contractRepository.save(resModel);
@@ -212,10 +212,9 @@ public class ContractServiceImpl implements ContractService {
         //update payment image info and isPaid - ACCEPTED, INACTIVE, RESERVED
         if (includeStatuses(exModel, Contract.STATUS.ACCEPTED, Contract.STATUS.INACTIVE, Contract.STATUS.RESERVED)) {
             updateContractImages(exModel, reqDTO);
-            // if isPaid -> update isPaid and lastPayAt
+            // if isPaid -> update isPaid
             if (reqDTO.isPaid()) {
                 exModel.setPaid(reqDTO.isPaid());
-                exModel.setLastPayAt(utilities.getCurrentTime());
             }
         }
 
@@ -254,20 +253,28 @@ public class ContractServiceImpl implements ContractService {
                 exModel.setPaid(false);
                 // start time begin when vendor accept with payment information
                 exModel.setStartTime(utilities.getCurrentTime());
+                // change last_pay at the time vendor confirm
+                exModel.setLastPayAt(utilities.getCurrentTime());
             }
             // change to ACTIVATED only from INACTIVE
             else if (reqDTO.getStatus().equals(Contract.STATUS.ACTIVATED) && (includeStatuses(exModel, Contract.STATUS.ACCEPTED, Contract.STATUS.RESERVED))) {
                 exModel.setStatus(Contract.STATUS.ACTIVATED);
                 /* send mail for both renter and vendor when active contract */
-                String contractHtml = generateContractHTML(exModel);
+                String contractHtml = generateContractHTML(exModel, true);
                 utilities.sendMailWithEmbed(Constant.Contract.SUBJECT_CREATE_NEW, contractHtml, exModel.getRenter().getEmail());
                 utilities.sendMailWithEmbed(Constant.Contract.SUBJECT_CREATE_NEW, contractHtml, exModel.getVendor().getEmail());
-
+                // change last_pay at the time vendor confirm
+                exModel.setLastPayAt(utilities.getCurrentTime());
             }
             // change to ACCEPTED only from INACTIVE
             else if (reqDTO.getStatus().equals(Contract.STATUS.ACCEPTED) && includeStatuses(exModel, Contract.STATUS.INACTIVE)) {
                 exModel.setStatus((Contract.STATUS.ACCEPTED));
                 exModel.setLastPayAt(utilities.getCurrentTime());
+                /* upload pdf and save the url */
+                String contractHtml = generateContractHTML(exModel, false);
+                String contractUrl = uploadPDF(contractHtml, String.valueOf(exModel.getContractId()));
+                exModel.setContractUrl(contractUrl);
+                exModel = contractRepository.save(exModel);
             } else {
                 throw new GenericException(Contract.class, "Invalid status for updating", "from", String.valueOf(exModel.getStatus()), "to", String.valueOf(reqDTO.getStatus()));
             }
@@ -294,14 +301,14 @@ public class ContractServiceImpl implements ContractService {
     @Override
     public List<Contract> findByRenterId(UUID renterId, int page, int size, String sortBy, boolean asc) {
         Sort sort = Sort.by(asc ? Sort.Direction.ASC : Sort.Direction.DESC, sortBy);
-        Pageable pageable = PageRequest.of(page - 1, size, sort);
+        Pageable pageable = PageRequest.of(page - Constant.ONE, size, sort);
         return contractRepository.findByRenter_UserId(renterId, pageable).stream().map(this::fillInContractObject).collect(Collectors.toList());
     }
 
     @Override
     public List<Contract> findByVendorId(UUID vendorId, int page, int size, String sortBy, boolean asc) {
         Sort sort = Sort.by(asc ? Sort.Direction.ASC : Sort.Direction.DESC, sortBy);
-        Pageable pageable = PageRequest.of(page - 1, size, sort);
+        Pageable pageable = PageRequest.of(page - Constant.ONE, size, sort);
         return contractRepository.findByVendor_UserId(vendorId, pageable).stream().map(this::fillInContractObject).collect(Collectors.toList());
     }
 
@@ -458,7 +465,7 @@ public class ContractServiceImpl implements ContractService {
         return null;
     }
 
-    public String generateContractHTML(Contract model) {
+    public String generateContractHTML(Contract model, boolean isEmail) {
         Map<String, Object> contractInfo = new HashMap<>();
         contractInfo.put(Constant.Contract.VENDOR_NAME, model.getVendor().getUsername());
         contractInfo.put(Constant.Contract.VENDOR_YEAR_OF_BIRTH, String.valueOf(model.getVendor().getYearOfBirth()));
@@ -487,19 +494,19 @@ public class ContractServiceImpl implements ContractService {
         // get current time (miliseconds)
         calendar.getTimeInMillis();
         contractInfo.put(Constant.Contract.CURRENT_DAY, String.valueOf(calendar.get(Calendar.DAY_OF_MONTH)));
-        contractInfo.put(Constant.Contract.CURRENT_MONTH, String.valueOf(calendar.get(Calendar.MONTH) + 1));
+        contractInfo.put(Constant.Contract.CURRENT_MONTH, String.valueOf(calendar.get(Calendar.MONTH) + Constant.ONE));
         contractInfo.put(Constant.Contract.CURRENT_YEAR, String.valueOf(calendar.get(Calendar.YEAR)));
 
         // get start time in contract (miliseconds)
         calendar.setTimeInMillis(model.getStartTime());
         contractInfo.put(Constant.Contract.START_DAY, String.valueOf(calendar.get(Calendar.DAY_OF_MONTH)));
-        contractInfo.put(Constant.Contract.START_MONTH, String.valueOf(calendar.get(Calendar.MONTH) + 1));
+        contractInfo.put(Constant.Contract.START_MONTH, String.valueOf(calendar.get(Calendar.MONTH) + Constant.ONE));
         contractInfo.put(Constant.Contract.START_YEAR, String.valueOf(calendar.get(Calendar.YEAR)));
 
         // end time of contract
         calendar.add(Calendar.MONTH, model.getDuration());
         contractInfo.put(Constant.Contract.END_DAY, String.valueOf(calendar.get(Calendar.DAY_OF_MONTH)));
-        contractInfo.put(Constant.Contract.END_MONTH, String.valueOf(calendar.get(Calendar.MONTH) + 1));
+        contractInfo.put(Constant.Contract.END_MONTH, String.valueOf(calendar.get(Calendar.MONTH) + Constant.ONE));
         contractInfo.put(Constant.Contract.END_YEAR, String.valueOf(calendar.get(Calendar.YEAR)));
 
         // room number
@@ -510,15 +517,20 @@ public class ContractServiceImpl implements ContractService {
 
         // Number format
         NumberFormat nf = NumberFormat.getNumberInstance();
-        nf.setMaximumFractionDigits(0);
+        nf.setMaximumFractionDigits(Constant.ZERO);
 
         // type deposit + renting price
         if (model.getDealId() != null) {
-            contractInfo.put(Constant.Contract.TYPE_DEPOSIT, nf.format(model.getRoom().getType().getDeposit() * model.getDeal().getOfferedPrice() * 1000000));
-            contractInfo.put(Constant.Contract.RENTING_PRICE, nf.format(model.getDeal().getOfferedPrice() * 1000000));
+            contractInfo.put(Constant.Contract.TYPE_DEPOSIT, nf.format(model.getRoom().getType().getDeposit() * model.getDeal().getOfferedPrice() * Constant.ONE_MILION));
+            contractInfo.put(Constant.Contract.RENTING_PRICE, nf.format(model.getDeal().getOfferedPrice() * Constant.ONE_MILION));
         } else {
-            contractInfo.put(Constant.Contract.TYPE_DEPOSIT, nf.format(model.getRoom().getType().getDeposit() * model.getRoom().getType().getPrice() * 1000000));
-            contractInfo.put(Constant.Contract.RENTING_PRICE, nf.format(model.getRoom().getType().getPrice() * 1000000));
+            contractInfo.put(Constant.Contract.TYPE_DEPOSIT, nf.format(model.getRoom().getType().getDeposit() * model.getRoom().getType().getPrice() * Constant.ONE_MILION));
+            contractInfo.put(Constant.Contract.RENTING_PRICE, nf.format(model.getRoom().getType().getPrice() * Constant.ONE_MILION));
+        }
+
+        // renter confirm text when status is ACCEPTED, RESERVED, ACTIVATED
+        if (includeStatuses(model, Contract.STATUS.ACCEPTED, Contract.STATUS.RESERVED, Contract.STATUS.ACTIVATED)) {
+            contractInfo.put(Constant.Contract.RENTER_CONFIRM_TEXT, Constant.Contract.RENTER_CONFIRM_TEXT_CONTENT);
         }
 
 
@@ -529,14 +541,26 @@ public class ContractServiceImpl implements ContractService {
         contractInfo.put(Constant.Contract.PAYMENT_DAY_IN_MONTH, String.valueOf(model.getPaymentDayInMonth()));
 
         // down payment
-        contractInfo.put(Constant.Contract.DOWN_PAYMENT, nf.format(model.getDownPayment() * 1000000));
+        if (model.getDownPayment() == null) {
+            contractInfo.put(Constant.Contract.DOWN_PAYMENT, nf.format(Constant.ZERO));
+        } else {
+            contractInfo.put(Constant.Contract.DOWN_PAYMENT, nf.format(model.getDownPayment() * Constant.ONE_MILION));
+        }
+
+        // contractUrl
+        if (model.getContractUrl()!= null
+                && includeStatuses(model, Contract.STATUS.ACCEPTED, Contract.STATUS.RESERVED, Contract.STATUS.ACTIVATED)){
+            contractInfo.put(Constant.Contract.CONTRACT_PDF_URL, Constant.Contract.CONTRACT_PDF_URL_CONTENT + model.getContractUrl());
+        }else{
+            contractInfo.put(Constant.Contract.CONTRACT_PDF_URL, Constant.EMPTY_STRING);
+        }
 
         // reserved Contract Expired Day Range
         contractInfo.put(Constant.Contract.RESERVED_CONTRACT_EXPIRED_DAY_RANGE, reservedContractExpiredDayRange);
 
         model.getGroupServices()
                 .forEach(groupService -> {
-                    groupService.setDisplayPrice(nf.format((long) Math.round(groupService.getPrice()) * 1000));
+                    groupService.setDisplayPrice(nf.format((long) Math.round(groupService.getPrice()) * Constant.ONE_THOUSAND));
                 });
 
         contractInfo.put(Constant.Contract.SERVICES, model.getGroupServices());
