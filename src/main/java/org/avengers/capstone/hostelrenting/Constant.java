@@ -96,6 +96,8 @@ public class Constant {
         public final static String SERVICES = "services" ;
         public final static String REGULATIONS = "regulations" ;
         public final static String FACILITIES = "facilities" ;
+        public final static String RENTER_CONFIRM_TEXT = "renterConfirmText" ;
+        public final static String RENTER_CONFIRM_TEXT_CONTENT = "ĐÃ XÁC NHẬN" ;
 
 
 
