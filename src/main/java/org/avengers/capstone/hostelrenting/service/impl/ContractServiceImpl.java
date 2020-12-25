@@ -533,7 +533,6 @@ public class ContractServiceImpl implements ContractService {
             contractInfo.put(Constant.Contract.RENTER_CONFIRM_TEXT, Constant.Contract.RENTER_CONFIRM_TEXT_CONTENT);
         }
 
-
         // appendix contract
         contractInfo.put(Constant.Contract.APPENDIX_CONTRACT, model.getAppendixContract());
 
@@ -549,7 +548,7 @@ public class ContractServiceImpl implements ContractService {
 
         // contractUrl
         if (model.getContractUrl()!= null
-                && includeStatuses(model, Contract.STATUS.ACCEPTED, Contract.STATUS.RESERVED, Contract.STATUS.ACTIVATED)){
+                && includeStatuses(model, Contract.STATUS.ACCEPTED, Contract.STATUS.RESERVED, Contract.STATUS.ACTIVATED) && isEmail){
             contractInfo.put(Constant.Contract.CONTRACT_PDF_URL, Constant.Contract.CONTRACT_PDF_URL_CONTENT + model.getContractUrl());
         }else{
             contractInfo.put(Constant.Contract.CONTRACT_PDF_URL, Constant.EMPTY_STRING);
