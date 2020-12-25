@@ -540,7 +540,7 @@ public class ContractServiceImpl implements ContractService {
         contractInfo.put(Constant.Contract.PAYMENT_DAY_IN_MONTH, String.valueOf(model.getPaymentDayInMonth()));
 
         // down payment
-        if (model.getDownPayment() == null) {
+        if (model.getDownPayment() == null || !model.isReserved()) {
             contractInfo.put(Constant.Contract.DOWN_PAYMENT, nf.format(Constant.ZERO));
         } else {
             contractInfo.put(Constant.Contract.DOWN_PAYMENT, nf.format(model.getDownPayment() * Constant.ONE_MILION));

@@ -184,7 +184,7 @@ public class ScheduledTasks {
         data.put("action", "REQUEST_HOSTEL_RESULT");
         inTimeRequests.forEach(request -> {
             firebaseService.sendPnsToDevice(NotificationRequest.builder().destination(request.getRenter().getFirebaseToken()).data(data).build());
-            String resultUrl = "Danh sách các phòng dựa trên yêu cầu của bạn: " + systemDomain + "/request/"+request.getRequestId();
+            String resultUrl = "Danh sách các phòng dựa trên yêu cầu của bạn: " + "https://" +systemDomain + "/request/"+request.getRequestId();
             Calendar cal = Calendar.getInstance();
             cal.setTimeInMillis(request.getCreatedAt());
             utilities.sendMailWithEmbed(Constant.REQUEST_NOTIFICATION_SUBJECT , resultUrl, request.getRenter().getEmail());
