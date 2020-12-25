@@ -285,8 +285,9 @@ public class TypeServiceImpl implements TypeService {
 //                                .stream(regulationIds)
 //                                .anyMatch(id -> id == regulation.getRegulation().getRegulationId()));
             return true;
-        }).limit(size)
+        })
                 .skip(page * size)
+                .limit(size)
                 .collect(Collectors.toList());
     }
 
