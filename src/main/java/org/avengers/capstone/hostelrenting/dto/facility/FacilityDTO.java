@@ -9,6 +9,7 @@ import java.io.Serializable;
 @Setter
 public class FacilityDTO implements Serializable {
     private int facilityId;
+    private int quantity;
     private String facilityName;
     private boolean isApproved;
 }
