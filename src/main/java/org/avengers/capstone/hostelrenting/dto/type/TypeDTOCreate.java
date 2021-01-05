@@ -17,7 +17,6 @@ public class TypeDTOCreate extends TypeDTO {
         if (getStatus() == null) {
             setStatus(Type.STATUS.AVAILABLE);
         }
-
         setDeleted(false);
         setCreatedAt(System.currentTimeMillis());
     }

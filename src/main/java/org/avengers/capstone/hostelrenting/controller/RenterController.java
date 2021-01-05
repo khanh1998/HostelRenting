@@ -1,5 +1,7 @@
 package org.avengers.capstone.hostelrenting.controller;
 
+import org.avengers.capstone.hostelrenting.dto.contract.ContractDTOResponse;
+import org.avengers.capstone.hostelrenting.dto.renter.RenterBlockDTO;
 import org.avengers.capstone.hostelrenting.dto.renter.RenterDTOCreate;
 import org.avengers.capstone.hostelrenting.dto.renter.RenterDTOResponse;
 import org.avengers.capstone.hostelrenting.dto.renter.RenterDTOUpdate;
@@ -17,9 +19,13 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
+
+import static org.avengers.capstone.hostelrenting.Constant.Pagination.DEFAULT_PAGE;
+import static org.avengers.capstone.hostelrenting.Constant.Pagination.DEFAULT_SIZE;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -71,6 +77,19 @@ public class RenterController {
         return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
     }
 
+    @PutMapping("/renters/{renterId}/block")
+    public ResponseEntity<?> blockInfo(@PathVariable UUID renterId,
+                                       @RequestBody @Valid RenterBlockDTO renterBlockDTO) throws EntityNotFoundException {
+        Renter exModel = renterService.findById(renterId);
+        exModel.setBlocked(renterBlockDTO.isBlocked());
+        Renter resModel = renterService.update(exModel);
+        RenterDTOResponse resDTO = modelMapper.map(resModel, RenterDTOResponse.class);
+        String resMsg = renterBlockDTO.isBlocked() ? "This account has been blocked successfully!":"This account has been unblocked successfully!";
+        ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTO, resMsg);
+
+        return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
+    }
+
     @PutMapping("/renters/{renterId}/token")
     public ResponseEntity<?> updateTokenOnly(@PathVariable UUID renterId,
                                     @RequestBody @Valid UserDTOUpdateOnlyToken reqDTO) throws EntityNotFoundException {
@@ -104,4 +123,26 @@ public class RenterController {
         return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
     }
 
+    @GetMapping("/renters/renters")
+    public ResponseEntity<?> getAllRenters(@RequestParam(required = false, defaultValue = "createdAt") String sortBy,
+                                                    @RequestParam(required = false, defaultValue = "false") Boolean asc,
+                                                    @RequestParam(required = false, defaultValue = DEFAULT_SIZE) Integer size,
+                                                    @RequestParam(required = false, defaultValue = DEFAULT_PAGE) Integer page) throws EntityNotFoundException {
+        String resMsg = "Your renter(s) has been retrieved successfully!";
+
+        List<RenterDTOResponse> resDTOs = renterService.getAllRenters(page, size, sortBy, asc)
+                .stream()
+                .map(resDTO -> modelMapper.map(resDTO, RenterDTOResponse.class))
+                .collect(Collectors.toList());
+
+        if (resDTOs.isEmpty())
+            resMsg = "There is no renter";
+
+        // Response entity
+        ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTOs, resMsg);
+        apiSuccess.setPage(page);
+        apiSuccess.setSize(size);
+
+        return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
+    }
 }

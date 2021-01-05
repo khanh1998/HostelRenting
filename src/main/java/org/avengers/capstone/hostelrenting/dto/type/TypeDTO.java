@@ -25,7 +25,7 @@ public class TypeDTO{
     private String description;
     private Integer view;
     private Integer deposit;
-    private Collection<Integer> uCategoryIds;
+//    private Collection<Integer> uCategoryIds;
     @JsonIgnore
     private boolean isDeleted;
 

@@ -1,12 +1,18 @@
 package org.avengers.capstone.hostelrenting.service.impl;
 
+import org.avengers.capstone.hostelrenting.dto.room.RoomDTO;
+import org.avengers.capstone.hostelrenting.dto.room.RoomDTOCreate;
+import org.avengers.capstone.hostelrenting.dto.room.RoomDTOResponse;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
+import org.avengers.capstone.hostelrenting.exception.GenericException;
 import org.avengers.capstone.hostelrenting.model.*;
+import org.avengers.capstone.hostelrenting.repository.RoomRepository;
 import org.avengers.capstone.hostelrenting.repository.TypeFacilityRepository;
 import org.avengers.capstone.hostelrenting.repository.TypeRepository;
 import org.avengers.capstone.hostelrenting.service.*;
 import org.avengers.capstone.hostelrenting.service.GroupService;
 import org.avengers.capstone.hostelrenting.util.Utilities;
+import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +30,8 @@ import java.util.stream.Stream;
 @Service
 public class TypeServiceImpl implements TypeService {
     private TypeRepository typeRepository;
+    private RoomRepository roomRepository;
+    private RoomService roomService;
     private TypeFacilityRepository typeFacilityRepository;
     private GroupService groupService;
     private ProvinceService provinceService;
@@ -31,6 +39,13 @@ public class TypeServiceImpl implements TypeService {
     private HostelRequestService hostelRequestService;
     private UtilityService utilityService;
     private Utilities utilities;
+    private ModelMapper modelMapper;
+    private TypeService typeService;
+
+    @Autowired
+    public void setHostelTypeService(TypeService typeService) {
+        this.typeService = typeService;
+    }
 
     @Autowired
     public void setUtilities(Utilities utilities) {
@@ -52,6 +67,15 @@ public class TypeServiceImpl implements TypeService {
         this.typeFacilityRepository = typeFacilityRepository;
     }
 
+    @Autowired
+    public void setRoomRepository(RoomRepository roomRepository) {
+        this.roomRepository = roomRepository;
+    }
+
+    @Autowired
+    public void setRoomService(RoomService roomService) {
+        this.roomService = roomService;
+    }
 
     @Autowired
     public void setProvinceService(ProvinceService provinceService) {
@@ -73,6 +97,11 @@ public class TypeServiceImpl implements TypeService {
     @Autowired
     public void setHostelTypeRepository(TypeRepository typeRepository) {
         this.typeRepository = typeRepository;
+    }
+
+    @Autowired
+    public void setModelMapper(ModelMapper modelMapper) {
+        this.modelMapper = modelMapper;
     }
 
     @Override
@@ -104,8 +133,34 @@ public class TypeServiceImpl implements TypeService {
     public Type update(Type reqModel) {
         // Set updatedAt
         reqModel.setUpdatedAt(System.currentTimeMillis());
-
+        //Set for update room
+//        Collection<Room> rooms = reqModel.getRooms();
+//        for(Room room : rooms){
+//            if(roomRepository.getByRoomNameAndType_TypeId(room.getRoomName(), room.getType().getTypeId()) != null){
+//                //update
+//                Type existedType = typeService.findById(room.getType().getTypeId());
+//                Room existedRoom = roomService.findById(room.getRoomId());
+//
+//                room.setRoomId(existedRoom.getRoomId());
+//                Room rqModel = modelMapper.map(room, Room.class);
+//                rqModel.setType(existedType);
+//                roomRepository.save(rqModel);
+//            }else{
+//                //create
+//                roomRepository.save(room);
+//            }
+//        }
         return typeRepository.save(reqModel);
+    }
+
+    private void createRoom(Integer typeId, RoomDTOCreate reqDTO){
+        Type exType = typeService.findById(typeId);
+
+        Room reqModel = modelMapper.map(reqDTO, Room.class);
+        reqModel.setType(exType);
+
+        // save list of model
+        Room resModel = roomService.save(reqModel);
     }
 
     @Override

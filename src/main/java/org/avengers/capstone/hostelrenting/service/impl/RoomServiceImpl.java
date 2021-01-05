@@ -73,6 +73,16 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
+    public void updateRoom(Integer roomId, Room updateRoom) {
+        Room exRoom = findById(roomId);
+        exRoom.setRoomId(roomId);
+        exRoom.setRoomName(updateRoom.getRoomName());
+        exRoom.setType(updateRoom.getType());
+        exRoom.setContracts(updateRoom.getContracts());
+        roomRepository.save(exRoom);
+    }
+
+    @Override
     public void checkExist(Integer id) {
         Optional<Room> model = roomRepository.findById(id);
         if (model.isEmpty())

@@ -18,12 +18,16 @@ import org.avengers.capstone.hostelrenting.service.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class RenterServiceIml implements RenterService {
@@ -63,6 +67,18 @@ public class RenterServiceIml implements RenterService {
         Optional<Renter> model = renterRepository.findById(id);
         if (model.isEmpty())
             throw new EntityNotFoundException(Renter.class, "id", id.toString());
+    }
+
+    @Override
+    public List<Renter> getAllRenters(int page, int size, String sortBy, boolean asc) {
+        Sort sort = Sort.by(asc ? Sort.Direction.ASC : Sort.Direction.DESC, sortBy);
+        Pageable pageable = PageRequest.of(page - Constant.ONE, size, sort);
+        return renterRepository.findAll(pageable).toList();
+    }
+
+    @Override
+    public Renter update(Renter renter) {
+        return renterRepository.save(renter);
     }
 
     @Override
