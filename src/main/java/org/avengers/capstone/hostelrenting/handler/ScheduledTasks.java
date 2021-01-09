@@ -88,16 +88,52 @@ public class ScheduledTasks {
     /**
      * Run scheduled tasks every 00:00 each day
      */
-//    @Scheduled(cron = "0 0 0 * * ?") // execute every 00:00 of day
-    @Scheduled(cron = "*/30 * * ? * *") // execute every 30 seconds
+
+    //@Scheduled(cron = "*/30 * * ? * *") // execute every 30 seconds
+    @Scheduled(cron = "0 0 0 * * ?") // execute every 00:00 of day
     public void cleanUp() {
         cleanUpExpiredDeals();
         cleanUpExpiredBookings();
         cleanUpExpiredContracts();
         cleanUpExpiredRequests();
         sendRequestDueTime();
+        sendNotificationAboutNearlyExpiringContract();
     }
-
+    /**
+     * Nearly expiring contract means validity duration of the contract is less than 31 days
+     * **/
+    private void sendNotificationAboutNearlyExpiringContract() {
+        Long limitTime = calculateLimitTime(getCurrentTime(), Calendar.DAY_OF_MONTH, 10);
+        System.out.println(limitTime);
+        Collection<Contract> nearlyExpiringContracts = contractRepository.findNearlyExpiringContractByDayRange(limitTime);
+        if (nearlyExpiringContracts.isEmpty()) {
+            logger.info("There is no nearly expiring contracts, yeye");
+            return;
+        }
+        logger.info("There are " + nearlyExpiringContracts.size() + " nearly expiring contracts");
+        nearlyExpiringContracts.forEach(contract -> {
+            String renterToken = contract.getRenter().getFirebaseToken();
+            String vendorToken = contract.getVendor().getFirebaseToken();
+            Map<String, String> data = new HashMap<>();
+            data.put("title", "Hợp đồng của bạn sắp hết hạn");
+            data.put("action", "UPDATE_CONTRACT");
+            data.put("id", Integer.toString(contract.getContractId()));
+            NotificationRequest renterNoti = NotificationRequest.builder()
+                    .data(data)
+                    .destination(renterToken).build();
+            NotificationRequest vendorNoti = NotificationRequest.builder()
+                    .data(data)
+                    .destination(vendorToken).build();
+            if (renterToken != null && !renterToken.isEmpty()) {
+                logger.info(renterToken);
+                firebaseService.sendPnsToDevice(renterNoti);
+            }
+            if (vendorToken != null && !vendorToken.isEmpty()) {
+                logger.info(vendorToken);
+                firebaseService.sendPnsToDevice(vendorNoti);
+            }
+        });
+    }
     /**
      * Clean up all expired deal (deal without reference - STATUS!=DONE & STATUS!=CANCELLED based on updated and created time)
      */

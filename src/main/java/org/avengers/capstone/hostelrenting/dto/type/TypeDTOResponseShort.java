@@ -37,7 +37,7 @@ public class TypeDTOResponseShort extends TypeDTOResponse {
 
     @Override
     @JsonIgnore
-    public Collection<FacilityDTOResponse> getFacilities() {
+    public Collection<TypeFacilityDTO> getFacilities() {
         return super.getFacilities();
     }
 
@@ -49,7 +49,7 @@ public class TypeDTOResponseShort extends TypeDTOResponse {
 
     @Override
     @JsonIgnore
-    public void setFacilities(Collection<FacilityDTOResponse> facilities) {
+    public void setFacilities(Collection<TypeFacilityDTO> facilities) {
         super.setFacilities(facilities);
     }
 

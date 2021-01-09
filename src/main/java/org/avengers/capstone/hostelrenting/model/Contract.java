@@ -52,11 +52,11 @@ public class Contract {
     @Transient
     private Booking booking;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "vendor_id", nullable = false)
     private Vendor vendor;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "renter_id", nullable = false)
     private Renter renter;
 

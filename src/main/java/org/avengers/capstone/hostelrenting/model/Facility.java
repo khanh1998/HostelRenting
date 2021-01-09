@@ -1,5 +1,6 @@
 package org.avengers.capstone.hostelrenting.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
@@ -26,6 +27,7 @@ public class Facility {
     @Column(columnDefinition = "boolean default false",nullable = false)
     private boolean isApproved;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "facility", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Collection<TypeFacility> typeFacilities;
 }

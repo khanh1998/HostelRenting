@@ -1,5 +1,8 @@
 package org.avengers.capstone.hostelrenting.service.impl;
 
+import org.avengers.capstone.hostelrenting.dto.room.RoomDTOCreate;
+import org.avengers.capstone.hostelrenting.dto.type.TypeDTOUpdate;
+import org.avengers.capstone.hostelrenting.dto.type.TypeFacilityDTO;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
 import org.avengers.capstone.hostelrenting.model.*;
 import org.avengers.capstone.hostelrenting.repository.TypeFacilityRepository;
@@ -7,6 +10,7 @@ import org.avengers.capstone.hostelrenting.repository.TypeRepository;
 import org.avengers.capstone.hostelrenting.service.*;
 import org.avengers.capstone.hostelrenting.service.GroupService;
 import org.avengers.capstone.hostelrenting.util.Utilities;
+import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +22,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigInteger;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -31,6 +36,15 @@ public class TypeServiceImpl implements TypeService {
     private HostelRequestService hostelRequestService;
     private UtilityService utilityService;
     private Utilities utilities;
+    private ModelMapper mapper;
+    private TypeImageService typeImageService;
+    private TypeFacilityService typeFacilityService;
+    private RoomService roomService;
+
+    @Autowired
+    public void setRoomService(RoomService roomService) {
+        this.roomService = roomService;
+    }
 
     @Autowired
     public void setUtilities(Utilities utilities) {
@@ -75,6 +89,31 @@ public class TypeServiceImpl implements TypeService {
         this.typeRepository = typeRepository;
     }
 
+    @Autowired
+    public void setTypeRepository(TypeRepository typeRepository) {
+        this.typeRepository = typeRepository;
+    }
+
+    @Autowired
+    public void setGroupService(GroupService groupService) {
+        this.groupService = groupService;
+    }
+
+    @Autowired
+    public void setMapper(ModelMapper mapper) {
+        this.mapper = mapper;
+    }
+
+    @Autowired
+    public void setTypeImageService(TypeImageService typeImageService) {
+        this.typeImageService = typeImageService;
+    }
+
+    @Autowired
+    public void setTypeFacilityService(TypeFacilityService typeFacilityService) {
+        this.typeFacilityService = typeFacilityService;
+    }
+
     @Override
     public void checkExist(Integer id) {
         Optional<Type> model = typeRepository.findById(id);
@@ -106,6 +145,97 @@ public class TypeServiceImpl implements TypeService {
         reqModel.setUpdatedAt(System.currentTimeMillis());
 
         return typeRepository.save(reqModel);
+    }
+
+    private void updateImages(TypeDTOUpdate dto, Type type) {
+        Collection<TypeImage> newImages = dto.getImageUrls();
+        Collection<TypeImage> oldImages = type.getTypeImages();
+        if (newImages != null) {
+            List<Integer> deletedImages = oldImages.stream()
+                    .filter(oldImage -> !newImages.contains(oldImage))
+                    .map(TypeImage::getImageId)
+                    .collect(Collectors.toList());
+            typeImageService.deleteByIds(deletedImages);
+            List<TypeImage> addedImages = newImages.stream()
+                    .filter(newImage -> !oldImages.contains(newImage))
+                    .map(image -> {
+                        image.setDeleted(false);
+                        image.setType(type);
+                        return typeImageService.save(image);
+                    })
+                    .collect(Collectors.toList());
+            dto.setImageUrls(addedImages);
+        }
+    }
+    @Override
+    public Type updatePartial(TypeDTOUpdate dto, int typeId) {
+        Type type = findById(typeId);
+        updateImages(dto, type);
+        updateFacilities(dto, type);
+        updateRooms(dto, type);
+        mapper.map(dto, type);
+        return typeRepository.save(type);
+    }
+
+    private void updateRooms(TypeDTOUpdate dto, Type type) {
+        Collection<Room> oldRooms = type.getRooms();
+        Collection<Room> newRooms = dto.getRooms();
+        List<Integer> oldRoomIds = oldRooms.stream().map(Room::getRoomId).collect(Collectors.toList());
+        List<Integer> newRoomIds = newRooms.stream().map(Room::getRoomId).collect(Collectors.toList());
+        System.out.println(oldRoomIds);
+        System.out.println(newRoomIds);
+        if (!newRooms.isEmpty()) {
+            List<Integer> deletedRoomIds = oldRooms.stream()
+                    .filter(room -> !newRoomIds.contains(room.getRoomId()))
+                    .map(room -> {
+                        roomService.deleteById(room.getRoomId());
+                        return room.getRoomId();
+                    })
+                    .collect(Collectors.toList());
+            List<Room> addedRooms = newRooms.stream()
+                    .map(room -> {
+                        room.setType(type);
+                        if (!oldRoomIds.contains(room.getRoomId())) {
+                            System.out.println(room);
+                            return roomService.save(room);
+                        }
+                        return room;
+                    })
+                    .collect(Collectors.toList());
+            Predicate<Room> delete = room -> deletedRoomIds.contains(room.getRoomId());
+            oldRooms.removeIf(delete);
+            dto.setRooms(addedRooms);
+        }
+    }
+
+    private void updateFacilities(TypeDTOUpdate dto, Type type) {
+        Collection<TypeFacility> newFacilities = dto.getFacilities();
+        Collection<TypeFacility> oldFacilities = type.getTypeFacilities();
+        List<Integer> newFacilityIds = newFacilities.stream()
+                .map(TypeFacility::getId)
+                .collect(Collectors.toList());
+        List<Integer> oldFacilityIds = oldFacilities.stream()
+                .map(TypeFacility::getId)
+                .collect(Collectors.toList());
+        if (!newFacilities.isEmpty()) {
+            List<Integer> deletedTypeFacilities = oldFacilities.stream()
+                    .filter(typeFacility -> !newFacilityIds.contains(typeFacility.getId()))
+                    .map(TypeFacility::getId)
+                    .collect(Collectors.toList());
+            typeFacilityService.deleteById(deletedTypeFacilities);
+            List<TypeFacility> addedTypeFacility = newFacilities.stream()
+                    .map(typeFacility -> {
+                        typeFacility.setType(type);
+                        if (!oldFacilityIds.contains(typeFacility.getId())) {
+                            return typeFacilityService.create(typeFacility);
+                        }
+                        return typeFacility;
+                    })
+                    .collect(Collectors.toList());
+            Predicate<TypeFacility> delete = typeFacility -> deletedTypeFacilities.contains(typeFacility.getId());
+            oldFacilities.removeIf(delete);
+            dto.setFacilities(addedTypeFacility);
+        }
     }
 
     @Override
