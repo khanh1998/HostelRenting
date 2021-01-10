@@ -50,3 +50,7 @@
 2021-01-10 01:29:19.777 DEBUG  org.springframework.web.filter.GenericFilterBean.init 242  - Filter 'firebaseFilter' configured for use
 2021-01-10 01:30:27.612 DEBUG  org.springframework.boot.StartupInfoLogger.logStarting 56  - Running with Spring Boot v2.3.0.RELEASE, Spring v5.2.6.RELEASE
 2021-01-10 01:30:29.462 DEBUG  org.springframework.web.filter.GenericFilterBean.init 242  - Filter 'firebaseFilter' configured for use
+2021-01-10 15:08:09.582 DEBUG  org.springframework.boot.StartupInfoLogger.logStarting 56  - Running with Spring Boot v2.3.0.RELEASE, Spring v5.2.6.RELEASE
+2021-01-10 15:08:12.225 DEBUG  org.springframework.web.filter.GenericFilterBean.init 242  - Filter 'firebaseFilter' configured for use
+2021-01-10 15:22:06.625 DEBUG  org.springframework.boot.StartupInfoLogger.logStarting 56  - Running with Spring Boot v2.3.0.RELEASE, Spring v5.2.6.RELEASE
+2021-01-10 15:22:09.242 DEBUG  org.springframework.web.filter.GenericFilterBean.init 242  - Filter 'firebaseFilter' configured for use

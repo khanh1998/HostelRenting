@@ -14,7 +14,6 @@ import java.util.UUID;
 @Getter
 @Setter
 @AllArgsConstructor
-
 @Entity
 @Table(name = "manager")
 public class Manager {
@@ -34,4 +33,13 @@ public class Manager {
 
     @Column(columnDefinition = "boolean default true", nullable = false)
     private boolean isActive;
+
+    private String password;
+
+    @Transient
+    private User.ROLE role;
+
+    public User.ROLE getRole() {
+        return User.ROLE.MANAGER;
+    }
 }
