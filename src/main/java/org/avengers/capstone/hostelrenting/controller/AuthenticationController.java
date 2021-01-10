@@ -57,15 +57,30 @@ public class AuthenticationController {
     public ResponseEntity<?> login(@RequestBody UserDTOLogin reqDTO) throws Exception {
         authenticate(reqDTO.getPhone(), reqDTO.getPassword());
         User resModel = customUserService.findByPhone(reqDTO.getPhone());
-        UserDTOResponse resDTO;
-            final UserDetails userDetails = customUserService.loadUserByUsername(reqDTO.getPhone());
-            final String token = firebaseService.generateJwtToken(userDetails);
-            if (resModel.getRole().equals(User.ROLE.RENTER)){
-                resDTO = modelMapper.map(resModel, RenterDTOResponse.class);
-            }else{
-                resDTO = modelMapper.map(resModel, VendorDTOResponse.class);
-            }
-        resDTO.setJwtToken(token);
+        UserDTOResponse resDTOUser;
+
+//        Admin resModelAdmin = customUserService.findByPhoneAdmin(reqDTO.getPhone());
+//        AdminResponse resDTOAdmin;
+
+        Object resDTO = new Object();
+//        if(resModel != null){
+        final UserDetails userDetails = customUserService.loadUserByUsername(reqDTO.getPhone());
+        final String token = firebaseService.generateJwtToken(userDetails);
+        if (resModel.getRole().equals(User.ROLE.RENTER)){
+            resDTOUser = modelMapper.map(resModel, RenterDTOResponse.class);
+        }else{
+            resDTOUser = modelMapper.map(resModel, VendorDTOResponse.class);
+        }
+        resDTOUser.setJwtToken(token);
+        resDTO = resDTOUser;
+//        }
+//        if(resModelAdmin != null){
+//            final AdminDTORequest adminDTORequest = customUserService.loadAdminByUsername(reqDTO.getPhone());
+//            final String tokenAdmin = firebaseService.generateJwtTokenAdmin(adminDTORequest);
+//            resDTOAdmin = modelMapper.map(resModelAdmin, AdminResponse.class);
+//            resDTOAdmin.setJwtToken(tokenAdmin);
+//            resDTO = resDTOAdmin;
+//        }
 
         ApiSuccess<?> apiSuccess = new ApiSuccess<>( resDTO, "Login successfully!");
 
