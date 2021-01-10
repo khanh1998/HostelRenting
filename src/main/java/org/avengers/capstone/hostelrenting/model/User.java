@@ -10,7 +10,6 @@ import java.util.UUID;
 @Getter
 @Setter
 @AllArgsConstructor
-
 @MappedSuperclass
 public class User {
     public enum ROLE{RENTER, VENDOR, ADMIN, MANAGER}

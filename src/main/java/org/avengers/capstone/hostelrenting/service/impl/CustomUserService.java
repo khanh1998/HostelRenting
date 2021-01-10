@@ -1,6 +1,7 @@
 package org.avengers.capstone.hostelrenting.service.impl;
 
 import org.avengers.capstone.hostelrenting.dto.admin.AdminDTORequest;
+import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
 import org.avengers.capstone.hostelrenting.model.Admin;
 import org.avengers.capstone.hostelrenting.model.Renter;
 import org.avengers.capstone.hostelrenting.model.Vendor;
@@ -50,6 +51,11 @@ public class CustomUserService implements UserDetailsService {
             return new User(phone, existedRenter.get().getPassword(), new ArrayList<>());
         }
 
+        Optional<Admin> admin = adminRepository.findByPhone(phone);
+        if (admin.isPresent()) {
+            return new User(phone, admin.get().getPassword(), new ArrayList<>());
+        }
+
         throw new UsernameNotFoundException("User not found with phone: " + phone);
 
     }
@@ -67,14 +73,24 @@ public class CustomUserService implements UserDetailsService {
     public org.avengers.capstone.hostelrenting.model.User findByPhone(String phone) {
         Optional<Vendor> existedVendor = vendorRepository.findByPhone(phone);
         Optional<Renter> existedRenter = renterRepository.findByPhone(phone);
+        Optional<Admin> existedAdmin = adminRepository.findByPhone(phone);
         if (existedRenter.isPresent()) {
             existedRenter.get().setRole(org.avengers.capstone.hostelrenting.model.User.ROLE.RENTER);
             return existedRenter.get();
         } else if (existedVendor.isPresent()) {
             existedVendor.get().setRole(org.avengers.capstone.hostelrenting.model.User.ROLE.VENDOR);
             return existedVendor.get();
+        } else if (existedAdmin.isPresent()) {
+            existedAdmin.get().setRole(org.avengers.capstone.hostelrenting.model.User.ROLE.ADMIN);
+            org.avengers.capstone.hostelrenting.model.User user =
+                    new org.avengers.capstone.hostelrenting.model.User();
+            user.setRole(existedAdmin.get().getRole());
+            user.setUserId(existedAdmin.get().getUserId());
+            user.setPhone(existedAdmin.get().getPhone());
+            user.setPassword(existedAdmin.get().getPassword());
+            return user;
         }
-        return null;
+        throw new EntityNotFoundException(User.class, "phone", phone);
     }
 
 //    public Admin findByPhoneAdmin(String phone){

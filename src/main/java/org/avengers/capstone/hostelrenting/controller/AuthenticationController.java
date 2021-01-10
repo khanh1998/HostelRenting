@@ -62,7 +62,11 @@ public class AuthenticationController {
             final String token = firebaseService.generateJwtToken(userDetails);
             if (resModel.getRole().equals(User.ROLE.RENTER)){
                 resDTO = modelMapper.map(resModel, RenterDTOResponse.class);
-            }else{
+            }
+            else if (resModel.getRole().equals(User.ROLE.ADMIN)) {
+                resDTO = modelMapper.map(resModel, UserDTOResponse.class);
+            }
+            else {
                 resDTO = modelMapper.map(resModel, VendorDTOResponse.class);
             }
         resDTO.setJwtToken(token);
