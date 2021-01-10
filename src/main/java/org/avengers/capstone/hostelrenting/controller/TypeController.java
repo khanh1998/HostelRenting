@@ -270,6 +270,13 @@ public class TypeController {
         return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
     }
 
+    @PatchMapping("types/{typeId}")
+    public ResponseEntity<TypeDTOResponse> updatePartialType(@Valid @RequestBody TypeDTOUpdate reqDTO, @PathVariable int typeId) {
+        Type updated = typeService.updatePartial(reqDTO, typeId);
+        TypeDTOResponse res = modelMapper.map(updated, TypeDTOResponse.class);
+        return ResponseEntity.ok(res);
+    }
+
     private Collection<TypeDTOResponse> createType(Collection<TypeDTOCreate> reqDTOs, Integer groupId) {
         // check existed Group
         Group exGroup = groupService.findById(groupId);

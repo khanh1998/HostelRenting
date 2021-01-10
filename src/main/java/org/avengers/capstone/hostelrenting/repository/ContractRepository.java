@@ -22,4 +22,10 @@ public interface ContractRepository extends JpaRepository<Contract, Integer> {
             "(c.created_at < ?1)\n" +
             "and c.status = 'INACTIVE';", nativeQuery = true)
     Collection<Contract> findExpiredInactiveContractByDayRange(Long limitTime);
+
+    @Query(value = "SELECT c.* FROM contract as c\n" +
+            "WHERE \n" +
+            "((c.created_at + c.duration * 2.628e+9)< ?1)\n" +
+            "and c.status = 'ACTIVATED';", nativeQuery = true)
+    Collection<Contract> findNearlyExpiringContractByDayRange(Long limitTime);
 }

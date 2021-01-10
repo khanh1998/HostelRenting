@@ -11,6 +11,7 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
+import org.avengers.capstone.hostelrenting.dto.admin.AdminDTORequest;
 import org.avengers.capstone.hostelrenting.dto.notification.NotificationRequest;
 import org.avengers.capstone.hostelrenting.dto.notification.SubscriptionRequestDTO;
 import org.avengers.capstone.hostelrenting.model.Renter;
@@ -134,6 +135,14 @@ public class FirebaseService {
 
     public String generateJwtToken(UserDetails userDetails) throws FirebaseAuthException {
         String uid = userDetails.getUsername();
+        Map<String, Object> additionalClaims = new HashMap<>();
+//        additionalClaims.put("vendor", true);
+
+        return FirebaseAuth.getInstance().createCustomToken(uid, additionalClaims);
+    }
+
+    public String generateJwtTokenAdmin(AdminDTORequest adminDTORequest) throws FirebaseAuthException {
+        String uid = adminDTORequest.getPhone();
         Map<String, Object> additionalClaims = new HashMap<>();
 //        additionalClaims.put("vendor", true);
 

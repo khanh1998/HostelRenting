@@ -48,6 +48,15 @@ public class TypeImageServiceImp implements TypeImageService {
     }
 
     @Override
+    public void deleteByIds(List<Integer> indexes) {
+        indexes.forEach(index -> {
+            TypeImage image = findById(index);
+            image.setDeleted(true);
+            typeImageRepository.save(image);
+        });
+    }
+
+    @Override
     public TypeImage findByIdAndHostelTypeId(Integer imageId, Integer typeId) {
         return typeImageRepository.findByImageIdAndType_TypeId(imageId, typeId);
     }

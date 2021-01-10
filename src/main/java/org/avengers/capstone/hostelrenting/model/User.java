@@ -13,7 +13,7 @@ import java.util.UUID;
 
 @MappedSuperclass
 public class User {
-    public enum ROLE{RENTER, VENDOR}
+    public enum ROLE{RENTER, VENDOR, ADMIN, MANAGER}
 
     public User() {
         this.userId = UUID.randomUUID();

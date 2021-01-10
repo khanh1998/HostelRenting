@@ -27,7 +27,7 @@ public class TypeDTOResponse extends TypeDTO {
 
     @Getter
     @Setter
-    private Collection<FacilityDTOResponse> facilities;
+    private Collection<TypeFacilityDTO> facilities;
 
     @Getter
     @Setter

@@ -1,5 +1,6 @@
 package org.avengers.capstone.hostelrenting.service;
 
+import org.avengers.capstone.hostelrenting.dto.type.TypeDTOUpdate;
 import org.avengers.capstone.hostelrenting.model.Type;
 
 import java.util.Collection;
@@ -11,6 +12,7 @@ public interface TypeService {
     Type findById(Integer id);
     Type create(Type reqModel);
     Type update(Type reqModel);
+    Type updatePartial(TypeDTOUpdate dto, int typeId);
     void deleteById(Integer id);
     List<Type> findByHostelGroupId(Integer hostelGroupId);
 
