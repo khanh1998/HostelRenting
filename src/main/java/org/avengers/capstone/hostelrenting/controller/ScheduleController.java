@@ -95,6 +95,18 @@ public class ScheduleController {
         return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
     }
 
+    @DeleteMapping("/schedules")
+    public ResponseEntity<ApiSuccess<?>> deleteGroupScheduleByIds(@RequestParam List<Integer> ids) {
+        List<Integer> deleted = new ArrayList<>();
+        ids.forEach(id -> {
+            groupScheduleService.delete(id);
+            deleted.add(id);
+        });
+        String message = "Your schedules have been deleted successfully!" + deleted.toString();
+        ApiSuccess<?> apiSuccess = new ApiSuccess<>(null, message);
+        return ResponseEntity.ok(apiSuccess);
+    }
+
     @GetMapping("/groups/{groupId}/schedules")
     public ResponseEntity<?> getGroupScheduleByGroupId(@PathVariable Integer groupId) {
         Group group = groupService.findById(groupId);
