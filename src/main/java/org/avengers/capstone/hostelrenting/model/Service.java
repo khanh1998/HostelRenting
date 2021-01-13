@@ -13,14 +13,17 @@ import java.util.Collection;
 
 @Entity
 @Table(name = "service")
+@Builder(toBuilder = true)
 public class Service {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer serviceId;
 
-    @Column(nullable = false)
-    @NotBlank(message = "Service name is mandatory")
-    private String serviceName;
+    @Column(nullable = false, length = 30)
+        private String serviceName;
+
+    @Column(columnDefinition = "boolean default false",nullable = false)
+    private boolean isApproved;
 
     @OneToMany(mappedBy = "service", fetch = FetchType.LAZY)
     private Collection<GroupService> groupServices;

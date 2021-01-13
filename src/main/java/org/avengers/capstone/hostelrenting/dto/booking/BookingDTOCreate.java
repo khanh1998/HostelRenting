@@ -9,8 +9,6 @@ import org.avengers.capstone.hostelrenting.model.Booking;
 import javax.validation.constraints.NotNull;
 import java.util.UUID;
 
-@Getter
-@Setter
 public class BookingDTOCreate {
     public BookingDTOCreate() {
         this.qrCode = UUID.randomUUID();
@@ -20,17 +18,18 @@ public class BookingDTOCreate {
 
     @Getter
     @Setter
+    @JsonIgnore
     private Integer bookingId;
 
     @Getter
     @Setter
     @NotNull(message = "Renter id is mandatory!")
-    private Long renterId;
+    private UUID renterId;
 
     @Getter
     @Setter
     @NotNull(message = "Vendor id is mandatory!")
-    private Long vendorId;
+    private UUID vendorId;
 
     @Getter
     @Setter

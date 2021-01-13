@@ -2,6 +2,7 @@ package org.avengers.capstone.hostelrenting.service.impl;
 
 import org.avengers.capstone.hostelrenting.Constant;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
+import org.avengers.capstone.hostelrenting.exception.GenericException;
 import org.avengers.capstone.hostelrenting.model.Room;
 import org.avengers.capstone.hostelrenting.repository.RoomRepository;
 import org.avengers.capstone.hostelrenting.service.RoomService;
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,8 +37,8 @@ public class RoomServiceImpl implements RoomService {
 
     @Override
     public Room save(Room room) {
-        if (roomRepository.getByRoomName(room.getRoomName()) != null) {
-            throw new DuplicateKeyException(String.format(Constant.Message.DUPLICATED_ERROR, "hostel_room_name", room.getRoomName()));
+        if (roomRepository.getByRoomNameAndType_TypeId(room.getRoomName(), room.getType().getTypeId()) != null) {
+            throw new GenericException(Room.class, "is existed with ", "id", room.getRoomName());
         }
         return roomRepository.save(room);
     }
@@ -55,7 +57,29 @@ public class RoomServiceImpl implements RoomService {
 
     @Override
     public Room updateStatus(Integer id, boolean isAvailable) {
-        return roomRepository.save(findById(id).toBuilder().isAvailable(isAvailable).build());
+        Room exRoom = findById(id);
+        exRoom.setAvailable(isAvailable);
+        return roomRepository.save(exRoom);
+    }
+
+    @Override
+    public Room getExistedRoomInList(Collection<Room> rooms) {
+        for (Room room : rooms) {
+            Room exRoom = roomRepository.getByRoomNameAndType_TypeId(room.getRoomName(), room.getType().getTypeId());
+            if (exRoom != null)
+                return exRoom;
+        }
+        return null;
+    }
+
+    @Override
+    public void updateRoom(Integer roomId, Room updateRoom) {
+        Room exRoom = findById(roomId);
+        exRoom.setRoomId(roomId);
+        exRoom.setRoomName(updateRoom.getRoomName());
+        exRoom.setType(updateRoom.getType());
+        exRoom.setContracts(updateRoom.getContracts());
+        roomRepository.save(exRoom);
     }
 
     @Override

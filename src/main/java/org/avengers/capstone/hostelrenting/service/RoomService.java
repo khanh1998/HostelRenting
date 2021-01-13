@@ -2,6 +2,7 @@ package org.avengers.capstone.hostelrenting.service;
 
 import org.avengers.capstone.hostelrenting.model.Room;
 
+import java.util.Collection;
 import java.util.List;
 
 public interface RoomService {
@@ -13,5 +14,6 @@ public interface RoomService {
 
     Boolean checkAvailableById(Integer id);
     Room updateStatus(Integer id, boolean isAvailable);
-
+    Room getExistedRoomInList(Collection<Room> room);
+    void updateRoom(Integer roomId, Room updateRoom);
 }

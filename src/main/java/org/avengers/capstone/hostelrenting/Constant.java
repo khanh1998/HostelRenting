@@ -1,7 +1,17 @@
 package org.avengers.capstone.hostelrenting;
 
 public class Constant {
+    public static final int ONE_MILION = 1000000;
+
+    public static final int ONE_THOUSAND = 1000;
+
+    public static final int ZERO = 0;
+
+    public static final int ONE = 1;
+    public static final String EMPTY_STRING = "";
+
     public static class Message {
+
         /**
          * Example: Province has been created successfully
          */
@@ -43,6 +53,8 @@ public class Constant {
     public static final double DEFAULT_RANGE = 5;
 
     public static class Contract {
+
+        public final static String SUBJECT_CREATE_NEW = "NHATROSAC - HỢP ĐỒNG THUÊ NHÀ";
         public final static String UNICODE_TRUETYPE_SOURCE_SANS_PRO = "'Source Sans Pro'";
         public final static String TEMPLATE_NAME = "contract_template";
         /* VENDOR INFORMATION*/
@@ -73,6 +85,33 @@ public class Constant {
         public final static String START_MONTH = "contractStartMonth";
         public final static String START_YEAR = "contractStartYear";
 
+        public final static String END_DAY = "contractEndDay";
+        public final static String END_MONTH = "contractEndMonth";
+        public final static String END_YEAR = "contractEndYear";
+
+        public final static String CURRENT_DAY = "currentDay";
+        public final static String CURRENT_MONTH = "currentMonth";
+        public final static String CURRENT_YEAR = "currentYear";
+
+        public final static String ROOM_NUMBER = "roomNumber";
+        public final static String GROUP_SUPERFICIALITY = "groupSuperficiality";
+        public final static String RENTING_PRICE = "rentingPrice";
+        public final static String TYPE_DEPOSIT = "typeDeposit";
+
+        public final static String APPENDIX_CONTRACT = "appendixContract";
+        public final static String PAYMENT_DAY_IN_MONTH = "paymentDayInMonth";
+
+        public final static String DOWN_PAYMENT = "downPayment";
+        public final static String RESERVED_CONTRACT_EXPIRED_DAY_RANGE = "reservedContractExpiredDayRange";
+        public final static String SERVICES = "services";
+        public final static String REGULATIONS = "regulations";
+        public final static String FACILITIES = "facilities";
+        public final static String RENTER_CONFIRM_TEXT = "renterConfirmText";
+        public final static String RENTER_CONFIRM_TEXT_CONTENT = "ĐÃ XÁC NHẬN";
+        public final static String CONTRACT_PDF_URL = "contractPDFUrl";
+        public final static String CONTRACT_PDF_URL_CONTENT = "Link hợp đồng (PDF): ";
+
+
         /* GROUP INFORMATION */
         public final static String ADDRESS = "groupAddress";
 
@@ -93,37 +132,19 @@ public class Constant {
     }
 
     public static class Mail {
-        public final static String MAIL_SMTP_AUTH="mail.smtp.auth";
-        public final static String MAIL_SMTP_STARTTLS_ENABLE="mail.smtp.starttls.enable";
-        public final static String MAIL_SMTP_HOST="mail.smtp.host";
-        public final static String MAIL_SMTP_PORT="mail.smtp.port";
-        public final static String MAIL_SMTP_DEBUG="mail.smtp.debug";
-        public final static String MAIL_SMTP_SOCKET_FACTORY_PORT="mail.smtp.socketFactory.port";
-        public final static String MAIL_SMTP_SOCKET_FACTORY_CLASS="mail.smtp.socketFactory.class";
-        public final static String MAIL_SMTP_SOCKET_FACTORY_FALLBACK="mail.smtp.socketFactory.fallback";
+        public final static String MAIL_SMTP_AUTH = "mail.smtp.auth";
+        public final static String MAIL_SMTP_STARTTLS_ENABLE = "mail.smtp.starttls.enable";
+        public final static String MAIL_SMTP_HOST = "mail.smtp.host";
+        public final static String MAIL_SMTP_PORT = "mail.smtp.port";
+        public final static String MAIL_SMTP_DEBUG = "mail.smtp.debug";
+        public final static String MAIL_SMTP_SOCKET_FACTORY_PORT = "mail.smtp.socketFactory.port";
+        public final static String MAIL_SMTP_SOCKET_FACTORY_CLASS = "mail.smtp.socketFactory.class";
+        public final static String MAIL_SMTP_SOCKET_FACTORY_FALLBACK = "mail.smtp.socketFactory.fallback";
     }
 
-    public static class Notification{
-        public final static String ID_FIELD_NAME = "id";
-        public final static String BODY_FIELD_NAME = "body";
-        public final static String CLICK_ACTION_FIELD_NAME = "clickAction";
-        public final static String ICON_FIELD_NAME = "icon";
-        public final static String TITLE_FIELD_NAME = "title";
-        public final static String ACTION_FIELD_NAME = "action";
-
-        public final static String NEW_BOOKING = "NEW_BOOKING";
-        public final static String STATIC_NEW_BOOKING_MESSAGE = "Bạn có lịch hẹn mới từ: ";
-        public final static String CONFIRM_BOOKING = "CONFIRM_BOOKING";
-        public final static String STATIC_CONFIRM_BOOKING_MESSAGE = "Lịch hẹn của bạn đã được xác nhận từ: ";
-        public final static String NEW_CONTRACT = "NEW_CONTRACT";
-        public final static String STATIC_NEW_CONTRACT_MESSAGE = "Bạn có hợp đồng mới từ: ";
-        public final static String CONFIRM_CONTRACT = "CONFIRM_CONTRACT";
-        public final static String STATIC_CONFIRM_CONTRACT_MESSAGE = "Hợp đồng đã được đồng ý từ: ";
+    public static class Format {
+        public final static String DATE_TIME_DEFAULT = "yyyy/MM/dd HH:mm:ss";
     }
 
-    public static class Field{
-        public final static String BOOKING_ID = "bookingId";
-        public final static String CONTRACT_ID= "contractId";
-
-    }
+    public static final String REQUEST_NOTIFICATION_SUBJECT = "DANH SÁCH PHÒNG THEO YÊU CẦU";
 }

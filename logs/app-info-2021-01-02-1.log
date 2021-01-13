@@ -1,0 +1,23 @@
+2021-01-02 16:33:47.991 INFO   org.springframework.boot.StartupInfoLogger.logStarting 55  - Starting HostelrentingApplication on DESKTOP-LJ9DRPS with PID 13316 (D:\capstone\HostelBackEnd-BV2\target\classes started by thanh in D:\capstone\HostelBackEnd-BV2)
+2021-01-02 16:33:48.011 INFO   org.springframework.boot.SpringApplication.logStartupProfileInfo 655  - The following profiles are active: prod
+2021-01-02 16:34:03.773 INFO   org.springframework.boot.StartupInfoLogger.logStarted 61  - Started HostelrentingApplication in 16.168 seconds (JVM running for 18.079)
+2021-01-02 16:34:30.192 INFO   org.avengers.capstone.hostelrenting.handler.ScheduledTasks.cleanUpExpiredDeals 108  - There is no expired DEAL
+2021-01-02 16:34:30.245 INFO   org.avengers.capstone.hostelrenting.handler.ScheduledTasks.cleanUpExpiredBookings 127  - There is no expired BOOKING
+2021-01-02 16:34:30.299 INFO   org.avengers.capstone.hostelrenting.handler.ScheduledTasks.cleanUpExpiredContracts 144  - There is no expire CONTRACT
+2021-01-02 16:34:30.353 INFO   org.avengers.capstone.hostelrenting.handler.ScheduledTasks.cleanUpExpiredRequests 162  - There is no expired HOSTEL REQUEST
+2021-01-02 16:34:30.405 INFO   org.avengers.capstone.hostelrenting.handler.ScheduledTasks.sendRequestDueTime 179  - There is no in time REQUEST
+2021-01-02 16:35:00.123 INFO   org.avengers.capstone.hostelrenting.handler.ScheduledTasks.cleanUpExpiredDeals 108  - There is no expired DEAL
+2021-01-02 16:35:00.181 INFO   org.avengers.capstone.hostelrenting.handler.ScheduledTasks.cleanUpExpiredBookings 127  - There is no expired BOOKING
+2021-01-02 16:35:00.242 INFO   org.avengers.capstone.hostelrenting.handler.ScheduledTasks.cleanUpExpiredContracts 144  - There is no expire CONTRACT
+2021-01-02 16:35:00.306 INFO   org.avengers.capstone.hostelrenting.handler.ScheduledTasks.cleanUpExpiredRequests 162  - There is no expired HOSTEL REQUEST
+2021-01-02 16:35:00.364 INFO   org.avengers.capstone.hostelrenting.handler.ScheduledTasks.sendRequestDueTime 179  - There is no in time REQUEST
+2021-01-02 16:35:30.135 INFO   org.avengers.capstone.hostelrenting.handler.ScheduledTasks.cleanUpExpiredDeals 108  - There is no expired DEAL
+2021-01-02 16:35:30.197 INFO   org.avengers.capstone.hostelrenting.handler.ScheduledTasks.cleanUpExpiredBookings 127  - There is no expired BOOKING
+2021-01-02 16:35:30.259 INFO   org.avengers.capstone.hostelrenting.handler.ScheduledTasks.cleanUpExpiredContracts 144  - There is no expire CONTRACT
+2021-01-02 16:35:30.321 INFO   org.avengers.capstone.hostelrenting.handler.ScheduledTasks.cleanUpExpiredRequests 162  - There is no expired HOSTEL REQUEST
+2021-01-02 16:35:30.382 INFO   org.avengers.capstone.hostelrenting.handler.ScheduledTasks.sendRequestDueTime 179  - There is no in time REQUEST
+2021-01-02 16:36:00.105 INFO   org.avengers.capstone.hostelrenting.handler.ScheduledTasks.cleanUpExpiredDeals 108  - There is no expired DEAL
+2021-01-02 16:36:00.156 INFO   org.avengers.capstone.hostelrenting.handler.ScheduledTasks.cleanUpExpiredBookings 127  - There is no expired BOOKING
+2021-01-02 16:36:00.223 INFO   org.avengers.capstone.hostelrenting.handler.ScheduledTasks.cleanUpExpiredContracts 144  - There is no expire CONTRACT
+2021-01-02 16:36:00.276 INFO   org.avengers.capstone.hostelrenting.handler.ScheduledTasks.cleanUpExpiredRequests 162  - There is no expired HOSTEL REQUEST
+2021-01-02 16:36:00.327 INFO   org.avengers.capstone.hostelrenting.handler.ScheduledTasks.sendRequestDueTime 179  - There is no in time REQUEST

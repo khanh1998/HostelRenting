@@ -2,9 +2,13 @@ package org.avengers.capstone.hostelrenting.service.impl;
 
 import org.avengers.capstone.hostelrenting.Constant;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
+import org.avengers.capstone.hostelrenting.exception.GenericException;
 import org.avengers.capstone.hostelrenting.model.District;
+import org.avengers.capstone.hostelrenting.model.Province;
 import org.avengers.capstone.hostelrenting.repository.DistrictRepository;
 import org.avengers.capstone.hostelrenting.service.DistrictService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
@@ -15,6 +19,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class DistrictServiceImpl implements DistrictService {
+    private static final Logger logger = LoggerFactory.getLogger(DistrictServiceImpl.class);
     private DistrictRepository districtRepository;
 
     @Autowired
@@ -43,11 +48,14 @@ public class DistrictServiceImpl implements DistrictService {
     }
 
     @Override
-    public District save(District district) {
-        if (districtRepository.getByDistrictName(district.getDistrictName()) != null) {
-            throw new DuplicateKeyException(String.format(Constant.Message.DUPLICATED_ERROR, "district_name", district.getDistrictName()));
+    public District create(District reqModel) {
+        Optional<District> exModel = districtRepository.getByDistrictName(reqModel.getDistrictName());
+        if (exModel.isPresent()) {
+            logger.error("Duplicated: " + reqModel.getDistrictName());
+            return exModel.get();
         }
-        return districtRepository.save(district);
+        else
+            return districtRepository.save(reqModel);
 
     }
 

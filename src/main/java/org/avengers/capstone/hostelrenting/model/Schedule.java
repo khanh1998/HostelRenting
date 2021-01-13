@@ -27,7 +27,7 @@ public class Schedule {
     @Column(unique = true)
     private CODE code;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 10)
     @NotBlank(message = "Day of week time is mandatory")
     private String dayOfWeek;
 

@@ -7,7 +7,6 @@ import java.util.List;
 
 @Getter
 @Setter
-//@Builder
 @EqualsAndHashCode(callSuper = false)
 @Entity
 @Table(name = "vendor")
@@ -31,4 +30,9 @@ public class Vendor extends User{
 
     @OneToMany(mappedBy = "vendor", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Group> groups;
+
+    @Override
+    public ROLE getRole() {
+        return ROLE.VENDOR;
+    }
 }

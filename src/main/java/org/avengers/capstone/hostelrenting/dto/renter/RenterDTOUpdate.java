@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 import org.avengers.capstone.hostelrenting.dto.SchoolDTOFull;
-import org.avengers.capstone.hostelrenting.dto.province.ProvinceDTOShort;
+import org.avengers.capstone.hostelrenting.dto.province.ProvinceDTO;
 import org.avengers.capstone.hostelrenting.dto.user.UserDTOUpdate;
 
 import javax.validation.Valid;
@@ -22,7 +22,7 @@ public class RenterDTOUpdate extends UserDTOUpdate {
     @NotNull(message = "Hometown province id is mandatory!")
     @JsonProperty("hometown")
     @JsonIgnoreProperties({"provinceName"})
-    private @Valid ProvinceDTOShort province;
+    private @Valid ProvinceDTO province;
 
     @Getter
     @Setter

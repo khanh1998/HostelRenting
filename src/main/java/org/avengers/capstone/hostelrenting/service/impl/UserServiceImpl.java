@@ -1,5 +1,6 @@
 package org.avengers.capstone.hostelrenting.service.impl;
 
+import org.avengers.capstone.hostelrenting.exception.GenericException;
 import org.avengers.capstone.hostelrenting.model.Renter;
 import org.avengers.capstone.hostelrenting.model.User;
 import org.avengers.capstone.hostelrenting.model.Vendor;
@@ -27,16 +28,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User login(String phone, String password) {
-        Optional<Vendor> existedVendor = vendorRepository.findByPhone(phone);
-        Optional<Renter> existedRenter = renterRepository.findByPhone(phone);
-        if (existedRenter.isPresent()){
-            if (existedRenter.get().getPassword().equals(password))
-                return existedRenter.get();
-        }else if(existedVendor.isPresent()){
-            if (existedVendor.get().getPassword().equals(password))
-                return existedVendor.get();
+    public void checkDuplicatePhone(String phone) {
+        // check duplicate phone
+        if (renterRepository.countByPhone(phone) > 0 || vendorRepository.countByPhone(phone) > 0){
+            throw new GenericException(User.class, "phone is already existed", "phone", phone);
         }
-        return null;
     }
 }

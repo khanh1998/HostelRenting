@@ -1,11 +1,13 @@
 package org.avengers.capstone.hostelrenting.controller;
 
+import org.avengers.capstone.hostelrenting.dto.admin.AdminDTORequest;
+import org.avengers.capstone.hostelrenting.dto.admin.AdminResponse;
 import org.avengers.capstone.hostelrenting.dto.renter.RenterDTOResponse;
 import org.avengers.capstone.hostelrenting.dto.response.ApiSuccess;
 import org.avengers.capstone.hostelrenting.dto.user.UserDTOResponse;
 import org.avengers.capstone.hostelrenting.dto.user.UserDTOLogin;
 import org.avengers.capstone.hostelrenting.dto.vendor.VendorDTOResponse;
-import org.avengers.capstone.hostelrenting.model.Role;
+import org.avengers.capstone.hostelrenting.model.Admin;
 import org.avengers.capstone.hostelrenting.model.User;
 import org.avengers.capstone.hostelrenting.service.impl.CustomUserService;
 import org.avengers.capstone.hostelrenting.service.impl.FirebaseService;
@@ -53,21 +55,34 @@ public class AuthenticationController {
 
     @PostMapping(value = "/login")
     public ResponseEntity<?> login(@RequestBody UserDTOLogin reqDTO) throws Exception {
-
         authenticate(reqDTO.getPhone(), reqDTO.getPassword());
+        User resModel = customUserService.findByPhone(reqDTO.getPhone());
+        UserDTOResponse resDTOUser;
+
+//        Admin resModelAdmin = customUserService.findByPhoneAdmin(reqDTO.getPhone());
+//        AdminResponse resDTOAdmin;
+
+        Object resDTO = new Object();
+//        if(resModel != null){
         final UserDetails userDetails = customUserService.loadUserByUsername(reqDTO.getPhone());
         final String token = firebaseService.generateJwtToken(userDetails);
-        User resModel = customUserService.findByPhone(reqDTO.getPhone());
-        UserDTOResponse resDTO;
-        if (resModel.getRole().getCode().equals(Role.CODE.RENTER)){
-            resDTO = modelMapper.map(resModel, RenterDTOResponse.class);
+        if (resModel.getRole().equals(User.ROLE.RENTER)){
+            resDTOUser = modelMapper.map(resModel, RenterDTOResponse.class);
         }else{
-            resDTO = modelMapper.map(resModel, VendorDTOResponse.class);
+            resDTOUser = modelMapper.map(resModel, VendorDTOResponse.class);
         }
+        resDTOUser.setJwtToken(token);
+        resDTO = resDTOUser;
+//        }
+//        if(resModelAdmin != null){
+//            final AdminDTORequest adminDTORequest = customUserService.loadAdminByUsername(reqDTO.getPhone());
+//            final String tokenAdmin = firebaseService.generateJwtTokenAdmin(adminDTORequest);
+//            resDTOAdmin = modelMapper.map(resModelAdmin, AdminResponse.class);
+//            resDTOAdmin.setJwtToken(tokenAdmin);
+//            resDTO = resDTOAdmin;
+//        }
 
-        resDTO.setJwtToken(token);
-
-        ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTO, "Login successfully!");
+        ApiSuccess<?> apiSuccess = new ApiSuccess<>( resDTO, "Login successfully!");
 
         return ResponseEntity.ok(apiSuccess);
     }

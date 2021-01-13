@@ -22,6 +22,7 @@ public class UserDTOUpdate implements Serializable {
     @Getter
     @Setter
     private String username;
+
     @Getter
     @Setter
     @NotNull(message = "Year of birth is mandatory!")

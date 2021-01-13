@@ -30,8 +30,11 @@ public class Regulation {
     /**
      * regulation name
      */
-    @Column(nullable = false)
+    @Column(nullable = false, length = 50)
     private String regulationName;
+
+    @Column(columnDefinition = "boolean default false",nullable = false)
+    private boolean isApproved;
 
     /**
      * list of group_schedules

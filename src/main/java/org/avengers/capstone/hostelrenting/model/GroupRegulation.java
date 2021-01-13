@@ -39,15 +39,5 @@ public class GroupRegulation {
     @JoinColumn(name = "regulation_id", nullable = false)
     private Regulation regulation;
 
-    /**
-     * define the regulation is allowed or not
-     */
-    @Column(columnDefinition = "bool default true")
-    private boolean isAllowed;
 
-    /**
-     * define the regulation is active or not
-     */
-    @Column(columnDefinition = "bool default true")
-    private boolean isActive;
 }

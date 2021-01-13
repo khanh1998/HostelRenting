@@ -1,5 +1,6 @@
 package org.avengers.capstone.hostelrenting.service;
 
+import org.avengers.capstone.hostelrenting.dto.type.TypeDTOUpdate;
 import org.avengers.capstone.hostelrenting.model.Type;
 
 import java.util.Collection;
@@ -11,11 +12,13 @@ public interface TypeService {
     Type findById(Integer id);
     Type create(Type reqModel);
     Type update(Type reqModel);
+    Type updatePartial(TypeDTOUpdate dto, int typeId);
     void deleteById(Integer id);
     List<Type> findByHostelGroupId(Integer hostelGroupId);
 
     Collection<Type> handleAfterRetrieve(Collection<Type> types);
     Type countAvailableRoomAndCurrentBooking(Type type);
+
 
     /**
      * Get hostel types based on input factors
@@ -30,5 +33,17 @@ public interface TypeService {
      * @param page page of the result
      * @return corresponding hostel types with factors
      */
-    Collection<Type> searchWithMainFactors(Double latitude, Double longitude, Double distance, Integer schoolId, Integer districtId, String sortBy, Boolean asc, int size, int page);
+    Collection<Type> searchWithMainFactors(Double latitude, Double longitude,
+                                           Double distance, Integer schoolId,
+                                           Integer provinceId, Integer requestId,
+                                           String sortBy, Boolean asc, int size,
+                                           int page);
+
+    Collection<Type> filtering(Collection<Type> types, Integer requestId,
+                               Integer schoolId, Integer provinceId,
+                               Integer categoryId, Float minPrice,
+                               Float maxPrice, Float minSuperficiality,
+                               Float maxSuperficiality, Integer minCapacity,
+                               Integer maxCapacity, Integer[] uCategoryIds, Integer[] facilityIds,
+                               Integer[] serviceIds, Integer[] regulationIds, Integer size, Integer page);
 }

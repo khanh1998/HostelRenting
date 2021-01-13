@@ -1,5 +1,6 @@
 package org.avengers.capstone.hostelrenting.controller;
 
+import com.google.protobuf.Api;
 import org.avengers.capstone.hostelrenting.dto.feedback.FeedbackDTOCreate;
 import org.avengers.capstone.hostelrenting.dto.feedback.FeedbackDTOResponse;
 import org.avengers.capstone.hostelrenting.dto.feedback.FeedbackDTOUpdate;
@@ -121,6 +122,9 @@ public class FeedbackController {
                 .stream().map(feedback -> modelMapper.map(feedback, FeedbackDTOResponse.class))
                 .collect(Collectors.toList());
         ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTOs, "Feedback has been retrieved successfully!");
+        apiSuccess.setTotal(feedbackService.countFeedbackByTypeId(typeId));
+        apiSuccess.setSize(size);
+        apiSuccess.setPage(page);
         logger.info("END - getting feedback");
         return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
     }

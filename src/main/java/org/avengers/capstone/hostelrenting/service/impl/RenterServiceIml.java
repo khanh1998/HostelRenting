@@ -5,30 +5,42 @@ import org.avengers.capstone.hostelrenting.Constant;
 import org.avengers.capstone.hostelrenting.dto.renter.RenterDTOResponse;
 import org.avengers.capstone.hostelrenting.dto.renter.RenterDTOUpdate;
 import org.avengers.capstone.hostelrenting.dto.user.UserDTOUpdate;
+import org.avengers.capstone.hostelrenting.dto.user.UserDTOUpdateOnlyToken;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
-import org.avengers.capstone.hostelrenting.model.Province;
-import org.avengers.capstone.hostelrenting.model.Renter;
-import org.avengers.capstone.hostelrenting.model.School;
-import org.avengers.capstone.hostelrenting.model.User;
+import org.avengers.capstone.hostelrenting.exception.GenericException;
+import org.avengers.capstone.hostelrenting.model.*;
 import org.avengers.capstone.hostelrenting.repository.RenterRepository;
+import org.avengers.capstone.hostelrenting.repository.VendorRepository;
 import org.avengers.capstone.hostelrenting.service.ProvinceService;
 import org.avengers.capstone.hostelrenting.service.RenterService;
 import org.avengers.capstone.hostelrenting.service.SchoolService;
+import org.avengers.capstone.hostelrenting.service.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class RenterServiceIml implements RenterService {
     private RenterRepository renterRepository;
+    private UserService userService;
     private ModelMapper modelMapper;
     private ProvinceService provinceService;
     private SchoolService schoolService;
+
+    @Autowired
+    public void setUserService(UserService userService) {
+        this.userService = userService;
+    }
 
     @Autowired
     public void setProvinceService(ProvinceService provinceService) {
@@ -51,10 +63,22 @@ public class RenterServiceIml implements RenterService {
     }
 
     @Override
-    public void checkExist(Long id) {
+    public void checkExist(UUID id) {
         Optional<Renter> model = renterRepository.findById(id);
         if (model.isEmpty())
             throw new EntityNotFoundException(Renter.class, "id", id.toString());
+    }
+
+    @Override
+    public List<Renter> getAllRenters(int page, int size, String sortBy, boolean asc) {
+        Sort sort = Sort.by(asc ? Sort.Direction.ASC : Sort.Direction.DESC, sortBy);
+        Pageable pageable = PageRequest.of(page - Constant.ONE, size, sort);
+        return renterRepository.findAll(pageable).toList();
+    }
+
+    @Override
+    public Renter update(Renter renter) {
+        return renterRepository.save(renter);
     }
 
     @Override
@@ -74,14 +98,20 @@ public class RenterServiceIml implements RenterService {
     }
 
     @Override
-    public Renter findById(Long id) {
+    public Renter updateToken(Renter exModel, UserDTOUpdateOnlyToken onlyTokenDTO) {
+        modelMapper.map(onlyTokenDTO, exModel);
+        return renterRepository.save(exModel);
+    }
+
+    @Override
+    public Renter findById(UUID id) {
         checkExist(id);
 
         return renterRepository.getOne(id);
     }
 
     @Override
-    public Collection<Renter> findByIds(Collection<Long> ids) {
+    public Collection<Renter> findByIds(Collection<UUID> ids) {
         return renterRepository.findByUserIdIn(ids);
     }
 
@@ -93,7 +123,7 @@ public class RenterServiceIml implements RenterService {
         if (renter.getProvince() != null){
             renter.setProvince(provinceService.findById(renter.getProvince().getProvinceId()));
         }
-
+        userService.checkDuplicatePhone(renter.getPhone());
         return renterRepository.save(renter);
     }
 

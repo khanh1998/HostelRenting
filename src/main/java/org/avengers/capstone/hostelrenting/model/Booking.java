@@ -34,7 +34,7 @@ public class Booking {
 
     private Integer contractId;
 
-    @Column(columnDefinition = "varchar(10) default 'INCOMING'")
+    @Column(columnDefinition = "varchar(10) default 'INCOMING'", nullable = false)
     @Enumerated(EnumType.STRING)
     private STATUS status;
 
@@ -52,4 +52,7 @@ public class Booking {
 
     @Column(name = "updated_at")
     private Long updatedAt;
+
+    @Column(columnDefinition = "bool default false")
+    private boolean isDeleted;
 }

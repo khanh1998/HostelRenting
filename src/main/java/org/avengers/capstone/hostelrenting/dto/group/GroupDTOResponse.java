@@ -3,16 +3,16 @@ package org.avengers.capstone.hostelrenting.dto.group;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
-import org.avengers.capstone.hostelrenting.model.GroupSchedule;
+import org.avengers.capstone.hostelrenting.dto.category.CategoryDTO;
+import org.avengers.capstone.hostelrenting.dto.groupRegulation.GroupRegulationDTOResponse;
+import org.avengers.capstone.hostelrenting.dto.groupService.GroupServiceDTOResponse;
+import org.avengers.capstone.hostelrenting.dto.schedule.GroupScheduleDTOResponse;
 import org.avengers.capstone.hostelrenting.model.serialized.AddressFull;
-import org.avengers.capstone.hostelrenting.model.serialized.ServiceFull;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Comparator;
-import java.util.function.BinaryOperator;
-import java.util.function.Function;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Getter
@@ -23,15 +23,19 @@ public class GroupDTOResponse implements Serializable {
     @JsonProperty("address")
     private AddressFull addressFull;
 
-    private Long vendorId;
+    private UUID vendorId;
 
     private String groupName;
 
     private String buildingNo;
 
+    private CategoryDTO category;
+
     private Double longitude;
 
     private Double latitude;
+
+    private UUID managerId;
 
     private String managerName;
 
@@ -41,6 +45,11 @@ public class GroupDTOResponse implements Serializable {
      * curfewTime that limit the time to come back home
      */
     private String curfewTime;
+
+    /**
+     * appendix contract of each group
+     */
+    private String appendixContract;
 
     private boolean ownerJoin;
 
@@ -59,7 +68,7 @@ public class GroupDTOResponse implements Serializable {
 
     public Collection<GroupRegulationDTOResponse> getGroupRegulations() {
         if (groupRegulations != null)
-            return groupRegulations.stream().filter(GroupRegulationDTOResponse::isActive).collect(Collectors.toList());
+            return groupRegulations;
         return null;
     }
 
@@ -70,6 +79,7 @@ public class GroupDTOResponse implements Serializable {
                     .values().stream()
                     .map(scheduleDTO -> GroupScheduleDTOResponse
                             .builder().scheduleId(scheduleDTO.get(0).getScheduleId())
+                            .id(scheduleDTO.get(0).getId())
                             .schedule(scheduleDTO.get(0).getSchedule())
                             .startTime(scheduleDTO.get(0).getStartTime())
                             .endTime(scheduleDTO.get(0).getEndTime())
@@ -81,7 +91,13 @@ public class GroupDTOResponse implements Serializable {
                                         return timeRange;
                                     })
                                     .flatMap(Collection::stream)
-                                    .collect(Collectors.toList())).build()).collect(Collectors.toList());
+                                    .collect(Collectors.toList())).build())
+                    .collect(Collectors.toList());
         return null;
+    }
+
+    public Collection<GroupServiceDTOResponse> getGroupServices() {
+        return groupServices.stream().filter(groupServiceDTOResponse -> groupServiceDTOResponse.isActive())
+                .collect(Collectors.toList());
     }
 }

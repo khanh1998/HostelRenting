@@ -18,4 +18,6 @@ public interface FeedbackService {
     Feedback update(Feedback exModel, FeedbackDTOUpdate reqDTO);
     void deleteById(Integer feedbackId);
     Collection<Feedback> findByTypeId(Integer typeId, String orderBy, int page, int size, boolean asc);
+
+    int countFeedbackByTypeId(Integer typeId);
 }

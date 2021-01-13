@@ -9,6 +9,7 @@ public interface TypeImageService {
     List<TypeImage> findAll();
     TypeImage save(TypeImage typeImage);
     void deleteById(Integer id);
+    void deleteByIds(List<Integer> indexes);
 
     TypeImage findByIdAndHostelTypeId(Integer imageId, Integer typeId);
 }

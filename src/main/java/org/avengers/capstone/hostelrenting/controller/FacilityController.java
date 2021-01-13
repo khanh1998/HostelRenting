@@ -1,7 +1,7 @@
 package org.avengers.capstone.hostelrenting.controller;
 
 
-import org.avengers.capstone.hostelrenting.dto.FacilityDTO;
+import org.avengers.capstone.hostelrenting.dto.facility.FacilityDTO;
 import org.avengers.capstone.hostelrenting.dto.response.ApiSuccess;
 import org.avengers.capstone.hostelrenting.service.FacilityService;
 import org.springframework.beans.factory.annotation.Autowired;

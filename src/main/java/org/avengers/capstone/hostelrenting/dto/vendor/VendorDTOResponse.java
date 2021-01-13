@@ -13,6 +13,6 @@ public class VendorDTOResponse extends UserDTOResponse implements Serializable {
 
 //    private List<ContractDTOShort> contracts;
 //    private List<HostelGroupDTO> hostelGroups;
-//    private List<DealDTOShort> deals;
+//    private List<DealDTOCreate> deals;
 //    private List<BookingDTOShort> bookings;
 }

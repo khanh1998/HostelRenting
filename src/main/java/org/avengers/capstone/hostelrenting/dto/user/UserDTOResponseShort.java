@@ -2,7 +2,9 @@ package org.avengers.capstone.hostelrenting.dto.user;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.avengers.capstone.hostelrenting.dto.RoleDTO;
+import org.avengers.capstone.hostelrenting.model.User;
+
+import java.util.UUID;
 
 /**
  * @author duattt on 10/27/20
@@ -11,8 +13,9 @@ import org.avengers.capstone.hostelrenting.dto.RoleDTO;
  */
 @Getter @Setter
 public class UserDTOResponseShort {
-    private int userId;
+    private UUID userId;
     private String username;
     private String avatar;
-    private RoleDTO role;
+    private User.ROLE role;
+    private String phone;
 }

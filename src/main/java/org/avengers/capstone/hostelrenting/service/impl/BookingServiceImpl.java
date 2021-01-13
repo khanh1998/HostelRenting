@@ -16,16 +16,21 @@ import org.avengers.capstone.hostelrenting.service.BookingService;
 import org.avengers.capstone.hostelrenting.service.DealService;
 import org.avengers.capstone.hostelrenting.service.RenterService;
 import org.avengers.capstone.hostelrenting.service.VendorService;
+import org.avengers.capstone.hostelrenting.util.Utilities;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class BookingServiceImpl implements BookingService {
+    @Value("${deal.expiring.day}")
+    private Long dealExpiringTime;
 
     private BookingRepository bookingRepository;
     private RoomRepository roomRepository;
@@ -88,14 +93,8 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public Booking create(Booking reqModel) {
-        Optional<Booking> tempBooking = bookingRepository.findFirstByRenter_UserIdAndType_TypeIdAndStatusOrderByCreatedAtDesc(reqModel.getRenter().getUserId(),
-                reqModel.getType().getTypeId(), Booking.STATUS.INCOMING);
-        if (tempBooking.isPresent()) {
-            throw new GenericException(Booking.class, "has already existed with ",
-                    "bookingId", String.valueOf(tempBooking.get().getBookingId()),
-                    "renterId", String.valueOf(tempBooking.get().getRenter().getUserId()),
-                    "typeId", String.valueOf(tempBooking.get().getType().getTypeId()));
-        }
+        handlePreCreate(reqModel);
+
         // check out of room
         if (roomRepository.countByType_TypeIdAndIsAvailableIsTrue(reqModel.getType().getTypeId()) == 0)
             throw new GenericException(Type.class, "is out of room",
@@ -109,7 +108,6 @@ public class BookingServiceImpl implements BookingService {
         }
 
         Booking resModel = bookingRepository.save(reqModel);
-        sendNotification(resModel, Constant.Notification.NEW_BOOKING, Constant.Notification.STATIC_NEW_BOOKING_MESSAGE);
 
         return resModel;
     }
@@ -124,7 +122,6 @@ public class BookingServiceImpl implements BookingService {
         if (exModel.getQrCode().equals(reqDTO.getQrCode())) {
             modelMapper.map(reqDTO, exModel);
             Booking resModel = bookingRepository.save(exModel);
-            sendNotification(resModel, Constant.Notification.CONFIRM_BOOKING, Constant.Notification.STATIC_CONFIRM_BOOKING_MESSAGE);
             return resModel;
         }
         throw new GenericException(Booking.class, "qrCode not matched", "bookingId", String.valueOf(exModel.getBookingId()), "qrCode", exModel.getQrCode().toString());
@@ -139,7 +136,7 @@ public class BookingServiceImpl implements BookingService {
      * @return list of booking models
      */
     @Override
-    public List<Booking> findByRenterId(Long renterId) {
+    public List<Booking> findByRenterId(UUID renterId) {
         renterService.checkExist(renterId);
 
         return renterService.findById(renterId).getBookings();
@@ -152,7 +149,7 @@ public class BookingServiceImpl implements BookingService {
      * @return list of booking models
      */
     @Override
-    public List<Booking> findByVendorId(Long vendorId) {
+    public List<Booking> findByVendorId(UUID vendorId) {
         vendorService.checkExist(vendorId);
 
         return vendorService.findById(vendorId).getBookings();
@@ -169,35 +166,33 @@ public class BookingServiceImpl implements BookingService {
         });
         return true;
     }
+    
 
+    private void handlePreCreate(Booking model) {
+        // 1 renter only have 1 incoming booking for 1 type
+        Optional<Booking> tempBooking = bookingRepository.findFirstByRenter_UserIdAndType_TypeIdAndStatusOrderByCreatedAtDesc(model.getRenter().getUserId(),
+                model.getType().getTypeId(), Booking.STATUS.INCOMING);
+        if (tempBooking.isPresent()) {
+            throw new GenericException(Booking.class, "has already existed with ",
+                    "bookingId", String.valueOf(tempBooking.get().getBookingId()),
+                    "renterId", String.valueOf(tempBooking.get().getRenter().getUserId()),
+                    "typeId", String.valueOf(tempBooking.get().getType().getTypeId()));
+        }
 
-    /**
-     * sending notification after handling
-     * @param model for sending notification
-     */
-    private void sendNotification(Booking model, String action, String staticMsg){
-        String pattern = "dd/MM/yyyy hh:mm:ss";
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
-        String timestamp = simpleDateFormat.format(new Date());
+        // only create booking at least 3 hours from now
+        Long remainBookingTime = TimeUnit.MILLISECONDS.toHours(model.getMeetTime() - System.currentTimeMillis());
+        if (remainBookingTime < 3) {
+            throw new GenericException(Booking.class, "remaining time should be at least 3 hours",
+                    "remainingTime", remainBookingTime + "hours");
+        }
 
-        NotificationContent content = NotificationContent.builder()
-                .id(String.valueOf(model.getBookingId()))
-                .action(action)
-                .title(staticMsg + model.getRenter().getUsername())
-                .body(timestamp)
-                .icon(model.getRenter().getAvatar())
-                .clickAction("")
-                .build();
-
-        ObjectMapper objMapper = new ObjectMapper();
-        Map<String, String> data = objMapper.convertValue(content, Map.class);
-
-        NotificationRequest notificationRequest = NotificationRequest.builder()
-                .destination(model.getVendor().getFirebaseToken())
-                .data(data)
-                .build();
-
-        firebaseService.sendPnsToDevice(notificationRequest);
+        // check valid deal or not (3 day expiring)
+        if (model.getDealId()!= null) {
+            Deal exDeal = dealService.findById(model.getDealId());
+            Long remainDealTime = TimeUnit.MILLISECONDS.toDays(System.currentTimeMillis() - exDeal.getCreatedAt());
+            if (remainDealTime >= dealExpiringTime) {
+                model.setDealId(null);
+            }
+        }
     }
-
 }

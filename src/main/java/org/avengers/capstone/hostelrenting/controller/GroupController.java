@@ -2,7 +2,10 @@ package org.avengers.capstone.hostelrenting.controller;
 
 import org.avengers.capstone.hostelrenting.dto.group.GroupDTOResponse;
 import org.avengers.capstone.hostelrenting.dto.group.GroupDTOCreate;
+import org.avengers.capstone.hostelrenting.dto.group.GroupDTOResponseV2;
 import org.avengers.capstone.hostelrenting.dto.group.GroupDTOUpdate;
+import org.avengers.capstone.hostelrenting.dto.groupRegulation.GroupRegulationDTOCreateForGroup;
+import org.avengers.capstone.hostelrenting.dto.groupService.GroupServiceDTOCreateForGroup;
 import org.avengers.capstone.hostelrenting.dto.response.ApiSuccess;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
 import org.avengers.capstone.hostelrenting.model.*;
@@ -17,11 +20,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.transaction.Transactional;
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static org.avengers.capstone.hostelrenting.Constant.Pagination.DEFAULT_PAGE;
@@ -29,6 +34,7 @@ import static org.avengers.capstone.hostelrenting.Constant.Pagination.DEFAULT_SI
 
 @Validated
 @RestController
+@Transactional
 @RequestMapping("/api/v1")
 public class GroupController {
     private static final Logger logger = LoggerFactory.getLogger(GroupController.class);
@@ -44,9 +50,24 @@ public class GroupController {
     private ServiceService serviceService;
 
     private ScheduleService scheduleService;
+
     private StreetService streetService;
 
+    private CategoryService categoryService;
+
+    private ManagerService managerService;
+
     private ModelMapper modelMapper;
+
+    @Autowired
+    public void setManagerService(ManagerService managerService) {
+        this.managerService = managerService;
+    }
+
+    @Autowired
+    public void setCategoryService(CategoryService categoryService) {
+        this.categoryService = categoryService;
+    }
 
     @Autowired
     public void setStreetService(StreetService streetService) {
@@ -104,6 +125,9 @@ public class GroupController {
         List<GroupDTOResponse> resDTOs = new ArrayList<>();
         reqDTOs.forEach(reqDTO -> {
             Group reqModel = modelMapper.map(reqDTO, Group.class);
+            // set category
+            Category category = categoryService.findById(reqDTO.getCategoryId());
+            reqModel.setCategory(category);
             // set vendor object
             Vendor vendor = vendorService.findById(reqDTO.getVendorId());
             reqModel.setVendor(vendor);
@@ -115,12 +139,18 @@ public class GroupController {
             StreetWard address = streetWardService.findByStreetIdAndWardId(streetService.createIfNotExist(street).getStreetId(), reqDTO.getAddressFull().getWardId());
             reqModel.setAddress(address);
             // set manager info
-            if (reqModel.getManagerName() == null){
-                reqModel.setManagerName(vendor.getUsername());
+            if (reqDTO.getManagerPhone()!= null){
+                Manager newManager = new Manager();
+                newManager.setManagerPhone(reqDTO.getManagerPhone());
+                if (reqDTO.getManagerName()!=null){
+                    newManager.setManagerName(reqDTO.getManagerName());
+                }
+                Manager resManagerModel = managerService.createNewManager(newManager);
+                logger.info(String.format("Manager has been created with {name=%s}, {phone=%s} ",resManagerModel.getManagerName(), reqDTO.getManagerPhone()));
+                reqModel.setManager(resManagerModel);
             }
-            if (reqModel.getManagerPhone() == null){
-                reqModel.setManagerPhone(vendor.getPhone());
-            }
+
+            createRefObj(reqDTO);
 
             /* set services */
             if (reqDTO.getServices() != null) {
@@ -131,7 +161,9 @@ public class GroupController {
                                     .createdAt(System.currentTimeMillis())
                                     .group(reqModel)
                                     .price(dto.getPrice())
+                                    .priceUnit(dto.getPriceUnit())
                                     .userUnit(dto.getUserUnit())
+                                    .timeUnit(dto.getTimeUnit())
                                     .service(serviceService.findById(dto.getServiceId()))
                                     .isActive(true)
                                     .isRequired(true)
@@ -149,8 +181,6 @@ public class GroupController {
                         .map(dto -> {
                             GroupRegulation model = GroupRegulation.builder()
                                     .group(reqModel)
-                                    .isActive(dto.getIsActive())
-                                    .isAllowed(dto.getIsAllowed())
                                     .regulation(regulationService.findById(dto.getRegulationId()))
                                     .build();
                             return model;
@@ -252,7 +282,7 @@ public class GroupController {
      * @throws EntityNotFoundException when object is not found
      */
     @GetMapping("/vendors/{vendorId}/groups")
-    public ResponseEntity<?> getGroupsByVendorId(@PathVariable Long vendorId,
+    public ResponseEntity<?> getGroupsByVendorId(@PathVariable UUID vendorId,
                                                  @RequestParam(required = false, defaultValue = DEFAULT_SIZE) Integer size,
                                                  @RequestParam(required = false, defaultValue = DEFAULT_PAGE) Integer page) {
         //log start
@@ -267,5 +297,42 @@ public class GroupController {
         return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
     }
 
+    @GetMapping("/vendors/{vendorId}/groups/V2")
+    public ResponseEntity<?> getGroupsByVendorIdV2(@PathVariable UUID vendorId,
+                                                 @RequestParam(required = false, defaultValue = DEFAULT_SIZE) Integer size,
+                                                 @RequestParam(required = false, defaultValue = DEFAULT_PAGE) Integer page) {
+        //log start
+        logger.info("START - Get group by vendor with id: " + vendorId);
+        List<GroupDTOResponseV2> resDTOs = groupService.getByVendorId(vendorId, size, page - 1)
+                .stream().map(group -> modelMapper.map(group, GroupDTOResponseV2.class))
+                .collect(Collectors.toList());
 
+        logger.info("SUCCESSFUL - Get group by vendorId");
+        ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTOs, "Your hostel group has been retrieved successfully!");
+
+        return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
+    }
+
+    private void createRefObj(GroupDTOCreate groupDTO) {
+        if (groupDTO.getNewRegulations() != null && !groupDTO.getNewRegulations().isEmpty()){
+            groupDTO.getNewRegulations().stream().forEach(dto -> {
+                Regulation reqModel = modelMapper.map(dto, Regulation.class);
+                Regulation resModel = regulationService.createNew(reqModel);
+                List<GroupRegulationDTOCreateForGroup> regulations= groupDTO.getRegulations();
+                GroupRegulationDTOCreateForGroup regulationDTO = new GroupRegulationDTOCreateForGroup(resModel.getRegulationId());
+                regulations.add(regulationDTO);
+            });
+        }
+
+        if (groupDTO.getNewServices() != null && !groupDTO.getNewServices().isEmpty()){
+            groupDTO.getNewServices().stream().forEach(dto -> {
+                Service reqNewService = Service.builder().serviceName(dto.getServiceName()).build();
+                Service resNewService = serviceService.createNew(reqNewService);
+                List<GroupServiceDTOCreateForGroup> groupServices= groupDTO.getServices();
+                GroupServiceDTOCreateForGroup groupServiceDTO = modelMapper.map(dto, GroupServiceDTOCreateForGroup.class);
+                groupServiceDTO.setServiceId(resNewService.getServiceId());
+                groupServices.add(groupServiceDTO);
+            });
+        }
+    }
 }

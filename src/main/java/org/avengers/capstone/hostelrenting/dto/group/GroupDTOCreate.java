@@ -4,11 +4,17 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
+import org.avengers.capstone.hostelrenting.dto.groupRegulation.GroupRegulationDTOCreate;
+import org.avengers.capstone.hostelrenting.dto.groupRegulation.GroupRegulationDTOCreateForGroup;
+import org.avengers.capstone.hostelrenting.dto.groupService.GroupServiceDTOCreate;
+import org.avengers.capstone.hostelrenting.dto.groupService.GroupServiceDTOCreateForGroup;
+import org.avengers.capstone.hostelrenting.dto.schedule.GroupScheduleDTOCreate;
 import org.avengers.capstone.hostelrenting.model.serialized.AddressFull;
 
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.List;
+import java.util.UUID;
 
 
 public class GroupDTOCreate implements Serializable {
@@ -17,7 +23,7 @@ public class GroupDTOCreate implements Serializable {
     }
 
     @Getter
-    @Setter
+    @JsonIgnore
     private int groupId;
 
     @JsonProperty("address")
@@ -25,10 +31,19 @@ public class GroupDTOCreate implements Serializable {
     @Setter
     private AddressFull addressFull;
 
+    @Getter
+    @Setter
+    private String appendixContract;
+
     @NotNull(message = "vendorId is mandatory!")
     @Getter
     @Setter
-    private Long vendorId;
+    private UUID vendorId;
+
+    @NotNull(message = "categoryId is mandatory!")
+    @Getter
+    @Setter
+    private Integer categoryId;
 
     @NotNull(message = "groupName is mandatory!")
     @Getter
@@ -79,15 +94,23 @@ public class GroupDTOCreate implements Serializable {
 
     @Getter
     @Setter
-    private List<GroupServiceDTOCreate> services;
+    private List<GroupServiceDTOCreateForGroup> services;
 
     @Getter
     @Setter
-    private List<GroupRegulationDTOCreate> regulations;
+    private List<GroupRegulationDTOCreateForGroup> regulations;
 
     @Getter
     @Setter
     private List<GroupScheduleDTOCreate> schedules;
+
+    @Getter
+    @Setter
+    private List<GroupRegulationDTOCreate> newRegulations;
+
+    @Getter
+    @Setter
+    private List<GroupServiceDTOCreate> newServices;
 
     @JsonIgnore
     @Getter

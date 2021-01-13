@@ -64,4 +64,11 @@ public class UtilityServiceImpl implements UtilityService {
 
         return resCategories;
     }
+
+    @Override
+    public Collection<Utility> getUtilitiesByCategoryId(Integer uCategoryId) {
+        Collection<Utility> utilities = utilityRepository.getByUCategoryId(uCategoryId);
+
+        return utilities;
+    }
 }

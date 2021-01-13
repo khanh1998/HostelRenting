@@ -30,6 +30,10 @@ public class Group {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int groupId;
 
+    @ManyToOne
+    @JoinColumn(name = "category_id", nullable = false)
+    private Category category;
+
     /**
      * group name
      */
@@ -46,7 +50,7 @@ public class Group {
     /**
      * building number
      */
-    @Column(name = "building_no", nullable = false)
+    @Column(name = "building_no", length = 30)
     private String buildingNo;
 
     /**
@@ -61,15 +65,17 @@ public class Group {
     @Column(nullable = false)
     private Double latitude;
 
-    /**
-     * manager name of this group
-     */
-    private String managerName;
-
-    /**
-     * manager phone number of this group
-     */
-    private String managerPhone;
+//    /**
+//     * manager name of this group
+//     */
+//    @Column(length = 50)
+//    private String managerName;
+//
+//    /**
+//     * manager phone number of this group
+//     */
+//    @Column(length = 15)
+//    private String managerPhone;
 
     /**
      * living in the same building with the owner or not
@@ -79,12 +85,19 @@ public class Group {
     /**
      * curfew time range. Ex: 23:00 - 05:00
      */
+    @Column(length = 15)
     private String curfewTime;
 
     /**
      * image url of hostel group
      */
     private String imgUrl;
+
+    /**
+     * appendix contract string for each group
+     */
+    @Column(length = 5000)
+    private String appendixContract;
 
     /**
      * Down payment for keeping a particular room in 7 days
@@ -122,6 +135,10 @@ public class Group {
      */
     @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Collection<GroupRegulation> groupRegulations;
+
+    @OneToOne
+    @JoinColumn(name = "manager_id")
+    private Manager manager;
 
     /**
      * creating timestamp

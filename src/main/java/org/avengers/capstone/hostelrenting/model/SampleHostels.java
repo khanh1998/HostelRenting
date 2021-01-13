@@ -54,5 +54,7 @@ public class SampleHostels {
     )
     private Integer[] services;
 
+    private Integer categoryId;
+
     private Long postAt;
 }

@@ -4,7 +4,10 @@ import lombok.*;
 import org.springframework.beans.factory.annotation.Value;
 
 import javax.persistence.*;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 
@@ -18,12 +21,15 @@ import java.util.Comparator;
 @Entity
 @Table(name = "type_hostel")
 public class Type {
+    public enum STATUS{AVAILABLE, ONLY_EXTENSION, NOT_AVAILABLE}
 
     @Id
     @Column(name = "type_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int typeId;
 
+    @Min(0)
+    @Max(10)
     private float score;
 
     @Column(name = "title", nullable = false, length = 100)
@@ -34,7 +40,12 @@ public class Type {
     @Column(nullable = false)
     private float price;
 
+    @Column(nullable = false, columnDefinition = "varchar(10) default 'triệu'")
+    private String priceUnit;
+
     @Column(nullable = false)
+    @Min(5)
+    @Max(200)
     private float superficiality;
 
     @Column(nullable = false)
@@ -46,6 +57,8 @@ public class Type {
     // unit: month
     @Column(nullable = false)
     private int deposit;
+
+    private String description;
 
     @Transient
     private int schoolmate;
@@ -59,20 +72,19 @@ public class Type {
     @Transient
     private int currentBooking;
 
-    @Column(columnDefinition = "boolean default false")
+    @Transient
+    private Collection<Integer> uCategoryIds;
+
+    @Column(columnDefinition = "boolean default false", nullable = false)
     private boolean isDeleted;
 
     @ManyToOne
     @JoinColumn(name = "group_id")
     private Group group;
 
-    @ManyToOne
-    @JoinColumn(name = "category_id")
-    private Category category;
-
-    @ManyToOne
-    @JoinColumn(name = "status_id")
-    private TypeStatus typeStatus;
+    @Column(columnDefinition = "varchar(20) default 'AVAILABLE'", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private STATUS status;
 
     @OneToMany(mappedBy = "type", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Collection<Room> rooms;
@@ -89,18 +101,21 @@ public class Type {
     @OneToMany(mappedBy = "type", fetch = FetchType.LAZY)
     private Collection<Feedback> feedbacks;
 
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @EqualsAndHashCode.Exclude
-    @ToString.Exclude
-    @JoinTable(name = "type_facility",
-            joinColumns = @JoinColumn(name = "type_id"),
-            inverseJoinColumns = @JoinColumn(name = "facility_id")
-    )
-    private Collection<Facility> facilities;
+    @OneToMany(mappedBy = "type", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Collection<TypeFacility> typeFacilities;
+
+    @Column(columnDefinition = "boolean default false", nullable = false)
+    private boolean isActive;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private Long createdAt;
 
     @Column(name = "updated_at")
     private Long updatedAt;
+
+    public Collection<Integer> getuCategoryIds() {
+        if (uCategoryIds == null)
+            return new ArrayList<>();
+        return uCategoryIds;
+    }
 }

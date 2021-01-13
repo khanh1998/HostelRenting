@@ -13,6 +13,7 @@ import org.avengers.capstone.hostelrenting.model.Schedule;
 @Getter
 @Setter
 public class ScheduleDTO {
+    private int scheduleId;
     private Schedule.CODE code;
     private String dayOfWeek;
 }

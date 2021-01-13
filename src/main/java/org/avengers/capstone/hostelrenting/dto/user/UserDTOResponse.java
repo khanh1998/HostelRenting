@@ -1,23 +1,19 @@
 package org.avengers.capstone.hostelrenting.dto.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonView;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import org.avengers.capstone.hostelrenting.dto.RoleDTO;
-import org.avengers.capstone.hostelrenting.dto.Views;
+import org.avengers.capstone.hostelrenting.model.User;
 
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotEmpty;
 import java.io.Serializable;
+import java.util.UUID;
 
 @Getter
 @Setter
 
 public class UserDTOResponse implements Serializable {
-    private Long userId;
+    private UUID userId;
     private String username;
     @JsonIgnore
     @ToString.Exclude
@@ -34,7 +30,7 @@ public class UserDTOResponse implements Serializable {
     private String citizenIdNum;
     private String citizenIdFrontImg;
     private String citizenIdBackImg;
-    private RoleDTO role;
+    private User.ROLE role;
     private String jwtToken;
 
     private Long createdAt;

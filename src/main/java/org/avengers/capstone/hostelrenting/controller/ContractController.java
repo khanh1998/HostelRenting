@@ -1,13 +1,7 @@
 package org.avengers.capstone.hostelrenting.controller;
 
-import org.avengers.capstone.hostelrenting.dto.booking.BookingDTOCreate;
-import org.avengers.capstone.hostelrenting.dto.contract.ContractDTOConfirm;
-import org.avengers.capstone.hostelrenting.dto.contract.ContractDTOCreate;
-import org.avengers.capstone.hostelrenting.dto.contract.ContractDTOResponse;
-import org.avengers.capstone.hostelrenting.dto.deal.DealDTOShort;
-import org.avengers.capstone.hostelrenting.dto.group.GroupDTOResponse;
+import org.avengers.capstone.hostelrenting.dto.contract.*;
 import org.avengers.capstone.hostelrenting.dto.response.ApiSuccess;
-import org.avengers.capstone.hostelrenting.dto.type.TypeDTOResponse;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
 import org.avengers.capstone.hostelrenting.model.*;
 import org.avengers.capstone.hostelrenting.service.GroupService;
@@ -18,15 +12,18 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static org.avengers.capstone.hostelrenting.Constant.Pagination.DEFAULT_PAGE;
 import static org.avengers.capstone.hostelrenting.Constant.Pagination.DEFAULT_SIZE;
 
+@Validated
 @RestController
 @RequestMapping("/api/v1")
 public class ContractController {
@@ -95,15 +92,22 @@ public class ContractController {
         Vendor exVendor = vendorService.findById(reqDTO.getVendorId());
         Renter exRenter = renterService.findById(reqDTO.getRenterId());
         Room exRoom = roomService.findById(reqDTO.getRoomId());
+        Booking exBooking = null;
+        Deal exDeal = null;
+        if (reqDTO.getBookingId()!= null){
+            exBooking = bookingService.findById(reqDTO.getBookingId());
+        }
+        if (reqDTO.getDealId() != null){
+            exDeal = dealService.findById(reqDTO.getDealId());
+        }
         Contract reqModel = modelMapper.map(reqDTO, Contract.class);
-        reqModel = reqModel.toBuilder().vendor(exVendor).renter(exRenter).room(exRoom).build();
+        reqModel = reqModel.toBuilder().vendor(exVendor).renter(exRenter)
+                .room(exRoom).deal(exDeal)
+                .booking(exBooking).build();
 
         Contract resModel = contractService.create(reqModel);
 
         ContractDTOResponse resDTO = modelMapper.map(resModel, ContractDTOResponse.class);
-
-        // get deal, booking, group and type
-        getFullAttributesForDTO(resDTO);
 
         String msg = String.format("Your contract has been created with status: %s", resModel.getStatus());
         logger.info(msg);
@@ -113,25 +117,36 @@ public class ContractController {
         return ResponseEntity.status(HttpStatus.CREATED).body(apiSuccess);
     }
 
-    @PutMapping("/contracts/{contractId}")
+    @PutMapping("/contracts/confirm/{contractId}")
     public ResponseEntity<?> confirmContractById(@PathVariable Integer contractId,
-                                             @RequestBody @Valid ContractDTOConfirm reqDTO) {
+                                                 @RequestBody @Valid ContractDTOConfirm reqDTO) {
         Contract exModel = contractService.findById(contractId);
         Contract resModel = contractService.confirm(exModel, reqDTO);
         ContractDTOResponse resDTO = modelMapper.map(resModel, ContractDTOResponse.class);
 
-        getFullAttributesForDTO(resDTO);
+        ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTO, String.format("Your contract has been updated with status: %s", resModel.getStatus()));
+
+        return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
+    }
+
+    @PutMapping("/contracts/{contractId}")
+    public ResponseEntity<?> updateInactiveContract(@PathVariable Integer contractId,
+                                                    @RequestBody @Valid ContractDTOUpdate reqDTO) {
+        Contract exModel = contractService.findById(contractId);
+        Contract resModel = contractService.updateInactiveContract(exModel, reqDTO);
+        ContractDTOResponse resDTO = modelMapper.map(resModel, ContractDTOResponse.class);
+
         ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTO, String.format("Your contract has been updated with status: %s", resModel.getStatus()));
 
         return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
     }
 
     @GetMapping("/renters/{renterId}/contracts")
-    public ResponseEntity<?> getContractsByRenterId(@PathVariable Long renterId,
-                                           @RequestParam(required = false, defaultValue = "createdAt") String sortBy,
-                                           @RequestParam(required = false, defaultValue = "false") Boolean asc,
-                                           @RequestParam(required = false, defaultValue = DEFAULT_SIZE) Integer size,
-                                           @RequestParam(required = false, defaultValue = DEFAULT_PAGE) Integer page) throws EntityNotFoundException {
+    public ResponseEntity<?> getContractsByRenterId(@PathVariable UUID renterId,
+                                                    @RequestParam(required = false, defaultValue = "createdAt") String sortBy,
+                                                    @RequestParam(required = false, defaultValue = "false") Boolean asc,
+                                                    @RequestParam(required = false, defaultValue = DEFAULT_SIZE) Integer size,
+                                                    @RequestParam(required = false, defaultValue = DEFAULT_PAGE) Integer page) throws EntityNotFoundException {
         String resMsg = "Your contract(s) has been retrieved successfully!";
 
         List<ContractDTOResponse> resDTOs = contractService.findByRenterId(renterId, page, size, sortBy, asc)
@@ -142,9 +157,6 @@ public class ContractController {
         if (resDTOs.isEmpty())
             resMsg = "There is no contract";
 
-        // get deal, booking, group and type
-        resDTOs.forEach(this::getFullAttributesForDTO);
-
         // Response entity
         ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTOs, resMsg);
         apiSuccess.setPage(page);
@@ -154,11 +166,11 @@ public class ContractController {
     }
 
     @GetMapping("/vendors/{vendorId}/contracts")
-    public ResponseEntity<?> getContractsByVendorId(@PathVariable Long vendorId,
-                                           @RequestParam(required = false, defaultValue = "createdAt") String sortBy,
-                                           @RequestParam(required = false, defaultValue = "false") Boolean asc,
-                                           @RequestParam(required = false, defaultValue = DEFAULT_SIZE) Integer size,
-                                           @RequestParam(required = false, defaultValue = DEFAULT_PAGE) Integer page) throws EntityNotFoundException {
+    public ResponseEntity<?> getContractsByVendorId(@PathVariable UUID vendorId,
+                                                    @RequestParam(required = false, defaultValue = "createdAt") String sortBy,
+                                                    @RequestParam(required = false, defaultValue = "false") Boolean asc,
+                                                    @RequestParam(required = false, defaultValue = DEFAULT_SIZE) Integer size,
+                                                    @RequestParam(required = false, defaultValue = DEFAULT_PAGE) Integer page) throws EntityNotFoundException {
         String resMsg = "Your contract(s) has been retrieved successfully!";
 
         List<ContractDTOResponse> resDTOs = contractService.findByVendorId(vendorId, page, size, sortBy, asc)
@@ -168,9 +180,6 @@ public class ContractController {
 
         if (resDTOs.isEmpty())
             resMsg = "There is no contract";
-
-        // get deal, booking, group and type
-        resDTOs.forEach(this::getFullAttributesForDTO);
 
         // Response entity
         ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTOs, resMsg);
@@ -182,40 +191,11 @@ public class ContractController {
 
     @GetMapping("/contracts/{contractId}")
     public ResponseEntity<?> getContractById(@PathVariable Integer contractId) {
-        ContractDTOResponse resDTO = modelMapper.map(contractService.findById(contractId), ContractDTOResponse.class);
-        getFullAttributesForDTO(resDTO);
+        Contract model = contractService.findById(contractId);
+        ContractDTOResponseFull resDTO = modelMapper.map(model, ContractDTOResponseFull.class);
         // Response entity
         ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTO, "Your contract has been retrieved successfully");
 
         return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
-    }
-
-    private void getFullAttributesForDTO(ContractDTOResponse resDTO) {
-        //get deal
-        if (resDTO.getDeal() != null)
-            getDealForDTO(resDTO);
-
-        //get booking
-        if (resDTO.getBooking() != null)
-            getBookingForDTO(resDTO);
-
-        //get type & group
-        getTypeAndGroupForDTO(resDTO);
-    }
-
-    private void getDealForDTO(ContractDTOResponse resDTO) {
-        Deal exDeal = dealService.findById(resDTO.getDeal().getDealId());
-        resDTO.setDeal(modelMapper.map(exDeal, DealDTOShort.class));
-    }
-
-    private void getBookingForDTO(ContractDTOResponse resDTO) {
-        Booking exBooking = bookingService.findById(resDTO.getBooking().getBookingId());
-        resDTO.setBooking(modelMapper.map(exBooking, BookingDTOCreate.class));
-    }
-
-    private void getTypeAndGroupForDTO(ContractDTOResponse resDTO) {
-        Type exType = typeService.findById(resDTO.getRoom().getTypeId());
-        resDTO.setType(modelMapper.map(exType, TypeDTOResponse.class));
-        resDTO.setGroup(modelMapper.map(groupService.findById(exType.getGroup().getGroupId()), GroupDTOResponse.class));
     }
 }
