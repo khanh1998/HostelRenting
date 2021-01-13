@@ -107,7 +107,7 @@ public class ScheduleController {
     @GetMapping("/groups/{groupId}/schedules")
     public ResponseEntity<?> getGroupScheduleByGroupId(@PathVariable Integer groupId) {
         Group group = groupService.findById(groupId);
-        Collection<GroupScheduleDTOResponse> resDTO = modelMapper.map(group, GroupDTOResponse.class).getGroupSchedules();
+        Collection<GroupScheduleDTOResponseV2> resDTO = modelMapper.map(group, GroupDTOResponseV2.class).getGroupSchedules();
         ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTO, "Your schedule has been retrieved successfully!");
 
         return ResponseEntity.ok(apiSuccess);
