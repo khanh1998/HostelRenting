@@ -180,11 +180,10 @@ public class TypeServiceImpl implements TypeService {
     private void updateRooms(TypeDTOUpdate dto, Type type) {
         Collection<Room> oldRooms = type.getRooms();
         Collection<Room> newRooms = dto.getRooms();
-        List<Integer> oldRoomIds = oldRooms.stream().map(Room::getRoomId).collect(Collectors.toList());
-        List<Integer> newRoomIds = newRooms.stream().map(Room::getRoomId).collect(Collectors.toList());
-        System.out.println(oldRoomIds);
-        System.out.println(newRoomIds);
-        if (!newRooms.isEmpty()) {
+        if (newRooms!=null && !newRooms.isEmpty()) {
+            List<Integer> oldRoomIds = oldRooms.stream().map(Room::getRoomId).collect(Collectors.toList());
+            List<Integer> newRoomIds = newRooms.stream().map(Room::getRoomId).collect(Collectors.toList());
+
             List<Integer> deletedRoomIds = oldRooms.stream()
                     .filter(room -> !newRoomIds.contains(room.getRoomId()))
                     .map(room -> {
@@ -211,13 +210,14 @@ public class TypeServiceImpl implements TypeService {
     private void updateFacilities(TypeDTOUpdate dto, Type type) {
         Collection<TypeFacility> newFacilities = dto.getFacilities();
         Collection<TypeFacility> oldFacilities = type.getTypeFacilities();
-        List<Integer> newFacilityIds = newFacilities.stream()
-                .map(TypeFacility::getId)
-                .collect(Collectors.toList());
-        List<Integer> oldFacilityIds = oldFacilities.stream()
-                .map(TypeFacility::getId)
-                .collect(Collectors.toList());
-        if (!newFacilities.isEmpty()) {
+
+        if (newFacilities !=null && !newFacilities.isEmpty()) {
+            List<Integer> newFacilityIds = newFacilities.stream()
+                    .map(TypeFacility::getId)
+                    .collect(Collectors.toList());
+            List<Integer> oldFacilityIds = oldFacilities.stream()
+                    .map(TypeFacility::getId)
+                    .collect(Collectors.toList());
             List<Integer> deletedTypeFacilities = oldFacilities.stream()
                     .filter(typeFacility -> !newFacilityIds.contains(typeFacility.getId()))
                     .map(TypeFacility::getId)
