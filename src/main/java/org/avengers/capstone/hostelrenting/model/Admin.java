@@ -1,12 +1,16 @@
 package org.avengers.capstone.hostelrenting.model;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.UUID;
 
 @Entity
 @Data
+@Getter
+@Setter
 @Table(name = "admin")
 public class Admin {
     public Admin(UUID userId) {
