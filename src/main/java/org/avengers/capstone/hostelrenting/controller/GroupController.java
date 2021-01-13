@@ -287,8 +287,8 @@ public class GroupController {
                                                  @RequestParam(required = false, defaultValue = DEFAULT_PAGE) Integer page) {
         //log start
         logger.info("START - Get group by vendor with id: " + vendorId);
-        List<GroupDTOResponse> resDTOs = groupService.getByVendorId(vendorId, size, page - 1)
-                .stream().map(group -> modelMapper.map(group, GroupDTOResponse.class))
+        List<GroupDTOResponseV2> resDTOs = groupService.getByVendorId(vendorId, size, page - 1)
+                .stream().map(group -> modelMapper.map(group, GroupDTOResponseV2.class))
                 .collect(Collectors.toList());
 
         logger.info("SUCCESSFUL - Get group by vendorId");
