@@ -1,5 +1,6 @@
 package org.avengers.capstone.hostelrenting.service.impl;
 
+import org.avengers.capstone.hostelrenting.dto.group.GroupDTOUpdate;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
 import org.avengers.capstone.hostelrenting.model.Group;
 import org.avengers.capstone.hostelrenting.model.GroupRegulation;
@@ -9,6 +10,7 @@ import org.avengers.capstone.hostelrenting.repository.GroupRepository;
 import org.avengers.capstone.hostelrenting.repository.GroupServiceRepository;
 import org.avengers.capstone.hostelrenting.service.GroupService;
 import org.avengers.capstone.hostelrenting.service.VendorService;
+import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +27,12 @@ public class GroupServiceImpl implements GroupService {
     private VendorService vendorService;
     private GroupRegulationRepository groupRegulationRepository;
     private GroupServiceRepository groupServiceRepository;
+    private ModelMapper modelMapper;
+
+    @Autowired
+    public void setModelMapper(ModelMapper modelMapper) {
+        this.modelMapper = modelMapper;
+    }
 
     @Autowired
     public void setGroupServiceRepository(GroupServiceRepository groupServiceRepository) {
@@ -59,9 +67,7 @@ public class GroupServiceImpl implements GroupService {
     @Override
     public Group findById(Integer id) {
         checkExist(id);
-        Group resModel = groupRepository.getOne(id);
-//        handleObjForEndUser(resModel);
-        return resModel;
+        return groupRepository.getOne(id);
     }
 
     @Override
@@ -72,9 +78,10 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
-    public Group update(Group reqModel) {
-
-        return groupRepository.save(reqModel);
+    public Group update(GroupDTOUpdate reqDTO, Integer groupId) {
+        Group existedModel = this.findById(groupId);
+        modelMapper.map(reqDTO, existedModel);
+        return null;
     }
 
     @Override

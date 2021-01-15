@@ -23,7 +23,7 @@ public class GroupDTOUpdate {
     private Boolean ownerJoin;
     private String imgUrl;
     private Float downPayment;
-
+    private String appendixContract;
     @Getter
     @JsonIgnore
     private Long updatedAt;

@@ -11,7 +11,7 @@ import java.util.Set;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-
+@ToString
 @Entity
 @Table(name = "group_service")
 public class GroupService {

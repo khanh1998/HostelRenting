@@ -22,6 +22,6 @@ public interface GroupServiceRepository extends JpaRepository<GroupService, Inte
             "from GroupService gs " +
             "where gs.group.vendor.userId= :vendorId and gs.group.groupId= :groupId and gs.groupServiceId= :groupServiceId")
     boolean IsGroupServiceExistByVendorAndGroup(UUID vendorId, int groupId, int groupServiceId);
-
+    Collection<GroupService> findByGroup_GroupId(Integer groupId);
     Collection<GroupService> findByGroup_GroupIdAndService_IsApproved(Integer groupId, boolean isApproved);
 }

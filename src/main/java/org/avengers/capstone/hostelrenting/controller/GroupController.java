@@ -238,10 +238,7 @@ public class GroupController {
                                          @PathVariable Integer groupId) {
         //log start update
         logger.info("START - updating group");
-        Group existedModel = groupService.findById(groupId);
-
-        modelMapper.map(reqDTO, existedModel);
-        Group resModel = groupService.update(existedModel);
+        Group resModel = groupService.update(reqDTO, groupId);
         GroupDTOResponse resDTO = modelMapper.map(resModel, GroupDTOResponse.class);
 
         //log end update
@@ -250,6 +247,11 @@ public class GroupController {
         ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTO, "Your hostel group has been retrieved successfully!");
 
         return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
+    }
+
+    @PatchMapping("/groups/{groupId}")
+    public ResponseEntity<?> updatePartialGroup(@Valid @RequestBody GroupDTOUpdate reqDTO, @PathVariable Integer groupId) {
+        return null;
     }
 
     /**

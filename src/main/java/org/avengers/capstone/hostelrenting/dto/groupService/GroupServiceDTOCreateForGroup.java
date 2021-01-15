@@ -15,6 +15,7 @@ import java.io.Serializable;
 @Setter
 @Builder(toBuilder = true)
 @AllArgsConstructor
+@ToString
 public class GroupServiceDTOCreateForGroup implements Serializable {
 
     public GroupServiceDTOCreateForGroup() {
@@ -36,10 +37,5 @@ public class GroupServiceDTOCreateForGroup implements Serializable {
     @JsonIgnore
     public void setCreatedAt(Long createdAt) {
         this.createdAt = createdAt;
-    }
-
-    @JsonIgnore
-    public void setGroupServiceId(Integer groupServiceId) {
-        this.groupServiceId = groupServiceId;
     }
 }
