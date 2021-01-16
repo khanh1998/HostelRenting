@@ -2,8 +2,9 @@ package org.avengers.capstone.hostelrenting.util;
 
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.pdf.BaseFont;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.avengers.capstone.hostelrenting.Constant;
-import org.avengers.capstone.hostelrenting.model.Contract;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,9 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.templatemode.TemplateMode;
-import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 import org.thymeleaf.templateresolver.StringTemplateResolver;
-import org.thymeleaf.templateresolver.UrlTemplateResolver;
 import org.xhtmlrenderer.pdf.ITextRenderer;
 
 import javax.mail.Message;
@@ -24,15 +23,16 @@ import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
-import java.io.*;
-import java.net.URL;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Calendar;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Scanner;
+import java.util.Random;
 
 /**
  * @author duattt on 9/16/20
@@ -40,6 +40,8 @@ import java.util.Scanner;
  * @project youthhostelapp
  */
 @Component
+@NoArgsConstructor
+@Setter
 public class Utilities {
 
     public static int SYSTEM_CORRECTION = 0;
@@ -74,6 +76,9 @@ public class Utilities {
 
     @Value("${mail.smtp.socketFactory.fallback}")
     private String mailSocketFactoryFallback;
+
+    @Value("${manager.password.length}")
+    private int managerPasswordLength;
 
     private static final Logger logger = LoggerFactory.getLogger(Utilities.class);
 
@@ -162,8 +167,19 @@ public class Utilities {
         return f.getName().replaceFirst("[.][^.]+$", "");
     }
 
-    public void sendMailWithEmbed(String subject, String content, String receivedMail) {
+    public String getRandomString(int len) {
+        String AB = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZqwertyuiopasdfghjklzxcvbnm";
+        Random rnd = new Random();
 
+        StringBuilder sb = new StringBuilder(len);
+        for (int i = 0; i < len; i++) {
+            sb.append(AB.charAt(rnd.nextInt(AB.length())));
+        }
+        return sb.toString();
+    }
+
+    public void sendMailWithEmbed(String subject, String content, String receivedMail) {
+        System.out.println(mailAuth + mailStartTlsEnable + mailHost + mailPort);
         Properties props = new Properties();
         props.put(Constant.Mail.MAIL_SMTP_AUTH, mailAuth);
         props.put(Constant.Mail.MAIL_SMTP_STARTTLS_ENABLE, mailStartTlsEnable);
@@ -175,6 +191,7 @@ public class Utilities {
         props.put(Constant.Mail.MAIL_SMTP_SOCKET_FACTORY_FALLBACK, mailSocketFactoryFallback);
 
         // Get the Session object.
+        System.out.println(adminGmailUsername + adminGmailPwd);
         Session session = Session.getInstance(props,
                 new javax.mail.Authenticator() {
                     protected PasswordAuthentication getPasswordAuthentication() {
@@ -190,6 +207,7 @@ public class Utilities {
             message.setSubject(subject);
             message.setContent(content, "text/html; charset=UTF-8");
             // Send message
+            System.out.println(message);
             Transport.send(message);
 
         } catch (Exception e) {

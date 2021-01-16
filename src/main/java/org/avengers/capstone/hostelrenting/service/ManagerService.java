@@ -11,7 +11,10 @@ import java.util.UUID;
  */
 public interface ManagerService {
     Manager findByPhone(String phone);
+
     Manager findById(UUID id);
-    Manager createNewManager(Manager manager);
+
+    Manager createNewManager(Manager manager, String vendorEmail);
+
     Manager changeActive(Manager manager, boolean active);
 }

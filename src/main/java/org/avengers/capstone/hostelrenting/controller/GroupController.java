@@ -1,15 +1,15 @@
 package org.avengers.capstone.hostelrenting.controller;
 
-import org.avengers.capstone.hostelrenting.dto.group.GroupDTOResponse;
 import org.avengers.capstone.hostelrenting.dto.group.GroupDTOCreate;
+import org.avengers.capstone.hostelrenting.dto.group.GroupDTOResponse;
 import org.avengers.capstone.hostelrenting.dto.group.GroupDTOUpdate;
 import org.avengers.capstone.hostelrenting.dto.groupRegulation.GroupRegulationDTOCreateForGroup;
 import org.avengers.capstone.hostelrenting.dto.groupService.GroupServiceDTOCreateForGroup;
 import org.avengers.capstone.hostelrenting.dto.response.ApiSuccess;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
 import org.avengers.capstone.hostelrenting.model.*;
-import org.avengers.capstone.hostelrenting.service.*;
 import org.avengers.capstone.hostelrenting.service.GroupService;
+import org.avengers.capstone.hostelrenting.service.*;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -144,7 +144,7 @@ public class GroupController {
                 if (reqDTO.getManagerName()!=null){
                     newManager.setManagerName(reqDTO.getManagerName());
                 }
-                Manager resManagerModel = managerService.createNewManager(newManager);
+                Manager resManagerModel = managerService.createNewManager(newManager, vendor.getEmail());
                 logger.info(String.format("Manager has been created with {name=%s}, {phone=%s} ",resManagerModel.getManagerName(), reqDTO.getManagerPhone()));
                 reqModel.setManager(resManagerModel);
             }

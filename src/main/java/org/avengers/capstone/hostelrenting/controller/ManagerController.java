@@ -71,7 +71,7 @@ public class ManagerController {
         if (exGroup.getManager() != null && exGroup.getManager().getManagerPhone().equals(reqDTO.getManagerPhone()))
             throw new GenericException(Manager.class, "existed in your group", "managerPhone", reqDTO.getManagerPhone(), "groupId", String.valueOf(exGroup.getGroupId()));
         Manager reqModel = modelMapper.map(reqDTO, Manager.class);
-        Manager resModel = managerService.createNewManager(reqModel);
+        Manager resModel = managerService.createNewManager(reqModel, exGroup.getVendor().getEmail());
         exGroup.setManager(resModel);
         groupRepository.save(exGroup);
         ManagerDTOResponse resDTO = modelMapper.map(resModel, ManagerDTOResponse.class);
