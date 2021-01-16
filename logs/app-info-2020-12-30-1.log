@@ -1,0 +1,2 @@
+2020-12-30 02:48:31.299 INFO   org.springframework.boot.StartupInfoLogger.logStarting 55  - Starting HostelrentingApplication on DESKTOP-LJ9DRPS with PID 13108 (D:\capstone\HostelBackEnd-BV2\target\classes started by thanh in D:\capstone\HostelBackEnd-BV2)
+2020-12-30 02:48:31.333 INFO   org.springframework.boot.SpringApplication.logStartupProfileInfo 655  - The following profiles are active: prod

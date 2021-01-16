@@ -1,5 +1,6 @@
 package org.avengers.capstone.hostelrenting.service.impl;
 
+import org.avengers.capstone.hostelrenting.Constant;
 import org.avengers.capstone.hostelrenting.dto.user.UserDTOUpdate;
 import org.avengers.capstone.hostelrenting.dto.user.UserDTOUpdateOnlyToken;
 import org.avengers.capstone.hostelrenting.dto.vendor.VendorDTOUpdate;
@@ -11,8 +12,12 @@ import org.avengers.capstone.hostelrenting.service.UserService;
 import org.avengers.capstone.hostelrenting.service.VendorService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -46,6 +51,11 @@ public class VendorServiceImpl implements VendorService {
     }
 
     @Override
+    public Vendor update(Vendor vendor) {
+        return vendorRepository.save(vendor);
+    }
+
+    @Override
     public Vendor updateInfo(Vendor exModel, VendorDTOUpdate reqDTO) {
         modelMapper.map(reqDTO, exModel);
 
@@ -70,6 +80,13 @@ public class VendorServiceImpl implements VendorService {
         // check duplicate phone
         userService.checkDuplicatePhone(vendor.getPhone());
         return vendorRepository.save(vendor);
+    }
+
+    @Override
+    public Collection<Vendor> getAllVendors(int page, int size, String sortBy, boolean asc) {
+        Sort sort = Sort.by(asc ? Sort.Direction.ASC : Sort.Direction.DESC, sortBy);
+        Pageable pageable = PageRequest.of(page - Constant.ONE, size, sort);
+        return vendorRepository.findAll(pageable).toList();
     }
 
 }

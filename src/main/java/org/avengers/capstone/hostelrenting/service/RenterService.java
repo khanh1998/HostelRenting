@@ -12,9 +12,10 @@ import java.util.UUID;
 
 public interface RenterService {
     void checkExist(UUID id);
+    Collection<Renter> getAllRenters(int page, int size, String sortBy, boolean asc);
+    Renter update(Renter renter);
     Renter updateInfo(Renter exModel, RenterDTOUpdate reqDTO);
     Renter updateToken(Renter exModel, UserDTOUpdateOnlyToken onlyTokenDTO);
-
     Renter findById(UUID id);
     Collection<Renter> findByIds(Collection<UUID> ids);
     Renter create(Renter renter);

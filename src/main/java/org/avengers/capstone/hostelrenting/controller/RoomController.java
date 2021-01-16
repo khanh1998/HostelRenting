@@ -92,7 +92,7 @@ public class RoomController {
     }
 
     @PutMapping("/types/{typeId}/rooms/{roomId}")
-    public ResponseEntity<ApiSuccess> updateDistrict(@PathVariable Integer typeId,
+    public ResponseEntity<ApiSuccess> updateRoomByRoomId(@PathVariable Integer typeId,
                                                      @PathVariable Integer roomId,
                                                      @Valid @RequestBody RoomDTOCreate rqRoom) throws EntityNotFoundException {
         // check that id exist or not
@@ -139,5 +139,10 @@ public class RoomController {
 
         return resDTOs;
     }
-
+    @DeleteMapping("/rooms/{roomId}")
+    public ResponseEntity<?> deleteRoomByRoomId(@PathVariable Integer roomId){
+        roomService.deleteById(roomId);
+        ApiSuccess<?> apiSuccess = new ApiSuccess<>(null, "Your room has been deleted successfully!");
+        return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
+    }
 }

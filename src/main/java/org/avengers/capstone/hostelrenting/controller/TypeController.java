@@ -231,14 +231,41 @@ public class TypeController {
         logger.info("START - updating type");
         Type existedModel = typeService.findById(typeId);
         modelMapper.map(reqDTO, existedModel);
-
+//        existedModel.setTypeId(typeId);
         Type resModel = typeService.update(existedModel);
         TypeDTOResponse resDTO = modelMapper.map(resModel, TypeDTOResponse.class);
+
+//        Type exModel = typeService.findById(typeId);
+//        Type resModel = typeService.update(exModel);
 
         // log end update
         logger.info("SUCCESSFUL - updating type");
 
         ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTO, "Your Hostel Type has been updated successfully");
+
+        return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
+    }
+
+    @PutMapping("types/{typeId}/disableOrEnable")
+    public ResponseEntity<?> disableOrEnableType(@Valid @RequestBody TypeDeletedDTO typeDeletedDTO,@PathVariable Integer typeId) {
+        Type existedModel = typeService.findById(typeId);
+        existedModel.setDeleted(typeDeletedDTO.isDeleted());
+        Type resModel = typeService.update(existedModel);
+        TypeDTOResponse resDTO = modelMapper.map(resModel, TypeDTOResponse.class);
+        String message = typeDeletedDTO.isDeleted() ? "Your Hostel Type has been disable successfully" : "Your Hostel Type has been enable successfully";
+        ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTO, message);
+
+        return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
+    }
+
+    @PutMapping("types/{typeId}/active")
+    public ResponseEntity<?> activeType(@Valid @RequestBody TypeActiveDTO typeActiveDTO, @PathVariable Integer typeId) {
+        Type existedModel = typeService.findById(typeId);
+        existedModel.setActive(typeActiveDTO.isActivate());
+        Type resModel = typeService.update(existedModel);
+        TypeDTOResponse resDTO = modelMapper.map(resModel, TypeDTOResponse.class);
+        String message = typeActiveDTO.isActivate() ? "Your Hostel Type has been activated successfully" : "Your Hostel Type has been inactivated successfully";
+        ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTO, message);
 
         return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
     }

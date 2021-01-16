@@ -1,15 +1,16 @@
 package org.avengers.capstone.hostelrenting.controller;
 
-import org.avengers.capstone.hostelrenting.dto.group.GroupDTOCreate;
 import org.avengers.capstone.hostelrenting.dto.group.GroupDTOResponse;
+import org.avengers.capstone.hostelrenting.dto.group.GroupDTOCreate;
+import org.avengers.capstone.hostelrenting.dto.group.GroupDTOResponseV2;
 import org.avengers.capstone.hostelrenting.dto.group.GroupDTOUpdate;
 import org.avengers.capstone.hostelrenting.dto.groupRegulation.GroupRegulationDTOCreateForGroup;
 import org.avengers.capstone.hostelrenting.dto.groupService.GroupServiceDTOCreateForGroup;
 import org.avengers.capstone.hostelrenting.dto.response.ApiSuccess;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
 import org.avengers.capstone.hostelrenting.model.*;
-import org.avengers.capstone.hostelrenting.service.GroupService;
 import org.avengers.capstone.hostelrenting.service.*;
+import org.avengers.capstone.hostelrenting.service.GroupService;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -288,8 +289,24 @@ public class GroupController {
                                                  @RequestParam(required = false, defaultValue = DEFAULT_PAGE) Integer page) {
         //log start
         logger.info("START - Get group by vendor with id: " + vendorId);
-        List<GroupDTOResponse> resDTOs = groupService.getByVendorId(vendorId, size, page - 1)
-                .stream().map(group -> modelMapper.map(group, GroupDTOResponse.class))
+        List<GroupDTOResponseV2> resDTOs = groupService.getByVendorId(vendorId, size, page - 1)
+                .stream().map(group -> modelMapper.map(group, GroupDTOResponseV2.class))
+                .collect(Collectors.toList());
+
+        logger.info("SUCCESSFUL - Get group by vendorId");
+        ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTOs, "Your hostel group has been retrieved successfully!");
+
+        return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
+    }
+
+    @GetMapping("/vendors/{vendorId}/groups/V2")
+    public ResponseEntity<?> getGroupsByVendorIdV2(@PathVariable UUID vendorId,
+                                                   @RequestParam(required = false, defaultValue = DEFAULT_SIZE) Integer size,
+                                                   @RequestParam(required = false, defaultValue = DEFAULT_PAGE) Integer page) {
+        //log start
+        logger.info("START - Get group by vendor with id: " + vendorId);
+        List<GroupDTOResponseV2> resDTOs = groupService.getByVendorId(vendorId, size, page - 1)
+                .stream().map(group -> modelMapper.map(group, GroupDTOResponseV2.class))
                 .collect(Collectors.toList());
 
         logger.info("SUCCESSFUL - Get group by vendorId");

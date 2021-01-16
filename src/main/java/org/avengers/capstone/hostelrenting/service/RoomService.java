@@ -15,5 +15,5 @@ public interface RoomService {
     Boolean checkAvailableById(Integer id);
     Room updateStatus(Integer id, boolean isAvailable);
     Room getExistedRoomInList(Collection<Room> room);
-
+    void updateRoom(Integer roomId, Room updateRoom);
 }

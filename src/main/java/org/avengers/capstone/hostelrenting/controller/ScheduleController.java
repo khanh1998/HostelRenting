@@ -2,11 +2,10 @@ package org.avengers.capstone.hostelrenting.controller;
 
 import com.sun.mail.iap.Response;
 import org.avengers.capstone.hostelrenting.dto.group.GroupDTOResponse;
-import org.avengers.capstone.hostelrenting.dto.schedule.GroupScheduleDTOCreate;
-import org.avengers.capstone.hostelrenting.dto.schedule.GroupScheduleDTOResponse;
+import org.avengers.capstone.hostelrenting.dto.group.GroupDTOResponseV2;
+import org.avengers.capstone.hostelrenting.dto.schedule.*;
 import org.avengers.capstone.hostelrenting.dto.response.ApiSuccess;
-import org.avengers.capstone.hostelrenting.dto.schedule.GroupScheduleDTOUpdate;
-import org.avengers.capstone.hostelrenting.dto.schedule.ScheduleDTO;
+import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
 import org.avengers.capstone.hostelrenting.model.Group;
 import org.avengers.capstone.hostelrenting.model.GroupSchedule;
 import org.avengers.capstone.hostelrenting.model.Schedule;
@@ -87,11 +86,9 @@ public class ScheduleController {
     }
 
     @DeleteMapping("/schedules/{groupScheduleId}")
-    public ResponseEntity<?> updateGroupScheduleByGroupId(@PathVariable Integer groupScheduleId){
-
+    public ResponseEntity<?> deleteGroupScheduleByGroupId(@PathVariable Integer groupScheduleId){
         groupScheduleService.delete(groupScheduleId);
-        ApiSuccess<?> apiSuccess = new ApiSuccess<>(null, "Your schedule has been created successfully!");
-
+        ApiSuccess<?> apiSuccess = new ApiSuccess<>(null, "Your schedule has been deleted successfully!");
         return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
     }
 
@@ -110,7 +107,7 @@ public class ScheduleController {
     @GetMapping("/groups/{groupId}/schedules")
     public ResponseEntity<?> getGroupScheduleByGroupId(@PathVariable Integer groupId) {
         Group group = groupService.findById(groupId);
-        Collection<GroupScheduleDTOResponse> resDTO = modelMapper.map(group, GroupDTOResponse.class).getGroupSchedules();
+        Collection<GroupScheduleDTOResponseV2> resDTO = modelMapper.map(group, GroupDTOResponseV2.class).getGroupSchedules();
         ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTO, "Your schedule has been retrieved successfully!");
 
         return ResponseEntity.ok(apiSuccess);
@@ -124,5 +121,13 @@ public class ScheduleController {
         ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTOs, "Your schedule has been created successfully!");
 
         return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
+    }
+
+    @GetMapping("/groups/{groupId}/schedulesv2")
+    public ResponseEntity<?> getScheduleByGroupIdV2(@PathVariable Integer groupId){
+        Group group = groupService.findById(groupId);
+        Collection<GroupScheduleDTOResponseV2>  resDTO =  modelMapper.map(group, GroupDTOResponseV2.class).getGroupSchedules();
+        ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTO, "Your schedule has been retrieved successfully!");
+        return ResponseEntity.ok(apiSuccess);
     }
 }
