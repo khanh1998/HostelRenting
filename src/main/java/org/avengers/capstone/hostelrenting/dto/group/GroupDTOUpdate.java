@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
 import lombok.Setter;
+import org.avengers.capstone.hostelrenting.model.serialized.AddressFull;
 
 import java.util.UUID;
 
@@ -19,6 +20,7 @@ public class GroupDTOUpdate {
     public GroupDTOUpdate() {
         this.updatedAt = System.currentTimeMillis();
     }
+
     private String groupName;
     private String curfewTime;
     private Boolean ownerJoin;
@@ -26,6 +28,10 @@ public class GroupDTOUpdate {
     private Float downPayment;
     private String appendixContract;
     private UUID managerId;
+    private AddressFull addressFull;
+    private String buildingNo;
+    private Double longitude;
+    private Double latitude;
     @Getter
     @JsonIgnore
     private Long updatedAt;
