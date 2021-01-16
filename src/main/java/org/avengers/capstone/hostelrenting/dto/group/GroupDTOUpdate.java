@@ -2,9 +2,10 @@ package org.avengers.capstone.hostelrenting.dto.group;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.UUID;
 
 /**
  * @author duattt on 10/9/20
@@ -24,6 +25,7 @@ public class GroupDTOUpdate {
     private String imgUrl;
     private Float downPayment;
     private String appendixContract;
+    private UUID managerId;
     @Getter
     @JsonIgnore
     private Long updatedAt;

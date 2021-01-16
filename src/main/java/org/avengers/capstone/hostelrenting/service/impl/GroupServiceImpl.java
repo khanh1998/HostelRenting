@@ -3,12 +3,11 @@ package org.avengers.capstone.hostelrenting.service.impl;
 import org.avengers.capstone.hostelrenting.dto.group.GroupDTOUpdate;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
 import org.avengers.capstone.hostelrenting.model.Group;
-import org.avengers.capstone.hostelrenting.model.GroupRegulation;
+import org.avengers.capstone.hostelrenting.model.Manager;
 import org.avengers.capstone.hostelrenting.model.Vendor;
-import org.avengers.capstone.hostelrenting.repository.GroupRegulationRepository;
 import org.avengers.capstone.hostelrenting.repository.GroupRepository;
-import org.avengers.capstone.hostelrenting.repository.GroupServiceRepository;
 import org.avengers.capstone.hostelrenting.service.GroupService;
+import org.avengers.capstone.hostelrenting.service.ManagerService;
 import org.avengers.capstone.hostelrenting.service.VendorService;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
@@ -25,23 +24,17 @@ import java.util.stream.Collectors;
 public class GroupServiceImpl implements GroupService {
     private GroupRepository groupRepository;
     private VendorService vendorService;
-    private GroupRegulationRepository groupRegulationRepository;
-    private GroupServiceRepository groupServiceRepository;
     private ModelMapper modelMapper;
+    private ManagerService managerService;
+
+    @Autowired
+    public void setManagerService(ManagerService managerService) {
+        this.managerService = managerService;
+    }
 
     @Autowired
     public void setModelMapper(ModelMapper modelMapper) {
         this.modelMapper = modelMapper;
-    }
-
-    @Autowired
-    public void setGroupServiceRepository(GroupServiceRepository groupServiceRepository) {
-        this.groupServiceRepository = groupServiceRepository;
-    }
-
-    @Autowired
-    public void setGroupRegulationRepository(GroupRegulationRepository groupRegulationRepository) {
-        this.groupRegulationRepository = groupRegulationRepository;
     }
 
     private static final Logger logger = LoggerFactory.getLogger(GroupServiceImpl.class);
@@ -80,8 +73,13 @@ public class GroupServiceImpl implements GroupService {
     @Override
     public Group update(GroupDTOUpdate reqDTO, Integer groupId) {
         Group existedModel = this.findById(groupId);
+        if (reqDTO.getManagerId() != null && reqDTO.getManagerId() != existedModel.getManager().getManagerId()) {
+            Manager newManager = managerService.findById(reqDTO.getManagerId());
+            existedModel.setManager(newManager);
+        }
+        reqDTO.setManagerId(null);
         modelMapper.map(reqDTO, existedModel);
-        return null;
+        return groupRepository.save(existedModel);
     }
 
     @Override
