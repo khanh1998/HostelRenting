@@ -114,7 +114,7 @@ public class VendorController {
     }
 
     @GetMapping("/vendors/vendors")
-    public ResponseEntity<?> getAllRenters(@RequestParam(required = false, defaultValue = "createdAt") String sortBy,
+    public ResponseEntity<?> getAllVendors(@RequestParam(required = false, defaultValue = "createdAt") String sortBy,
                                            @RequestParam(required = false, defaultValue = "false") Boolean asc,
                                            @RequestParam(required = false, defaultValue = DEFAULT_SIZE) Integer size,
                                            @RequestParam(required = false, defaultValue = DEFAULT_PAGE) Integer page) throws EntityNotFoundException {
