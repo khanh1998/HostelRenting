@@ -1,6 +1,5 @@
 package org.avengers.capstone.hostelrenting.dto.groupRegulation;
 
-import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,6 +11,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class RegulationDTO {
+    private int id;
     private int regulationId;
     private String regulationName;
     private boolean isApproved;

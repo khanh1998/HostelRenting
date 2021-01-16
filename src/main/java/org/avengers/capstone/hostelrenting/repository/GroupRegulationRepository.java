@@ -12,4 +12,6 @@ import java.util.Collection;
  */
 public interface GroupRegulationRepository extends JpaRepository<GroupRegulation, Integer> {
     Collection<GroupRegulation> findByGroup_GroupIdAndRegulation_IsApproved(Integer groupId, boolean isApproved);
+
+    Collection<GroupRegulation> findByGroup_GroupId(Integer groupId);
 }
