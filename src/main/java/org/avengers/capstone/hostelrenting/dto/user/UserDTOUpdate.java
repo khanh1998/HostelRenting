@@ -76,4 +76,13 @@ public class UserDTOUpdate implements Serializable {
     @Getter
     @JsonIgnore
     private Long updatedAt;
+
+    @Getter
+    @Setter
+    private boolean isBlocked;
+
+    @Getter
+    @Setter
+    private boolean isCensored;
+
 }
