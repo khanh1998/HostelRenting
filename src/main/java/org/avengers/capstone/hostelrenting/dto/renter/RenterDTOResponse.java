@@ -17,4 +17,7 @@ public class RenterDTOResponse extends UserDTOResponse implements Serializable  
 
     @JsonProperty("hometown")
     private ProvinceDTO province;
+
+    private boolean isBlocked;
+    private boolean isCensored;
 }
