@@ -4,11 +4,12 @@ import org.avengers.capstone.hostelrenting.dto.combination.TypeAndGroupDTO;
 import org.avengers.capstone.hostelrenting.dto.combination.TypeAndGroupInfoDTO;
 import org.avengers.capstone.hostelrenting.dto.combination.TypesAndGroupsDTO;
 import org.avengers.capstone.hostelrenting.dto.combination.TypesAndGroupsInfoDTO;
-import org.avengers.capstone.hostelrenting.dto.facility.FacilityDTOCreate;
 import org.avengers.capstone.hostelrenting.dto.group.GroupDTOResponse;
 import org.avengers.capstone.hostelrenting.dto.group.GroupDTOResponseV2;
+import org.avengers.capstone.hostelrenting.dto.group.GroupDTOResponseV3;
 import org.avengers.capstone.hostelrenting.dto.response.ApiSuccess;
 import org.avengers.capstone.hostelrenting.dto.type.*;
+import org.avengers.capstone.hostelrenting.dto.vendor.VendorDTOResponse;
 import org.avengers.capstone.hostelrenting.exception.EntityNotFoundException;
 import org.avengers.capstone.hostelrenting.model.*;
 import org.avengers.capstone.hostelrenting.service.*;
@@ -40,6 +41,7 @@ public class TypeController {
 
     private TypeService typeService;
     private GroupService groupService;
+    private VendorService vendorService;
     private FacilityService facilityService;
     private ModelMapper modelMapper;
 
@@ -61,6 +63,11 @@ public class TypeController {
     @Autowired
     public void setModelMapper(ModelMapper modelMapper) {
         this.modelMapper = modelMapper;
+    }
+
+    @Autowired
+    public void setVendorService(VendorService vendorService) {
+        this.vendorService = vendorService;
     }
 
     /**
@@ -293,9 +300,18 @@ public class TypeController {
                 .collect(Collectors.toSet());
 //                .collect(Collectors.groupingBy(GroupDTOResponse::getGroupId))
 //                .values().stream().flatMap(List::stream).collect(Collectors.toSet());
-        Set<GroupDTOResponseV2> groupDTOs = groups.stream()
-                .map(group -> modelMapper.map(group, GroupDTOResponseV2.class))
+        Set<GroupDTOResponseV3> groupDTOs = groups.stream()
+                .map(group -> modelMapper.map(group, GroupDTOResponseV3.class))
                 .collect(Collectors.toSet());
+        for(GroupDTOResponseV3 group : groupDTOs){
+            Vendor vendor = vendorService.findById(group.getVendorId());
+            VendorDTOResponse vendorDTOResponse = modelMapper.map(vendor,VendorDTOResponse.class);
+            group.setVendor(vendorDTOResponse);
+        }
+        List<VendorDTOResponse> vendorDTOs = groupDTOs.stream()
+                .map(vendorDTO -> vendorService.findById(vendorDTO.getVendorId()))
+                .map(vendorFinal -> modelMapper.map(vendorFinal,VendorDTOResponse.class))
+                .collect(Collectors.toList());
 
         int totalType = typeDTOs.size();
         int totalGroup = groupDTOs.size();
@@ -307,6 +323,7 @@ public class TypeController {
                 .groups(groupDTOs)
                 .totalType(totalType)
                 .totalGroup(totalGroup)
+                .vendors(vendorDTOs)
                 .build();
 
         //log success
