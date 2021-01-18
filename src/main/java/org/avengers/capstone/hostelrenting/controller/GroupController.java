@@ -315,6 +315,21 @@ public class GroupController {
         return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
     }
 
+//    @GetMapping("/vendors/{vendorId}/groups/V2")
+//    public ResponseEntity<?> getAllGroups(@RequestParam(required = false, defaultValue = DEFAULT_SIZE) Integer size,
+//                                          @RequestParam(required = false, defaultValue = DEFAULT_PAGE) Integer page) {
+//        //log start
+//        logger.info("START - Get group by vendor with id: " + vendorId);
+//        List<GroupDTOResponseV2> resDTOs = groupService.getByVendorId(vendorId, size, page - 1)
+//                .stream().map(group -> modelMapper.map(group, GroupDTOResponseV2.class))
+//                .collect(Collectors.toList());
+//
+//        logger.info("SUCCESSFUL - Get group by vendorId");
+//        ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTOs, "Your hostel group has been retrieved successfully!");
+//
+//        return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
+//    }
+
     private void createRefObj(GroupDTOCreate groupDTO) {
         if (groupDTO.getNewRegulations() != null && !groupDTO.getNewRegulations().isEmpty()){
             groupDTO.getNewRegulations().stream().forEach(dto -> {

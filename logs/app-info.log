@@ -1,31 +1,6 @@
-2021-01-18 00:27:35.439 INFO   org.springframework.boot.StartupInfoLogger.logStarting 55  - Starting HostelrentingApplication on DESKTOP-LJ9DRPS with PID 6048 (D:\capstone\HostelBackEnd-BV2\target\classes started by thanh in D:\capstone\HostelBackEnd-BV2)
-2021-01-18 00:27:35.461 INFO   org.springframework.boot.SpringApplication.logStartupProfileInfo 655  - The following profiles are active: prod
-2021-01-18 00:27:45.723 INFO   org.springframework.boot.StartupInfoLogger.logStarting 55  - Starting HostelrentingApplication on DESKTOP-LJ9DRPS with PID 19932 (D:\capstone\HostelBackEnd-BV2\target\classes started by thanh in D:\capstone\HostelBackEnd-BV2)
-2021-01-18 00:27:45.730 INFO   org.springframework.boot.SpringApplication.logStartupProfileInfo 655  - The following profiles are active: prod
-2021-01-18 00:28:55.190 INFO   org.springframework.boot.StartupInfoLogger.logStarting 55  - Starting HostelrentingApplication on DESKTOP-LJ9DRPS with PID 19664 (D:\capstone\HostelBackEnd-BV2\target\classes started by thanh in D:\capstone\HostelBackEnd-BV2)
-2021-01-18 00:28:55.197 INFO   org.springframework.boot.SpringApplication.logStartupProfileInfo 655  - The following profiles are active: prod
-2021-01-18 00:29:09.185 INFO   org.springframework.boot.StartupInfoLogger.logStarted 61  - Started HostelrentingApplication in 14.271 seconds (JVM running for 15.353)
-2021-01-18 00:40:17.306 INFO   org.springframework.boot.StartupInfoLogger.logStarting 55  - Starting HostelrentingApplication on DESKTOP-LJ9DRPS with PID 18872 (D:\capstone\HostelBackEnd-BV2\target\classes started by thanh in D:\capstone\HostelBackEnd-BV2)
-2021-01-18 00:40:17.313 INFO   org.springframework.boot.SpringApplication.logStartupProfileInfo 655  - The following profiles are active: prod
-2021-01-18 00:40:30.337 INFO   org.springframework.boot.StartupInfoLogger.logStarted 61  - Started HostelrentingApplication in 13.304 seconds (JVM running for 14.472)
-2021-01-18 00:43:06.027 INFO   org.springframework.boot.StartupInfoLogger.logStarting 55  - Starting HostelrentingApplication on DESKTOP-LJ9DRPS with PID 19256 (D:\capstone\HostelBackEnd-BV2\target\classes started by thanh in D:\capstone\HostelBackEnd-BV2)
-2021-01-18 00:43:06.033 INFO   org.springframework.boot.SpringApplication.logStartupProfileInfo 655  - The following profiles are active: prod
-2021-01-18 00:43:18.406 INFO   org.springframework.boot.StartupInfoLogger.logStarted 61  - Started HostelrentingApplication in 12.641 seconds (JVM running for 13.65)
-2021-01-18 00:46:31.621 INFO   org.springframework.boot.StartupInfoLogger.logStarting 55  - Starting HostelrentingApplication on DESKTOP-LJ9DRPS with PID 20028 (D:\capstone\HostelBackEnd-BV2\target\classes started by thanh in D:\capstone\HostelBackEnd-BV2)
-2021-01-18 00:46:31.628 INFO   org.springframework.boot.SpringApplication.logStartupProfileInfo 655  - The following profiles are active: prod
-2021-01-18 00:46:45.576 INFO   org.springframework.boot.StartupInfoLogger.logStarting 55  - Starting HostelrentingApplication on DESKTOP-LJ9DRPS with PID 20076 (D:\capstone\HostelBackEnd-BV2\target\classes started by thanh in D:\capstone\HostelBackEnd-BV2)
-2021-01-18 00:46:45.584 INFO   org.springframework.boot.SpringApplication.logStartupProfileInfo 655  - The following profiles are active: prod
-2021-01-18 00:46:58.614 INFO   org.springframework.boot.StartupInfoLogger.logStarted 61  - Started HostelrentingApplication in 13.321 seconds (JVM running for 14.439)
-2021-01-18 00:48:00.231 INFO   org.springframework.boot.StartupInfoLogger.logStarting 55  - Starting HostelrentingApplication on DESKTOP-LJ9DRPS with PID 17612 (D:\capstone\HostelBackEnd-BV2\target\classes started by thanh in D:\capstone\HostelBackEnd-BV2)
-2021-01-18 00:48:00.238 INFO   org.springframework.boot.SpringApplication.logStartupProfileInfo 655  - The following profiles are active: prod
-2021-01-18 00:48:19.115 INFO   org.springframework.boot.StartupInfoLogger.logStarting 55  - Starting HostelrentingApplication on DESKTOP-LJ9DRPS with PID 20148 (D:\capstone\HostelBackEnd-BV2\target\classes started by thanh in D:\capstone\HostelBackEnd-BV2)
-2021-01-18 00:48:19.123 INFO   org.springframework.boot.SpringApplication.logStartupProfileInfo 655  - The following profiles are active: prod
-2021-01-18 00:48:32.909 INFO   org.springframework.boot.StartupInfoLogger.logStarting 55  - Starting HostelrentingApplication on DESKTOP-LJ9DRPS with PID 16648 (D:\capstone\HostelBackEnd-BV2\target\classes started by thanh in D:\capstone\HostelBackEnd-BV2)
-2021-01-18 00:48:32.916 INFO   org.springframework.boot.SpringApplication.logStartupProfileInfo 655  - The following profiles are active: prod
-2021-01-18 00:48:49.248 INFO   org.springframework.boot.StartupInfoLogger.logStarting 55  - Starting HostelrentingApplication on DESKTOP-LJ9DRPS with PID 4380 (D:\capstone\HostelBackEnd-BV2\target\classes started by thanh in D:\capstone\HostelBackEnd-BV2)
-2021-01-18 00:48:49.255 INFO   org.springframework.boot.SpringApplication.logStartupProfileInfo 655  - The following profiles are active: prod
-2021-01-18 00:49:06.148 INFO   org.springframework.boot.StartupInfoLogger.logStarting 55  - Starting HostelrentingApplication on DESKTOP-LJ9DRPS with PID 15704 (D:\capstone\HostelBackEnd-BV2\target\classes started by thanh in D:\capstone\HostelBackEnd-BV2)
-2021-01-18 00:49:06.155 INFO   org.springframework.boot.SpringApplication.logStartupProfileInfo 655  - The following profiles are active: prod
-2021-01-18 00:49:29.490 INFO   org.springframework.boot.StartupInfoLogger.logStarting 55  - Starting HostelrentingApplication on DESKTOP-LJ9DRPS with PID 21324 (D:\capstone\HostelBackEnd-BV2\target\classes started by thanh in D:\capstone\HostelBackEnd-BV2)
-2021-01-18 00:49:29.498 INFO   org.springframework.boot.SpringApplication.logStartupProfileInfo 655  - The following profiles are active: prod
-2021-01-18 00:49:42.012 INFO   org.springframework.boot.StartupInfoLogger.logStarted 61  - Started HostelrentingApplication in 12.831 seconds (JVM running for 13.801)
+2021-01-19 00:20:59.954 INFO   org.springframework.boot.StartupInfoLogger.logStarting 55  - Starting HostelrentingApplication on DESKTOP-LJ9DRPS with PID 18268 (D:\capstone\HostelBackEnd-BV2\target\classes started by thanh in D:\capstone\HostelBackEnd-BV2)
+2021-01-19 00:20:59.967 INFO   org.springframework.boot.SpringApplication.logStartupProfileInfo 655  - The following profiles are active: prod
+2021-01-19 00:21:12.462 INFO   org.springframework.boot.StartupInfoLogger.logStarted 61  - Started HostelrentingApplication in 12.844 seconds (JVM running for 14.172)
+2021-01-19 00:26:04.793 INFO   org.springframework.boot.StartupInfoLogger.logStarting 55  - Starting HostelrentingApplication on DESKTOP-LJ9DRPS with PID 18276 (D:\capstone\HostelBackEnd-BV2\target\classes started by thanh in D:\capstone\HostelBackEnd-BV2)
+2021-01-19 00:26:04.801 INFO   org.springframework.boot.SpringApplication.logStartupProfileInfo 655  - The following profiles are active: prod
+2021-01-19 00:26:19.407 INFO   org.springframework.boot.StartupInfoLogger.logStarted 61  - Started HostelrentingApplication in 14.97 seconds (JVM running for 16.625)
