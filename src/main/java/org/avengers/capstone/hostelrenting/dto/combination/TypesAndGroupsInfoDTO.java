@@ -20,5 +20,4 @@ public class TypesAndGroupsInfoDTO implements Serializable {
     private int totalType;
     private Set<GroupDTOResponseV3> groups;
     private int totalGroup;
-    private List<VendorDTOResponse> vendors;
 }

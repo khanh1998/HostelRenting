@@ -323,7 +323,6 @@ public class TypeController {
                 .groups(groupDTOs)
                 .totalType(totalType)
                 .totalGroup(totalGroup)
-                .vendors(vendorDTOs)
                 .build();
 
         //log success
