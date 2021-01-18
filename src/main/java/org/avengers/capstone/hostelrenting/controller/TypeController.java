@@ -285,9 +285,9 @@ public class TypeController {
 
         Collection<Type> types = typeService.searchWithMainFactors(latitude, longitude, distance, schoolId, provinceId, requestId, sortBy, asc, size, page);
         types = typeService.filtering(types, requestId, schoolId, provinceId, categoryId, minPrice, maxPrice, minSuperficiality, maxSuperficiality, minCapacity, maxCapacity, uCategoryIds, facilityIds, serviceIds, regulationIds, size, page-1);
-        List<TypeDTOResponse> typeDTOs = types
+        List<TypeDTOResponseV2> typeDTOs = types
                 .stream()
-                .map(type -> modelMapper.map(type, TypeDTOResponse.class))
+                .map(type -> modelMapper.map(type, TypeDTOResponseV2.class))
                 .collect(Collectors.toList());
 
         if (typeDTOs.isEmpty())
@@ -295,34 +295,36 @@ public class TypeController {
         else
             message = "Hostel type(s) has been retrieved successfully!";
 
-        Set<Group> groups = typeDTOs.stream()
-                .map(typeDTO -> groupService.findById(typeDTO.getGroupId()))
-                .collect(Collectors.toSet());
-//                .collect(Collectors.groupingBy(GroupDTOResponse::getGroupId))
-//                .values().stream().flatMap(List::stream).collect(Collectors.toSet());
-        Set<GroupDTOResponseV3> groupDTOs = groups.stream()
-                .map(group -> modelMapper.map(group, GroupDTOResponseV3.class))
-                .collect(Collectors.toSet());
-        for(GroupDTOResponseV3 group : groupDTOs){
-            Vendor vendor = vendorService.findById(group.getVendorId());
-            VendorDTOResponse vendorDTOResponse = modelMapper.map(vendor,VendorDTOResponse.class);
-            group.setVendor(vendorDTOResponse);
-        }
-        List<VendorDTOResponse> vendorDTOs = groupDTOs.stream()
-                .map(vendorDTO -> vendorService.findById(vendorDTO.getVendorId()))
-                .map(vendorFinal -> modelMapper.map(vendorFinal,VendorDTOResponse.class))
-                .collect(Collectors.toList());
+//        Set<Group> groups = typeDTOs.stream()
+//                .map(typeDTO -> groupService.findById(typeDTO.getGroupId()))
+//                .collect(Collectors.toSet());
+////                .collect(Collectors.groupingBy(GroupDTOResponse::getGroupId))
+////                .values().stream().flatMap(List::stream).collect(Collectors.toSet());
 
-        int totalType = typeDTOs.size();
-        int totalGroup = groupDTOs.size();
+//        Set<GroupDTOResponseV3> groupDTOs = groups.stream()
+//                .map(group -> modelMapper.map(group, GroupDTOResponseV3.class))
+//                .collect(Collectors.toSet());
+//        for(GroupDTOResponseV3 group : groupDTOs){
+//            Vendor vendor = vendorService.findById(group.getVendorId());
+//            VendorDTOResponse vendorDTOResponse = modelMapper.map(vendor,VendorDTOResponse.class);
+//            group.setVendor(vendorDTOResponse);
+//        }
+
+        for(TypeDTOResponseV2 type : typeDTOs){
+            Group group = groupService.findById(type.getGroupId());
+            GroupDTOResponseV3 groupDTO = modelMapper.map(group,GroupDTOResponseV3.class);
+            Vendor vendor = vendorService.findById(groupDTO.getVendorId());
+            VendorDTOResponse vendorDTOResponse = modelMapper.map(vendor,VendorDTOResponse.class);
+            groupDTO.setVendor(vendorDTOResponse);
+        }
+
+//        int totalType = typeDTOs.size();
+//        int totalGroup = groupDTOs.size();
 
         // DTO contains list of Types and groups follow that type
         TypesAndGroupsInfoDTO resDTO = TypesAndGroupsInfoDTO
                 .builder()
                 .types(typeDTOs)
-                .groups(groupDTOs)
-                .totalType(totalType)
-                .totalGroup(totalGroup)
                 .build();
 
         //log success
