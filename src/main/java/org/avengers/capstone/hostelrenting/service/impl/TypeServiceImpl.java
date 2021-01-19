@@ -1,5 +1,6 @@
 package org.avengers.capstone.hostelrenting.service.impl;
 
+import org.avengers.capstone.hostelrenting.Constant;
 import org.avengers.capstone.hostelrenting.dto.room.RoomDTOCreate;
 import org.avengers.capstone.hostelrenting.dto.type.TypeDTOUpdate;
 import org.avengers.capstone.hostelrenting.dto.type.TypeFacilityDTO;
@@ -254,6 +255,13 @@ public class TypeServiceImpl implements TypeService {
         groupService.checkExist(hostelGroupId);
         List<Type> types = typeRepository.findByGroup_GroupId((hostelGroupId));
         return types;
+    }
+
+    @Override
+    public Collection<Type> getAllTypes(int page, int size, String sortBy, boolean asc) {
+        Sort sort = Sort.by(asc ? Sort.Direction.ASC : Sort.Direction.DESC, sortBy);
+        Pageable pageable = PageRequest.of(page - Constant.ONE, size, sort);
+        return typeRepository.findAll(pageable).toList();
     }
 
     /**

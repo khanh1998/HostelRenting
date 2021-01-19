@@ -235,56 +235,14 @@ public class TypeController {
     }
 
     @GetMapping("/types/all")
-    public ResponseEntity<?> getAllTypes(@RequestParam(required = false) Integer typeId,
-                                      @RequestParam(required = false) Integer schoolId,
-                                      @RequestParam(required = false) Integer provinceId,
-                                      @RequestParam(required = false) Integer categoryId,
-                                      @RequestParam(required = false) Double latitude,
-                                      @RequestParam(required = false) Double longitude,
-                                      @RequestParam(required = false, defaultValue = "5.0") Double distance,
-                                      @RequestParam(required = false) Float minPrice,
-                                      @RequestParam(required = false) Float maxPrice,
-                                      @RequestParam(required = false) Float minSuperficiality,
-                                      @RequestParam(required = false) Float maxSuperficiality,
-                                      @RequestParam(required = false) Integer minCapacity,
-                                      @RequestParam(required = false) Integer maxCapacity,
-                                      @RequestParam(required = false) Integer[] uCategoryIds,
-                                      @RequestParam(required = false) Integer[] facilityIds,
-                                      @RequestParam(required = false) Integer[] serviceIds,
-                                      @RequestParam(required = false) Integer[] regulationIds,
-                                      @RequestParam(required = false) Integer requestId,
-                                      @RequestParam(required = false, defaultValue = "score") String sortBy,
+    public ResponseEntity<?> getAllTypes(@RequestParam(required = false, defaultValue = "createdAt") String sortBy,
                                       @RequestParam(required = false, defaultValue = "false") Boolean asc,
                                       @RequestParam(required = false, defaultValue = DEFAULT_SIZE) Integer size,
                                       @RequestParam(required = false, defaultValue = DEFAULT_PAGE) Integer page) {
         //log start
         String message;
 
-        if (typeId != null) {
-            message = "Hostel type {id=" + typeId + "} has been retrieved successfully!";
-            // handle hostel type and corresponding hostel group
-            Type model = typeService.findById(typeId);
-            model.setView(model.getView() + 1);
-            model = typeService.update(model);
-            model = typeService.countAvailableRoomAndCurrentBooking(model);
-            if (model.isDeleted()) {
-                message = String.format("Type with {id=%s} was not found!", typeId);
-                ApiSuccess<?> apiSuccess = new ApiSuccess<>(null, message);
-                return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
-            }
-            TypeDTOResponse typeDTOResponse = modelMapper.map(model, TypeDTOResponse.class);
-            GroupDTOResponseV2 resGroupDTO = modelMapper.map(groupService.findById(typeDTOResponse.getGroupId()), GroupDTOResponseV2.class);
-            TypeAndGroupInfoDTO resDTO = TypeAndGroupInfoDTO.builder().group(resGroupDTO).type(typeDTOResponse).build();
-            // log when typeId != null
-            logger.info(message);
-
-            ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTO, message);
-
-            return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
-        }
-
-        Collection<Type> types = typeService.searchWithMainFactors(latitude, longitude, distance, schoolId, provinceId, requestId, sortBy, asc, size, page);
-        types = typeService.filtering(types, requestId, schoolId, provinceId, categoryId, minPrice, maxPrice, minSuperficiality, maxSuperficiality, minCapacity, maxCapacity, uCategoryIds, facilityIds, serviceIds, regulationIds, size, page-1);
+        Collection<Type> types = typeService.getAllTypes(page, size, sortBy, asc);
         List<TypeDTOResponseV2> typeDTOs = types
                 .stream()
                 .map(type -> modelMapper.map(type, TypeDTOResponseV2.class))

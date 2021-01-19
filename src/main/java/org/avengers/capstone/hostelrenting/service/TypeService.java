@@ -1,6 +1,7 @@
 package org.avengers.capstone.hostelrenting.service;
 
 import org.avengers.capstone.hostelrenting.dto.type.TypeDTOUpdate;
+import org.avengers.capstone.hostelrenting.model.Renter;
 import org.avengers.capstone.hostelrenting.model.Type;
 
 import java.util.Collection;
@@ -15,7 +16,7 @@ public interface TypeService {
     Type updatePartial(TypeDTOUpdate dto, int typeId);
     void deleteById(Integer id);
     List<Type> findByHostelGroupId(Integer hostelGroupId);
-
+    Collection<Type> getAllTypes(int page, int size, String sortBy, boolean asc);
     Collection<Type> handleAfterRetrieve(Collection<Type> types);
     Type countAvailableRoomAndCurrentBooking(Type type);
 
