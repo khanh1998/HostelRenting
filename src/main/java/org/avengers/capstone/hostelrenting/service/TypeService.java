@@ -39,6 +39,10 @@ public interface TypeService {
                                            Integer provinceId, Integer requestId,
                                            String sortBy, Boolean asc, int size,
                                            int page);
+    Collection<Type> searchWithMainFactorsV2(Double latitude, Double longitude,
+                                           Double distance, Integer schoolId,
+                                           Integer provinceId, Integer requestId,
+                                           String sortBy, Boolean asc);
 
     Collection<Type> filtering(Collection<Type> types, Integer requestId,
                                Integer schoolId, Integer provinceId,

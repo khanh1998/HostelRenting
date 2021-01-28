@@ -337,6 +337,65 @@ public class TypeServiceImpl implements TypeService {
     }
 
     @Override
+    public Collection<Type> searchWithMainFactorsV2(Double latitude, Double longitude, Double distance, Integer schoolId, Integer provinceId, Integer requestId, String sortBy, Boolean asc) {
+        Sort sort = Sort.by(asc ? Sort.Direction.ASC : Sort.Direction.DESC, sortBy);
+//        Pageable pageable = PageRequest.of(page - 1, size, sort);
+        Collection<Type> locTypes;
+        Collection<Type> schoolMateTypesOnly = new ArrayList<>();
+        Collection<Type> compatriotTypesOnly = new ArrayList<>();
+        boolean basicSearch = true;
+
+        /* Get surrounding based on long and lat */
+        if ((latitude != null && longitude != null) || requestId != null) {
+            locTypes = getSurrouding(longitude, latitude, distance, requestId);
+        } else {
+            //TODO: implement get default
+            locTypes = typeRepository.findTopOrderByScoreV2();
+        }
+        locTypes = handleAfterRetrieve(locTypes);
+
+        /* list of return types */
+        Collection<Type> result = new ArrayList<>(locTypes);
+
+        /* list of type has only schoolMate */
+        if (schoolId != null) {
+            //check whether schoolId exist or not
+            schoolService.findById(schoolId);
+
+            basicSearch = false;
+            schoolMateTypesOnly = convertMapToList(typeRepository.getBySchoolMates(schoolId), 1);
+            if (schoolMateTypesOnly.size() > 0)
+                schoolMateTypesOnly.retainAll(result);
+        }
+
+        /* list of type has only compatriot */
+        if (provinceId != null) {
+            //check whether provinceId exist or not
+            provinceService.findById(provinceId);
+
+            basicSearch = false;
+            compatriotTypesOnly = convertMapToList(typeRepository.getByCompatriot(provinceId), 2);
+            if (compatriotTypesOnly.size() > 0)
+                compatriotTypesOnly.retainAll(result);
+        }
+
+        /* Generate result collection and sort */
+        result = generateResult(result, schoolMateTypesOnly, compatriotTypesOnly);
+
+        /* Immediately return if only search by location */
+        if (basicSearch)
+            return result;
+
+        if (!basicSearch) {
+            result = result.stream()
+                    .filter(type -> type.getCompatriot() + type.getSchoolmate() > 0)
+                    .collect(Collectors.toCollection(LinkedHashSet::new));
+        }
+
+        return result;
+    }
+
+    @Override
     public Collection<Type> filtering(Collection<Type> types, Integer requestId, Integer schoolId, Integer provinceId, Integer categoryId, Float minPrice, Float maxPrice, Float minSuperficiality, Float maxSuperficiality, Integer minCapacity, Integer maxCapacity, Integer[] uCategoryIds, Integer[] facilityIds, Integer[] serviceIds, Integer[] regulationIds, Integer size, Integer page) {
         HostelRequest exRequest = null;
         if (requestId != null) {

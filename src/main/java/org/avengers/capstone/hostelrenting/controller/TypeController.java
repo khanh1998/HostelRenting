@@ -196,8 +196,13 @@ public class TypeController {
         }
 
         Collection<Type> types = typeService.searchWithMainFactors(latitude, longitude, distance, schoolId, provinceId, requestId, sortBy, asc, size, page);
+        Collection<Type> typesV2 = typeService.searchWithMainFactorsV2(latitude, longitude, distance, schoolId, provinceId, requestId, sortBy, asc);
         types = typeService.filtering(types, requestId, schoolId, provinceId, categoryId, minPrice, maxPrice, minSuperficiality, maxSuperficiality, minCapacity, maxCapacity, uCategoryIds, facilityIds, serviceIds, regulationIds, size, page-1);
         List<TypeDTOResponse> typeDTOs = types
+                .stream()
+                .map(type -> modelMapper.map(type, TypeDTOResponse.class))
+                .collect(Collectors.toList());
+        List<TypeDTOResponse> typeDTOsV2 = typesV2
                 .stream()
                 .map(type -> modelMapper.map(type, TypeDTOResponse.class))
                 .collect(Collectors.toList());
@@ -210,14 +215,22 @@ public class TypeController {
         Set<Group> groups = typeDTOs.stream()
                 .map(typeDTO -> groupService.findById(typeDTO.getGroupId()))
                 .collect(Collectors.toSet());
+
+        Set<Group> groupsV2 = typeDTOsV2.stream()
+                .map(typeDTO -> groupService.findById(typeDTO.getGroupId()))
+                .collect(Collectors.toSet());
 //                .collect(Collectors.groupingBy(GroupDTOResponse::getGroupId))
 //                .values().stream().flatMap(List::stream).collect(Collectors.toSet());
         Set<GroupDTOResponse> groupDTOs = groups.stream()
                 .map(group -> modelMapper.map(group, GroupDTOResponse.class))
                 .collect(Collectors.toSet());
 
-        int totalType = typeDTOs.size();
-        int totalGroup = groupDTOs.size();
+        Set<GroupDTOResponse> groupDTOsV2 = groupsV2.stream()
+                .map(group -> modelMapper.map(group, GroupDTOResponse.class))
+                .collect(Collectors.toSet());
+
+        int totalType = typeDTOsV2.size();
+        int totalGroup = groupDTOsV2.size();
 
         // DTO contains list of Types and groups follow that type
         TypesAndGroupsDTO resDTO = TypesAndGroupsDTO
@@ -243,11 +256,12 @@ public class TypeController {
         String message;
 
         Collection<Type> types = typeService.getAllTypes(page, size, sortBy, asc);
+        System.out.println(types.size());
         List<TypeDTOResponseV2> typeDTOs = types
                 .stream()
                 .map(type -> modelMapper.map(type, TypeDTOResponseV2.class))
                 .collect(Collectors.toList());
-
+        System.out.println(typeDTOs.size());
         if (typeDTOs.isEmpty())
             message = "There is no hostel type";
         else
@@ -312,6 +326,23 @@ public class TypeController {
 
         return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
     }
+
+//    @PutMapping("types/{typeId}/active")
+//    public ResponseEntity<?> updateActiveType(@RequestBody boolean active,
+//                                        @PathVariable Integer typeId) {
+//        // log start update
+//        logger.info("START - updating type");
+//        Type existedModel = typeService.findById(typeId);
+//        Type resModel = typeService.update(existedModel);
+//        resModel.setActive(active);
+//        TypeDTOResponse resDTO = modelMapper.map(resModel, TypeDTOResponse.class);
+//        // log end update
+//        logger.info("SUCCESSFUL - updating type");
+//
+//        ApiSuccess<?> apiSuccess = new ApiSuccess<>(resDTO, "Your Hostel Type has been updated successfully");
+//
+//        return ResponseEntity.status(HttpStatus.OK).body(apiSuccess);
+//    }
 
     @PutMapping("types/{typeId}/disableOrEnable")
     public ResponseEntity<?> disableOrEnableType(@Valid @RequestBody TypeDeletedDTO typeDeletedDTO,@PathVariable Integer typeId) {

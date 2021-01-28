@@ -38,6 +38,9 @@ public interface TypeRepository extends JpaRepository<Type, Integer> {
     @Query(value = "SELECT * FROM type_hostel AS t where t.is_deleted = FALSE and t.is_active = TRUE ORDER BY t.score DESC LIMIT ?1 OFFSET ?2", nativeQuery = true)
     Collection<Type> findTopOrderByScore(int size, int offset);
 
+    @Query(value = "SELECT * FROM type_hostel AS t where t.is_deleted = FALSE and t.is_active = TRUE", nativeQuery = true)
+    Collection<Type> findTopOrderByScoreV2();
+
     @Query(value = "SELECT * FROM get_type_by_request_due_time(?1, ?2)", nativeQuery = true)
     Collection<Type> findByRequestDueTime(Integer requestId, String status);
 }
